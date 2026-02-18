@@ -12,13 +12,17 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
+        Network
         REQUIRED)
 
-add_executable(Server main.cpp)
+add_executable(Server main.cpp
+        TcpServer.cpp
+        TcpServer.h)
 target_link_libraries(Server
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        Qt::Network
 )
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)

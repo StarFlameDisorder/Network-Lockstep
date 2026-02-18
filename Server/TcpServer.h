@@ -5,16 +5,18 @@
 #ifndef SERVER_TCPSERVER_H
 #define SERVER_TCPSERVER_H
 #include <QTcpServer>
-
+#include <QHash>
 
 class TcpServer:public QTcpServer
 {
 public:
     TcpServer(QObject *parent = nullptr);
-private slots:
+private:
     void tcpServerConnectionNew();
-    void tcpServerConnectionClosed();
+    void tcpServerConnectClosed();
+    std::string getTcpSocketInfo(const QTcpSocket *socket)const;
 
+    QHash<quint64,QTcpSocket*> m_idTcpSocketMap;
 };
 
 

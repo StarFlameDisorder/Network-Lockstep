@@ -4,6 +4,7 @@
 
 #include "TcpServer.h"
 #include <QDebug>
+#include <QTcpSocket>
 
 TcpServer::TcpServer(QObject* parent):QTcpServer(parent)
 {
@@ -14,5 +15,41 @@ TcpServer::TcpServer(QObject* parent):QTcpServer(parent)
 
 void TcpServer::tcpServerConnectionNew()
 {
-    qDebug()<<"新连接";
+    QTcpSocket *newTcpSocket=nextPendingConnection();
+    quint64 id=m_idTcpSocketMap.size();
+    qDebug().noquote()<<"新连接["<<id<<"-"<<getTcpSocketInfo(newTcpSocket)<<"]";
+
+    m_idTcpSocketMap.insert(id,newTcpSocket);
+
+    connect(newTcpSocket,&QTcpSocket::readyRead,this,[this,newTcpSocket]()
+    {
+        QByteArray data=newTcpSocket->readAll();
+        qDebug()<<QString::fromUtf8(data);
+    });
+    connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket,id]()
+    {
+        qDebug()<<"断开连接:"<<id;
+        newTcpSocket->deleteLater();
+        m_idTcpSocketMap.remove(id);
+    });
 }
+
+void TcpServer::tcpServerConnectClosed()
+{
+    qDebug()<<"连接断开";
+}
+
+std::string TcpServer::getTcpSocketInfo(const QTcpSocket* socket) const
+{
+    QHostAddress address = socket->peerAddress();
+    QString out=address.toString();
+    if (address.protocol() == QAbstractSocket::IPv6Protocol&&out.startsWith("::ffff:"))
+    {
+        out.replace("::ffff:","");
+    }
+    out+=":"+QString::number(socket->peerPort());
+    return out.toStdString();
+}
+
+
+

@@ -17,7 +17,9 @@ find_package(Qt6 COMPONENTS
 
 add_executable(Server main.cpp
         TcpServer.cpp
-        TcpServer.h)
+        TcpServer.h
+        Logger.cpp
+        Logger.h)
 target_link_libraries(Server
         Qt::Core
         Qt::Gui

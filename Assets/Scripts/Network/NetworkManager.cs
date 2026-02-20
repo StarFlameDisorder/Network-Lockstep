@@ -57,7 +57,6 @@ namespace Network
         {
             byte[] buf = new byte[1028];
             int l = _socketTcp.Receive(buf, 0, buf.Length, SocketFlags.None);
-            Debug.Log("当前字节长度"+l);
             Debug.Log($"原始字节(十六进制): {BitConverter.ToString(buf, 0, l)}");
             
             if (l > 0)
@@ -68,7 +67,7 @@ namespace Network
                 int tmpLen=BitConverter.ToInt32(headBytes, 0);
                 int length = IPAddress.NetworkToHostOrder(tmpLen);
                 
-                Debug.Log("当前解析长度"+tmpLen+"-"+length);
+                //Debug.Log("当前解析长度"+tmpLen+"-"+length);
                 byte[] message = new byte[length];
                 Buffer.BlockCopy(buf, 4, message, 0, length);
                 return message;

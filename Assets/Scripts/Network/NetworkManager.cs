@@ -20,10 +20,18 @@ namespace Network
             Socket socketTcp=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _ipEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
             socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
-            String str = "这是客户端";
+            String str = "这是客户端，请求连接";
             socketTcp.Send(Encoding.UTF8.GetBytes(str));
+            byte[] buf=new byte[1024];
+            socketTcp.Receive(buf);
+            Debug.Log(Encoding.UTF8.GetString(buf));
+            
             socketTcp.Close();
         }
-        
+
+        public void Send()
+        {
+            
+        }
     }
 }

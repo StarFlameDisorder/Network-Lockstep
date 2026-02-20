@@ -8,7 +8,7 @@
 
 TcpServer::TcpServer(QObject* parent):QTcpServer(parent)
 {
-    Debug()<<"初始化服务器";
+    Info()<<"初始化TCP服务器";
     connect(this,&QTcpServer::newConnection,this,&TcpServer::tcpServerConnectionNew);
     listen(QHostAddress::Any, 1975);
 }
@@ -17,18 +17,21 @@ void TcpServer::tcpServerConnectionNew()
 {
     QTcpSocket *newTcpSocket=nextPendingConnection();
     quint64 id=m_idTcpSocketMap.size();
-    Debug()<<"新连接["<<id<<"-"<<getTcpSocketInfo(newTcpSocket)<<"]";
+    Info()<<"新连接["<<id<<"-"<<getTcpSocketInfo(newTcpSocket)<<"]";
 
     m_idTcpSocketMap.insert(id,newTcpSocket);
+
+    newTcpSocket->write(QString("这里是服务器,建立连接").toUtf8());
+
 
     connect(newTcpSocket,&QTcpSocket::readyRead,this,[this,newTcpSocket]()
     {
         QByteArray data=newTcpSocket->readAll();
-        Debug()<<QString::fromUtf8(data);
+        Info()<<QString::fromUtf8(data);
     });
     connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket,id]()
     {
-        Debug()<<"断开连接:"<<id;
+        Info()<<"断开连接:"<<id;
         newTcpSocket->deleteLater();
         m_idTcpSocketMap.remove(id);
     });
@@ -36,7 +39,7 @@ void TcpServer::tcpServerConnectionNew()
 
 void TcpServer::tcpServerConnectClosed()
 {
-    Debug()<<"连接断开";
+    Info()<<"连接断开";
 
 }
 

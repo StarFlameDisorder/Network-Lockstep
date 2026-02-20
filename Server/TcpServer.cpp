@@ -3,6 +3,8 @@
 //
 
 #include "TcpServer.h"
+
+#include <QtEndian>
 #include <QTcpSocket>
 #include "LoggerStream.h"
 
@@ -13,13 +15,13 @@ TcpServer::TcpServer(QObject* parent):QTcpServer(parent)
     listen(QHostAddress::Any, 1975);
 }
 
-void TcpServer::SendMessageById(quint64 id, QString message)
+void TcpServer::sendMessageById(quint64 id, QString message)
 {
     QTcpSocket *tcpSocket=m_idTcpSocketMap.value(id);
     tcpSocket->write(message.toUtf8());
 }
 
-void TcpServer::SendMessageBySocket(QTcpSocket* socket, QString message)
+void TcpServer::sendMessageBySocket(QTcpSocket* socket, QString message)
 {
     socket->write(message.toUtf8());
 }
@@ -33,16 +35,14 @@ void TcpServer::tcpServerConnectionNew()
 
     m_idTcpSocketMap.insert(id,newTcpSocket);
 
-    newTcpSocket->write(QString("这里是服务器,建立连接").toUtf8());
+    sendMessage(newTcpSocket,QString("这里是服务器,建立连接").toUtf8());
 
 
     connect(newTcpSocket,&QTcpSocket::readyRead,this,[this,newTcpSocket]()
     {
-        QByteArray data=newTcpSocket->readAll();
-        QByteArray head=data.left(4);
-        QByteArray message=data.mid(4);
+        QByteArray message=receiveMessage(newTcpSocket);
         Info()<<QString::fromUtf8(message);
-        newTcpSocket->write(message+QString("回传").toUtf8());
+        sendMessage(newTcpSocket,message+QString("回传").toUtf8());
     });
     connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket,id]()
     {
@@ -72,6 +72,30 @@ std::string TcpServer::getTcpSocketInfo(const QTcpSocket* socket) const
     }
     out+=":"+QString::number(socket->peerPort());
     return out.toStdString();
+}
+
+QByteArray TcpServer::receiveMessage(QTcpSocket* socket)
+{
+    QByteArray data=socket->readAll();
+    QByteArray head=data.left(4);
+    int length=qFromBigEndian<int>(reinterpret_cast<const char*>(head.constData()));
+    //Info()<<length;
+
+    return data.mid(4);
+}
+
+void TcpServer::sendMessage(QTcpSocket* socket, QByteArray message)
+{
+    qint32 originalLen = message.length();
+    Debug()<<"理论原始字节长度"<<originalLen;
+    qint32 networkLen=qToBigEndian(originalLen);
+    Debug() << "转换后的值(作为整数):" << networkLen;
+    QByteArray send;
+    send.append(reinterpret_cast<const char*>(&networkLen), sizeof(networkLen));
+    send.append(message);
+    Debug()<<"回传字节长度:"<<send.length();
+    Debug() << "原始字节(十六进制):" << send.toHex();
+    socket->write(send);
 }
 
 

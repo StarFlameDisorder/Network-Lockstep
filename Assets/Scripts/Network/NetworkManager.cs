@@ -24,18 +24,16 @@ namespace Network
             _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
             String str = "这是客户端，请求连接";
             Send(Encoding.UTF8.GetBytes(str));
-            byte[] buf=new byte[1024];
-            _socketTcp.Receive(buf);
+            byte[] buf=Receive();
             Debug.Log(Encoding.UTF8.GetString(buf));
         }
         private void Update()
         {
-            if(_index<100)
+            if(_index<20)
             {
                 String s = "消息" + _index;
                 Send(Encoding.UTF8.GetBytes(s));
-                byte[] buf = new byte[1024];
-                _socketTcp.Receive(buf);
+                byte[] buf=Receive();
                 Debug.Log(Encoding.UTF8.GetString(buf));
                 _index++;
             }
@@ -55,9 +53,27 @@ namespace Network
             }
         }
 
-        public void Receive()
+        public byte[] Receive()
         {
+            byte[] buf = new byte[1028];
+            int l = _socketTcp.Receive(buf, 0, buf.Length, SocketFlags.None);
+            Debug.Log("当前字节长度"+l);
+            Debug.Log($"原始字节(十六进制): {BitConverter.ToString(buf, 0, l)}");
             
+            if (l > 0)
+            {
+                byte[] headBytes = new byte[4];
+                Buffer.BlockCopy(buf, 0, headBytes, 0, 4);
+                string hex = BitConverter.ToString(headBytes);
+                int tmpLen=BitConverter.ToInt32(headBytes, 0);
+                int length = IPAddress.NetworkToHostOrder(tmpLen);
+                
+                Debug.Log("当前解析长度"+tmpLen+"-"+length);
+                byte[] message = new byte[length];
+                Buffer.BlockCopy(buf, 4, message, 0, length);
+                return message;
+            }
+            return null;
         }
 
         private void OnDestroy()

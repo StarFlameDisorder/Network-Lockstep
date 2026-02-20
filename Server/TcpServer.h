@@ -11,12 +11,16 @@ class TcpServer:public QTcpServer
 {
 public:
     TcpServer(QObject *parent = nullptr);
+    void SendMessageById(quint64 id,QString message);
+    void SendMessageBySocket(QTcpSocket* socket,QString message);
 private:
     void tcpServerConnectionNew();
     void tcpServerConnectClosed();
     std::string getTcpSocketInfo(const QTcpSocket *socket)const;
 
+
     QHash<quint64,QTcpSocket*> m_idTcpSocketMap;
+    quint64 m_tcpNextId=0;
 };
 
 

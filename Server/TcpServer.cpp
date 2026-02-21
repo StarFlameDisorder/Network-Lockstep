@@ -81,17 +81,18 @@ QByteArray TcpServer::receiveMessage(QTcpSocket* socket)
     int length=qFromBigEndian<int>(reinterpret_cast<const char*>(head.constData()));
     //Info()<<length;
 
+    Debug() <<"接受-长度:"<<length<< "原始字节:" << data.toHex();
     return data.mid(4);
 }
 
 void TcpServer::sendMessage(QTcpSocket* socket, QByteArray message)
 {
-    qint32 originalLen = message.length();
+    qint32 originalLen = message.length();//转成32位
     qint32 networkLen=qToBigEndian(originalLen);
     QByteArray send;
     send.append(reinterpret_cast<const char*>(&networkLen), sizeof(networkLen));
     send.append(message);
-    Debug() << "原始字节(十六进制):" << send.toHex();
+    Debug() <<"发送-长度:"<<originalLen<< "原始字节:" << send.toHex();
     socket->write(send);
 }
 

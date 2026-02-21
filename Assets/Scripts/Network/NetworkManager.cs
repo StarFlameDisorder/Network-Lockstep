@@ -50,6 +50,7 @@ namespace Network
                 Buffer.BlockCopy(headBytes, 0, sendBuf, 0, headBytes.Length); //快速复制数据
                 Buffer.BlockCopy(buf, 0, sendBuf, headBytes.Length, buf.Length);
                 _socketTcp.Send(sendBuf);
+                Debug.Log($"发送-长度:{length}原始字节(十六进制): {BitConverter.ToString(sendBuf, 0, length)}");
             }
         }
 
@@ -57,7 +58,6 @@ namespace Network
         {
             byte[] buf = new byte[1028];
             int l = _socketTcp.Receive(buf, 0, buf.Length, SocketFlags.None);
-            Debug.Log($"原始字节(十六进制): {BitConverter.ToString(buf, 0, l)}");
             
             if (l > 0)
             {
@@ -66,6 +66,7 @@ namespace Network
                 string hex = BitConverter.ToString(headBytes);
                 int tmpLen=BitConverter.ToInt32(headBytes, 0);
                 int length = IPAddress.NetworkToHostOrder(tmpLen);
+                Debug.Log($"接收-长度:{length}原始字节(十六进制): {BitConverter.ToString(buf, 0, l)}");
                 
                 //Debug.Log("当前解析长度"+tmpLen+"-"+length);
                 byte[] message = new byte[length];

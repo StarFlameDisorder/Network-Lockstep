@@ -34,16 +34,21 @@ void TcpServer::tcpServerConnectionNew()
     Info()<<"新连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
 
     m_idTcpSocketMap.insert(id,newTcpSocket);
+    m_tcpMessageBuffer.insert(newTcpSocket,QByteArray());
 
     sendMessage(newTcpSocket,QString("这里是服务器,建立连接").toUtf8());
 
+    //TODO:两个接收
+    // connect(newTcpSocket,&QTcpSocket::readyRead,this,[this,newTcpSocket]()
+    // {
+    //     QByteArray message=receiveTcpMessage(newTcpSocket);
+    //     Info()<<QString::fromUtf8(message);
+    //     sendMessage(newTcpSocket,message+QString("回传").toUtf8());
+    // });
 
-    connect(newTcpSocket,&QTcpSocket::readyRead,this,[this,newTcpSocket]()
-    {
-        QByteArray message=receiveMessage(newTcpSocket);
-        Info()<<QString::fromUtf8(message);
-        sendMessage(newTcpSocket,message+QString("回传").toUtf8());
-    });
+    connect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
+    connect(this,&TcpServer::tcpReadyRead,this,&TcpServer::receiveMessage);
+
     connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket,id]()
     {
         Info()<<"断开连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
@@ -74,7 +79,7 @@ std::string TcpServer::getTcpSocketInfo(const QTcpSocket* socket) const
     return out.toStdString();
 }
 
-QByteArray TcpServer::receiveMessage(QTcpSocket* socket)
+QByteArray TcpServer::receiveTcpMessage(QTcpSocket* socket)
 {
     QByteArray data=socket->readAll();
     QByteArray head=data.left(4);
@@ -85,6 +90,35 @@ QByteArray TcpServer::receiveMessage(QTcpSocket* socket)
     return data.mid(4);
 }
 
+/**
+ * @brief 获取此QTcpSocket收到的信息并缓存 使用信号与槽
+ */
+void TcpServer::receiveSocketMessage()
+{
+    QTcpSocket *socket=qobject_cast<QTcpSocket*>(sender());
+    if (!socket)return;
+
+    QByteArray &messageBuffer=m_tcpMessageBuffer[socket];
+    messageBuffer.append(socket->readAll());//缓冲区大量移动 潜在优化成环形缓冲区
+    while (true)
+    {
+        if (messageBuffer.size()<4)break;
+        //获取信息的有效部分的字节长度 避免分包黏包
+        int length=qFromBigEndian<int>(reinterpret_cast<const char*>(messageBuffer.constData()));//以大端序读取长度头
+        if (length<=0||length>1024)
+        {
+            Error()<<"错误有效载荷长度："<<length;
+            break;
+        }
+        if (messageBuffer.size()<length+4)break;
+        QByteArray message=messageBuffer.mid(4,length);
+        Debug() <<"接受-长度:"<<length<< "原始字节:" << message.toHex();//有效载荷长度
+        messageBuffer.remove(0,length+4);
+
+        emit tcpReadyRead(socket,message);
+    }
+}
+
 void TcpServer::sendMessage(QTcpSocket* socket, QByteArray message)
 {
     qint32 originalLen = message.length();//转成32位
@@ -92,8 +126,14 @@ void TcpServer::sendMessage(QTcpSocket* socket, QByteArray message)
     QByteArray send;
     send.append(reinterpret_cast<const char*>(&networkLen), sizeof(networkLen));
     send.append(message);
-    Debug() <<"发送-长度:"<<originalLen<< "原始字节:" << send.toHex();
+    Debug() <<"发送-长度:"<<originalLen<< "原始字节:" << send.toHex();//有效载荷长度
     socket->write(send);
+}
+
+void TcpServer::receiveMessage(QTcpSocket* socket, QByteArray message)
+{
+    Info()<<QString::fromUtf8(message);
+    sendMessage(socket,message+QString("回传").toUtf8());
 }
 
 

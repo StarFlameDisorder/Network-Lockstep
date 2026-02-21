@@ -9,6 +9,7 @@
 
 class TcpServer:public QTcpServer
 {
+    Q_OBJECT
 public:
     TcpServer(QObject *parent = nullptr);
     void sendMessageById(quint64 id,QString message);
@@ -17,11 +18,18 @@ private:
     void tcpServerConnectionNew();
     void tcpServerConnectClosed();
     std::string getTcpSocketInfo(const QTcpSocket *socket)const;
-    QByteArray receiveMessage(QTcpSocket *socket);
+    QByteArray receiveTcpMessage(QTcpSocket *socket);
+    void receiveSocketMessage();
     void sendMessage(QTcpSocket *socket,QByteArray message);
+    void receiveMessage(QTcpSocket *socket,QByteArray message);
 
     QHash<quint64,QTcpSocket*> m_idTcpSocketMap;
     quint64 m_tcpNextId=0;
+    qint32 m_messageId=0;
+    QHash<QTcpSocket*,QByteArray> m_tcpMessageBuffer;
+signals:
+    void tcpReadyRead(QTcpSocket* socket,QByteArray data);
+
 };
 
 

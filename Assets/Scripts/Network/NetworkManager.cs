@@ -94,6 +94,7 @@ namespace Network
             {
                 byte[] buf = new byte[2048];
                 int originalLength = await _socketTcp.ReceiveAsync(buf, SocketFlags.None);
+                Debug.Log($"接收-Socket长度:{originalLength}");
                 _tcpMessageBuffer.AddRange(buf.Take(originalLength));
                 while (_tcpMessageBuffer.Count >= 4)
                 {

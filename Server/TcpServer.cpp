@@ -99,7 +99,10 @@ void TcpServer::receiveSocketMessage()
     if (!socket)return;
 
     QByteArray &messageBuffer=m_tcpMessageBuffer[socket];
-    messageBuffer.append(socket->readAll());//缓冲区大量移动 潜在优化成环形缓冲区
+    QByteArray buf=socket->readAll();
+    messageBuffer.append(buf);//缓冲区大量移动 潜在优化成环形缓冲区
+
+    Debug() <<"接受-Socket长度:"<<buf.length();
     while (true)
     {
         if (messageBuffer.size()<4)break;

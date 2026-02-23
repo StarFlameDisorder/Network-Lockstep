@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Network
 {
@@ -12,7 +16,8 @@ namespace Network
         private IPEndPoint _ipEndPoint;
         [SerializeField] private string _ip="127.0.0.1";
         [SerializeField]private int _port=1975;
-
+        
+        private List<byte> _tcpMessageBuffer=new List<byte>();
         private Socket _socketTcp;
         private int _index = 0;
         private void Awake()
@@ -24,8 +29,12 @@ namespace Network
             _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
             String str = "这是客户端，请求连接";
             Send(Encoding.UTF8.GetBytes(str));
-            byte[] buf=Receive();
-            Debug.Log(Encoding.UTF8.GetString(buf));
+            // byte[] buf=Receive();
+            // Debug.Log(Encoding.UTF8.GetString(buf));
+            ReceiveAsync((message) =>
+            {
+                Debug.Log(Encoding.UTF8.GetString(message));
+            });
         }
         private void Update()
         {
@@ -33,8 +42,9 @@ namespace Network
             {
                 String s = "消息" + _index;
                 Send(Encoding.UTF8.GetBytes(s));
-                byte[] buf=Receive();
-                Debug.Log(Encoding.UTF8.GetString(buf));
+                // byte[] buf=Receive();
+                // Debug.Log(Encoding.UTF8.GetString(buf));
+                
                 _index++;
             }
         }
@@ -50,13 +60,15 @@ namespace Network
                 Buffer.BlockCopy(headBytes, 0, sendBuf, 0, headBytes.Length); //快速复制数据
                 Buffer.BlockCopy(buf, 0, sendBuf, headBytes.Length, buf.Length);
                 _socketTcp.Send(sendBuf);
-                Debug.Log($"发送-长度:{length}原始字节(十六进制): {BitConverter.ToString(sendBuf, 0, length)}");//有效载荷长度
+                Debug.Log($"发送-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(buf, 0, length)}");//有效载荷长度
             }
         }
-
+        
+        //弃用 
         public byte[] Receive()
         {
             byte[] buf = new byte[1028];
+            
             int l = _socketTcp.Receive(buf, 0, buf.Length, SocketFlags.None);
             
             if (l > 0)
@@ -74,6 +86,32 @@ namespace Network
                 return message;
             }
             return null;
+        }
+
+        private async void ReceiveAsync(UnityAction<byte[]> callback)
+        {
+            while(_socketTcp.Connected)
+            {
+                byte[] buf = new byte[2048];
+                int originalLength = await _socketTcp.ReceiveAsync(buf, SocketFlags.None);
+                _tcpMessageBuffer.AddRange(buf.Take(originalLength));
+                while (_tcpMessageBuffer.Count >= 4)
+                {
+                    byte[] headBytes = new byte[4];
+                    _tcpMessageBuffer.CopyTo(0, headBytes, 0, 4);
+                    int tmpLen = BitConverter.ToInt32(headBytes, 0);
+                    int length = IPAddress.NetworkToHostOrder(tmpLen);
+                    if (_tcpMessageBuffer.Count >= length + 4)
+                    {
+                        byte[] message = new byte[length];
+                        _tcpMessageBuffer.CopyTo(4, message, 0, length);
+                        Debug.Log($"接收-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(message, 0, length)}"); //有效载荷长度
+                        _tcpMessageBuffer.RemoveRange(0, length + 4);
+                        callback?.Invoke(message);
+                    }
+                    else break;
+                }
+            }
         }
 
         private void OnDestroy()

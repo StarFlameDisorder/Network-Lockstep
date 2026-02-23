@@ -112,7 +112,7 @@ void TcpServer::receiveSocketMessage()
         }
         if (messageBuffer.size()<length+4)break;
         QByteArray message=messageBuffer.mid(4,length);
-        Debug() <<"接受-长度:"<<length<< "原始字节:" << message.toHex();//有效载荷长度
+        Debug() <<"接受-长度:"<<length<< "原始有效字节:" << message.toHex();//有效载荷长度
         messageBuffer.remove(0,length+4);
 
         emit tcpReadyRead(socket,message);
@@ -126,7 +126,7 @@ void TcpServer::sendMessage(QTcpSocket* socket, QByteArray message)
     QByteArray send;
     send.append(reinterpret_cast<const char*>(&networkLen), sizeof(networkLen));
     send.append(message);
-    Debug() <<"发送-长度:"<<originalLen<< "原始字节:" << send.toHex();//有效载荷长度
+    Debug() <<"发送-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
     socket->write(send);
 }
 

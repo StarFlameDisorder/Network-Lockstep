@@ -12,6 +12,7 @@ TcpServer::TcpServer(QObject* parent):QTcpServer(parent)
 {
     Info()<<"初始化TCP服务器";
     connect(this,&QTcpServer::newConnection,this,&TcpServer::tcpServerConnectionNew);
+    connect(this,&TcpServer::tcpReadyRead,this,&TcpServer::receiveMessage);
     listen(QHostAddress::Any, 1975);
 }
 
@@ -47,13 +48,15 @@ void TcpServer::tcpServerConnectionNew()
     // });
 
     connect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
-    connect(this,&TcpServer::tcpReadyRead,this,&TcpServer::receiveMessage);
 
     connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket,id]()
     {
         Info()<<"断开连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
-        newTcpSocket->deleteLater();
         m_idTcpSocketMap.remove(id);
+        m_tcpMessageBuffer.remove(newTcpSocket);
+        disconnect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
+
+        newTcpSocket->deleteLater();
     });
 }
 

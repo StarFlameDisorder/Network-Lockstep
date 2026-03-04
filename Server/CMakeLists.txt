@@ -19,7 +19,11 @@ add_executable(Server main.cpp
         TcpServer.cpp
         TcpServer.h
         LoggerStream.cpp
-        LoggerStream.h)
+        LoggerStream.h
+        NetworkDispatcher.cpp
+        NetworkDispatcher.h
+        GameServer.cpp
+        GameServer.h)
 target_link_libraries(Server
         Qt::Core
         Qt::Gui

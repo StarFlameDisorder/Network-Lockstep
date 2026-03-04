@@ -24,21 +24,11 @@ namespace Network
         {
             Instance = this;
             
-            _socketTcp=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _ipEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
-            _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
-            String str = "这是客户端，请求连接";
-            Send(Encoding.UTF8.GetBytes(str));
-            // byte[] buf=Receive();
-            // Debug.Log(Encoding.UTF8.GetString(buf));
-            ReceiveAsync((message) =>
-            {
-                Debug.Log(Encoding.UTF8.GetString(message));
-            });
+            //StartLink(_ip, _port);
         }
         private void Update()
         {
-            if(_index<20)
+            if(_socketTcp!=null)if(_index<20&&_socketTcp.Connected)
             {
                 String s = "消息" + _index;
                 Send(Encoding.UTF8.GetBytes(s));
@@ -49,6 +39,28 @@ namespace Network
             }
         }
 
+        public void StartLink(string ip, int port)
+        {
+            if(IsConnected())CloseLink();
+            _socketTcp=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+            _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
+            String str = "这是客户端，请求连接";
+            Send(Encoding.UTF8.GetBytes(str));
+            ReceiveAsync((message) =>
+            {
+                Debug.Log(Encoding.UTF8.GetString(message));
+            });
+        }
+
+        public void CloseLink()
+        {
+            _socketTcp.Shutdown(SocketShutdown.Both);
+            _socketTcp.Close();
+            _socketTcp = null;
+        }
+        
+        
         public void Send(byte[] buf)
         {
             if(_socketTcp.Connected)
@@ -118,6 +130,11 @@ namespace Network
         private void OnDestroy()
         {
             _socketTcp.Close();
+        }
+
+        private bool IsConnected()
+        {
+            return _socketTcp!=null && _socketTcp.Connected;
         }
     }
 }

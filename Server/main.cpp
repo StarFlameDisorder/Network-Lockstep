@@ -1,13 +1,14 @@
 #include <QApplication>
 #include <QPushButton>
-#include "TcpServer.h"
+#include "GameServer.h"
+
 
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
     qDebug()<<"Hello World";
-    TcpServer server;
-
+    //TcpServer server;
+    GameServer server;
 
     return QApplication::exec();
 }

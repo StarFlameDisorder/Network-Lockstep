@@ -23,7 +23,9 @@ add_executable(Server main.cpp
         NetworkDispatcher.cpp
         NetworkDispatcher.h
         GameServer.cpp
-        GameServer.h)
+        GameServer.h
+        UDPServer.cpp
+        UDPServer.h)
 target_link_libraries(Server
         Qt::Core
         Qt::Gui

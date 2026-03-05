@@ -1,141 +1,63 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using UI;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Network
 {
     public class NetworkManager : MonoBehaviour
     {
         public static NetworkManager Instance;
-        private IPEndPoint _ipEndPoint;
-        [SerializeField] private string _ip="127.0.0.1";
-        [SerializeField]private int _port=1975;
-        
-        private List<byte> _tcpMessageBuffer=new List<byte>();
-        private Socket _socketTcp;
+        private TcpSocket _tcpSocket=new TcpSocket();
+        private UdpSocket _udpSocket=new UdpSocket();
         private int _index = 0;
+        
         private void Awake()
         {
             Instance = this;
-            
-            //StartLink(_ip, _port);
-        }
-        private void Update()
-        {
-            if(_socketTcp!=null)if(_index<20&&_socketTcp.Connected)
-            {
-                String s = "TCP消息" + _index;
-                Send(Encoding.UTF8.GetBytes(s));
-                // byte[] buf=Receive();
-                // Debug.Log(Encoding.UTF8.GetString(buf));
-                
-                _index++;
-            }
         }
 
         public void StartLink(string ip, int port)
         {
-            if(IsConnected())CloseLink();
-            _socketTcp=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-            _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
-            String str = "这是客户端，请求连接";
-            Send(Encoding.UTF8.GetBytes(str));
-            ReceiveAsync((message) =>
-            {
-                Debug.Log(Encoding.UTF8.GetString(message));
-                MessagePanel.Instance?.AddMessage(Encoding.UTF8.GetString(message));
-            });
+            _tcpSocket.StartLink(ip, port);
+            _udpSocket.StartLink(ip, port);
         }
 
-        public void CloseLink()
+        public void StopLink()
         {
-            _socketTcp.Shutdown(SocketShutdown.Both);
-            _socketTcp.Close();
-            _socketTcp = null;
+            if(TcpIsConnected())_tcpSocket.CloseLink();
         }
         
-        
-        public void Send(byte[] buf)
+        private void Update()
         {
-            if(_socketTcp.Connected)
-            {
-                int length = buf.Length;
-                //长度为4字节
-                byte[] headBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(length));
-                byte[] sendBuf = new byte[buf.Length + headBytes.Length];
-                Buffer.BlockCopy(headBytes, 0, sendBuf, 0, headBytes.Length); //快速复制数据
-                Buffer.BlockCopy(buf, 0, sendBuf, headBytes.Length, buf.Length);
-                _socketTcp.Send(sendBuf);
-                Debug.Log($"发送-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(buf, 0, length)}");//有效载荷长度
-            }
-        }
-        
-        //弃用 
-        public byte[] Receive()
-        {
-            byte[] buf = new byte[1028];
-            
-            int l = _socketTcp.Receive(buf, 0, buf.Length, SocketFlags.None);
-            
-            if (l > 0)
-            {
-                byte[] headBytes = new byte[4];
-                Buffer.BlockCopy(buf, 0, headBytes, 0, 4);
-                string hex = BitConverter.ToString(headBytes);
-                int tmpLen=BitConverter.ToInt32(headBytes, 0);
-                int length = IPAddress.NetworkToHostOrder(tmpLen);
-                Debug.Log($"接收-长度:{length}原始字节(十六进制): {BitConverter.ToString(buf, 0, l)}");//有效载荷长度
-                
-                //Debug.Log("当前解析长度"+tmpLen+"-"+length);
-                byte[] message = new byte[length];
-                Buffer.BlockCopy(buf, 4, message, 0, length);
-                return message;
-            }
-            return null;
-        }
-
-        private async void ReceiveAsync(UnityAction<byte[]> callback)
-        {
-            while(_socketTcp.Connected)
-            {
-                byte[] buf = new byte[2048];
-                int originalLength = await _socketTcp.ReceiveAsync(buf, SocketFlags.None);
-                Debug.Log($"接收-Socket长度:{originalLength}");
-                _tcpMessageBuffer.AddRange(buf.Take(originalLength));
-                while (_tcpMessageBuffer.Count >= 4)
-                {
-                    byte[] headBytes = new byte[4];
-                    _tcpMessageBuffer.CopyTo(0, headBytes, 0, 4);
-                    int tmpLen = BitConverter.ToInt32(headBytes, 0);
-                    int length = IPAddress.NetworkToHostOrder(tmpLen);
-                    if (_tcpMessageBuffer.Count >= length + 4)
-                    {
-                        byte[] message = new byte[length];
-                        _tcpMessageBuffer.CopyTo(4, message, 0, length);
-                        Debug.Log($"接收-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(message, 0, length)}"); //有效载荷长度
-                        _tcpMessageBuffer.RemoveRange(0, length + 4);
-                        callback?.Invoke(message);
-                    }
-                    else break;
-                }
+            if(_index<2){
+                String s = "TCP:消息" + _index;
+                if (TcpSendMessageBool(Encoding.UTF8.GetBytes(s))) _index++;
             }
         }
 
-        private void OnDestroy()
+        public bool TcpIsConnected()
         {
-            _socketTcp?.Close();
+            return _tcpSocket != null && _tcpSocket.IsConnected();
         }
 
-        private bool IsConnected()
+        public void TcpSendMessage(byte[] data)
         {
-            return _socketTcp!=null && _socketTcp.Connected;
+            if(TcpIsConnected())_tcpSocket.Send(data);
+            //else Debug.Log("TcpSendMessage:未建立连接");
+        }
+        
+        public bool TcpSendMessageBool(byte[] data)
+        {
+            if(TcpIsConnected())
+            {
+                _tcpSocket.Send(data);
+                return true;
+            }
+            else
+            {
+                //Debug.Log("TcpSendMessage:未建立连接");
+                return false;
+            }
         }
     }
 }

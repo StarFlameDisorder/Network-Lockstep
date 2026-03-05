@@ -7,11 +7,11 @@
 
 #include <QUdpSocket>
 
-class UDPServer:public QObject
+class UdpServer:public QObject
 {
     Q_OBJECT
 public:
-    UDPServer(QObject *parent=nullptr);
+    UdpServer(QObject *parent=nullptr);
 
 
 private:

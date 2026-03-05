@@ -7,6 +7,7 @@
 #define SERVER_NETWORKDISPATCHER_H
 
 #include "TcpServer.h"
+#include "UDPServer.h"
 
 class NetworkDispatcher
 {
@@ -17,6 +18,7 @@ public:
 
 private:
     TcpServer m_tcpServer;
+    UdpServer m_udpServer;
 };
 
 

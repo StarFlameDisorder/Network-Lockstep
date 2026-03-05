@@ -1489,7 +1489,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.3
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 5
   m_Viewport: {fileID: 1540030774}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 1475321130}
@@ -2918,8 +2918,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d2454ba075747e47821eb46dd974681, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Network.NetworkManager
-  _ip: 127.0.0.1
-  _port: 1975
 --- !u!1 &1740683149
 GameObject:
   m_ObjectHideFlags: 0

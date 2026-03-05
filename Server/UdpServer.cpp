@@ -6,29 +6,29 @@
 #include <QNetworkDatagram>
 #include "LoggerStream.h"
 
-UDPServer::UDPServer(QObject* parent)
+UdpServer::UdpServer(QObject* parent)
 {
+    Info()<<"UdpServer::初始化UDP服务器 端口："<<1976;
     m_socket=new QUdpSocket(this);
+
+    connect(m_socket,&QUdpSocket::readyRead,this,&UdpServer::receiveSocketMessage);
     m_socket->bind(QHostAddress::Any,1976);
-
-    connect(m_socket,&QUdpSocket::readyRead,this,&UDPServer::receiveSocketMessage);
-
-
 }
 
-void UDPServer::receiveSocketMessage()
+void UdpServer::receiveSocketMessage()
 {
+    Info()<<"UDP:收到消息";
     while (m_socket->hasPendingDatagrams())
     {
         char buf[512];
         QHostAddress addr;
         quint16 port;
         m_socket->readDatagram(buf,512,&addr,&port);
-        Info()<<getPeerAddressInfo(addr,port)<<QString::fromUtf8(buf);
+        Info()<<"UDP:"<<getPeerAddressInfo(addr,port)<<QString::fromUtf8(buf);
     }
 }
 
-std::string UDPServer::getPeerAddressInfo(const QHostAddress& address, const quint16& port) const
+std::string UdpServer::getPeerAddressInfo(const QHostAddress& address, const quint16& port) const
 {
     QString out=address.toString();
     if (address.protocol() == QAbstractSocket::IPv6Protocol&&out.startsWith("::ffff:"))

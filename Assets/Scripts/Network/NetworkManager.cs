@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
+using UI;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -30,7 +30,7 @@ namespace Network
         {
             if(_socketTcp!=null)if(_index<20&&_socketTcp.Connected)
             {
-                String s = "消息" + _index;
+                String s = "TCP消息" + _index;
                 Send(Encoding.UTF8.GetBytes(s));
                 // byte[] buf=Receive();
                 // Debug.Log(Encoding.UTF8.GetString(buf));
@@ -50,6 +50,7 @@ namespace Network
             ReceiveAsync((message) =>
             {
                 Debug.Log(Encoding.UTF8.GetString(message));
+                MessagePanel.Instance?.AddMessage(Encoding.UTF8.GetString(message));
             });
         }
 
@@ -129,7 +130,7 @@ namespace Network
 
         private void OnDestroy()
         {
-            _socketTcp.Close();
+            _socketTcp?.Close();
         }
 
         private bool IsConnected()

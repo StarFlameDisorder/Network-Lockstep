@@ -39,14 +39,6 @@ void TcpServer::tcpServerConnectionNew()
 
     sendMessage(newTcpSocket,QString("这里是服务器,建立连接").toUtf8());
 
-    //TODO:两个接收
-    // connect(newTcpSocket,&QTcpSocket::readyRead,this,[this,newTcpSocket]()
-    // {
-    //     QByteArray message=receiveTcpMessage(newTcpSocket);
-    //     Info()<<QString::fromUtf8(message);
-    //     sendMessage(newTcpSocket,message+QString("回传").toUtf8());
-    // });
-
     connect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
 
     connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket,id]()

@@ -30,5 +30,5 @@ LoggerStream::LoggerStream(LogLevel level)
 
 LoggerStream::~LoggerStream()
 {
-    if (m_level>=LogLevel::Info)qDebug().noquote()<<m_buf;
+    if (m_level>=ALLOW_LOG_LEVEL)qDebug().noquote()<<m_buf;
 }

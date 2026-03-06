@@ -23,16 +23,21 @@ void UdpServer::receiveSocketMessage()
     Debug()<<"UDP:收到消息";
     while (m_socket->hasPendingDatagrams())
     {
-        char buf[512];
         QHostAddress addr;
         quint16 port;
-        m_socket->readDatagram(buf,512,&addr,&port);
+        quint64 length=m_socket->pendingDatagramSize();
+        char buf[length];
+        m_socket->readDatagram(buf,length,&addr,&port);
+        QByteArray message(buf);
+        Debug() <<"接受-长度:"<<length<< "原始有效字节:" << message.toHex();//有效载荷长度
         emit udpReadyRead(buf,addr,port);
     }
 }
 
 void UdpServer::sendMessage(const QByteArray& message, const QHostAddress& address, const quint16& port)
 {
+    qint32 originalLen = message.length();//转成32位
+    Debug() <<"发送-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
     m_socket->writeDatagram(message,address,port);
 }
 

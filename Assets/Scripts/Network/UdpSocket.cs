@@ -46,7 +46,12 @@ namespace Network
 
         public void Send(byte[] buf)
         {
-            if (IsConnected()) _socketUdp.Send(buf);
+            if (IsConnected())
+            {
+                int length = buf.Length;
+                Debug.Log($"发送-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(buf, 0, length)}");//有效载荷长度
+                _socketUdp.Send(buf);
+            }
         }
 
         private async void ReceiveAsync(UnityAction<byte[]> callback)

@@ -21,13 +21,22 @@ namespace Network
         
         public void StartLink(string ip, int port)
         {
-            if(IsConnected())CloseLink();
-            Debug.Log("初始化TCP服务器"+ip+":"+port);
-            _socketTcp=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-            _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
-            String str = "TCP:这是客户端，请求连接";
-            Send(Encoding.UTF8.GetBytes(str));
+            try
+            {
+                if(IsConnected())CloseLink();
+                Debug.Log("初始化TCP客户端"+ip+":"+port);
+                _socketTcp=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+                _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
+                String str = "TCP-这是客户端，请求连接";
+                Send(Encoding.UTF8.GetBytes(str));
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                throw;
+            }
+            
             ReceiveAsync((message) =>
             {
                 Debug.Log(Encoding.UTF8.GetString(message));

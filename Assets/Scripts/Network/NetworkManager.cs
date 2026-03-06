@@ -30,7 +30,7 @@ namespace Network
         private void Update()
         {
             if(_index<2){
-                String s = "TCP:消息" + _index;
+                String s = "TCP-消息" + _index;
                 if (TcpSendMessageBool(Encoding.UTF8.GetBytes(s))) _index++;
             }
         }

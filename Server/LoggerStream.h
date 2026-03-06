@@ -7,6 +7,8 @@
 #include <QString>
 #include <QTextStream>
 
+#define ALLOW_LOG_LEVEL LogLevel::Debug
+
 enum LogLevel
 {
     Debug,Info,Warning,Error
@@ -33,11 +35,22 @@ class LoggerStream
     private:
     QString m_buf;
     QTextStream m_stream;
+    LogLevel m_level;
 };
 
-#define Debug() LoggerStream(LogLevel::Debug)
-#define Info() LoggerStream(LogLevel::Info)
-#define Warning() LoggerStream(LogLevel::Warning)
-#define Error() LoggerStream(LogLevel::Error)
+/*
+ * 日志输出前缀实现 前缀必须可以传给qDebug()
+ * FILE_PREFIX宏必须比引用此头先定义 否则无效
+ */
+#ifndef FILE_PREFIX
+#define LoggerStreamWithPrefix(level) LoggerStream(level)//无前缀
+#else
+#define LoggerStreamWithPrefix(level) LoggerStream(level)<<FILE_PREFIX//有前缀
+#endif
+
+#define Debug() LoggerStreamWithPrefix(LogLevel::Debug)
+#define Info() LoggerStreamWithPrefix(LogLevel::Info)
+#define Warning() LoggerStreamWithPrefix(LogLevel::Warning)
+#define Error() LoggerStreamWithPrefix(LogLevel::Error)
 
 #endif //SERVER_LOGGER_H

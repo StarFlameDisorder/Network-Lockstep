@@ -23,7 +23,7 @@ private:
     void sendMessage(QTcpSocket *socket,QByteArray message);
     void receiveMessage(QTcpSocket *socket,QByteArray message);
 
-    QHash<quint64,QTcpSocket*> m_idTcpSocketMap;
+    QHash<quint64,QTcpSocket*> m_tcpIdSocketMap;
     quint64 m_tcpNextId=0;
     qint32 m_messageId=0;
     QHash<QTcpSocket*,QByteArray> m_tcpMessageBuffer;

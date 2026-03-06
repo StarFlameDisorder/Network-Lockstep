@@ -9,6 +9,7 @@ LoggerStream::LoggerStream(LogLevel level)
     :m_stream(&m_buf)
 {
     m_stream<<QTime::currentTime().toString("HH:mm:ss");
+    m_level = level;
     switch (level)
     {
         case LogLevel::Debug:

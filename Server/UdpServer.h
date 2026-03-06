@@ -5,7 +5,24 @@
 #ifndef SERVER_UDPSERVER_H
 #define SERVER_UDPSERVER_H
 
+#include <QSet>
 #include <QUdpSocket>
+
+struct UdpEndPoint
+{
+    UdpEndPoint();
+    UdpEndPoint(const QHostAddress &adr,const quint16 &port)
+        :address(adr),port(port)
+    {}
+
+    bool operator==(const UdpEndPoint& other)const
+    {
+        return address==other.address && port==other.port;
+    }
+
+    QHostAddress address;
+    quint16 port;
+};
 
 class UdpServer:public QObject
 {
@@ -16,9 +33,17 @@ public:
 
 private:
     void receiveSocketMessage();
+    void sendMessage(const QByteArray& message,const QHostAddress& address,const quint16& port);
     std::string getPeerAddressInfo(const QHostAddress& address,const quint16 &port)const;
+    void receiveMessage(const QByteArray& message,const QHostAddress& address,const quint16& port);
+
+
     QUdpSocket *m_socket;
-    quint64 m_udpNextId=0;
+
+    QSet<UdpEndPoint> m_udpEndPoints;
+signals:
+    void udpReadyRead(const QByteArray& message,const QHostAddress& address,const quint16& port);
+
 };
 
 

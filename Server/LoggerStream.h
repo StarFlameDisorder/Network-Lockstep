@@ -7,7 +7,7 @@
 #include <QString>
 #include <QTextStream>
 
-#define ALLOW_LOG_LEVEL LogLevel::Debug
+#define ALLOW_LOG_LEVEL LogLevel::Info
 
 enum LogLevel
 {

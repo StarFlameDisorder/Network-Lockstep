@@ -29,10 +29,10 @@ namespace Network
         
         private void Update()
         {
-            if(_index<2){
-                String s = "TCP-消息" + _index;
-                if (TcpSendMessageBool(Encoding.UTF8.GetBytes(s))) _index++;
-            }
+            // if(_index<2){
+            //     String s = "TCP-消息" + _index;
+            //     if (TcpSendMessageBool(Encoding.UTF8.GetBytes(s))) _index++;
+            // }
         }
 
         public bool TcpIsConnected()
@@ -58,6 +58,16 @@ namespace Network
                 //Debug.Log("TcpSendMessage:未建立连接");
                 return false;
             }
+        }
+
+        public bool UdpIsConnected()
+        {
+            return _udpSocket != null && _udpSocket.IsConnected();
+        }
+
+        public void UdpSendMessage(byte[] data)
+        {
+            if(UdpIsConnected())_udpSocket.Send(data);
         }
     }
 }

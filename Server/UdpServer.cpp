@@ -27,11 +27,13 @@ void UdpServer::receiveSocketMessage()
         QHostAddress addr;
         quint16 port;
         quint64 length=m_socket->pendingDatagramSize();
-        char buf[length];
-        m_socket->readDatagram(buf,length,&addr,&port);
-        QByteArray message(buf);
+        QByteArray message;
+        message.resize(length);
+
+        m_socket->readDatagram(message.data(),length,&addr,&port);
+
         Debug() <<"接受-长度:"<<length<< "原始有效字节:" << message.toHex();//有效载荷长度
-        emit udpReadyRead(buf,addr,port);
+        emit udpReadyRead(message,addr,port);
     }
 }
 

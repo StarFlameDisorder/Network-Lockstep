@@ -3,6 +3,7 @@
 //
 
 #define FILE_PREFIX "TCP:"//日志前缀
+#define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
 #include "TcpServer.h"
 #include <QtEndian>

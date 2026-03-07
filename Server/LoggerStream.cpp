@@ -5,11 +5,10 @@
 #include "LoggerStream.h"
 #include <QTime>
 
-LoggerStream::LoggerStream(LogLevel level)
-    :m_stream(&m_buf)
+LoggerStream::LoggerStream(LogLevel level,LogLevel localLogLevel)
+    :m_stream(&m_buf),m_level(level),m_localLogLevel(localLogLevel)
 {
     m_stream<<QTime::currentTime().toString("HH:mm:ss");
-    m_level = level;
     switch (level)
     {
         case LogLevel::Debug:
@@ -30,5 +29,5 @@ LoggerStream::LoggerStream(LogLevel level)
 
 LoggerStream::~LoggerStream()
 {
-    if (m_level>=ALLOW_LOG_LEVEL)qDebug().noquote()<<m_buf;
+    if (m_level>=m_localLogLevel)qDebug().noquote()<<m_buf;
 }

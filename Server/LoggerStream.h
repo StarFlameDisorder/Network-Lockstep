@@ -7,7 +7,13 @@
 #include <QString>
 #include <QTextStream>
 
-#define ALLOW_LOG_LEVEL LogLevel::Debug
+
+#define ALLOW_LOG_LEVEL LogLevel::Debug//全局日志显示等级
+
+#ifndef LOCAL_LOG_LEVEL
+#define LOCAL_LOG_LEVEL ALLOW_LOG_LEVEL//未定义局部日志等级时采用全局日志等级
+#endif
+
 
 enum LogLevel
 {
@@ -17,7 +23,7 @@ enum LogLevel
 class LoggerStream
 {
     public:
-    explicit LoggerStream(LogLevel level=Debug);
+    explicit LoggerStream(LogLevel level=Debug,LogLevel localLogLevel=Debug);
     ~LoggerStream();
 
     LoggerStream& operator<<(const std::string& val) {
@@ -36,6 +42,7 @@ class LoggerStream
     QString m_buf;
     QTextStream m_stream;
     LogLevel m_level;
+    LogLevel m_localLogLevel;
 };
 
 /*
@@ -43,14 +50,14 @@ class LoggerStream
  * FILE_PREFIX宏必须比引用此头先定义 否则无效
  */
 #ifndef FILE_PREFIX
-#define LoggerStreamWithPrefix(level) LoggerStream(level)//无前缀
+#define LoggerStreamWithPrefix(level,localLogLevel) LoggerStream(level,localLogLevel)//无前缀
 #else
-#define LoggerStreamWithPrefix(level) LoggerStream(level)<<FILE_PREFIX//有前缀
+#define LoggerStreamWithPrefix(level,localLogLevel) LoggerStream(level,localLogLevel)<<FILE_PREFIX//有前缀
 #endif
 
-#define Debug() LoggerStreamWithPrefix(LogLevel::Debug)
-#define Info() LoggerStreamWithPrefix(LogLevel::Info)
-#define Warning() LoggerStreamWithPrefix(LogLevel::Warning)
-#define Error() LoggerStreamWithPrefix(LogLevel::Error)
+#define Debug() LoggerStreamWithPrefix(LogLevel::Debug,LOCAL_LOG_LEVEL)
+#define Info() LoggerStreamWithPrefix(LogLevel::Info,LOCAL_LOG_LEVEL)
+#define Warning() LoggerStreamWithPrefix(LogLevel::Warning,LOCAL_LOG_LEVEL)
+#define Error() LoggerStreamWithPrefix(LogLevel::Error,LOCAL_LOG_LEVEL)
 
 #endif //SERVER_LOGGER_H

@@ -7,11 +7,13 @@
 #include <QTcpServer>
 #include <QHash>
 
+class NetworkDispatcher;
+
 class TcpServer:public QTcpServer
 {
     Q_OBJECT
 public:
-    TcpServer(QObject *parent = nullptr);
+    TcpServer(NetworkDispatcher *networkDispatcher,QObject *parent = nullptr);
     void sendMessageById(quint64 id,QString message);
     void sendMessageBySocket(QTcpSocket* socket,QString message);
 private:
@@ -27,6 +29,8 @@ private:
     quint64 m_tcpNextId=0;
     qint32 m_messageId=0;
     QHash<QTcpSocket*,QByteArray> m_tcpMessageBuffer;
+    NetworkDispatcher *_networkDispatcher;
+
 signals:
     void tcpReadyRead(QTcpSocket* socket,QByteArray data);
 

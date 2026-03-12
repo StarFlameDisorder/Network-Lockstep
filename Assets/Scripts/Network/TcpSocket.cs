@@ -31,7 +31,7 @@ namespace Network
                 String str = "TCP-这是客户端，请求连接";
                 Send(Encoding.UTF8.GetBytes(str));
             }
-            catch (Exception e)
+            catch (SocketException e)
             {
                 Debug.LogError(e);
                 throw;
@@ -67,54 +67,38 @@ namespace Network
             }
         }
         
-        //弃用 
-        public byte[] Receive()
-        {
-            byte[] buf = new byte[1028];
-            
-            int l = _socketTcp.Receive(buf, 0, buf.Length, SocketFlags.None);
-            
-            if (l > 0)
-            {
-                byte[] headBytes = new byte[4];
-                Buffer.BlockCopy(buf, 0, headBytes, 0, 4);
-                string hex = BitConverter.ToString(headBytes);
-                int tmpLen=BitConverter.ToInt32(headBytes, 0);
-                int length = IPAddress.NetworkToHostOrder(tmpLen);
-                Debug.Log($"接收-长度:{length}原始字节(十六进制): {BitConverter.ToString(buf, 0, l)}");//有效载荷长度
-                
-                //Debug.Log("当前解析长度"+tmpLen+"-"+length);
-                byte[] message = new byte[length];
-                Buffer.BlockCopy(buf, 4, message, 0, length);
-                return message;
-            }
-            return null;
-        }
-
         private async void ReceiveAsync(UnityAction<byte[]> callback)
         {
-            while(_socketTcp.Connected)
+            try
             {
-                byte[] buf = new byte[2048];
-                int originalLength = await _socketTcp.ReceiveAsync(buf, SocketFlags.None);
-                Debug.Log($"接收-Socket长度:{originalLength}");
-                _tcpMessageBuffer.AddRange(buf.Take(originalLength));
-                while (_tcpMessageBuffer.Count >= 4)
+                while (_socketTcp.Connected)
                 {
-                    byte[] headBytes = new byte[4];
-                    _tcpMessageBuffer.CopyTo(0, headBytes, 0, 4);
-                    int tmpLen = BitConverter.ToInt32(headBytes, 0);
-                    int length = IPAddress.NetworkToHostOrder(tmpLen);
-                    if (_tcpMessageBuffer.Count >= length + 4)
+                    byte[] buf = new byte[2048];
+                    int originalLength = await _socketTcp.ReceiveAsync(buf, SocketFlags.None);
+                    Debug.Log($"接收-Socket长度:{originalLength}");
+                    _tcpMessageBuffer.AddRange(buf.Take(originalLength));
+                    while (_tcpMessageBuffer.Count >= 4)
                     {
-                        byte[] message = new byte[length];
-                        _tcpMessageBuffer.CopyTo(4, message, 0, length);
-                        Debug.Log($"接收-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(message, 0, length)}"); //有效载荷长度
-                        _tcpMessageBuffer.RemoveRange(0, length + 4);
-                        callback?.Invoke(message);
+                        byte[] headBytes = new byte[4];
+                        _tcpMessageBuffer.CopyTo(0, headBytes, 0, 4);
+                        int tmpLen = BitConverter.ToInt32(headBytes, 0);
+                        int length = IPAddress.NetworkToHostOrder(tmpLen);
+                        if (_tcpMessageBuffer.Count >= length + 4)
+                        {
+                            byte[] message = new byte[length];
+                            _tcpMessageBuffer.CopyTo(4, message, 0, length);
+                            Debug.Log(
+                                $"接收-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(message, 0, length)}"); //有效载荷长度
+                            _tcpMessageBuffer.RemoveRange(0, length + 4);
+                            callback?.Invoke(message);
+                        }
+                        else break;
                     }
-                    else break;
                 }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("消息接收错误"+e);
             }
         }
 

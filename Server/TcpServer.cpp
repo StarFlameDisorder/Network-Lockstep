@@ -8,9 +8,10 @@
 #include "TcpServer.h"
 #include <QtEndian>
 #include <QTcpSocket>
+#include <QJsonObject>
 #include "LoggerStream.h"
 
-TcpServer::TcpServer(QObject* parent):QTcpServer(parent)
+TcpServer::TcpServer(NetworkDispatcher *networkDispatcher,QObject* parent):QTcpServer(parent),_networkDispatcher(networkDispatcher)
 {
     Info()<<"TcpServer::初始化TCP服务器 端口："<<1975;
     connect(this,&QTcpServer::newConnection,this,&TcpServer::tcpServerConnectionNew);
@@ -38,6 +39,11 @@ void TcpServer::tcpServerConnectionNew()
 
     m_tcpIdSocketMap.insert(id,newTcpSocket);
     m_tcpMessageBuffer.insert(newTcpSocket,QByteArray());
+
+    QJsonObject jsonObject{
+        {"client",1},
+    };
+
 
     sendMessage(newTcpSocket,QString("Tcp-这里是服务器,建立连接").toUtf8());
 

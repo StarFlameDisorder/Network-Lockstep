@@ -9,7 +9,8 @@
 #include <QNetworkDatagram>
 #include "LoggerStream.h"
 
-UdpServer::UdpServer(QObject* parent)
+UdpServer::UdpServer(NetworkDispatcher *networkDispatcher,QObject* parent)
+    :QObject(parent),_networkDispatcher(networkDispatcher)
 {
     Info()<<"UdpServer::初始化UDP服务器 端口："<<1976;
     m_socket=new QUdpSocket(this);

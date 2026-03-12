@@ -24,7 +24,7 @@ namespace Network
                 _socketUdp.Connect(_ipEndPoint);
                 Send(Encoding.UTF8.GetBytes("UDP-这里是客户端，请求连接"));
             }
-            catch (Exception e)
+            catch (SocketException e)
             {
                 Debug.LogError(e);
                 throw;
@@ -64,9 +64,7 @@ namespace Network
                 callback?.Invoke(buf);
             }
         }
-        
-        
-        
+         
         public bool IsConnected()
         {
             return _socketUdp!=null&&_socketUdp.Connected;

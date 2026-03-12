@@ -7,6 +7,7 @@
 
 #include <QSet>
 #include <QUdpSocket>
+#include <QHash>
 
 struct UdpEndPoint
 {
@@ -24,11 +25,18 @@ struct UdpEndPoint
     quint16 port;
 };
 
+inline size_t qHash(const UdpEndPoint& key,uint seed=0)
+{
+    return qHashMulti(seed,key.address,key.port);
+}
+
+class NetworkDispatcher;
+
 class UdpServer:public QObject
 {
     Q_OBJECT
 public:
-    UdpServer(QObject *parent=nullptr);
+    UdpServer(NetworkDispatcher *networkDispatcher,QObject *parent=nullptr);
 
 
 private:
@@ -39,8 +47,9 @@ private:
 
 
     QUdpSocket *m_socket;
-
     QSet<UdpEndPoint> m_udpEndPoints;
+
+    NetworkDispatcher *_networkDispatcher;
 signals:
     void udpReadyRead(const QByteArray& message,const QHostAddress& address,const quint16& port);
 

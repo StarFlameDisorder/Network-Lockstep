@@ -10,6 +10,7 @@
 #include <QTcpSocket>
 #include <QJsonObject>
 #include "LoggerStream.h"
+#include "NetworkDispatcher.h"
 
 TcpServer::TcpServer(NetworkDispatcher *networkDispatcher,QObject* parent):QTcpServer(parent),_networkDispatcher(networkDispatcher)
 {
@@ -39,13 +40,14 @@ void TcpServer::tcpServerConnectionNew()
 
     m_tcpIdSocketMap.insert(id,newTcpSocket);
     m_tcpMessageBuffer.insert(newTcpSocket,QByteArray());
+    quint64 clientId=_networkDispatcher->addClient();
 
     QJsonObject jsonObject{
-        {"client",1},
+        {"clientId",QString::number(clientId)},
     };
 
-
     sendMessage(newTcpSocket,QString("Tcp-这里是服务器,建立连接").toUtf8());
+    sendMessage(newTcpSocket,QJsonDocument(jsonObject).toJson());
 
     connect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
 

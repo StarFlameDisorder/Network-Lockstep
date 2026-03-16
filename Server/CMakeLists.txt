@@ -15,6 +15,8 @@ find_package(Qt6 COMPONENTS
         Network
         REQUIRED)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/protobuf/include)
+
 add_executable(Server main.cpp
         TcpServer.cpp
         TcpServer.h
@@ -27,12 +29,20 @@ add_executable(Server main.cpp
         UdpServer.cpp
         UdpServer.h
         client.cpp
-        client.h)
+        client.h
+        protobuf/output/test.pb.cc
+        protobuf/output/test.pb.h
+)
+
+
+target_link_directories(Server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/lib)
+
 target_link_libraries(Server
         Qt::Core
         Qt::Gui
         Qt::Widgets
         Qt::Network
+        protobuf
 )
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -62,4 +72,8 @@ if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
                 "${QT_INSTALL_PATH}/bin/Qt6${QT_LIB}${DEBUG_SUFFIX}.dll"
                 "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
     endforeach (QT_LIB)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            "${CMAKE_CURRENT_SOURCE_DIR}/protobuf/lib/libprotobuf.dll"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
 endif ()

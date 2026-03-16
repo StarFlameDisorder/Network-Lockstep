@@ -29,6 +29,9 @@ namespace Network
                 _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
                 String str = "TCP-这是客户端，请求连接";
+                
+                
+                
                 Send(Encoding.UTF8.GetBytes(str));
             }
             catch (SocketException e)

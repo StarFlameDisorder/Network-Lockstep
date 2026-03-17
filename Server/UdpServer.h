@@ -37,11 +37,11 @@ class UdpServer:public QObject
     Q_OBJECT
 public:
     UdpServer(NetworkDispatcher *networkDispatcher,QObject *parent=nullptr);
+    void sendMessage(const QHostAddress& address,const quint16& port,const QByteArray& message);
 
 
 private:
     void receiveSocketMessage();
-    void sendMessage(const QByteArray& message,const QHostAddress& address,const quint16& port);
     std::string getPeerAddressInfo(const QHostAddress& address,const quint16 &port)const;
     void receiveMessage(const QByteArray& message,const QHostAddress& address,const quint16& port);
 

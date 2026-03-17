@@ -4,9 +4,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Google.Protobuf;
 using UI;
 using UnityEngine;
 using UnityEngine.Events;
+using SyncMessage;
+using ConnectMessage;
 
 namespace Network
 {
@@ -15,6 +18,7 @@ namespace Network
         private IPEndPoint _ipEndPoint;
         [SerializeField] private string _ip="127.0.0.1";
         [SerializeField]private int _port=1975;
+        private UInt64  _clientId=0; 
         
         private List<byte> _tcpMessageBuffer=new List<byte>();
         private Socket _socketTcp;
@@ -28,11 +32,20 @@ namespace Network
                 _socketTcp=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
-                String str = "TCP-这是客户端，请求连接";
-                
-                
-                
-                Send(Encoding.UTF8.GetBytes(str));
+                ClientMessage message = new ClientMessage
+                {
+
+                    ConnectMessage = new ClientConnectMessage
+                    {
+
+                        HandShakeMessage = new HandShakeRequest
+                        {
+                            Content = "TCP-这是客户端，建立连接",
+                            ClientId = 0
+                        }
+                    }
+                };
+                Send(message.ToByteArray());
             }
             catch (SocketException e)
             {
@@ -113,6 +126,25 @@ namespace Network
         public bool IsConnected()
         {
             return _socketTcp!=null && _socketTcp.Connected;
+        }
+        
+        public void bindClientId(UInt64 clientId)
+        {
+            _clientId=clientId;
+            // ClientMessage message = new ClientMessage
+            // {
+            //
+            //     ConnectMessage = new ClientConnectMessage
+            //     {
+            //
+            //         HandShakeMessage = new HandShakeRequest
+            //         {
+            //             Content = "TCP-这是客户端，建立连接",
+            //             ClientId = _clientId
+            //         }
+            //     }
+            // };
+            // Send(message.ToByteArray());
         }
     }
 }

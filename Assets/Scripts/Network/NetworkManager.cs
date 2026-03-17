@@ -10,6 +10,10 @@ namespace Network
         private TcpSocket _tcpSocket=new TcpSocket();
         private UdpSocket _udpSocket=new UdpSocket();
         private int _index = 0;
+        private UInt64 clientId = 0;
+        private string _ip;
+        private int _port;
+        
         
         private void Awake()
         {
@@ -27,14 +31,6 @@ namespace Network
             if(TcpIsConnected())_tcpSocket.CloseLink();
         }
         
-        private void Update()
-        {
-            // if(_index<2){
-            //     String s = "TCP-消息" + _index;
-            //     if (TcpSendMessageBool(Encoding.UTF8.GetBytes(s))) _index++;
-            // }
-        }
-
         public bool TcpIsConnected()
         {
             return _tcpSocket != null && _tcpSocket.IsConnected();
@@ -68,6 +64,18 @@ namespace Network
         public void UdpSendMessage(byte[] data)
         {
             if(UdpIsConnected())_udpSocket.Send(data);
+        }
+
+        public void HandleMessage(byte[] data)
+        {
+            MessageDispatcher.HandleMessage(data);
+        }
+
+        public void SetClientId(UInt64 clientId)
+        {
+            this.clientId = clientId;
+            _tcpSocket.bindClientId(clientId);
+            _udpSocket.bindClientId(clientId);
         }
     }
 }

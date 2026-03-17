@@ -9,13 +9,30 @@
 #include "Client.h"
 #include "TcpServer.h"
 #include "UDPServer.h"
+#include "protobuf/output/SyncMessage.pb.h"
+#include "protobuf/output/ConnectMessage.pb.h"
+
+using namespace SyncMessage;
+using namespace ConnectMessage;
 
 class NetworkDispatcher
 {
 public:
     NetworkDispatcher();
     void sendTcpMessage(QTcpSocket *socket,const QByteArray &message);
+    void sendUdpMessage(QHostAddress address,quint16 port,const QByteArray &message);
+
+    //消息处理Tcp
     void handleTcpMessage(QTcpSocket *socket,const QByteArray &message);
+    void handleTcpConnection(QTcpSocket *socket,const ClientConnectMessage &message);
+    //void handleMessage(quint64 clientId,const ClientMessage &message);
+
+    //消息处理Udp
+    //void handleUdpMessage(QHostAddress address,quint16 port,const QByteArray &message);
+
+
+    //消息-绑定id
+
 
     //客户端相关
     QSharedPointer<Client> findClient(qint64 clientId);

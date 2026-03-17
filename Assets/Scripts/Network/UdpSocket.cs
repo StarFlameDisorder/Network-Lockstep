@@ -5,6 +5,9 @@ using System.Text;
 using UI;
 using UnityEngine;
 using UnityEngine.Events;
+using SyncMessage;
+using ConnectMessage;
+using Google.Protobuf;
 
 namespace Network
 {
@@ -12,6 +15,7 @@ namespace Network
     {
         private IPEndPoint _ipEndPoint;
         private Socket _socketUdp;
+        private UInt64  _clientId=0; 
         
         public void StartLink(string ip, int port)
         {
@@ -68,6 +72,25 @@ namespace Network
         public bool IsConnected()
         {
             return _socketUdp!=null&&_socketUdp.Connected;
+        }
+
+        public void bindClientId(UInt64 clientId)
+        {
+            _clientId=clientId;
+            ClientMessage message = new ClientMessage
+            {
+            
+                ConnectMessage = new ClientConnectMessage
+                {
+            
+                    HandShakeMessage = new HandShakeRequest
+                    {
+                        Content = "UDP-这是客户端，绑定id",
+                        ClientId = _clientId
+                    }
+                }
+            };
+            Send(message.ToByteArray());
         }
     }
 }

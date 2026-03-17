@@ -55,9 +55,9 @@ class LoggerStream
 #define LoggerStreamWithPrefix(level,localLogLevel) LoggerStream(level,localLogLevel)<<FILE_PREFIX//有前缀
 #endif
 
-#define Debug() LoggerStreamWithPrefix(LogLevel::Debug,LOCAL_LOG_LEVEL)
-#define Info() LoggerStreamWithPrefix(LogLevel::Info,LOCAL_LOG_LEVEL)
-#define Warning() LoggerStreamWithPrefix(LogLevel::Warning,LOCAL_LOG_LEVEL)
-#define Error() LoggerStreamWithPrefix(LogLevel::Error,LOCAL_LOG_LEVEL)
+#define Log_Debug() LoggerStreamWithPrefix(LogLevel::Debug,LOCAL_LOG_LEVEL)
+#define Log_Info() LoggerStreamWithPrefix(LogLevel::Info,LOCAL_LOG_LEVEL)
+#define Log_Warning() LoggerStreamWithPrefix(LogLevel::Warning,LOCAL_LOG_LEVEL)
+#define Log_Error() LoggerStreamWithPrefix(LogLevel::Error,LOCAL_LOG_LEVEL)
 
 #endif //SERVER_LOGGER_H

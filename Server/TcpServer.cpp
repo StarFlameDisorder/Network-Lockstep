@@ -3,7 +3,7 @@
 //
 
 #define FILE_PREFIX "TCP:"//日志前缀
-#define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
+#define LOCAL_LOG_LEVEL LogLevel::Debug//局部日志等级
 
 #include "TcpServer.h"
 #include <QtEndian>
@@ -11,10 +11,12 @@
 #include <QJsonObject>
 #include "LoggerStream.h"
 #include "NetworkDispatcher.h"
+#include "protobuf/output/SyncMessage.pb.h"
+#include "protobuf/output/ConnectMessage.pb.h"
 
 TcpServer::TcpServer(NetworkDispatcher *networkDispatcher,QObject* parent):QTcpServer(parent),_networkDispatcher(networkDispatcher)
 {
-    Info()<<"TcpServer::初始化TCP服务器 端口："<<1975;
+    Log_Info()<<"TcpServer::初始化TCP服务器 端口："<<1975;
     connect(this,&QTcpServer::newConnection,this,&TcpServer::tcpServerConnectionNew);
     connect(this,&TcpServer::tcpReadyRead,this,&TcpServer::receiveMessage);
     listen(QHostAddress::Any, 1975);
@@ -36,24 +38,30 @@ void TcpServer::tcpServerConnectionNew()
     QTcpSocket *newTcpSocket=nextPendingConnection();
     quint64 id=m_tcpNextId;
     m_tcpNextId++;
-    Info()<<"新连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
+    Log_Info()<<"新连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
 
     m_tcpIdSocketMap.insert(id,newTcpSocket);
     m_tcpMessageBuffer.insert(newTcpSocket,QByteArray());
     quint64 clientId=_networkDispatcher->addClient();
 
-    QJsonObject jsonObject{
-        {"clientId",QString::number(clientId)},
-    };
+    using namespace ConnectMessage;
 
-    sendMessage(newTcpSocket,QString("Tcp-这里是服务器,建立连接").toUtf8());
-    sendMessage(newTcpSocket,QJsonDocument(jsonObject).toJson());
-
+    using namespace SyncMessage;
+    ServerMessage message;
+    auto *connectMessage= message.mutable_connectmessage();
+    auto *response=connectMessage->mutable_handshakemessage();
+    response->set_content("Tcp-这里是服务器,建立连接");
+    response->set_clientid(clientId);
+    QByteArray data;
+    data.resize(message.ByteSizeLong());
+    message.SerializeToArray(data.data(),data.size());
+    sendMessageBySocket(newTcpSocket,data);
+    
     connect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
 
     connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket,id]()
     {
-        Info()<<"断开连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
+        Log_Info()<<"断开连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
         m_tcpIdSocketMap.remove(id);
         m_tcpMessageBuffer.remove(newTcpSocket);
         disconnect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
@@ -64,7 +72,7 @@ void TcpServer::tcpServerConnectionNew()
 
 void TcpServer::tcpServerConnectClosed()
 {
-    Info()<<"连接断开";
+    Log_Info()<<"连接断开";
 
 }
 
@@ -91,7 +99,7 @@ QByteArray TcpServer::receiveTcpMessage(QTcpSocket* socket)
     int length=qFromBigEndian<int>(reinterpret_cast<const char*>(head.constData()));
     //Info()<<length;
 
-    Debug() <<"接受-长度:"<<length<< "原始字节:" << data.toHex();
+    Log_Debug() <<"接受-长度:"<<length<< "原始字节:" << data.toHex();
     return data.mid(4);
 }
 
@@ -107,7 +115,7 @@ void TcpServer::receiveSocketMessage()
     QByteArray buf=socket->readAll();
     messageBuffer.append(buf);//缓冲区大量移动 潜在优化成环形缓冲区
 
-    Debug() <<"接受-Socket长度:"<<buf.length();
+    Log_Debug() <<"接受-Socket长度:"<<buf.length();
     while (true)
     {
         if (messageBuffer.size()<4)break;
@@ -115,12 +123,12 @@ void TcpServer::receiveSocketMessage()
         int length=qFromBigEndian<int>(reinterpret_cast<const char*>(messageBuffer.constData()));//以大端序读取长度头
         if (length<=0||length>1024)
         {
-            Error()<<"错误有效载荷长度："<<length;
+            Log_Error()<<"错误有效载荷长度："<<length;
             break;
         }
         if (messageBuffer.size()<length+4)break;
         QByteArray message=messageBuffer.mid(4,length);
-        Debug() <<"接受-长度:"<<length<< "原始有效字节:" << message.toHex();//有效载荷长度
+        Log_Debug() <<"接受-长度:"<<length<< "原始有效字节:" << message.toHex();//有效载荷长度
         messageBuffer.remove(0,length+4);
 
         emit tcpReadyRead(socket,message);
@@ -134,14 +142,13 @@ void TcpServer::sendMessage(QTcpSocket* socket, QByteArray message)
     QByteArray send;
     send.append(reinterpret_cast<const char*>(&networkLen), sizeof(networkLen));
     send.append(message);
-    Debug() <<"发送-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
+    Log_Debug() <<"发送-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
     socket->write(send);
 }
 
 void TcpServer::receiveMessage(QTcpSocket* socket, QByteArray message)
 {
-    Info()<<QString::fromUtf8(message);
-    sendMessage(socket,message+QString("回传").toUtf8());
+    _networkDispatcher->handleTcpMessage(socket,message);
 }
 
 

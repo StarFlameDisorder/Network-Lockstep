@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package ConnectMessage;
+
+//服务器
+
+
+message ServerConnectMessage{
+    oneof content {
+        HandShakeResponse handShakeMessage = 2;
+    }
+}
+
+//客户端
+
+message ClientConnectMessage{
+    oneof content {
+        HandShakeRequest handShakeMessage = 2;
+    }
+}
+
+//握手
+message HandShakeResponse{
+    string content = 1;
+    uint64 clientId = 2;//仅用于tcp回复
+}
+
+message HandShakeRequest{
+    string content = 1;
+    uint64 clientId= 2;//仅用于udp请求
+}
+

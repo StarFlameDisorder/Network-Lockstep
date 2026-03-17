@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "ConnectMessage.proto";
+
+package SyncMessage;
+
+message ServerMessage{
+    oneof content{
+        ConnectMessage.ServerConnectMessage connectMessage = 2;
+    }
+}
+
+message ClientMessage{
+    oneof content{
+        ConnectMessage.ClientConnectMessage connectMessage = 2;
+    }
+}

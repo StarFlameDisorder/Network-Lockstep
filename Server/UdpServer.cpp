@@ -3,7 +3,7 @@
 //
 
 #define FILE_PREFIX "UDP:"
-
+#define LOCAL_LOG_LEVEL LogLevel::Error//局部日志等级
 
 #include "UDPServer.h"
 #include <QNetworkDatagram>
@@ -12,7 +12,7 @@
 UdpServer::UdpServer(NetworkDispatcher *networkDispatcher,QObject* parent)
     :QObject(parent),_networkDispatcher(networkDispatcher)
 {
-    Info()<<"UdpServer::初始化UDP服务器 端口："<<1976;
+    Log_Info()<<"UdpServer::初始化UDP服务器 端口："<<1976;
     m_socket=new QUdpSocket(this);
 
     connect(m_socket,&QUdpSocket::readyRead,this,&UdpServer::receiveSocketMessage);
@@ -22,7 +22,7 @@ UdpServer::UdpServer(NetworkDispatcher *networkDispatcher,QObject* parent)
 
 void UdpServer::receiveSocketMessage()
 {
-    Debug()<<"UDP:收到消息";
+    Log_Debug()<<"UDP:收到消息";
     while (m_socket->hasPendingDatagrams())
     {
         QHostAddress addr;
@@ -33,15 +33,15 @@ void UdpServer::receiveSocketMessage()
 
         m_socket->readDatagram(message.data(),length,&addr,&port);
 
-        Debug() <<"接受-长度:"<<length<< "原始有效字节:" << message.toHex();//有效载荷长度
+        Log_Debug() <<"接受-长度:"<<length<< "原始有效字节:" << message.toHex();//有效载荷长度
         emit udpReadyRead(message,addr,port);
     }
 }
 
-void UdpServer::sendMessage(const QByteArray& message, const QHostAddress& address, const quint16& port)
+void UdpServer::sendMessage(const QHostAddress& address, const quint16& port,const QByteArray& message)
 {
     qint32 originalLen = message.length();//转成32位
-    Debug() <<"发送-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
+    Log_Debug() <<"发送-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
     m_socket->writeDatagram(message,address,port);
 }
 
@@ -59,7 +59,7 @@ std::string UdpServer::getPeerAddressInfo(const QHostAddress& address, const qui
 
 void UdpServer::receiveMessage(const QByteArray& message, const QHostAddress& address, const quint16& port)
 {
-    Info()<<getPeerAddressInfo(address,port)<<" "<<QString::fromUtf8(message);
-    sendMessage(message+QString("回传").toUtf8(),address,port);
+    Log_Info()<<getPeerAddressInfo(address,port)<<" "<<QString::fromUtf8(message);
+    sendMessage(address,port,message+QString("回传").toUtf8());
 }
 

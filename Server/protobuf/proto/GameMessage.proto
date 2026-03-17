@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package GameMessage;
+
+import "UnityMath.proto";
+
+message GameSyncMessage{
+    oneof content{
+        PlayerSync player=1;
+    }
+}
+
+message PlayerSync
+{
+    UnityMath.Vector3D position= 1;
+
+}

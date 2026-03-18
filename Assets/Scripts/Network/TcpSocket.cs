@@ -22,6 +22,10 @@ namespace Network
         
         private List<byte> _tcpMessageBuffer=new List<byte>();
         private Socket _socketTcp;
+
+        public TcpSocket()
+        {
+        }
         
         public void StartLink(string ip, int port)
         {
@@ -55,8 +59,10 @@ namespace Network
             
             ReceiveAsync((message) =>
             {
-                Debug.Log(Encoding.UTF8.GetString(message));
-                MessagePanel.Instance?.AddMessage(Encoding.UTF8.GetString(message));
+                Debug.Log("Tcp:收到消息");
+                NetworkManager.Instance.HandleMessage(message);
+                // Debug.Log(Encoding.UTF8.GetString(message));
+                // MessagePanel.Instance?.AddMessage(Encoding.UTF8.GetString(message));
             });
         }
 
@@ -128,23 +134,9 @@ namespace Network
             return _socketTcp!=null && _socketTcp.Connected;
         }
         
-        public void bindClientId(UInt64 clientId)
+        public void BindClientId(UInt64 clientId)
         {
             _clientId=clientId;
-            // ClientMessage message = new ClientMessage
-            // {
-            //
-            //     ConnectMessage = new ClientConnectMessage
-            //     {
-            //
-            //         HandShakeMessage = new HandShakeRequest
-            //         {
-            //             Content = "TCP-这是客户端，建立连接",
-            //             ClientId = _clientId
-            //         }
-            //     }
-            // };
-            // Send(message.ToByteArray());
         }
     }
 }

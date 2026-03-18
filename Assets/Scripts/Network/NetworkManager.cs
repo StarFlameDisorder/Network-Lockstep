@@ -18,7 +18,7 @@ namespace Network
         private int _port;
         private MessageDispatcher _messageDispatcher=new();
 
-        public void RegisterHandler<T>(Signals signal, Action<T> handler)where T:IMessage,new()
+        public void RegisterHandler<T>(Signals signal, Action<T> handler)where T:IMessage//,new()
         {
             _messageDispatcher.RegisterHandler(signal,handler);
         }
@@ -32,14 +32,12 @@ namespace Network
         private void Awake()
         {
             Instance = this;
-            RegisterHandler<HandShakeResponse>(Signals.ConnectHandShake,test);
+            NetworkManager.Instance.RegisterHandler(Signals.ConnectHandShake, (HandShakeResponse msg) =>
+            {
+                SetClientId(msg.ClientId);
+            });
         }
-
-        void test(HandShakeResponse response)
-        {
-            Debug.Log("触发处理函数");
-        }
-
+        
         public void StartLink(string ip, int port)
         {
             _tcpSocket.StartLink(ip, port);
@@ -49,6 +47,7 @@ namespace Network
         public void StopLink()
         {
             if(TcpIsConnected())_tcpSocket.CloseLink();
+            if(UdpIsConnected())_udpSocket.CloseLink();
         }
         
         public bool TcpIsConnected()
@@ -88,13 +87,14 @@ namespace Network
 
         public void HandleMessage(byte[] data)
         {
-            MessageDispatcher.HandleMessage(data);
+            _messageDispatcher.HandleMessage(data);
         }
 
         public void SetClientId(UInt64 clientId)
         {
+            Debug.Log($"SetClientId {clientId}");
             this.clientId = clientId;
-            _tcpSocket.bindClientId(clientId);
+            _tcpSocket.BindClientId(clientId);
             _udpSocket.bindClientId(clientId);
         }
     }

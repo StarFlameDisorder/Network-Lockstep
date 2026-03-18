@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using ConnectMessage;
 using Google.Protobuf;
 using SyncMessage;
+using UI;
 using UnityEngine;
 
 namespace Network
@@ -12,13 +14,10 @@ namespace Network
     {
         Dictionary<Signals,Action<IMessage>> _handlers=new ();
 
-        public void RegisterHandler<T>(Signals signal, Action<T> handler)where T:IMessage,new() 
+        public void RegisterHandler<T>(Signals signal, Action<T> handler)where T:IMessage//,new()
         {
             _handlers[signal] = msg => { handler((T)msg); };
             Debug.Log("MessageDispatcher:注册信号处理器"+signal);
-            
-            // HandShakeResponse response = new HandShakeResponse();
-            // TriggerHandler(Signals.ConnectHandShake, response);
         }
 
         public void UnregisterHandler(Signals signal)
@@ -38,10 +37,8 @@ namespace Network
             }
         }
         
-        public static void HandleMessage(byte[] data)
+        public void HandleMessage(byte[] data)
         {
-            
-            
             ServerMessage message = ServerMessage.Parser.ParseFrom(data);
             switch (message.ContentCase)
             {
@@ -55,13 +52,15 @@ namespace Network
 
         }
 
-        public static void HandleConnectMessage(ServerConnectMessage message)
+        public void HandleConnectMessage(ServerConnectMessage message)
         {
             switch (message.ContentCase)
             {
                 case ServerConnectMessage.ContentOneofCase.HandShakeMessage:
-                    Debug.Log("Tcp-"+message.HandShakeMessage.Content);
-                    NetworkManager.Instance.SetClientId(message.HandShakeMessage.ClientId);
+                    Debug.Log("Tcp-" + message.HandShakeMessage.Content);
+                    MessagePanel.Instance?.AddMessage(message.HandShakeMessage.Content);
+                    TriggerHandler(Signals.ConnectHandShake,message.HandShakeMessage);
+                    //NetworkManager.Instance.SetClientId(message.HandShakeMessage.ClientId);
                     break;
                 default:
                     Debug.Log("HandleConnectMessage:未知类型"+message.ContentCase);

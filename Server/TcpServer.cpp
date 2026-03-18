@@ -55,7 +55,8 @@ void TcpServer::tcpServerConnectionNew()
     QByteArray data;
     data.resize(message.ByteSizeLong());
     message.SerializeToArray(data.data(),data.size());
-    sendMessageBySocket(newTcpSocket,data);
+    Log_Debug()<<"待发送字节长度:"<<data.size();
+    sendMessage(newTcpSocket,data);
     
     connect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
 

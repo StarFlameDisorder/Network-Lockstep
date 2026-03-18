@@ -46,7 +46,7 @@ private:
     QHash<quint64,QSharedPointer<Client>> m_clientsMap;
     QHash<QTcpSocket*,quint64> m_tcpClientsMap;
     QHash<UdpEndPoint,quint64> m_udpClientsMap;
-    quint64 nextClientId=0;
+    quint64 nextClientId=1;
 };
 
 

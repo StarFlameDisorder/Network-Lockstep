@@ -26,7 +26,7 @@ private:
     void receiveMessage(QTcpSocket *socket,QByteArray message);
 
     QHash<quint64,QTcpSocket*> m_tcpIdSocketMap;
-    quint64 m_tcpNextId=0;
+    quint64 m_tcpNextId=1;
     qint32 m_messageId=0;
     QHash<QTcpSocket*,QByteArray> m_tcpMessageBuffer;
     NetworkDispatcher *_networkDispatcher;

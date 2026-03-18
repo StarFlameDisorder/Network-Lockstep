@@ -1,5 +1,8 @@
 using System;
 using System.Text;
+using ConnectMessage;
+using Google.Protobuf;
+using TMPro;
 using UnityEngine;
 
 namespace Network
@@ -13,11 +16,28 @@ namespace Network
         private UInt64 clientId = 0;
         private string _ip;
         private int _port;
+        private MessageDispatcher _messageDispatcher=new();
+
+        public void RegisterHandler<T>(Signals signal, Action<T> handler)where T:IMessage,new()
+        {
+            _messageDispatcher.RegisterHandler(signal,handler);
+        }
+
+        public void UnregisterHandler(Signals signal)
+        {
+            _messageDispatcher.UnregisterHandler(signal);
+        }
         
         
         private void Awake()
         {
             Instance = this;
+            RegisterHandler<HandShakeResponse>(Signals.ConnectHandShake,test);
+        }
+
+        void test(HandShakeResponse response)
+        {
+            Debug.Log("触发处理函数");
         }
 
         public void StartLink(string ip, int port)

@@ -10,7 +10,7 @@
 
 #define ALLOW_LOG_LEVEL LogLevel::Debug//全局日志显示等级
 
-#ifndef LOCAL_LOG_LEVEL
+#ifndef LOCAL_LOG_LEVEL//局部日志等级
 #define LOCAL_LOG_LEVEL ALLOW_LOG_LEVEL//未定义局部日志等级时采用全局日志等级
 #endif
 

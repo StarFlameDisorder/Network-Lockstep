@@ -6,12 +6,15 @@ package SyncMessage;
 
 message ServerMessage{
     oneof content{
-        ConnectMessage.ServerConnectMessage connectMessage = 2;
+        string commonMessage = 2;
+        ConnectMessage.ServerConnectMessage connectMessage = 3;
     }
 }
 
 message ClientMessage{
+    uint64 clientId = 1;
     oneof content{
-        ConnectMessage.ClientConnectMessage connectMessage = 2;
+        string commonMessage = 2;
+        ConnectMessage.ClientConnectMessage connectMessage = 3;
     }
 }

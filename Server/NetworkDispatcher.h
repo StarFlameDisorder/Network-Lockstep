@@ -20,7 +20,7 @@ class NetworkDispatcher
 public:
     NetworkDispatcher();
     void sendTcpMessage(QTcpSocket *socket,const QByteArray &message);
-    void sendUdpMessage(QHostAddress address,quint16 port,const QByteArray &message);
+    void sendUdpMessage(const QHostAddress& address, quint16 port, const QByteArray &message);
 
     //消息处理Tcp
     void handleTcpMessage(QTcpSocket *socket,const QByteArray &message);
@@ -28,13 +28,15 @@ public:
     //void handleMessage(quint64 clientId,const ClientMessage &message);
 
     //消息处理Udp
-    //void handleUdpMessage(QHostAddress address,quint16 port,const QByteArray &message);
-
+    void handleUdpMessage(const QHostAddress &address,quint16 port,const QByteArray &message);
+    void handleUdpConnection(const QHostAddress &address,quint16 port,const ClientConnectMessage &message);
 
     //消息-绑定id
 
 
     //客户端相关
+    void checkClient(qint64 clientId,QTcpSocket *socket);
+    void checkClient(qint64 clientId,const QHostAddress &address, quint16 port);
     QSharedPointer<Client> findClient(qint64 clientId);
     quint64 addClient();
     void bindClient(const quint64 clientId,QTcpSocket *tcpSocket);

@@ -16,10 +16,10 @@ public:
     TcpServer(NetworkDispatcher *networkDispatcher,QObject *parent = nullptr);
     void sendMessageById(quint64 id,QString message);
     void sendMessageBySocket(QTcpSocket* socket,QString message);
+    std::string getTcpSocketInfo(const QTcpSocket *socket)const;
 private:
     void tcpServerConnectionNew();
     void tcpServerConnectClosed();
-    std::string getTcpSocketInfo(const QTcpSocket *socket)const;
     QByteArray receiveTcpMessage(QTcpSocket *socket);
     void receiveSocketMessage();
     void sendMessage(QTcpSocket *socket,QByteArray message);

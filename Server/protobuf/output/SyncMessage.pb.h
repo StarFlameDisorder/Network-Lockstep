@@ -105,7 +105,8 @@ class ServerMessage final :
     return *internal_default_instance();
   }
   enum ContentCase {
-    kConnectMessage = 2,
+    kCommonMessage = 2,
+    kConnectMessage = 3,
     CONTENT_NOT_SET = 0,
   };
 
@@ -187,9 +188,28 @@ class ServerMessage final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kConnectMessageFieldNumber = 2,
+    kCommonMessageFieldNumber = 2,
+    kConnectMessageFieldNumber = 3,
   };
-  // .ConnectMessage.ServerConnectMessage connectMessage = 2;
+  // string commonMessage = 2;
+  bool has_commonmessage() const;
+  private:
+  bool _internal_has_commonmessage() const;
+  public:
+  void clear_commonmessage();
+  const std::string& commonmessage() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_commonmessage(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_commonmessage();
+  PROTOBUF_NODISCARD std::string* release_commonmessage();
+  void set_allocated_commonmessage(std::string* commonmessage);
+  private:
+  const std::string& _internal_commonmessage() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_commonmessage(const std::string& value);
+  std::string* _internal_mutable_commonmessage();
+  public:
+
+  // .ConnectMessage.ServerConnectMessage connectMessage = 3;
   bool has_connectmessage() const;
   private:
   bool _internal_has_connectmessage() const;
@@ -212,6 +232,7 @@ class ServerMessage final :
   // @@protoc_insertion_point(class_scope:SyncMessage.ServerMessage)
  private:
   class _Internal;
+  void set_has_commonmessage();
   void set_has_connectmessage();
 
   inline bool has_content() const;
@@ -224,6 +245,7 @@ class ServerMessage final :
     union ContentUnion {
       constexpr ContentUnion() : _constinit_{} {}
         ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr commonmessage_;
       ::ConnectMessage::ServerConnectMessage* connectmessage_;
     } content_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -279,7 +301,8 @@ class ClientMessage final :
     return *internal_default_instance();
   }
   enum ContentCase {
-    kConnectMessage = 2,
+    kCommonMessage = 2,
+    kConnectMessage = 3,
     CONTENT_NOT_SET = 0,
   };
 
@@ -361,9 +384,38 @@ class ClientMessage final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kConnectMessageFieldNumber = 2,
+    kClientIdFieldNumber = 1,
+    kCommonMessageFieldNumber = 2,
+    kConnectMessageFieldNumber = 3,
   };
-  // .ConnectMessage.ClientConnectMessage connectMessage = 2;
+  // uint64 clientId = 1;
+  void clear_clientid();
+  uint64_t clientid() const;
+  void set_clientid(uint64_t value);
+  private:
+  uint64_t _internal_clientid() const;
+  void _internal_set_clientid(uint64_t value);
+  public:
+
+  // string commonMessage = 2;
+  bool has_commonmessage() const;
+  private:
+  bool _internal_has_commonmessage() const;
+  public:
+  void clear_commonmessage();
+  const std::string& commonmessage() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_commonmessage(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_commonmessage();
+  PROTOBUF_NODISCARD std::string* release_commonmessage();
+  void set_allocated_commonmessage(std::string* commonmessage);
+  private:
+  const std::string& _internal_commonmessage() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_commonmessage(const std::string& value);
+  std::string* _internal_mutable_commonmessage();
+  public:
+
+  // .ConnectMessage.ClientConnectMessage connectMessage = 3;
   bool has_connectmessage() const;
   private:
   bool _internal_has_connectmessage() const;
@@ -386,6 +438,7 @@ class ClientMessage final :
   // @@protoc_insertion_point(class_scope:SyncMessage.ClientMessage)
  private:
   class _Internal;
+  void set_has_commonmessage();
   void set_has_connectmessage();
 
   inline bool has_content() const;
@@ -395,9 +448,11 @@ class ClientMessage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    uint64_t clientid_;
     union ContentUnion {
       constexpr ContentUnion() : _constinit_{} {}
         ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr commonmessage_;
       ::ConnectMessage::ClientConnectMessage* connectmessage_;
     } content_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -418,7 +473,84 @@ class ClientMessage final :
 #endif  // __GNUC__
 // ServerMessage
 
-// .ConnectMessage.ServerConnectMessage connectMessage = 2;
+// string commonMessage = 2;
+inline bool ServerMessage::_internal_has_commonmessage() const {
+  return content_case() == kCommonMessage;
+}
+inline bool ServerMessage::has_commonmessage() const {
+  return _internal_has_commonmessage();
+}
+inline void ServerMessage::set_has_commonmessage() {
+  _impl_._oneof_case_[0] = kCommonMessage;
+}
+inline void ServerMessage::clear_commonmessage() {
+  if (_internal_has_commonmessage()) {
+    _impl_.content_.commonmessage_.Destroy();
+    clear_has_content();
+  }
+}
+inline const std::string& ServerMessage::commonmessage() const {
+  // @@protoc_insertion_point(field_get:SyncMessage.ServerMessage.commonMessage)
+  return _internal_commonmessage();
+}
+template <typename ArgT0, typename... ArgT>
+inline void ServerMessage::set_commonmessage(ArgT0&& arg0, ArgT... args) {
+  if (!_internal_has_commonmessage()) {
+    clear_content();
+    set_has_commonmessage();
+    _impl_.content_.commonmessage_.InitDefault();
+  }
+  _impl_.content_.commonmessage_.Set( static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:SyncMessage.ServerMessage.commonMessage)
+}
+inline std::string* ServerMessage::mutable_commonmessage() {
+  std::string* _s = _internal_mutable_commonmessage();
+  // @@protoc_insertion_point(field_mutable:SyncMessage.ServerMessage.commonMessage)
+  return _s;
+}
+inline const std::string& ServerMessage::_internal_commonmessage() const {
+  if (_internal_has_commonmessage()) {
+    return _impl_.content_.commonmessage_.Get();
+  }
+  return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
+}
+inline void ServerMessage::_internal_set_commonmessage(const std::string& value) {
+  if (!_internal_has_commonmessage()) {
+    clear_content();
+    set_has_commonmessage();
+    _impl_.content_.commonmessage_.InitDefault();
+  }
+  _impl_.content_.commonmessage_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ServerMessage::_internal_mutable_commonmessage() {
+  if (!_internal_has_commonmessage()) {
+    clear_content();
+    set_has_commonmessage();
+    _impl_.content_.commonmessage_.InitDefault();
+  }
+  return _impl_.content_.commonmessage_.Mutable(      GetArenaForAllocation());
+}
+inline std::string* ServerMessage::release_commonmessage() {
+  // @@protoc_insertion_point(field_release:SyncMessage.ServerMessage.commonMessage)
+  if (_internal_has_commonmessage()) {
+    clear_has_content();
+    return _impl_.content_.commonmessage_.Release();
+  } else {
+    return nullptr;
+  }
+}
+inline void ServerMessage::set_allocated_commonmessage(std::string* commonmessage) {
+  if (has_content()) {
+    clear_content();
+  }
+  if (commonmessage != nullptr) {
+    set_has_commonmessage();
+    _impl_.content_.commonmessage_.InitAllocated(commonmessage, GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(field_set_allocated:SyncMessage.ServerMessage.commonMessage)
+}
+
+// .ConnectMessage.ServerConnectMessage connectMessage = 3;
 inline bool ServerMessage::_internal_has_connectmessage() const {
   return content_case() == kConnectMessage;
 }
@@ -497,7 +629,104 @@ inline ServerMessage::ContentCase ServerMessage::content_case() const {
 
 // ClientMessage
 
-// .ConnectMessage.ClientConnectMessage connectMessage = 2;
+// uint64 clientId = 1;
+inline void ClientMessage::clear_clientid() {
+  _impl_.clientid_ = uint64_t{0u};
+}
+inline uint64_t ClientMessage::_internal_clientid() const {
+  return _impl_.clientid_;
+}
+inline uint64_t ClientMessage::clientid() const {
+  // @@protoc_insertion_point(field_get:SyncMessage.ClientMessage.clientId)
+  return _internal_clientid();
+}
+inline void ClientMessage::_internal_set_clientid(uint64_t value) {
+  
+  _impl_.clientid_ = value;
+}
+inline void ClientMessage::set_clientid(uint64_t value) {
+  _internal_set_clientid(value);
+  // @@protoc_insertion_point(field_set:SyncMessage.ClientMessage.clientId)
+}
+
+// string commonMessage = 2;
+inline bool ClientMessage::_internal_has_commonmessage() const {
+  return content_case() == kCommonMessage;
+}
+inline bool ClientMessage::has_commonmessage() const {
+  return _internal_has_commonmessage();
+}
+inline void ClientMessage::set_has_commonmessage() {
+  _impl_._oneof_case_[0] = kCommonMessage;
+}
+inline void ClientMessage::clear_commonmessage() {
+  if (_internal_has_commonmessage()) {
+    _impl_.content_.commonmessage_.Destroy();
+    clear_has_content();
+  }
+}
+inline const std::string& ClientMessage::commonmessage() const {
+  // @@protoc_insertion_point(field_get:SyncMessage.ClientMessage.commonMessage)
+  return _internal_commonmessage();
+}
+template <typename ArgT0, typename... ArgT>
+inline void ClientMessage::set_commonmessage(ArgT0&& arg0, ArgT... args) {
+  if (!_internal_has_commonmessage()) {
+    clear_content();
+    set_has_commonmessage();
+    _impl_.content_.commonmessage_.InitDefault();
+  }
+  _impl_.content_.commonmessage_.Set( static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:SyncMessage.ClientMessage.commonMessage)
+}
+inline std::string* ClientMessage::mutable_commonmessage() {
+  std::string* _s = _internal_mutable_commonmessage();
+  // @@protoc_insertion_point(field_mutable:SyncMessage.ClientMessage.commonMessage)
+  return _s;
+}
+inline const std::string& ClientMessage::_internal_commonmessage() const {
+  if (_internal_has_commonmessage()) {
+    return _impl_.content_.commonmessage_.Get();
+  }
+  return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
+}
+inline void ClientMessage::_internal_set_commonmessage(const std::string& value) {
+  if (!_internal_has_commonmessage()) {
+    clear_content();
+    set_has_commonmessage();
+    _impl_.content_.commonmessage_.InitDefault();
+  }
+  _impl_.content_.commonmessage_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ClientMessage::_internal_mutable_commonmessage() {
+  if (!_internal_has_commonmessage()) {
+    clear_content();
+    set_has_commonmessage();
+    _impl_.content_.commonmessage_.InitDefault();
+  }
+  return _impl_.content_.commonmessage_.Mutable(      GetArenaForAllocation());
+}
+inline std::string* ClientMessage::release_commonmessage() {
+  // @@protoc_insertion_point(field_release:SyncMessage.ClientMessage.commonMessage)
+  if (_internal_has_commonmessage()) {
+    clear_has_content();
+    return _impl_.content_.commonmessage_.Release();
+  } else {
+    return nullptr;
+  }
+}
+inline void ClientMessage::set_allocated_commonmessage(std::string* commonmessage) {
+  if (has_content()) {
+    clear_content();
+  }
+  if (commonmessage != nullptr) {
+    set_has_commonmessage();
+    _impl_.content_.commonmessage_.InitAllocated(commonmessage, GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(field_set_allocated:SyncMessage.ClientMessage.commonMessage)
+}
+
+// .ConnectMessage.ClientConnectMessage connectMessage = 3;
 inline bool ClientMessage::_internal_has_connectmessage() const {
   return content_case() == kConnectMessage;
 }

@@ -26,7 +26,7 @@ namespace Network
                 _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port + 1);
                 _socketUdp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 _socketUdp.Connect(_ipEndPoint);
-                Send(Encoding.UTF8.GetBytes("UDP-这里是客户端，请求连接"));
+                //Send(Encoding.UTF8.GetBytes("UDP-这里是客户端，请求连接"));
             }
             catch (SocketException e)
             {
@@ -79,16 +79,8 @@ namespace Network
             _clientId=clientId;
             ClientMessage message = new ClientMessage
             {
-            
-                ConnectMessage = new ClientConnectMessage
-                {
-            
-                    HandShakeMessage = new HandShakeRequest
-                    {
-                        Content = "UDP-这是客户端，绑定id",
-                        ClientId = _clientId
-                    }
-                }
+                ClientId = _clientId,
+                CommonMessage = "UDP-这是客户端，绑定id"
             };
             Send(message.ToByteArray());
         }

@@ -25,16 +25,17 @@ namespace SyncMessage {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChFTeW5jTWVzc2FnZS5wcm90bxILU3luY01lc3NhZ2UaFENvbm5lY3RNZXNz",
-            "YWdlLnByb3RvIloKDVNlcnZlck1lc3NhZ2USPgoOY29ubmVjdE1lc3NhZ2UY",
-            "AiABKAsyJC5Db25uZWN0TWVzc2FnZS5TZXJ2ZXJDb25uZWN0TWVzc2FnZUgA",
-            "QgkKB2NvbnRlbnQiWgoNQ2xpZW50TWVzc2FnZRI+Cg5jb25uZWN0TWVzc2Fn",
-            "ZRgCIAEoCzIkLkNvbm5lY3RNZXNzYWdlLkNsaWVudENvbm5lY3RNZXNzYWdl",
-            "SABCCQoHY29udGVudGIGcHJvdG8z"));
+            "YWdlLnByb3RvInMKDVNlcnZlck1lc3NhZ2USFwoNY29tbW9uTWVzc2FnZRgC",
+            "IAEoCUgAEj4KDmNvbm5lY3RNZXNzYWdlGAMgASgLMiQuQ29ubmVjdE1lc3Nh",
+            "Z2UuU2VydmVyQ29ubmVjdE1lc3NhZ2VIAEIJCgdjb250ZW50IoUBCg1DbGll",
+            "bnRNZXNzYWdlEhAKCGNsaWVudElkGAEgASgEEhcKDWNvbW1vbk1lc3NhZ2UY",
+            "AiABKAlIABI+Cg5jb25uZWN0TWVzc2FnZRgDIAEoCzIkLkNvbm5lY3RNZXNz",
+            "YWdlLkNsaWVudENvbm5lY3RNZXNzYWdlSABCCQoHY29udGVudGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::ConnectMessage.ConnectMessageReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ServerMessage), global::SyncMessage.ServerMessage.Parser, new[]{ "ConnectMessage" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ClientMessage), global::SyncMessage.ClientMessage.Parser, new[]{ "ConnectMessage" }, new[]{ "Content" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ServerMessage), global::SyncMessage.ServerMessage.Parser, new[]{ "CommonMessage", "ConnectMessage" }, new[]{ "Content" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ClientMessage), global::SyncMessage.ClientMessage.Parser, new[]{ "ClientId", "CommonMessage", "ConnectMessage" }, new[]{ "Content" }, null, null, null)
           }));
     }
     #endregion
@@ -76,6 +77,9 @@ namespace SyncMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public ServerMessage(ServerMessage other) : this() {
       switch (other.ContentCase) {
+        case ContentOneofCase.CommonMessage:
+          CommonMessage = other.CommonMessage;
+          break;
         case ContentOneofCase.ConnectMessage:
           ConnectMessage = other.ConnectMessage.Clone();
           break;
@@ -90,8 +94,20 @@ namespace SyncMessage {
       return new ServerMessage(this);
     }
 
+    /// <summary>Field number for the "commonMessage" field.</summary>
+    public const int CommonMessageFieldNumber = 2;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string CommonMessage {
+      get { return contentCase_ == ContentOneofCase.CommonMessage ? (string) content_ : ""; }
+      set {
+        content_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        contentCase_ = ContentOneofCase.CommonMessage;
+      }
+    }
+
     /// <summary>Field number for the "connectMessage" field.</summary>
-    public const int ConnectMessageFieldNumber = 2;
+    public const int ConnectMessageFieldNumber = 3;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::ConnectMessage.ServerConnectMessage ConnectMessage {
@@ -106,7 +122,8 @@ namespace SyncMessage {
     /// <summary>Enum of possible cases for the "content" oneof.</summary>
     public enum ContentOneofCase {
       None = 0,
-      ConnectMessage = 2,
+      CommonMessage = 2,
+      ConnectMessage = 3,
     }
     private ContentOneofCase contentCase_ = ContentOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -137,6 +154,7 @@ namespace SyncMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (CommonMessage != other.CommonMessage) return false;
       if (!object.Equals(ConnectMessage, other.ConnectMessage)) return false;
       if (ContentCase != other.ContentCase) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -146,6 +164,7 @@ namespace SyncMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (contentCase_ == ContentOneofCase.CommonMessage) hash ^= CommonMessage.GetHashCode();
       if (contentCase_ == ContentOneofCase.ConnectMessage) hash ^= ConnectMessage.GetHashCode();
       hash ^= (int) contentCase_;
       if (_unknownFields != null) {
@@ -166,8 +185,12 @@ namespace SyncMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (contentCase_ == ContentOneofCase.ConnectMessage) {
+      if (contentCase_ == ContentOneofCase.CommonMessage) {
         output.WriteRawTag(18);
+        output.WriteString(CommonMessage);
+      }
+      if (contentCase_ == ContentOneofCase.ConnectMessage) {
+        output.WriteRawTag(26);
         output.WriteMessage(ConnectMessage);
       }
       if (_unknownFields != null) {
@@ -180,8 +203,12 @@ namespace SyncMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (contentCase_ == ContentOneofCase.ConnectMessage) {
+      if (contentCase_ == ContentOneofCase.CommonMessage) {
         output.WriteRawTag(18);
+        output.WriteString(CommonMessage);
+      }
+      if (contentCase_ == ContentOneofCase.ConnectMessage) {
+        output.WriteRawTag(26);
         output.WriteMessage(ConnectMessage);
       }
       if (_unknownFields != null) {
@@ -194,6 +221,9 @@ namespace SyncMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (contentCase_ == ContentOneofCase.CommonMessage) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(CommonMessage);
+      }
       if (contentCase_ == ContentOneofCase.ConnectMessage) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(ConnectMessage);
       }
@@ -210,6 +240,9 @@ namespace SyncMessage {
         return;
       }
       switch (other.ContentCase) {
+        case ContentOneofCase.CommonMessage:
+          CommonMessage = other.CommonMessage;
+          break;
         case ContentOneofCase.ConnectMessage:
           if (ConnectMessage == null) {
             ConnectMessage = new global::ConnectMessage.ServerConnectMessage();
@@ -234,6 +267,10 @@ namespace SyncMessage {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 18: {
+            CommonMessage = input.ReadString();
+            break;
+          }
+          case 26: {
             global::ConnectMessage.ServerConnectMessage subBuilder = new global::ConnectMessage.ServerConnectMessage();
             if (contentCase_ == ContentOneofCase.ConnectMessage) {
               subBuilder.MergeFrom(ConnectMessage);
@@ -258,6 +295,10 @@ namespace SyncMessage {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 18: {
+            CommonMessage = input.ReadString();
+            break;
+          }
+          case 26: {
             global::ConnectMessage.ServerConnectMessage subBuilder = new global::ConnectMessage.ServerConnectMessage();
             if (contentCase_ == ContentOneofCase.ConnectMessage) {
               subBuilder.MergeFrom(ConnectMessage);
@@ -307,7 +348,11 @@ namespace SyncMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public ClientMessage(ClientMessage other) : this() {
+      clientId_ = other.clientId_;
       switch (other.ContentCase) {
+        case ContentOneofCase.CommonMessage:
+          CommonMessage = other.CommonMessage;
+          break;
         case ContentOneofCase.ConnectMessage:
           ConnectMessage = other.ConnectMessage.Clone();
           break;
@@ -322,8 +367,32 @@ namespace SyncMessage {
       return new ClientMessage(this);
     }
 
+    /// <summary>Field number for the "clientId" field.</summary>
+    public const int ClientIdFieldNumber = 1;
+    private ulong clientId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong ClientId {
+      get { return clientId_; }
+      set {
+        clientId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "commonMessage" field.</summary>
+    public const int CommonMessageFieldNumber = 2;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string CommonMessage {
+      get { return contentCase_ == ContentOneofCase.CommonMessage ? (string) content_ : ""; }
+      set {
+        content_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        contentCase_ = ContentOneofCase.CommonMessage;
+      }
+    }
+
     /// <summary>Field number for the "connectMessage" field.</summary>
-    public const int ConnectMessageFieldNumber = 2;
+    public const int ConnectMessageFieldNumber = 3;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::ConnectMessage.ClientConnectMessage ConnectMessage {
@@ -338,7 +407,8 @@ namespace SyncMessage {
     /// <summary>Enum of possible cases for the "content" oneof.</summary>
     public enum ContentOneofCase {
       None = 0,
-      ConnectMessage = 2,
+      CommonMessage = 2,
+      ConnectMessage = 3,
     }
     private ContentOneofCase contentCase_ = ContentOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -369,6 +439,8 @@ namespace SyncMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (ClientId != other.ClientId) return false;
+      if (CommonMessage != other.CommonMessage) return false;
       if (!object.Equals(ConnectMessage, other.ConnectMessage)) return false;
       if (ContentCase != other.ContentCase) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -378,6 +450,8 @@ namespace SyncMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (ClientId != 0UL) hash ^= ClientId.GetHashCode();
+      if (contentCase_ == ContentOneofCase.CommonMessage) hash ^= CommonMessage.GetHashCode();
       if (contentCase_ == ContentOneofCase.ConnectMessage) hash ^= ConnectMessage.GetHashCode();
       hash ^= (int) contentCase_;
       if (_unknownFields != null) {
@@ -398,8 +472,16 @@ namespace SyncMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (contentCase_ == ContentOneofCase.ConnectMessage) {
+      if (ClientId != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(ClientId);
+      }
+      if (contentCase_ == ContentOneofCase.CommonMessage) {
         output.WriteRawTag(18);
+        output.WriteString(CommonMessage);
+      }
+      if (contentCase_ == ContentOneofCase.ConnectMessage) {
+        output.WriteRawTag(26);
         output.WriteMessage(ConnectMessage);
       }
       if (_unknownFields != null) {
@@ -412,8 +494,16 @@ namespace SyncMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (contentCase_ == ContentOneofCase.ConnectMessage) {
+      if (ClientId != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(ClientId);
+      }
+      if (contentCase_ == ContentOneofCase.CommonMessage) {
         output.WriteRawTag(18);
+        output.WriteString(CommonMessage);
+      }
+      if (contentCase_ == ContentOneofCase.ConnectMessage) {
+        output.WriteRawTag(26);
         output.WriteMessage(ConnectMessage);
       }
       if (_unknownFields != null) {
@@ -426,6 +516,12 @@ namespace SyncMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (ClientId != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(ClientId);
+      }
+      if (contentCase_ == ContentOneofCase.CommonMessage) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(CommonMessage);
+      }
       if (contentCase_ == ContentOneofCase.ConnectMessage) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(ConnectMessage);
       }
@@ -441,7 +537,13 @@ namespace SyncMessage {
       if (other == null) {
         return;
       }
+      if (other.ClientId != 0UL) {
+        ClientId = other.ClientId;
+      }
       switch (other.ContentCase) {
+        case ContentOneofCase.CommonMessage:
+          CommonMessage = other.CommonMessage;
+          break;
         case ContentOneofCase.ConnectMessage:
           if (ConnectMessage == null) {
             ConnectMessage = new global::ConnectMessage.ClientConnectMessage();
@@ -465,7 +567,15 @@ namespace SyncMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
+          case 8: {
+            ClientId = input.ReadUInt64();
+            break;
+          }
           case 18: {
+            CommonMessage = input.ReadString();
+            break;
+          }
+          case 26: {
             global::ConnectMessage.ClientConnectMessage subBuilder = new global::ConnectMessage.ClientConnectMessage();
             if (contentCase_ == ContentOneofCase.ConnectMessage) {
               subBuilder.MergeFrom(ConnectMessage);
@@ -489,7 +599,15 @@ namespace SyncMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
+          case 8: {
+            ClientId = input.ReadUInt64();
+            break;
+          }
           case 18: {
+            CommonMessage = input.ReadString();
+            break;
+          }
+          case 26: {
             global::ConnectMessage.ClientConnectMessage subBuilder = new global::ConnectMessage.ClientConnectMessage();
             if (contentCase_ == ContentOneofCase.ConnectMessage) {
               subBuilder.MergeFrom(ConnectMessage);

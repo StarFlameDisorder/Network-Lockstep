@@ -509,9 +509,6 @@ namespace ConnectMessage {
 
   }
 
-  /// <summary>
-  ///握手
-  /// </summary>
   public sealed partial class HandShakeResponse : pb::IMessage<HandShakeResponse>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage

@@ -38,16 +38,8 @@ namespace Network
                 _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
                 ClientMessage message = new ClientMessage
                 {
-
-                    ConnectMessage = new ClientConnectMessage
-                    {
-
-                        HandShakeMessage = new HandShakeRequest
-                        {
-                            Content = "TCP-这是客户端，建立连接",
-                            ClientId = 0
-                        }
-                    }
+                    ClientId = 0,
+                    CommonMessage = "TCP-这是客户端，建立连接"
                 };
                 Send(message.ToByteArray());
             }

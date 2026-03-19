@@ -37,7 +37,8 @@ struct ServerMessageDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMessageDefaultTypeInternal _ServerMessage_default_instance_;
 PROTOBUF_CONSTEXPR ClientMessage::ClientMessage(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.content_)*/{}
+    /*decltype(_impl_.clientid_)*/uint64_t{0u}
+  , /*decltype(_impl_.content_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
   , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct ClientMessageDefaultTypeInternal {
@@ -62,6 +63,7 @@ const uint32_t TableStruct_SyncMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   ::_pbi::kInvalidFieldOffsetTag,
+  ::_pbi::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::SyncMessage::ServerMessage, _impl_.content_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::SyncMessage::ClientMessage, _internal_metadata_),
@@ -69,12 +71,14 @@ const uint32_t TableStruct_SyncMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   PROTOBUF_FIELD_OFFSET(::SyncMessage::ClientMessage, _impl_._oneof_case_[0]),
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::SyncMessage::ClientMessage, _impl_.clientid_),
+  ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::SyncMessage::ClientMessage, _impl_.content_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::SyncMessage::ServerMessage)},
-  { 8, -1, -1, sizeof(::SyncMessage::ClientMessage)},
+  { 9, -1, -1, sizeof(::SyncMessage::ClientMessage)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -84,19 +88,20 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_SyncMessage_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\021SyncMessage.proto\022\013SyncMessage\032\024Connec"
-  "tMessage.proto\"Z\n\rServerMessage\022>\n\016conne"
-  "ctMessage\030\002 \001(\0132$.ConnectMessage.ServerC"
-  "onnectMessageH\000B\t\n\007content\"Z\n\rClientMess"
-  "age\022>\n\016connectMessage\030\002 \001(\0132$.ConnectMes"
-  "sage.ClientConnectMessageH\000B\t\n\007contentb\006"
-  "proto3"
+  "tMessage.proto\"s\n\rServerMessage\022\027\n\rcommo"
+  "nMessage\030\002 \001(\tH\000\022>\n\016connectMessage\030\003 \001(\013"
+  "2$.ConnectMessage.ServerConnectMessageH\000"
+  "B\t\n\007content\"\205\001\n\rClientMessage\022\020\n\010clientI"
+  "d\030\001 \001(\004\022\027\n\rcommonMessage\030\002 \001(\tH\000\022>\n\016conn"
+  "ectMessage\030\003 \001(\0132$.ConnectMessage.Client"
+  "ConnectMessageH\000B\t\n\007contentb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_SyncMessage_2eproto_deps[1] = {
   &::descriptor_table_ConnectMessage_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_SyncMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_SyncMessage_2eproto = {
-    false, false, 246, descriptor_table_protodef_SyncMessage_2eproto,
+    false, false, 315, descriptor_table_protodef_SyncMessage_2eproto,
     "SyncMessage.proto",
     &descriptor_table_SyncMessage_2eproto_once, descriptor_table_SyncMessage_2eproto_deps, 1, 2,
     schemas, file_default_instances, TableStruct_SyncMessage_2eproto::offsets,
@@ -163,6 +168,10 @@ ServerMessage::ServerMessage(const ServerMessage& from)
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   clear_has_content();
   switch (from.content_case()) {
+    case kCommonMessage: {
+      _this->_internal_set_commonmessage(from._internal_commonmessage());
+      break;
+    }
     case kConnectMessage: {
       _this->_internal_mutable_connectmessage()->::ConnectMessage::ServerConnectMessage::MergeFrom(
           from._internal_connectmessage());
@@ -210,6 +219,10 @@ void ServerMessage::SetCachedSize(int size) const {
 void ServerMessage::clear_content() {
 // @@protoc_insertion_point(one_of_clear_start:SyncMessage.ServerMessage)
   switch (content_case()) {
+    case kCommonMessage: {
+      _impl_.content_.commonmessage_.Destroy();
+      break;
+    }
     case kConnectMessage: {
       if (GetArenaForAllocation() == nullptr) {
         delete _impl_.content_.connectmessage_;
@@ -240,9 +253,19 @@ const char* ServerMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext*
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .ConnectMessage.ServerConnectMessage connectMessage = 2;
+      // string commonMessage = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_commonmessage();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "SyncMessage.ServerMessage.commonMessage"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .ConnectMessage.ServerConnectMessage connectMessage = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_connectmessage(), ptr);
           CHK_(ptr);
         } else
@@ -277,10 +300,20 @@ uint8_t* ServerMessage::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .ConnectMessage.ServerConnectMessage connectMessage = 2;
+  // string commonMessage = 2;
+  if (_internal_has_commonmessage()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_commonmessage().data(), static_cast<int>(this->_internal_commonmessage().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "SyncMessage.ServerMessage.commonMessage");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_commonmessage(), target);
+  }
+
+  // .ConnectMessage.ServerConnectMessage connectMessage = 3;
   if (_internal_has_connectmessage()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, _Internal::connectmessage(this),
+      InternalWriteMessage(3, _Internal::connectmessage(this),
         _Internal::connectmessage(this).GetCachedSize(), target, stream);
   }
 
@@ -301,7 +334,14 @@ size_t ServerMessage::ByteSizeLong() const {
   (void) cached_has_bits;
 
   switch (content_case()) {
-    // .ConnectMessage.ServerConnectMessage connectMessage = 2;
+    // string commonMessage = 2;
+    case kCommonMessage: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_commonmessage());
+      break;
+    }
+    // .ConnectMessage.ServerConnectMessage connectMessage = 3;
     case kConnectMessage: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -331,6 +371,10 @@ void ServerMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   (void) cached_has_bits;
 
   switch (from.content_case()) {
+    case kCommonMessage: {
+      _this->_internal_set_commonmessage(from._internal_commonmessage());
+      break;
+    }
     case kConnectMessage: {
       _this->_internal_mutable_connectmessage()->::ConnectMessage::ServerConnectMessage::MergeFrom(
           from._internal_connectmessage());
@@ -412,13 +456,19 @@ ClientMessage::ClientMessage(const ClientMessage& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ClientMessage* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.content_){}
+      decltype(_impl_.clientid_){}
+    , decltype(_impl_.content_){}
     , /*decltype(_impl_._cached_size_)*/{}
     , /*decltype(_impl_._oneof_case_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.clientid_ = from._impl_.clientid_;
   clear_has_content();
   switch (from.content_case()) {
+    case kCommonMessage: {
+      _this->_internal_set_commonmessage(from._internal_commonmessage());
+      break;
+    }
     case kConnectMessage: {
       _this->_internal_mutable_connectmessage()->::ConnectMessage::ClientConnectMessage::MergeFrom(
           from._internal_connectmessage());
@@ -436,7 +486,8 @@ inline void ClientMessage::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.content_){}
+      decltype(_impl_.clientid_){uint64_t{0u}}
+    , decltype(_impl_.content_){}
     , /*decltype(_impl_._cached_size_)*/{}
     , /*decltype(_impl_._oneof_case_)*/{}
   };
@@ -466,6 +517,10 @@ void ClientMessage::SetCachedSize(int size) const {
 void ClientMessage::clear_content() {
 // @@protoc_insertion_point(one_of_clear_start:SyncMessage.ClientMessage)
   switch (content_case()) {
+    case kCommonMessage: {
+      _impl_.content_.commonmessage_.Destroy();
+      break;
+    }
     case kConnectMessage: {
       if (GetArenaForAllocation() == nullptr) {
         delete _impl_.content_.connectmessage_;
@@ -486,6 +541,7 @@ void ClientMessage::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.clientid_ = uint64_t{0u};
   clear_content();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -496,9 +552,27 @@ const char* ClientMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext*
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .ConnectMessage.ClientConnectMessage connectMessage = 2;
+      // uint64 clientId = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.clientid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string commonMessage = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_commonmessage();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "SyncMessage.ClientMessage.commonMessage"));
+        } else
+          goto handle_unusual;
+        continue;
+      // .ConnectMessage.ClientConnectMessage connectMessage = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_connectmessage(), ptr);
           CHK_(ptr);
         } else
@@ -533,10 +607,26 @@ uint8_t* ClientMessage::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .ConnectMessage.ClientConnectMessage connectMessage = 2;
+  // uint64 clientId = 1;
+  if (this->_internal_clientid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_clientid(), target);
+  }
+
+  // string commonMessage = 2;
+  if (_internal_has_commonmessage()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_commonmessage().data(), static_cast<int>(this->_internal_commonmessage().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "SyncMessage.ClientMessage.commonMessage");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_commonmessage(), target);
+  }
+
+  // .ConnectMessage.ClientConnectMessage connectMessage = 3;
   if (_internal_has_connectmessage()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, _Internal::connectmessage(this),
+      InternalWriteMessage(3, _Internal::connectmessage(this),
         _Internal::connectmessage(this).GetCachedSize(), target, stream);
   }
 
@@ -556,8 +646,20 @@ size_t ClientMessage::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  // uint64 clientId = 1;
+  if (this->_internal_clientid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_clientid());
+  }
+
   switch (content_case()) {
-    // .ConnectMessage.ClientConnectMessage connectMessage = 2;
+    // string commonMessage = 2;
+    case kCommonMessage: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_commonmessage());
+      break;
+    }
+    // .ConnectMessage.ClientConnectMessage connectMessage = 3;
     case kConnectMessage: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -586,7 +688,14 @@ void ClientMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from._internal_clientid() != 0) {
+    _this->_internal_set_clientid(from._internal_clientid());
+  }
   switch (from.content_case()) {
+    case kCommonMessage: {
+      _this->_internal_set_commonmessage(from._internal_commonmessage());
+      break;
+    }
     case kConnectMessage: {
       _this->_internal_mutable_connectmessage()->::ConnectMessage::ClientConnectMessage::MergeFrom(
           from._internal_connectmessage());
@@ -613,6 +722,7 @@ bool ClientMessage::IsInitialized() const {
 void ClientMessage::InternalSwap(ClientMessage* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_.clientid_, other->_impl_.clientid_);
   swap(_impl_.content_, other->_impl_.content_);
   swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }

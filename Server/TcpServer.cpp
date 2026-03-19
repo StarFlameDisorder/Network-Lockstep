@@ -2,7 +2,7 @@
 // Created by StarFlame on 2026/2/14.
 //
 
-#define FILE_PREFIX "TCP:"//日志前缀
+#define FILE_PREFIX "TcpServer:"//日志前缀
 #define LOCAL_LOG_LEVEL LogLevel::Debug//局部日志等级
 
 #include "TcpServer.h"
@@ -16,7 +16,7 @@
 
 TcpServer::TcpServer(NetworkDispatcher *networkDispatcher,QObject* parent):QTcpServer(parent),_networkDispatcher(networkDispatcher)
 {
-    Log_Info()<<"TcpServer::初始化TCP服务器 端口："<<1975;
+    Log_Info()<<"初始化TCP服务器 端口："<<1975;
     connect(this,&QTcpServer::newConnection,this,&TcpServer::tcpServerConnectionNew);
     connect(this,&TcpServer::tcpReadyRead,this,&TcpServer::receiveMessage);
     listen(QHostAddress::Any, 1975);

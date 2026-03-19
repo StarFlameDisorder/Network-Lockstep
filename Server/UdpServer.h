@@ -38,20 +38,18 @@ class UdpServer:public QObject
 public:
     UdpServer(NetworkDispatcher *networkDispatcher,QObject *parent=nullptr);
     void sendMessage(const QHostAddress& address,const quint16& port,const QByteArray& message);
-
-
+    std::string getPeerAddressInfo(const QHostAddress& address,const quint16 &port)const;
+    std::string getPeerAddressInfo(const UdpEndPoint& udpEndPoint)const;
 private:
     void receiveSocketMessage();
-    std::string getPeerAddressInfo(const QHostAddress& address,const quint16 &port)const;
-    void receiveMessage(const QByteArray& message,const QHostAddress& address,const quint16& port);
+    void receiveMessage(const QHostAddress& address,const quint16& port,const QByteArray& message);
 
 
     QUdpSocket *m_socket;
     QSet<UdpEndPoint> m_udpEndPoints;
-
     NetworkDispatcher *_networkDispatcher;
 signals:
-    void udpReadyRead(const QByteArray& message,const QHostAddress& address,const quint16& port);
+    void udpReadyRead(const QHostAddress& address,const quint16& port,const QByteArray& message);
 
 };
 

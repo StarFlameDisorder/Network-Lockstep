@@ -4563,7 +4563,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9db4a53f0ba4a009a3c686a52aeee4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GamePlay.GameSync
-  player1: {fileID: 643124923}
+  player1: {fileID: 1230610679}
+  player2: {fileID: 643124923}
 --- !u!224 &1425003271 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3267227213892833681, guid: 10b0154c5b2c12f48a189c700e09507f, type: 3}

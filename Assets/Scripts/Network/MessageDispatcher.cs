@@ -46,6 +46,9 @@ namespace Network
                 case ServerMessage.ContentOneofCase.ConnectMessage:
                     HandleConnectMessage(message.ConnectMessage);
                     break;
+                case ServerMessage.ContentOneofCase.GameSyncMessage:
+                    TriggerHandler(Signals.GameSync,message.GameSyncMessage);
+                    break;
                 default:
                     Debug.Log("HandleMessage:未知类型"+message.ContentCase);
                     break;

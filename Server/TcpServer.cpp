@@ -23,17 +23,6 @@ TcpServer::TcpServer(NetworkDispatcher *networkDispatcher,QObject* parent):QTcpS
     listen(QHostAddress::Any, 1975);
 }
 
-void TcpServer::sendMessageById(quint64 id, QString message)
-{
-    QTcpSocket *tcpSocket=m_tcpIdSocketMap.value(id);
-    tcpSocket->write(message.toUtf8());
-}
-
-void TcpServer::sendMessageBySocket(QTcpSocket* socket, QString message)
-{
-    socket->write(message.toUtf8());
-}
-
 void TcpServer::tcpServerConnectionNew()
 {
     QTcpSocket *newTcpSocket=nextPendingConnection();
@@ -41,7 +30,6 @@ void TcpServer::tcpServerConnectionNew()
     m_tcpNextId++;
     Log_Info()<<"新连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
 
-    m_tcpIdSocketMap.insert(id,newTcpSocket);
     m_tcpMessageBuffer.insert(newTcpSocket,QByteArray());
     quint64 clientId=_networkDispatcher->addClient();
 
@@ -64,7 +52,6 @@ void TcpServer::tcpServerConnectionNew()
     connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket,id]()
     {
         Log_Info()<<"断开连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
-        m_tcpIdSocketMap.remove(id);
         m_tcpMessageBuffer.remove(newTcpSocket);
         disconnect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
 

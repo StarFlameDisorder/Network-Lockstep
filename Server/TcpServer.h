@@ -14,8 +14,6 @@ class TcpServer:public QTcpServer
     Q_OBJECT
 public:
     TcpServer(NetworkDispatcher *networkDispatcher,QObject *parent = nullptr);
-    void sendMessageById(quint64 id,QString message);
-    void sendMessageBySocket(QTcpSocket* socket,QString message);
     std::string getTcpSocketInfo(const QTcpSocket *socket)const;
     void sendMessage(QTcpSocket *socket,QByteArray message);
 private:
@@ -25,9 +23,7 @@ private:
     void receiveSocketMessage();
     void receiveMessage(QTcpSocket *socket,QByteArray message);
 
-    QHash<quint64,QTcpSocket*> m_tcpIdSocketMap;
     quint64 m_tcpNextId=1;
-    qint32 m_messageId=0;
     QHash<QTcpSocket*,QByteArray> m_tcpMessageBuffer;
     NetworkDispatcher *_networkDispatcher;
 

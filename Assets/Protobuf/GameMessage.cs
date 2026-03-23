@@ -26,14 +26,14 @@ namespace GameMessage {
           string.Concat(
             "ChFHYW1lTWVzc2FnZS5wcm90bxILR2FtZU1lc3NhZ2UaD1VuaXR5TWF0aC5w",
             "cm90byJHCg9HYW1lU3luY01lc3NhZ2USKQoGcGxheWVyGAEgASgLMhcuR2Ft",
-            "ZU1lc3NhZ2UuUGxheWVyU3luY0gAQgkKB2NvbnRlbnQiMwoKUGxheWVyU3lu",
-            "YxIlCghwb3NpdGlvbhgBIAEoCzITLlVuaXR5TWF0aC5WZWN0b3IzRGIGcHJv",
-            "dG8z"));
+            "ZU1lc3NhZ2UuUGxheWVyU3luY0gAQgkKB2NvbnRlbnQiQQoKUGxheWVyU3lu",
+            "YxIQCghjbGllbnRJZBgBIAEoBBIhCgRtb3ZlGAIgASgLMhMuVW5pdHlNYXRo",
+            "LlZlY3RvcjNEYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::UnityMath.UnityMathReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSyncMessage), global::GameMessage.GameSyncMessage.Parser, new[]{ "Player" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSync), global::GameMessage.PlayerSync.Parser, new[]{ "Position" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSync), global::GameMessage.PlayerSync.Parser, new[]{ "ClientId", "Move" }, null, null, null, null)
           }));
     }
     #endregion
@@ -306,7 +306,8 @@ namespace GameMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public PlayerSync(PlayerSync other) : this() {
-      position_ = other.position_ != null ? other.position_.Clone() : null;
+      clientId_ = other.clientId_;
+      move_ = other.move_ != null ? other.move_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -316,15 +317,27 @@ namespace GameMessage {
       return new PlayerSync(this);
     }
 
-    /// <summary>Field number for the "position" field.</summary>
-    public const int PositionFieldNumber = 1;
-    private global::UnityMath.Vector3D position_;
+    /// <summary>Field number for the "clientId" field.</summary>
+    public const int ClientIdFieldNumber = 1;
+    private ulong clientId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::UnityMath.Vector3D Position {
-      get { return position_; }
+    public ulong ClientId {
+      get { return clientId_; }
       set {
-        position_ = value;
+        clientId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "move" field.</summary>
+    public const int MoveFieldNumber = 2;
+    private global::UnityMath.Vector3D move_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::UnityMath.Vector3D Move {
+      get { return move_; }
+      set {
+        move_ = value;
       }
     }
 
@@ -343,7 +356,8 @@ namespace GameMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Position, other.Position)) return false;
+      if (ClientId != other.ClientId) return false;
+      if (!object.Equals(Move, other.Move)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -351,7 +365,8 @@ namespace GameMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (position_ != null) hash ^= Position.GetHashCode();
+      if (ClientId != 0UL) hash ^= ClientId.GetHashCode();
+      if (move_ != null) hash ^= Move.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -370,9 +385,13 @@ namespace GameMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (position_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(Position);
+      if (ClientId != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(ClientId);
+      }
+      if (move_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Move);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -384,9 +403,13 @@ namespace GameMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (position_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(Position);
+      if (ClientId != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(ClientId);
+      }
+      if (move_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Move);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -398,8 +421,11 @@ namespace GameMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (position_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
+      if (ClientId != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(ClientId);
+      }
+      if (move_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Move);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -413,11 +439,14 @@ namespace GameMessage {
       if (other == null) {
         return;
       }
-      if (other.position_ != null) {
-        if (position_ == null) {
-          Position = new global::UnityMath.Vector3D();
+      if (other.ClientId != 0UL) {
+        ClientId = other.ClientId;
+      }
+      if (other.move_ != null) {
+        if (move_ == null) {
+          Move = new global::UnityMath.Vector3D();
         }
-        Position.MergeFrom(other.Position);
+        Move.MergeFrom(other.Move);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -434,11 +463,15 @@ namespace GameMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
-            if (position_ == null) {
-              Position = new global::UnityMath.Vector3D();
+          case 8: {
+            ClientId = input.ReadUInt64();
+            break;
+          }
+          case 18: {
+            if (move_ == null) {
+              Move = new global::UnityMath.Vector3D();
             }
-            input.ReadMessage(Position);
+            input.ReadMessage(Move);
             break;
           }
         }
@@ -456,11 +489,15 @@ namespace GameMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
-            if (position_ == null) {
-              Position = new global::UnityMath.Vector3D();
+          case 8: {
+            ClientId = input.ReadUInt64();
+            break;
+          }
+          case 18: {
+            if (move_ == null) {
+              Move = new global::UnityMath.Vector3D();
             }
-            input.ReadMessage(Position);
+            input.ReadMessage(Move);
             break;
           }
         }

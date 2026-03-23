@@ -36,6 +36,10 @@ add_executable(Server main.cpp
         protobuf/output/SyncMessage.pb.h
         protobuf/output/ConnectMessage.pb.cc
         protobuf/output/ConnectMessage.pb.h
+        protobuf/output/GameMessage.pb.cc
+        protobuf/output/GameMessage.pb.h
+        protobuf/output/UnityMath.pb.cc
+        protobuf/output/UnityMath.pb.h
 )
 
 

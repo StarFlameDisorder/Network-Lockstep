@@ -37,7 +37,8 @@ struct GameSyncMessageDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GameSyncMessageDefaultTypeInternal _GameSyncMessage_default_instance_;
 PROTOBUF_CONSTEXPR PlayerSync::PlayerSync(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.position_)*/nullptr
+    /*decltype(_impl_.move_)*/nullptr
+  , /*decltype(_impl_.clientid_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct PlayerSyncDefaultTypeInternal {
   PROTOBUF_CONSTEXPR PlayerSyncDefaultTypeInternal()
@@ -68,7 +69,8 @@ const uint32_t TableStruct_GameMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSync, _impl_.position_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSync, _impl_.clientid_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSync, _impl_.move_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::GameMessage::GameSyncMessage)},
@@ -84,15 +86,15 @@ const char descriptor_table_protodef_GameMessage_2eproto[] PROTOBUF_SECTION_VARI
   "\n\021GameMessage.proto\022\013GameMessage\032\017UnityM"
   "ath.proto\"G\n\017GameSyncMessage\022)\n\006player\030\001"
   " \001(\0132\027.GameMessage.PlayerSyncH\000B\t\n\007conte"
-  "nt\"3\n\nPlayerSync\022%\n\010position\030\001 \001(\0132\023.Uni"
-  "tyMath.Vector3Db\006proto3"
+  "nt\"A\n\nPlayerSync\022\020\n\010clientId\030\001 \001(\004\022!\n\004mo"
+  "ve\030\002 \001(\0132\023.UnityMath.Vector3Db\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_GameMessage_2eproto_deps[1] = {
   &::descriptor_table_UnityMath_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_GameMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_GameMessage_2eproto = {
-    false, false, 183, descriptor_table_protodef_GameMessage_2eproto,
+    false, false, 197, descriptor_table_protodef_GameMessage_2eproto,
     "GameMessage.proto",
     &descriptor_table_GameMessage_2eproto_once, descriptor_table_GameMessage_2eproto_deps, 1, 2,
     schemas, file_default_instances, TableStruct_GameMessage_2eproto::offsets,
@@ -358,18 +360,18 @@ void GameSyncMessage::InternalSwap(GameSyncMessage* other) {
 
 class PlayerSync::_Internal {
  public:
-  static const ::UnityMath::Vector3D& position(const PlayerSync* msg);
+  static const ::UnityMath::Vector3D& move(const PlayerSync* msg);
 };
 
 const ::UnityMath::Vector3D&
-PlayerSync::_Internal::position(const PlayerSync* msg) {
-  return *msg->_impl_.position_;
+PlayerSync::_Internal::move(const PlayerSync* msg) {
+  return *msg->_impl_.move_;
 }
-void PlayerSync::clear_position() {
-  if (GetArenaForAllocation() == nullptr && _impl_.position_ != nullptr) {
-    delete _impl_.position_;
+void PlayerSync::clear_move() {
+  if (GetArenaForAllocation() == nullptr && _impl_.move_ != nullptr) {
+    delete _impl_.move_;
   }
-  _impl_.position_ = nullptr;
+  _impl_.move_ = nullptr;
 }
 PlayerSync::PlayerSync(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -381,13 +383,15 @@ PlayerSync::PlayerSync(const PlayerSync& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   PlayerSync* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.position_){nullptr}
+      decltype(_impl_.move_){nullptr}
+    , decltype(_impl_.clientid_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_position()) {
-    _this->_impl_.position_ = new ::UnityMath::Vector3D(*from._impl_.position_);
+  if (from._internal_has_move()) {
+    _this->_impl_.move_ = new ::UnityMath::Vector3D(*from._impl_.move_);
   }
+  _this->_impl_.clientid_ = from._impl_.clientid_;
   // @@protoc_insertion_point(copy_constructor:GameMessage.PlayerSync)
 }
 
@@ -396,7 +400,8 @@ inline void PlayerSync::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.position_){nullptr}
+      decltype(_impl_.move_){nullptr}
+    , decltype(_impl_.clientid_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -412,7 +417,7 @@ PlayerSync::~PlayerSync() {
 
 inline void PlayerSync::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete _impl_.position_;
+  if (this != internal_default_instance()) delete _impl_.move_;
 }
 
 void PlayerSync::SetCachedSize(int size) const {
@@ -425,10 +430,11 @@ void PlayerSync::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArenaForAllocation() == nullptr && _impl_.position_ != nullptr) {
-    delete _impl_.position_;
+  if (GetArenaForAllocation() == nullptr && _impl_.move_ != nullptr) {
+    delete _impl_.move_;
   }
-  _impl_.position_ = nullptr;
+  _impl_.move_ = nullptr;
+  _impl_.clientid_ = uint64_t{0u};
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -438,10 +444,18 @@ const char* PlayerSync::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .UnityMath.Vector3D position = 1;
+      // uint64 clientId = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          ptr = ctx->ParseMessage(_internal_mutable_position(), ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.clientid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .UnityMath.Vector3D move = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_move(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -475,11 +489,17 @@ uint8_t* PlayerSync::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .UnityMath.Vector3D position = 1;
-  if (this->_internal_has_position()) {
+  // uint64 clientId = 1;
+  if (this->_internal_clientid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_clientid(), target);
+  }
+
+  // .UnityMath.Vector3D move = 2;
+  if (this->_internal_has_move()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, _Internal::position(this),
-        _Internal::position(this).GetCachedSize(), target, stream);
+      InternalWriteMessage(2, _Internal::move(this),
+        _Internal::move(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -498,11 +518,16 @@ size_t PlayerSync::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .UnityMath.Vector3D position = 1;
-  if (this->_internal_has_position()) {
+  // .UnityMath.Vector3D move = 2;
+  if (this->_internal_has_move()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.position_);
+        *_impl_.move_);
+  }
+
+  // uint64 clientId = 1;
+  if (this->_internal_clientid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_clientid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -523,9 +548,12 @@ void PlayerSync::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_position()) {
-    _this->_internal_mutable_position()->::UnityMath::Vector3D::MergeFrom(
-        from._internal_position());
+  if (from._internal_has_move()) {
+    _this->_internal_mutable_move()->::UnityMath::Vector3D::MergeFrom(
+        from._internal_move());
+  }
+  if (from._internal_clientid() != 0) {
+    _this->_internal_set_clientid(from._internal_clientid());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -544,7 +572,12 @@ bool PlayerSync::IsInitialized() const {
 void PlayerSync::InternalSwap(PlayerSync* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_.position_, other->_impl_.position_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(PlayerSync, _impl_.clientid_)
+      + sizeof(PlayerSync::_impl_.clientid_)
+      - PROTOBUF_FIELD_OFFSET(PlayerSync, _impl_.move_)>(
+          reinterpret_cast<char*>(&_impl_.move_),
+          reinterpret_cast<char*>(&other->_impl_.move_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata PlayerSync::GetMetadata() const {

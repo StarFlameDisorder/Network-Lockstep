@@ -14,6 +14,7 @@
 #include "protobuf/output/SyncMessage.pb.h"
 #include "protobuf/output/ConnectMessage.pb.h"
 
+
 TcpServer::TcpServer(NetworkDispatcher *networkDispatcher,QObject* parent):QTcpServer(parent),_networkDispatcher(networkDispatcher)
 {
     Log_Info()<<"初始化TCP服务器 端口："<<1975;

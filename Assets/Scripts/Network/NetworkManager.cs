@@ -97,5 +97,10 @@ namespace Network
             _tcpSocket.BindClientId(clientId);
             _udpSocket.bindClientId(clientId);
         }
+
+        public UInt64 GetClientId()
+        {
+            return clientId;
+        }
     }
 }

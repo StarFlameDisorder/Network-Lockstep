@@ -356,25 +356,35 @@ class PlayerSync final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kPositionFieldNumber = 1,
+    kMoveFieldNumber = 2,
+    kClientIdFieldNumber = 1,
   };
-  // .UnityMath.Vector3D position = 1;
-  bool has_position() const;
+  // .UnityMath.Vector3D move = 2;
+  bool has_move() const;
   private:
-  bool _internal_has_position() const;
+  bool _internal_has_move() const;
   public:
-  void clear_position();
-  const ::UnityMath::Vector3D& position() const;
-  PROTOBUF_NODISCARD ::UnityMath::Vector3D* release_position();
-  ::UnityMath::Vector3D* mutable_position();
-  void set_allocated_position(::UnityMath::Vector3D* position);
+  void clear_move();
+  const ::UnityMath::Vector3D& move() const;
+  PROTOBUF_NODISCARD ::UnityMath::Vector3D* release_move();
+  ::UnityMath::Vector3D* mutable_move();
+  void set_allocated_move(::UnityMath::Vector3D* move);
   private:
-  const ::UnityMath::Vector3D& _internal_position() const;
-  ::UnityMath::Vector3D* _internal_mutable_position();
+  const ::UnityMath::Vector3D& _internal_move() const;
+  ::UnityMath::Vector3D* _internal_mutable_move();
   public:
-  void unsafe_arena_set_allocated_position(
-      ::UnityMath::Vector3D* position);
-  ::UnityMath::Vector3D* unsafe_arena_release_position();
+  void unsafe_arena_set_allocated_move(
+      ::UnityMath::Vector3D* move);
+  ::UnityMath::Vector3D* unsafe_arena_release_move();
+
+  // uint64 clientId = 1;
+  void clear_clientid();
+  uint64_t clientid() const;
+  void set_clientid(uint64_t value);
+  private:
+  uint64_t _internal_clientid() const;
+  void _internal_set_clientid(uint64_t value);
+  public:
 
   // @@protoc_insertion_point(class_scope:GameMessage.PlayerSync)
  private:
@@ -384,7 +394,8 @@ class PlayerSync final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::UnityMath::Vector3D* position_;
+    ::UnityMath::Vector3D* move_;
+    uint64_t clientid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -488,39 +499,59 @@ inline GameSyncMessage::ContentCase GameSyncMessage::content_case() const {
 
 // PlayerSync
 
-// .UnityMath.Vector3D position = 1;
-inline bool PlayerSync::_internal_has_position() const {
-  return this != internal_default_instance() && _impl_.position_ != nullptr;
+// uint64 clientId = 1;
+inline void PlayerSync::clear_clientid() {
+  _impl_.clientid_ = uint64_t{0u};
 }
-inline bool PlayerSync::has_position() const {
-  return _internal_has_position();
+inline uint64_t PlayerSync::_internal_clientid() const {
+  return _impl_.clientid_;
 }
-inline const ::UnityMath::Vector3D& PlayerSync::_internal_position() const {
-  const ::UnityMath::Vector3D* p = _impl_.position_;
+inline uint64_t PlayerSync::clientid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.clientId)
+  return _internal_clientid();
+}
+inline void PlayerSync::_internal_set_clientid(uint64_t value) {
+  
+  _impl_.clientid_ = value;
+}
+inline void PlayerSync::set_clientid(uint64_t value) {
+  _internal_set_clientid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.PlayerSync.clientId)
+}
+
+// .UnityMath.Vector3D move = 2;
+inline bool PlayerSync::_internal_has_move() const {
+  return this != internal_default_instance() && _impl_.move_ != nullptr;
+}
+inline bool PlayerSync::has_move() const {
+  return _internal_has_move();
+}
+inline const ::UnityMath::Vector3D& PlayerSync::_internal_move() const {
+  const ::UnityMath::Vector3D* p = _impl_.move_;
   return p != nullptr ? *p : reinterpret_cast<const ::UnityMath::Vector3D&>(
       ::UnityMath::_Vector3D_default_instance_);
 }
-inline const ::UnityMath::Vector3D& PlayerSync::position() const {
-  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.position)
-  return _internal_position();
+inline const ::UnityMath::Vector3D& PlayerSync::move() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.move)
+  return _internal_move();
 }
-inline void PlayerSync::unsafe_arena_set_allocated_position(
-    ::UnityMath::Vector3D* position) {
+inline void PlayerSync::unsafe_arena_set_allocated_move(
+    ::UnityMath::Vector3D* move) {
   if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.position_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.move_);
   }
-  _impl_.position_ = position;
-  if (position) {
+  _impl_.move_ = move;
+  if (move) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:GameMessage.PlayerSync.position)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:GameMessage.PlayerSync.move)
 }
-inline ::UnityMath::Vector3D* PlayerSync::release_position() {
+inline ::UnityMath::Vector3D* PlayerSync::release_move() {
   
-  ::UnityMath::Vector3D* temp = _impl_.position_;
-  _impl_.position_ = nullptr;
+  ::UnityMath::Vector3D* temp = _impl_.move_;
+  _impl_.move_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
   temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
@@ -532,45 +563,45 @@ inline ::UnityMath::Vector3D* PlayerSync::release_position() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::UnityMath::Vector3D* PlayerSync::unsafe_arena_release_position() {
-  // @@protoc_insertion_point(field_release:GameMessage.PlayerSync.position)
+inline ::UnityMath::Vector3D* PlayerSync::unsafe_arena_release_move() {
+  // @@protoc_insertion_point(field_release:GameMessage.PlayerSync.move)
   
-  ::UnityMath::Vector3D* temp = _impl_.position_;
-  _impl_.position_ = nullptr;
+  ::UnityMath::Vector3D* temp = _impl_.move_;
+  _impl_.move_ = nullptr;
   return temp;
 }
-inline ::UnityMath::Vector3D* PlayerSync::_internal_mutable_position() {
+inline ::UnityMath::Vector3D* PlayerSync::_internal_mutable_move() {
   
-  if (_impl_.position_ == nullptr) {
+  if (_impl_.move_ == nullptr) {
     auto* p = CreateMaybeMessage<::UnityMath::Vector3D>(GetArenaForAllocation());
-    _impl_.position_ = p;
+    _impl_.move_ = p;
   }
-  return _impl_.position_;
+  return _impl_.move_;
 }
-inline ::UnityMath::Vector3D* PlayerSync::mutable_position() {
-  ::UnityMath::Vector3D* _msg = _internal_mutable_position();
-  // @@protoc_insertion_point(field_mutable:GameMessage.PlayerSync.position)
+inline ::UnityMath::Vector3D* PlayerSync::mutable_move() {
+  ::UnityMath::Vector3D* _msg = _internal_mutable_move();
+  // @@protoc_insertion_point(field_mutable:GameMessage.PlayerSync.move)
   return _msg;
 }
-inline void PlayerSync::set_allocated_position(::UnityMath::Vector3D* position) {
+inline void PlayerSync::set_allocated_move(::UnityMath::Vector3D* move) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.position_);
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.move_);
   }
-  if (position) {
+  if (move) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
         ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
-                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(position));
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(move));
     if (message_arena != submessage_arena) {
-      position = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, position, submessage_arena);
+      move = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, move, submessage_arena);
     }
     
   } else {
     
   }
-  _impl_.position_ = position;
-  // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSync.position)
+  _impl_.move_ = move;
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSync.move)
 }
 
 #ifdef __GNUC__

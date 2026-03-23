@@ -328,6 +328,9 @@ namespace ConnectMessage {
 
     /// <summary>Field number for the "handShakeMessage" field.</summary>
     public const int HandShakeMessageFieldNumber = 2;
+    /// <summary>
+    ///弃用
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::ConnectMessage.HandShakeRequest HandShakeMessage {
@@ -738,6 +741,9 @@ namespace ConnectMessage {
 
   }
 
+  /// <summary>
+  ///弃用
+  /// </summary>
   public sealed partial class HandShakeRequest : pb::IMessage<HandShakeRequest>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage

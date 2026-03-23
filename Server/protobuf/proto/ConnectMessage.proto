@@ -15,18 +15,18 @@ message ServerConnectMessage{
 
 message ClientConnectMessage{
     oneof content {
-        HandShakeRequest handShakeMessage = 2;
+        HandShakeRequest handShakeMessage = 2;//弃用
     }
 }
 
 //握手
 
-message HandShakeResponse{//弃用
+message HandShakeResponse{
     string content = 1;
     uint64 clientId = 2;//仅用于tcp回复
 }
 
-message HandShakeRequest{
+message HandShakeRequest{//弃用
     string content = 1;
     uint64 clientId= 2;//仅用于udp请求
 }

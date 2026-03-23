@@ -12,6 +12,6 @@ message GameSyncMessage{
 
 message PlayerSync
 {
-    UnityMath.Vector3D position= 1;
-
+    uint64 clientId = 1;
+    UnityMath.Vector3D move= 2;
 }

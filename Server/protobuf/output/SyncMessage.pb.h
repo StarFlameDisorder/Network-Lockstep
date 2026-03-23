@@ -31,6 +31,7 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
 #include "ConnectMessage.pb.h"
+#include "GameMessage.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_SyncMessage_2eproto
@@ -107,6 +108,7 @@ class ServerMessage final :
   enum ContentCase {
     kCommonMessage = 2,
     kConnectMessage = 3,
+    kGameSyncMessage = 4,
     CONTENT_NOT_SET = 0,
   };
 
@@ -190,6 +192,7 @@ class ServerMessage final :
   enum : int {
     kCommonMessageFieldNumber = 2,
     kConnectMessageFieldNumber = 3,
+    kGameSyncMessageFieldNumber = 4,
   };
   // string commonMessage = 2;
   bool has_commonmessage() const;
@@ -227,6 +230,24 @@ class ServerMessage final :
       ::ConnectMessage::ServerConnectMessage* connectmessage);
   ::ConnectMessage::ServerConnectMessage* unsafe_arena_release_connectmessage();
 
+  // .GameMessage.GameSyncMessage gameSyncMessage = 4;
+  bool has_gamesyncmessage() const;
+  private:
+  bool _internal_has_gamesyncmessage() const;
+  public:
+  void clear_gamesyncmessage();
+  const ::GameMessage::GameSyncMessage& gamesyncmessage() const;
+  PROTOBUF_NODISCARD ::GameMessage::GameSyncMessage* release_gamesyncmessage();
+  ::GameMessage::GameSyncMessage* mutable_gamesyncmessage();
+  void set_allocated_gamesyncmessage(::GameMessage::GameSyncMessage* gamesyncmessage);
+  private:
+  const ::GameMessage::GameSyncMessage& _internal_gamesyncmessage() const;
+  ::GameMessage::GameSyncMessage* _internal_mutable_gamesyncmessage();
+  public:
+  void unsafe_arena_set_allocated_gamesyncmessage(
+      ::GameMessage::GameSyncMessage* gamesyncmessage);
+  ::GameMessage::GameSyncMessage* unsafe_arena_release_gamesyncmessage();
+
   void clear_content();
   ContentCase content_case() const;
   // @@protoc_insertion_point(class_scope:SyncMessage.ServerMessage)
@@ -234,6 +255,7 @@ class ServerMessage final :
   class _Internal;
   void set_has_commonmessage();
   void set_has_connectmessage();
+  void set_has_gamesyncmessage();
 
   inline bool has_content() const;
   inline void clear_has_content();
@@ -247,6 +269,7 @@ class ServerMessage final :
         ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
       ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr commonmessage_;
       ::ConnectMessage::ServerConnectMessage* connectmessage_;
+      ::GameMessage::GameSyncMessage* gamesyncmessage_;
     } content_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -303,6 +326,7 @@ class ClientMessage final :
   enum ContentCase {
     kCommonMessage = 2,
     kConnectMessage = 3,
+    kGameSyncMessage = 4,
     CONTENT_NOT_SET = 0,
   };
 
@@ -387,6 +411,7 @@ class ClientMessage final :
     kClientIdFieldNumber = 1,
     kCommonMessageFieldNumber = 2,
     kConnectMessageFieldNumber = 3,
+    kGameSyncMessageFieldNumber = 4,
   };
   // uint64 clientId = 1;
   void clear_clientid();
@@ -433,6 +458,24 @@ class ClientMessage final :
       ::ConnectMessage::ClientConnectMessage* connectmessage);
   ::ConnectMessage::ClientConnectMessage* unsafe_arena_release_connectmessage();
 
+  // .GameMessage.GameSyncMessage gameSyncMessage = 4;
+  bool has_gamesyncmessage() const;
+  private:
+  bool _internal_has_gamesyncmessage() const;
+  public:
+  void clear_gamesyncmessage();
+  const ::GameMessage::GameSyncMessage& gamesyncmessage() const;
+  PROTOBUF_NODISCARD ::GameMessage::GameSyncMessage* release_gamesyncmessage();
+  ::GameMessage::GameSyncMessage* mutable_gamesyncmessage();
+  void set_allocated_gamesyncmessage(::GameMessage::GameSyncMessage* gamesyncmessage);
+  private:
+  const ::GameMessage::GameSyncMessage& _internal_gamesyncmessage() const;
+  ::GameMessage::GameSyncMessage* _internal_mutable_gamesyncmessage();
+  public:
+  void unsafe_arena_set_allocated_gamesyncmessage(
+      ::GameMessage::GameSyncMessage* gamesyncmessage);
+  ::GameMessage::GameSyncMessage* unsafe_arena_release_gamesyncmessage();
+
   void clear_content();
   ContentCase content_case() const;
   // @@protoc_insertion_point(class_scope:SyncMessage.ClientMessage)
@@ -440,6 +483,7 @@ class ClientMessage final :
   class _Internal;
   void set_has_commonmessage();
   void set_has_connectmessage();
+  void set_has_gamesyncmessage();
 
   inline bool has_content() const;
   inline void clear_has_content();
@@ -454,6 +498,7 @@ class ClientMessage final :
         ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
       ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr commonmessage_;
       ::ConnectMessage::ClientConnectMessage* connectmessage_;
+      ::GameMessage::GameSyncMessage* gamesyncmessage_;
     } content_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -613,6 +658,72 @@ inline ::ConnectMessage::ServerConnectMessage* ServerMessage::_internal_mutable_
 inline ::ConnectMessage::ServerConnectMessage* ServerMessage::mutable_connectmessage() {
   ::ConnectMessage::ServerConnectMessage* _msg = _internal_mutable_connectmessage();
   // @@protoc_insertion_point(field_mutable:SyncMessage.ServerMessage.connectMessage)
+  return _msg;
+}
+
+// .GameMessage.GameSyncMessage gameSyncMessage = 4;
+inline bool ServerMessage::_internal_has_gamesyncmessage() const {
+  return content_case() == kGameSyncMessage;
+}
+inline bool ServerMessage::has_gamesyncmessage() const {
+  return _internal_has_gamesyncmessage();
+}
+inline void ServerMessage::set_has_gamesyncmessage() {
+  _impl_._oneof_case_[0] = kGameSyncMessage;
+}
+inline ::GameMessage::GameSyncMessage* ServerMessage::release_gamesyncmessage() {
+  // @@protoc_insertion_point(field_release:SyncMessage.ServerMessage.gameSyncMessage)
+  if (_internal_has_gamesyncmessage()) {
+    clear_has_content();
+    ::GameMessage::GameSyncMessage* temp = _impl_.content_.gamesyncmessage_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.content_.gamesyncmessage_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::GameMessage::GameSyncMessage& ServerMessage::_internal_gamesyncmessage() const {
+  return _internal_has_gamesyncmessage()
+      ? *_impl_.content_.gamesyncmessage_
+      : reinterpret_cast< ::GameMessage::GameSyncMessage&>(::GameMessage::_GameSyncMessage_default_instance_);
+}
+inline const ::GameMessage::GameSyncMessage& ServerMessage::gamesyncmessage() const {
+  // @@protoc_insertion_point(field_get:SyncMessage.ServerMessage.gameSyncMessage)
+  return _internal_gamesyncmessage();
+}
+inline ::GameMessage::GameSyncMessage* ServerMessage::unsafe_arena_release_gamesyncmessage() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:SyncMessage.ServerMessage.gameSyncMessage)
+  if (_internal_has_gamesyncmessage()) {
+    clear_has_content();
+    ::GameMessage::GameSyncMessage* temp = _impl_.content_.gamesyncmessage_;
+    _impl_.content_.gamesyncmessage_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ServerMessage::unsafe_arena_set_allocated_gamesyncmessage(::GameMessage::GameSyncMessage* gamesyncmessage) {
+  clear_content();
+  if (gamesyncmessage) {
+    set_has_gamesyncmessage();
+    _impl_.content_.gamesyncmessage_ = gamesyncmessage;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:SyncMessage.ServerMessage.gameSyncMessage)
+}
+inline ::GameMessage::GameSyncMessage* ServerMessage::_internal_mutable_gamesyncmessage() {
+  if (!_internal_has_gamesyncmessage()) {
+    clear_content();
+    set_has_gamesyncmessage();
+    _impl_.content_.gamesyncmessage_ = CreateMaybeMessage< ::GameMessage::GameSyncMessage >(GetArenaForAllocation());
+  }
+  return _impl_.content_.gamesyncmessage_;
+}
+inline ::GameMessage::GameSyncMessage* ServerMessage::mutable_gamesyncmessage() {
+  ::GameMessage::GameSyncMessage* _msg = _internal_mutable_gamesyncmessage();
+  // @@protoc_insertion_point(field_mutable:SyncMessage.ServerMessage.gameSyncMessage)
   return _msg;
 }
 
@@ -789,6 +900,72 @@ inline ::ConnectMessage::ClientConnectMessage* ClientMessage::_internal_mutable_
 inline ::ConnectMessage::ClientConnectMessage* ClientMessage::mutable_connectmessage() {
   ::ConnectMessage::ClientConnectMessage* _msg = _internal_mutable_connectmessage();
   // @@protoc_insertion_point(field_mutable:SyncMessage.ClientMessage.connectMessage)
+  return _msg;
+}
+
+// .GameMessage.GameSyncMessage gameSyncMessage = 4;
+inline bool ClientMessage::_internal_has_gamesyncmessage() const {
+  return content_case() == kGameSyncMessage;
+}
+inline bool ClientMessage::has_gamesyncmessage() const {
+  return _internal_has_gamesyncmessage();
+}
+inline void ClientMessage::set_has_gamesyncmessage() {
+  _impl_._oneof_case_[0] = kGameSyncMessage;
+}
+inline ::GameMessage::GameSyncMessage* ClientMessage::release_gamesyncmessage() {
+  // @@protoc_insertion_point(field_release:SyncMessage.ClientMessage.gameSyncMessage)
+  if (_internal_has_gamesyncmessage()) {
+    clear_has_content();
+    ::GameMessage::GameSyncMessage* temp = _impl_.content_.gamesyncmessage_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.content_.gamesyncmessage_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::GameMessage::GameSyncMessage& ClientMessage::_internal_gamesyncmessage() const {
+  return _internal_has_gamesyncmessage()
+      ? *_impl_.content_.gamesyncmessage_
+      : reinterpret_cast< ::GameMessage::GameSyncMessage&>(::GameMessage::_GameSyncMessage_default_instance_);
+}
+inline const ::GameMessage::GameSyncMessage& ClientMessage::gamesyncmessage() const {
+  // @@protoc_insertion_point(field_get:SyncMessage.ClientMessage.gameSyncMessage)
+  return _internal_gamesyncmessage();
+}
+inline ::GameMessage::GameSyncMessage* ClientMessage::unsafe_arena_release_gamesyncmessage() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:SyncMessage.ClientMessage.gameSyncMessage)
+  if (_internal_has_gamesyncmessage()) {
+    clear_has_content();
+    ::GameMessage::GameSyncMessage* temp = _impl_.content_.gamesyncmessage_;
+    _impl_.content_.gamesyncmessage_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ClientMessage::unsafe_arena_set_allocated_gamesyncmessage(::GameMessage::GameSyncMessage* gamesyncmessage) {
+  clear_content();
+  if (gamesyncmessage) {
+    set_has_gamesyncmessage();
+    _impl_.content_.gamesyncmessage_ = gamesyncmessage;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:SyncMessage.ClientMessage.gameSyncMessage)
+}
+inline ::GameMessage::GameSyncMessage* ClientMessage::_internal_mutable_gamesyncmessage() {
+  if (!_internal_has_gamesyncmessage()) {
+    clear_content();
+    set_has_gamesyncmessage();
+    _impl_.content_.gamesyncmessage_ = CreateMaybeMessage< ::GameMessage::GameSyncMessage >(GetArenaForAllocation());
+  }
+  return _impl_.content_.gamesyncmessage_;
+}
+inline ::GameMessage::GameSyncMessage* ClientMessage::mutable_gamesyncmessage() {
+  ::GameMessage::GameSyncMessage* _msg = _internal_mutable_gamesyncmessage();
+  // @@protoc_insertion_point(field_mutable:SyncMessage.ClientMessage.gameSyncMessage)
   return _msg;
 }
 

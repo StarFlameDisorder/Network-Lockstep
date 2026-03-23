@@ -28,8 +28,6 @@ add_executable(Server main.cpp
         GameServer.h
         UdpServer.cpp
         UdpServer.h
-        client.cpp
-        client.h
         protobuf/output/test.pb.cc
         protobuf/output/test.pb.h
         protobuf/output/SyncMessage.pb.cc

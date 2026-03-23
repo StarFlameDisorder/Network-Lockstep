@@ -39,6 +39,7 @@ namespace Network
         
         public void HandleMessage(byte[] data)
         {
+            Debug.Log("HandleMessage");
             ServerMessage message = ServerMessage.Parser.ParseFrom(data);
             switch (message.ContentCase)
             {

@@ -10,6 +10,7 @@ namespace GamePlay
         [SerializeField]private GameObject player1;
         private Rigidbody _rigidbody;
         private Vector3 _velocity;
+        private float _speed=10f;
         private void Awake()
         {
             Instance = this;
@@ -23,7 +24,7 @@ namespace GamePlay
 
         private void Update()
         {
-            _rigidbody.transform.Translate(_velocity);
+            _rigidbody.transform.Translate(_speed*Time.deltaTime*_velocity);
         }
     }
 }

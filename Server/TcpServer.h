@@ -17,12 +17,12 @@ public:
     void sendMessageById(quint64 id,QString message);
     void sendMessageBySocket(QTcpSocket* socket,QString message);
     std::string getTcpSocketInfo(const QTcpSocket *socket)const;
+    void sendMessage(QTcpSocket *socket,QByteArray message);
 private:
     void tcpServerConnectionNew();
     void tcpServerConnectClosed();
     QByteArray receiveTcpMessage(QTcpSocket *socket);
     void receiveSocketMessage();
-    void sendMessage(QTcpSocket *socket,QByteArray message);
     void receiveMessage(QTcpSocket *socket,QByteArray message);
 
     QHash<quint64,QTcpSocket*> m_tcpIdSocketMap;

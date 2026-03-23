@@ -11,7 +11,7 @@
 
 struct UdpEndPoint
 {
-    UdpEndPoint();
+    UdpEndPoint(){};
     UdpEndPoint(const QHostAddress &adr,const quint16 &port)
         :address(adr),port(port)
     {}

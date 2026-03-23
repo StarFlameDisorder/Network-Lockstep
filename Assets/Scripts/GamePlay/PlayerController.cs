@@ -24,7 +24,7 @@ namespace GamePlay
             UInt64 clientId = NetworkManager.Instance.GetClientId();
             Vector2 value = ctx.ReadValue<Vector2>();
             Debug.Log(value);
-            // GameSync.Instance.PlayerAction(value);
+            GameSync.Instance.PlayerAction(value);
             
             ClientMessage message = new ClientMessage
             {

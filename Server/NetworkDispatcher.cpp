@@ -51,7 +51,7 @@ void NetworkDispatcher::handleTcpConnection(QTcpSocket* socket, const ClientConn
 {
     switch(message.content_case())
     {
-        case ClientConnectMessage::kHandShakeMessage:
+        case ClientConnectMessage::kHandShakeMessage://tcp客户端不会发送HandShakeMessage
             Log_Info()<<message.handshakemessage().content();
             break;
         default:

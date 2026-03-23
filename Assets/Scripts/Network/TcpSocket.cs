@@ -36,12 +36,12 @@ namespace Network
                 _socketTcp=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
-                ClientMessage message = new ClientMessage
-                {
-                    ClientId = 0,
-                    CommonMessage = "TCP-这是客户端，建立连接"
-                };
-                Send(message.ToByteArray());
+                // ClientMessage message = new ClientMessage
+                // {
+                //     ClientId = 0,
+                //     CommonMessage = "TCP-这是客户端，建立连接"
+                // };
+                // Send(message.ToByteArray());
             }
             catch (SocketException e)
             {
@@ -129,6 +129,13 @@ namespace Network
         public void BindClientId(UInt64 clientId)
         {
             _clientId=clientId;
+            Debug.Log("Tcp:服务器分配id:"+clientId);
+            ClientMessage message = new ClientMessage
+            {
+                ClientId = clientId,
+                CommonMessage = "TCP-这是客户端，建立连接"
+            };
+            Send(message.ToByteArray());
         }
     }
 }

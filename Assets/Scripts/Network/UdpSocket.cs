@@ -77,6 +77,7 @@ namespace Network
         public void bindClientId(UInt64 clientId)
         {
             _clientId=clientId;
+            Debug.Log("Udp:服务器分配id:"+clientId);
             ClientMessage message = new ClientMessage
             {
                 ClientId = _clientId,

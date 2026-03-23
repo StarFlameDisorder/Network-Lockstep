@@ -21,7 +21,7 @@ message ClientConnectMessage{
 
 //握手
 
-message HandShakeResponse{
+message HandShakeResponse{//弃用
     string content = 1;
     uint64 clientId = 2;//仅用于tcp回复
 }

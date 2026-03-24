@@ -36,8 +36,10 @@ namespace Network
             
             ReceiveAsync(message =>
             {
-                Debug.Log(Encoding.UTF8.GetString(message));
-                MessagePanel.Instance?.AddMessage(Encoding.UTF8.GetString(message));
+                Debug.Log("Udp:收到消息");
+                NetworkManager.Instance.HandleMessage(message);
+                // Debug.Log(Encoding.UTF8.GetString(message));
+                MessagePanel.Instance?.AddMessage("Udp:收到消息");
             });
         }
 
@@ -64,8 +66,10 @@ namespace Network
             {
                 byte[] buf = new byte[600];
                 int originalLength=await _socketUdp.ReceiveAsync(buf, SocketFlags.None);
-                Debug.Log($"接收-Socket长度:{originalLength}原始有效字节(十六进制): {BitConverter.ToString(buf, 0, originalLength)}");
-                callback?.Invoke(buf);
+                byte[] actualData = new byte[originalLength];
+                Array.Copy(buf, 0, actualData, 0, originalLength);
+                Debug.Log($"接收-Socket长度:{originalLength}原始有效字节(十六进制): {BitConverter.ToString(actualData, 0, originalLength)}");
+                callback?.Invoke(actualData);
             }
         }
          

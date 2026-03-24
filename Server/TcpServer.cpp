@@ -126,7 +126,7 @@ void TcpServer::receiveSocketMessage()
 
 void TcpServer::sendMessage(QTcpSocket* socket, QByteArray message)
 {
-    if (!socket||socket->state()!=QAbstractSocket::ConnectingState)Log_Error()<<"尝试发送消息给关闭的TcpSocket";
+    if (!socket){Log_Error()<<"尝试发送消息给关闭的TcpSocket";return;}
     qint32 originalLen = message.length();//转成32位
     qint32 networkLen=qToBigEndian(originalLen);
     QByteArray send;

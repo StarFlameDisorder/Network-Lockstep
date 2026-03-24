@@ -22,7 +22,10 @@ namespace GamePlay
         public void OnMoveInput(InputAction.CallbackContext ctx)
         {
             UInt64 clientId = NetworkManager.Instance.GetClientId();
-            Vector2 value = ctx.ReadValue<Vector2>();
+            Vector2 value ;
+            //value = new Vector2(0, 1f);
+            value = ctx.ReadValue<Vector2>();
+            
             Debug.Log(value);
             GameSync.Instance.PlayerAction(value);
             
@@ -44,7 +47,8 @@ namespace GamePlay
                 }
             };
             
-            NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
+            //NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
+            NetworkManager.Instance.UdpSendMessage(message.ToByteArray());
         }
         
     }

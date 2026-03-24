@@ -42,7 +42,7 @@ void UdpServer::receiveSocketMessage()
 void UdpServer::sendMessage(const QHostAddress& address, const quint16& port,const QByteArray& message)
 {
     qint32 originalLen = message.length();//转成32位
-    Log_Debug() <<"发送-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
+    Log_Debug() <<"发送"<<getPeerAddressInfo(address,port)<<"-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
     m_socket->writeDatagram(message,address,port);
 }
 

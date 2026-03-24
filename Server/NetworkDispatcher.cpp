@@ -76,6 +76,9 @@ void NetworkDispatcher::handleUdpMessage(const QHostAddress &address, quint16 po
     case ClientMessage::kConnectMessage:
         handleUdpConnection(address,port,clientMessage.connectmessage());
         break;
+    case ClientMessage::kGameSyncMessage:
+        handleGameSync(clientId,clientMessage.gamesyncmessage());
+        break;
     default:
         Log_Error()<<"[handleUdpMessage]未知类型:"<<clientMessage.content_case();
         break;
@@ -188,10 +191,13 @@ void NetworkDispatcher::broadcastGameSync(const GameSyncMessage& message)
         return;
     }
 
+    // for (const auto& i : m_clientsMap) {
+    //     if (i.socket) {
+    //         sendTcpMessage(i.socket, data);
+    //     }
+    // }
     for (const auto& i : m_clientsMap) {
-        if (i.socket) {
-            sendTcpMessage(i.socket, data);
-        }
+        sendUdpMessage(i.udpEndPoint.address,i.udpEndPoint.port, data);
     }
 }
 

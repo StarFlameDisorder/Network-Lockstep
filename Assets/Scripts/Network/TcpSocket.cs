@@ -16,8 +16,8 @@ namespace Network
     public class TcpSocket
     {
         private IPEndPoint _ipEndPoint;
-        [SerializeField] private string _ip="127.0.0.1";
-        [SerializeField]private int _port=1975;
+        // [SerializeField] private string _ip="127.0.0.1";
+        // [SerializeField]private int _port=1975;
         private UInt64  _clientId=0; 
         
         private List<byte> _tcpMessageBuffer=new List<byte>();
@@ -54,7 +54,7 @@ namespace Network
                 Debug.Log("Tcp:收到消息");
                 NetworkManager.Instance.HandleMessage(message);
                 // Debug.Log(Encoding.UTF8.GetString(message));
-                // MessagePanel.Instance?.AddMessage(Encoding.UTF8.GetString(message));
+                MessagePanel.Instance?.AddMessage("Tcp:收到消息");
             });
         }
 

@@ -5,13 +5,34 @@ package GameMessage;
 import "UnityMath.proto";
 
 message GameSyncMessage{
-    oneof content{
-        PlayerSync player=1;
-    }
+    uint64 id=1;
+    uint64 time=2;
+    repeated PlayerSync players=3;
 }
+
+message GameSnapshotMessage{
+    uint64 id=1;
+    repeated PlayerSnapshotSync playerSSs=2;
+    repeated ObjectSnapshotSync objectSSs=3;
+}
+
 
 message PlayerSync
 {
-    uint64 clientId = 1;
-    UnityMath.Vector3D move= 2;
+    uint64 playerId = 1;
+    UnityMath.Vector3D inputMove= 2;
+}
+
+message PlayerSnapshotSync
+{
+    uint64 playerId=1;
+    UnityMath.Vector3D pos = 2;
+    UnityMath.Vector3D velocity= 3;
+}
+
+message ObjectSnapshotSync
+{
+    uint64 objectId=1;
+    UnityMath.Vector3D pos = 2;
+    UnityMath.Vector3D velocity= 3;
 }

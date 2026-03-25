@@ -3,7 +3,7 @@
 //
 
 #define FILE_PREFIX "Dispatcher:"//日志前缀
-#define LOCAL_LOG_LEVEL LogLevel::Debug//局部日志等级
+#define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
 #include "NetworkDispatcher.h"
 #include "LoggerStream.h"
@@ -102,15 +102,7 @@ void NetworkDispatcher::handleUdpConnection(const QHostAddress &address, quint16
 void NetworkDispatcher::handleGameSync(quint64 clientId, const GameSyncMessage& message)
 {
     using namespace GameMessage;
-    switch (message.content_case())
-    {
-    case GameSyncMessage::kPlayer:
-        broadcastGameSync(message);
-        break;
-    default:
-        Log_Error()<<"[handleGameSync]未知类型:"<<message.content_case();
-        break;
-    }
+    broadcastGameSync(message);
 }
 
 void NetworkDispatcher::checkClient(qint64 clientId, QTcpSocket* socket)
@@ -178,9 +170,18 @@ void NetworkDispatcher::broadcastGameSync(const GameSyncMessage& message)
 
     // 创建一个新的GameSyncMessage并深复制PlayerSync内容
     ServerMessage sendMessage;
-    if (message.has_player()) {
-        GameSyncMessage* newGameSyncMessage = sendMessage.mutable_gamesyncmessage();
-        *newGameSyncMessage->mutable_player() = message.player();  // 深复制PlayerSync
+    // if (message.has_player()) {
+    //     GameSyncMessage* newGameSyncMessage = sendMessage.mutable_gamesyncmessage();
+    //     *newGameSyncMessage->mutable_player() = message.player();  // 深复制PlayerSync
+    // }
+    // 深复制
+    if (message.players_size()>0)
+    {
+        GameSyncMessage* newGameSyncMessage= sendMessage.mutable_gamesyncmessage();
+        for (auto &player:message.players())
+        {
+            *newGameSyncMessage->add_players() = player;
+        }
     }
 
     QByteArray data;

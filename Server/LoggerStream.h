@@ -27,14 +27,14 @@ class LoggerStream
     ~LoggerStream();
 
     LoggerStream& operator<<(const std::string& val) {
-        m_stream << QString::fromStdString(val);
+        if(m_level>=m_localLogLevel)m_stream << QString::fromStdString(val);
         return *this;
     }
 
     template <typename T>
     LoggerStream& operator<<(const T& val)
     {
-        m_stream << val;
+        if(m_level>=m_localLogLevel)m_stream << val;
         return *this;
     }
 

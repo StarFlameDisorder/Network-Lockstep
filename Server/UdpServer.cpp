@@ -3,7 +3,7 @@
 //
 
 #define FILE_PREFIX "UdpServer:"
-#define LOCAL_LOG_LEVEL LogLevel::Debug//局部日志等级
+#define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
 #include "UDPServer.h"
 #include <QNetworkDatagram>

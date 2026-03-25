@@ -46,15 +46,27 @@ struct TableStruct_GameMessage_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_GameMessage_2eproto;
 namespace GameMessage {
+class GameSnapshotMessage;
+struct GameSnapshotMessageDefaultTypeInternal;
+extern GameSnapshotMessageDefaultTypeInternal _GameSnapshotMessage_default_instance_;
 class GameSyncMessage;
 struct GameSyncMessageDefaultTypeInternal;
 extern GameSyncMessageDefaultTypeInternal _GameSyncMessage_default_instance_;
+class ObjectSnapshotSync;
+struct ObjectSnapshotSyncDefaultTypeInternal;
+extern ObjectSnapshotSyncDefaultTypeInternal _ObjectSnapshotSync_default_instance_;
+class PlayerSnapshotSync;
+struct PlayerSnapshotSyncDefaultTypeInternal;
+extern PlayerSnapshotSyncDefaultTypeInternal _PlayerSnapshotSync_default_instance_;
 class PlayerSync;
 struct PlayerSyncDefaultTypeInternal;
 extern PlayerSyncDefaultTypeInternal _PlayerSync_default_instance_;
 }  // namespace GameMessage
 PROTOBUF_NAMESPACE_OPEN
+template<> ::GameMessage::GameSnapshotMessage* Arena::CreateMaybeMessage<::GameMessage::GameSnapshotMessage>(Arena*);
 template<> ::GameMessage::GameSyncMessage* Arena::CreateMaybeMessage<::GameMessage::GameSyncMessage>(Arena*);
+template<> ::GameMessage::ObjectSnapshotSync* Arena::CreateMaybeMessage<::GameMessage::ObjectSnapshotSync>(Arena*);
+template<> ::GameMessage::PlayerSnapshotSync* Arena::CreateMaybeMessage<::GameMessage::PlayerSnapshotSync>(Arena*);
 template<> ::GameMessage::PlayerSync* Arena::CreateMaybeMessage<::GameMessage::PlayerSync>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace GameMessage {
@@ -104,11 +116,6 @@ class GameSyncMessage final :
   static const GameSyncMessage& default_instance() {
     return *internal_default_instance();
   }
-  enum ContentCase {
-    kPlayer = 1,
-    CONTENT_NOT_SET = 0,
-  };
-
   static inline const GameSyncMessage* internal_default_instance() {
     return reinterpret_cast<const GameSyncMessage*>(
                &_GameSyncMessage_default_instance_);
@@ -187,48 +194,246 @@ class GameSyncMessage final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kPlayerFieldNumber = 1,
+    kPlayersFieldNumber = 3,
+    kIdFieldNumber = 1,
+    kTimeFieldNumber = 2,
   };
-  // .GameMessage.PlayerSync player = 1;
-  bool has_player() const;
+  // repeated .GameMessage.PlayerSync players = 3;
+  int players_size() const;
   private:
-  bool _internal_has_player() const;
+  int _internal_players_size() const;
   public:
-  void clear_player();
-  const ::GameMessage::PlayerSync& player() const;
-  PROTOBUF_NODISCARD ::GameMessage::PlayerSync* release_player();
-  ::GameMessage::PlayerSync* mutable_player();
-  void set_allocated_player(::GameMessage::PlayerSync* player);
+  void clear_players();
+  ::GameMessage::PlayerSync* mutable_players(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSync >*
+      mutable_players();
   private:
-  const ::GameMessage::PlayerSync& _internal_player() const;
-  ::GameMessage::PlayerSync* _internal_mutable_player();
+  const ::GameMessage::PlayerSync& _internal_players(int index) const;
+  ::GameMessage::PlayerSync* _internal_add_players();
   public:
-  void unsafe_arena_set_allocated_player(
-      ::GameMessage::PlayerSync* player);
-  ::GameMessage::PlayerSync* unsafe_arena_release_player();
+  const ::GameMessage::PlayerSync& players(int index) const;
+  ::GameMessage::PlayerSync* add_players();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSync >&
+      players() const;
 
-  void clear_content();
-  ContentCase content_case() const;
+  // uint64 id = 1;
+  void clear_id();
+  uint64_t id() const;
+  void set_id(uint64_t value);
+  private:
+  uint64_t _internal_id() const;
+  void _internal_set_id(uint64_t value);
+  public:
+
+  // uint64 time = 2;
+  void clear_time();
+  uint64_t time() const;
+  void set_time(uint64_t value);
+  private:
+  uint64_t _internal_time() const;
+  void _internal_set_time(uint64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:GameMessage.GameSyncMessage)
  private:
   class _Internal;
-  void set_has_player();
-
-  inline bool has_content() const;
-  inline void clear_has_content();
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    union ContentUnion {
-      constexpr ContentUnion() : _constinit_{} {}
-        ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
-      ::GameMessage::PlayerSync* player_;
-    } content_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSync > players_;
+    uint64_t id_;
+    uint64_t time_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    uint32_t _oneof_case_[1];
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_GameMessage_2eproto;
+};
+// -------------------------------------------------------------------
 
+class GameSnapshotMessage final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GameMessage.GameSnapshotMessage) */ {
+ public:
+  inline GameSnapshotMessage() : GameSnapshotMessage(nullptr) {}
+  ~GameSnapshotMessage() override;
+  explicit PROTOBUF_CONSTEXPR GameSnapshotMessage(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GameSnapshotMessage(const GameSnapshotMessage& from);
+  GameSnapshotMessage(GameSnapshotMessage&& from) noexcept
+    : GameSnapshotMessage() {
+    *this = ::std::move(from);
+  }
+
+  inline GameSnapshotMessage& operator=(const GameSnapshotMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GameSnapshotMessage& operator=(GameSnapshotMessage&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GameSnapshotMessage& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GameSnapshotMessage* internal_default_instance() {
+    return reinterpret_cast<const GameSnapshotMessage*>(
+               &_GameSnapshotMessage_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(GameSnapshotMessage& a, GameSnapshotMessage& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GameSnapshotMessage* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GameSnapshotMessage* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GameSnapshotMessage* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GameSnapshotMessage>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GameSnapshotMessage& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const GameSnapshotMessage& from) {
+    GameSnapshotMessage::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GameSnapshotMessage* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GameMessage.GameSnapshotMessage";
+  }
+  protected:
+  explicit GameSnapshotMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPlayerSSsFieldNumber = 2,
+    kObjectSSsFieldNumber = 3,
+    kIdFieldNumber = 1,
+  };
+  // repeated .GameMessage.PlayerSnapshotSync playerSSs = 2;
+  int playersss_size() const;
+  private:
+  int _internal_playersss_size() const;
+  public:
+  void clear_playersss();
+  ::GameMessage::PlayerSnapshotSync* mutable_playersss(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSnapshotSync >*
+      mutable_playersss();
+  private:
+  const ::GameMessage::PlayerSnapshotSync& _internal_playersss(int index) const;
+  ::GameMessage::PlayerSnapshotSync* _internal_add_playersss();
+  public:
+  const ::GameMessage::PlayerSnapshotSync& playersss(int index) const;
+  ::GameMessage::PlayerSnapshotSync* add_playersss();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSnapshotSync >&
+      playersss() const;
+
+  // repeated .GameMessage.ObjectSnapshotSync objectSSs = 3;
+  int objectsss_size() const;
+  private:
+  int _internal_objectsss_size() const;
+  public:
+  void clear_objectsss();
+  ::GameMessage::ObjectSnapshotSync* mutable_objectsss(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::ObjectSnapshotSync >*
+      mutable_objectsss();
+  private:
+  const ::GameMessage::ObjectSnapshotSync& _internal_objectsss(int index) const;
+  ::GameMessage::ObjectSnapshotSync* _internal_add_objectsss();
+  public:
+  const ::GameMessage::ObjectSnapshotSync& objectsss(int index) const;
+  ::GameMessage::ObjectSnapshotSync* add_objectsss();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::ObjectSnapshotSync >&
+      objectsss() const;
+
+  // uint64 id = 1;
+  void clear_id();
+  uint64_t id() const;
+  void set_id(uint64_t value);
+  private:
+  uint64_t _internal_id() const;
+  void _internal_set_id(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:GameMessage.GameSnapshotMessage)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSnapshotSync > playersss_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::ObjectSnapshotSync > objectsss_;
+    uint64_t id_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_GameMessage_2eproto;
@@ -283,7 +488,7 @@ class PlayerSync final :
                &_PlayerSync_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   friend void swap(PlayerSync& a, PlayerSync& b) {
     a.Swap(&b);
@@ -356,34 +561,34 @@ class PlayerSync final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kMoveFieldNumber = 2,
-    kClientIdFieldNumber = 1,
+    kInputMoveFieldNumber = 2,
+    kPlayerIdFieldNumber = 1,
   };
-  // .UnityMath.Vector3D move = 2;
-  bool has_move() const;
+  // .UnityMath.Vector3D inputMove = 2;
+  bool has_inputmove() const;
   private:
-  bool _internal_has_move() const;
+  bool _internal_has_inputmove() const;
   public:
-  void clear_move();
-  const ::UnityMath::Vector3D& move() const;
-  PROTOBUF_NODISCARD ::UnityMath::Vector3D* release_move();
-  ::UnityMath::Vector3D* mutable_move();
-  void set_allocated_move(::UnityMath::Vector3D* move);
+  void clear_inputmove();
+  const ::UnityMath::Vector3D& inputmove() const;
+  PROTOBUF_NODISCARD ::UnityMath::Vector3D* release_inputmove();
+  ::UnityMath::Vector3D* mutable_inputmove();
+  void set_allocated_inputmove(::UnityMath::Vector3D* inputmove);
   private:
-  const ::UnityMath::Vector3D& _internal_move() const;
-  ::UnityMath::Vector3D* _internal_mutable_move();
+  const ::UnityMath::Vector3D& _internal_inputmove() const;
+  ::UnityMath::Vector3D* _internal_mutable_inputmove();
   public:
-  void unsafe_arena_set_allocated_move(
-      ::UnityMath::Vector3D* move);
-  ::UnityMath::Vector3D* unsafe_arena_release_move();
+  void unsafe_arena_set_allocated_inputmove(
+      ::UnityMath::Vector3D* inputmove);
+  ::UnityMath::Vector3D* unsafe_arena_release_inputmove();
 
-  // uint64 clientId = 1;
-  void clear_clientid();
-  uint64_t clientid() const;
-  void set_clientid(uint64_t value);
+  // uint64 playerId = 1;
+  void clear_playerid();
+  uint64_t playerid() const;
+  void set_playerid(uint64_t value);
   private:
-  uint64_t _internal_clientid() const;
-  void _internal_set_clientid(uint64_t value);
+  uint64_t _internal_playerid() const;
+  void _internal_set_playerid(uint64_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:GameMessage.PlayerSync)
@@ -394,8 +599,384 @@ class PlayerSync final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::UnityMath::Vector3D* move_;
-    uint64_t clientid_;
+    ::UnityMath::Vector3D* inputmove_;
+    uint64_t playerid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_GameMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class PlayerSnapshotSync final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GameMessage.PlayerSnapshotSync) */ {
+ public:
+  inline PlayerSnapshotSync() : PlayerSnapshotSync(nullptr) {}
+  ~PlayerSnapshotSync() override;
+  explicit PROTOBUF_CONSTEXPR PlayerSnapshotSync(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  PlayerSnapshotSync(const PlayerSnapshotSync& from);
+  PlayerSnapshotSync(PlayerSnapshotSync&& from) noexcept
+    : PlayerSnapshotSync() {
+    *this = ::std::move(from);
+  }
+
+  inline PlayerSnapshotSync& operator=(const PlayerSnapshotSync& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline PlayerSnapshotSync& operator=(PlayerSnapshotSync&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const PlayerSnapshotSync& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const PlayerSnapshotSync* internal_default_instance() {
+    return reinterpret_cast<const PlayerSnapshotSync*>(
+               &_PlayerSnapshotSync_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(PlayerSnapshotSync& a, PlayerSnapshotSync& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(PlayerSnapshotSync* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(PlayerSnapshotSync* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  PlayerSnapshotSync* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<PlayerSnapshotSync>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const PlayerSnapshotSync& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const PlayerSnapshotSync& from) {
+    PlayerSnapshotSync::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(PlayerSnapshotSync* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GameMessage.PlayerSnapshotSync";
+  }
+  protected:
+  explicit PlayerSnapshotSync(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPosFieldNumber = 2,
+    kVelocityFieldNumber = 3,
+    kPlayerIdFieldNumber = 1,
+  };
+  // .UnityMath.Vector3D pos = 2;
+  bool has_pos() const;
+  private:
+  bool _internal_has_pos() const;
+  public:
+  void clear_pos();
+  const ::UnityMath::Vector3D& pos() const;
+  PROTOBUF_NODISCARD ::UnityMath::Vector3D* release_pos();
+  ::UnityMath::Vector3D* mutable_pos();
+  void set_allocated_pos(::UnityMath::Vector3D* pos);
+  private:
+  const ::UnityMath::Vector3D& _internal_pos() const;
+  ::UnityMath::Vector3D* _internal_mutable_pos();
+  public:
+  void unsafe_arena_set_allocated_pos(
+      ::UnityMath::Vector3D* pos);
+  ::UnityMath::Vector3D* unsafe_arena_release_pos();
+
+  // .UnityMath.Vector3D velocity = 3;
+  bool has_velocity() const;
+  private:
+  bool _internal_has_velocity() const;
+  public:
+  void clear_velocity();
+  const ::UnityMath::Vector3D& velocity() const;
+  PROTOBUF_NODISCARD ::UnityMath::Vector3D* release_velocity();
+  ::UnityMath::Vector3D* mutable_velocity();
+  void set_allocated_velocity(::UnityMath::Vector3D* velocity);
+  private:
+  const ::UnityMath::Vector3D& _internal_velocity() const;
+  ::UnityMath::Vector3D* _internal_mutable_velocity();
+  public:
+  void unsafe_arena_set_allocated_velocity(
+      ::UnityMath::Vector3D* velocity);
+  ::UnityMath::Vector3D* unsafe_arena_release_velocity();
+
+  // uint64 playerId = 1;
+  void clear_playerid();
+  uint64_t playerid() const;
+  void set_playerid(uint64_t value);
+  private:
+  uint64_t _internal_playerid() const;
+  void _internal_set_playerid(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:GameMessage.PlayerSnapshotSync)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::UnityMath::Vector3D* pos_;
+    ::UnityMath::Vector3D* velocity_;
+    uint64_t playerid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_GameMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ObjectSnapshotSync final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GameMessage.ObjectSnapshotSync) */ {
+ public:
+  inline ObjectSnapshotSync() : ObjectSnapshotSync(nullptr) {}
+  ~ObjectSnapshotSync() override;
+  explicit PROTOBUF_CONSTEXPR ObjectSnapshotSync(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ObjectSnapshotSync(const ObjectSnapshotSync& from);
+  ObjectSnapshotSync(ObjectSnapshotSync&& from) noexcept
+    : ObjectSnapshotSync() {
+    *this = ::std::move(from);
+  }
+
+  inline ObjectSnapshotSync& operator=(const ObjectSnapshotSync& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ObjectSnapshotSync& operator=(ObjectSnapshotSync&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ObjectSnapshotSync& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ObjectSnapshotSync* internal_default_instance() {
+    return reinterpret_cast<const ObjectSnapshotSync*>(
+               &_ObjectSnapshotSync_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(ObjectSnapshotSync& a, ObjectSnapshotSync& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ObjectSnapshotSync* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ObjectSnapshotSync* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ObjectSnapshotSync* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ObjectSnapshotSync>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const ObjectSnapshotSync& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const ObjectSnapshotSync& from) {
+    ObjectSnapshotSync::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ObjectSnapshotSync* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GameMessage.ObjectSnapshotSync";
+  }
+  protected:
+  explicit ObjectSnapshotSync(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPosFieldNumber = 2,
+    kVelocityFieldNumber = 3,
+    kObjectIdFieldNumber = 1,
+  };
+  // .UnityMath.Vector3D pos = 2;
+  bool has_pos() const;
+  private:
+  bool _internal_has_pos() const;
+  public:
+  void clear_pos();
+  const ::UnityMath::Vector3D& pos() const;
+  PROTOBUF_NODISCARD ::UnityMath::Vector3D* release_pos();
+  ::UnityMath::Vector3D* mutable_pos();
+  void set_allocated_pos(::UnityMath::Vector3D* pos);
+  private:
+  const ::UnityMath::Vector3D& _internal_pos() const;
+  ::UnityMath::Vector3D* _internal_mutable_pos();
+  public:
+  void unsafe_arena_set_allocated_pos(
+      ::UnityMath::Vector3D* pos);
+  ::UnityMath::Vector3D* unsafe_arena_release_pos();
+
+  // .UnityMath.Vector3D velocity = 3;
+  bool has_velocity() const;
+  private:
+  bool _internal_has_velocity() const;
+  public:
+  void clear_velocity();
+  const ::UnityMath::Vector3D& velocity() const;
+  PROTOBUF_NODISCARD ::UnityMath::Vector3D* release_velocity();
+  ::UnityMath::Vector3D* mutable_velocity();
+  void set_allocated_velocity(::UnityMath::Vector3D* velocity);
+  private:
+  const ::UnityMath::Vector3D& _internal_velocity() const;
+  ::UnityMath::Vector3D* _internal_mutable_velocity();
+  public:
+  void unsafe_arena_set_allocated_velocity(
+      ::UnityMath::Vector3D* velocity);
+  ::UnityMath::Vector3D* unsafe_arena_release_velocity();
+
+  // uint64 objectId = 1;
+  void clear_objectid();
+  uint64_t objectid() const;
+  void set_objectid(uint64_t value);
+  private:
+  uint64_t _internal_objectid() const;
+  void _internal_set_objectid(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:GameMessage.ObjectSnapshotSync)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::UnityMath::Vector3D* pos_;
+    ::UnityMath::Vector3D* velocity_;
+    uint64_t objectid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -412,146 +993,247 @@ class PlayerSync final :
 #endif  // __GNUC__
 // GameSyncMessage
 
-// .GameMessage.PlayerSync player = 1;
-inline bool GameSyncMessage::_internal_has_player() const {
-  return content_case() == kPlayer;
+// uint64 id = 1;
+inline void GameSyncMessage::clear_id() {
+  _impl_.id_ = uint64_t{0u};
 }
-inline bool GameSyncMessage::has_player() const {
-  return _internal_has_player();
+inline uint64_t GameSyncMessage::_internal_id() const {
+  return _impl_.id_;
 }
-inline void GameSyncMessage::set_has_player() {
-  _impl_._oneof_case_[0] = kPlayer;
+inline uint64_t GameSyncMessage::id() const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSyncMessage.id)
+  return _internal_id();
 }
-inline void GameSyncMessage::clear_player() {
-  if (_internal_has_player()) {
-    if (GetArenaForAllocation() == nullptr) {
-      delete _impl_.content_.player_;
-    }
-    clear_has_content();
-  }
+inline void GameSyncMessage::_internal_set_id(uint64_t value) {
+  
+  _impl_.id_ = value;
 }
-inline ::GameMessage::PlayerSync* GameSyncMessage::release_player() {
-  // @@protoc_insertion_point(field_release:GameMessage.GameSyncMessage.player)
-  if (_internal_has_player()) {
-    clear_has_content();
-    ::GameMessage::PlayerSync* temp = _impl_.content_.player_;
-    if (GetArenaForAllocation() != nullptr) {
-      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-    }
-    _impl_.content_.player_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline const ::GameMessage::PlayerSync& GameSyncMessage::_internal_player() const {
-  return _internal_has_player()
-      ? *_impl_.content_.player_
-      : reinterpret_cast< ::GameMessage::PlayerSync&>(::GameMessage::_PlayerSync_default_instance_);
-}
-inline const ::GameMessage::PlayerSync& GameSyncMessage::player() const {
-  // @@protoc_insertion_point(field_get:GameMessage.GameSyncMessage.player)
-  return _internal_player();
-}
-inline ::GameMessage::PlayerSync* GameSyncMessage::unsafe_arena_release_player() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:GameMessage.GameSyncMessage.player)
-  if (_internal_has_player()) {
-    clear_has_content();
-    ::GameMessage::PlayerSync* temp = _impl_.content_.player_;
-    _impl_.content_.player_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline void GameSyncMessage::unsafe_arena_set_allocated_player(::GameMessage::PlayerSync* player) {
-  clear_content();
-  if (player) {
-    set_has_player();
-    _impl_.content_.player_ = player;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:GameMessage.GameSyncMessage.player)
-}
-inline ::GameMessage::PlayerSync* GameSyncMessage::_internal_mutable_player() {
-  if (!_internal_has_player()) {
-    clear_content();
-    set_has_player();
-    _impl_.content_.player_ = CreateMaybeMessage< ::GameMessage::PlayerSync >(GetArenaForAllocation());
-  }
-  return _impl_.content_.player_;
-}
-inline ::GameMessage::PlayerSync* GameSyncMessage::mutable_player() {
-  ::GameMessage::PlayerSync* _msg = _internal_mutable_player();
-  // @@protoc_insertion_point(field_mutable:GameMessage.GameSyncMessage.player)
-  return _msg;
+inline void GameSyncMessage::set_id(uint64_t value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:GameMessage.GameSyncMessage.id)
 }
 
-inline bool GameSyncMessage::has_content() const {
-  return content_case() != CONTENT_NOT_SET;
+// uint64 time = 2;
+inline void GameSyncMessage::clear_time() {
+  _impl_.time_ = uint64_t{0u};
 }
-inline void GameSyncMessage::clear_has_content() {
-  _impl_._oneof_case_[0] = CONTENT_NOT_SET;
+inline uint64_t GameSyncMessage::_internal_time() const {
+  return _impl_.time_;
 }
-inline GameSyncMessage::ContentCase GameSyncMessage::content_case() const {
-  return GameSyncMessage::ContentCase(_impl_._oneof_case_[0]);
+inline uint64_t GameSyncMessage::time() const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSyncMessage.time)
+  return _internal_time();
 }
+inline void GameSyncMessage::_internal_set_time(uint64_t value) {
+  
+  _impl_.time_ = value;
+}
+inline void GameSyncMessage::set_time(uint64_t value) {
+  _internal_set_time(value);
+  // @@protoc_insertion_point(field_set:GameMessage.GameSyncMessage.time)
+}
+
+// repeated .GameMessage.PlayerSync players = 3;
+inline int GameSyncMessage::_internal_players_size() const {
+  return _impl_.players_.size();
+}
+inline int GameSyncMessage::players_size() const {
+  return _internal_players_size();
+}
+inline void GameSyncMessage::clear_players() {
+  _impl_.players_.Clear();
+}
+inline ::GameMessage::PlayerSync* GameSyncMessage::mutable_players(int index) {
+  // @@protoc_insertion_point(field_mutable:GameMessage.GameSyncMessage.players)
+  return _impl_.players_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSync >*
+GameSyncMessage::mutable_players() {
+  // @@protoc_insertion_point(field_mutable_list:GameMessage.GameSyncMessage.players)
+  return &_impl_.players_;
+}
+inline const ::GameMessage::PlayerSync& GameSyncMessage::_internal_players(int index) const {
+  return _impl_.players_.Get(index);
+}
+inline const ::GameMessage::PlayerSync& GameSyncMessage::players(int index) const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSyncMessage.players)
+  return _internal_players(index);
+}
+inline ::GameMessage::PlayerSync* GameSyncMessage::_internal_add_players() {
+  return _impl_.players_.Add();
+}
+inline ::GameMessage::PlayerSync* GameSyncMessage::add_players() {
+  ::GameMessage::PlayerSync* _add = _internal_add_players();
+  // @@protoc_insertion_point(field_add:GameMessage.GameSyncMessage.players)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSync >&
+GameSyncMessage::players() const {
+  // @@protoc_insertion_point(field_list:GameMessage.GameSyncMessage.players)
+  return _impl_.players_;
+}
+
+// -------------------------------------------------------------------
+
+// GameSnapshotMessage
+
+// uint64 id = 1;
+inline void GameSnapshotMessage::clear_id() {
+  _impl_.id_ = uint64_t{0u};
+}
+inline uint64_t GameSnapshotMessage::_internal_id() const {
+  return _impl_.id_;
+}
+inline uint64_t GameSnapshotMessage::id() const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSnapshotMessage.id)
+  return _internal_id();
+}
+inline void GameSnapshotMessage::_internal_set_id(uint64_t value) {
+  
+  _impl_.id_ = value;
+}
+inline void GameSnapshotMessage::set_id(uint64_t value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:GameMessage.GameSnapshotMessage.id)
+}
+
+// repeated .GameMessage.PlayerSnapshotSync playerSSs = 2;
+inline int GameSnapshotMessage::_internal_playersss_size() const {
+  return _impl_.playersss_.size();
+}
+inline int GameSnapshotMessage::playersss_size() const {
+  return _internal_playersss_size();
+}
+inline void GameSnapshotMessage::clear_playersss() {
+  _impl_.playersss_.Clear();
+}
+inline ::GameMessage::PlayerSnapshotSync* GameSnapshotMessage::mutable_playersss(int index) {
+  // @@protoc_insertion_point(field_mutable:GameMessage.GameSnapshotMessage.playerSSs)
+  return _impl_.playersss_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSnapshotSync >*
+GameSnapshotMessage::mutable_playersss() {
+  // @@protoc_insertion_point(field_mutable_list:GameMessage.GameSnapshotMessage.playerSSs)
+  return &_impl_.playersss_;
+}
+inline const ::GameMessage::PlayerSnapshotSync& GameSnapshotMessage::_internal_playersss(int index) const {
+  return _impl_.playersss_.Get(index);
+}
+inline const ::GameMessage::PlayerSnapshotSync& GameSnapshotMessage::playersss(int index) const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSnapshotMessage.playerSSs)
+  return _internal_playersss(index);
+}
+inline ::GameMessage::PlayerSnapshotSync* GameSnapshotMessage::_internal_add_playersss() {
+  return _impl_.playersss_.Add();
+}
+inline ::GameMessage::PlayerSnapshotSync* GameSnapshotMessage::add_playersss() {
+  ::GameMessage::PlayerSnapshotSync* _add = _internal_add_playersss();
+  // @@protoc_insertion_point(field_add:GameMessage.GameSnapshotMessage.playerSSs)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSnapshotSync >&
+GameSnapshotMessage::playersss() const {
+  // @@protoc_insertion_point(field_list:GameMessage.GameSnapshotMessage.playerSSs)
+  return _impl_.playersss_;
+}
+
+// repeated .GameMessage.ObjectSnapshotSync objectSSs = 3;
+inline int GameSnapshotMessage::_internal_objectsss_size() const {
+  return _impl_.objectsss_.size();
+}
+inline int GameSnapshotMessage::objectsss_size() const {
+  return _internal_objectsss_size();
+}
+inline void GameSnapshotMessage::clear_objectsss() {
+  _impl_.objectsss_.Clear();
+}
+inline ::GameMessage::ObjectSnapshotSync* GameSnapshotMessage::mutable_objectsss(int index) {
+  // @@protoc_insertion_point(field_mutable:GameMessage.GameSnapshotMessage.objectSSs)
+  return _impl_.objectsss_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::ObjectSnapshotSync >*
+GameSnapshotMessage::mutable_objectsss() {
+  // @@protoc_insertion_point(field_mutable_list:GameMessage.GameSnapshotMessage.objectSSs)
+  return &_impl_.objectsss_;
+}
+inline const ::GameMessage::ObjectSnapshotSync& GameSnapshotMessage::_internal_objectsss(int index) const {
+  return _impl_.objectsss_.Get(index);
+}
+inline const ::GameMessage::ObjectSnapshotSync& GameSnapshotMessage::objectsss(int index) const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSnapshotMessage.objectSSs)
+  return _internal_objectsss(index);
+}
+inline ::GameMessage::ObjectSnapshotSync* GameSnapshotMessage::_internal_add_objectsss() {
+  return _impl_.objectsss_.Add();
+}
+inline ::GameMessage::ObjectSnapshotSync* GameSnapshotMessage::add_objectsss() {
+  ::GameMessage::ObjectSnapshotSync* _add = _internal_add_objectsss();
+  // @@protoc_insertion_point(field_add:GameMessage.GameSnapshotMessage.objectSSs)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::ObjectSnapshotSync >&
+GameSnapshotMessage::objectsss() const {
+  // @@protoc_insertion_point(field_list:GameMessage.GameSnapshotMessage.objectSSs)
+  return _impl_.objectsss_;
+}
+
 // -------------------------------------------------------------------
 
 // PlayerSync
 
-// uint64 clientId = 1;
-inline void PlayerSync::clear_clientid() {
-  _impl_.clientid_ = uint64_t{0u};
+// uint64 playerId = 1;
+inline void PlayerSync::clear_playerid() {
+  _impl_.playerid_ = uint64_t{0u};
 }
-inline uint64_t PlayerSync::_internal_clientid() const {
-  return _impl_.clientid_;
+inline uint64_t PlayerSync::_internal_playerid() const {
+  return _impl_.playerid_;
 }
-inline uint64_t PlayerSync::clientid() const {
-  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.clientId)
-  return _internal_clientid();
+inline uint64_t PlayerSync::playerid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.playerId)
+  return _internal_playerid();
 }
-inline void PlayerSync::_internal_set_clientid(uint64_t value) {
+inline void PlayerSync::_internal_set_playerid(uint64_t value) {
   
-  _impl_.clientid_ = value;
+  _impl_.playerid_ = value;
 }
-inline void PlayerSync::set_clientid(uint64_t value) {
-  _internal_set_clientid(value);
-  // @@protoc_insertion_point(field_set:GameMessage.PlayerSync.clientId)
+inline void PlayerSync::set_playerid(uint64_t value) {
+  _internal_set_playerid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.PlayerSync.playerId)
 }
 
-// .UnityMath.Vector3D move = 2;
-inline bool PlayerSync::_internal_has_move() const {
-  return this != internal_default_instance() && _impl_.move_ != nullptr;
+// .UnityMath.Vector3D inputMove = 2;
+inline bool PlayerSync::_internal_has_inputmove() const {
+  return this != internal_default_instance() && _impl_.inputmove_ != nullptr;
 }
-inline bool PlayerSync::has_move() const {
-  return _internal_has_move();
+inline bool PlayerSync::has_inputmove() const {
+  return _internal_has_inputmove();
 }
-inline const ::UnityMath::Vector3D& PlayerSync::_internal_move() const {
-  const ::UnityMath::Vector3D* p = _impl_.move_;
+inline const ::UnityMath::Vector3D& PlayerSync::_internal_inputmove() const {
+  const ::UnityMath::Vector3D* p = _impl_.inputmove_;
   return p != nullptr ? *p : reinterpret_cast<const ::UnityMath::Vector3D&>(
       ::UnityMath::_Vector3D_default_instance_);
 }
-inline const ::UnityMath::Vector3D& PlayerSync::move() const {
-  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.move)
-  return _internal_move();
+inline const ::UnityMath::Vector3D& PlayerSync::inputmove() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.inputMove)
+  return _internal_inputmove();
 }
-inline void PlayerSync::unsafe_arena_set_allocated_move(
-    ::UnityMath::Vector3D* move) {
+inline void PlayerSync::unsafe_arena_set_allocated_inputmove(
+    ::UnityMath::Vector3D* inputmove) {
   if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.move_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.inputmove_);
   }
-  _impl_.move_ = move;
-  if (move) {
+  _impl_.inputmove_ = inputmove;
+  if (inputmove) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:GameMessage.PlayerSync.move)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:GameMessage.PlayerSync.inputMove)
 }
-inline ::UnityMath::Vector3D* PlayerSync::release_move() {
+inline ::UnityMath::Vector3D* PlayerSync::release_inputmove() {
   
-  ::UnityMath::Vector3D* temp = _impl_.move_;
-  _impl_.move_ = nullptr;
+  ::UnityMath::Vector3D* temp = _impl_.inputmove_;
+  _impl_.inputmove_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
   temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
@@ -563,50 +1245,444 @@ inline ::UnityMath::Vector3D* PlayerSync::release_move() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::UnityMath::Vector3D* PlayerSync::unsafe_arena_release_move() {
-  // @@protoc_insertion_point(field_release:GameMessage.PlayerSync.move)
+inline ::UnityMath::Vector3D* PlayerSync::unsafe_arena_release_inputmove() {
+  // @@protoc_insertion_point(field_release:GameMessage.PlayerSync.inputMove)
   
-  ::UnityMath::Vector3D* temp = _impl_.move_;
-  _impl_.move_ = nullptr;
+  ::UnityMath::Vector3D* temp = _impl_.inputmove_;
+  _impl_.inputmove_ = nullptr;
   return temp;
 }
-inline ::UnityMath::Vector3D* PlayerSync::_internal_mutable_move() {
+inline ::UnityMath::Vector3D* PlayerSync::_internal_mutable_inputmove() {
   
-  if (_impl_.move_ == nullptr) {
+  if (_impl_.inputmove_ == nullptr) {
     auto* p = CreateMaybeMessage<::UnityMath::Vector3D>(GetArenaForAllocation());
-    _impl_.move_ = p;
+    _impl_.inputmove_ = p;
   }
-  return _impl_.move_;
+  return _impl_.inputmove_;
 }
-inline ::UnityMath::Vector3D* PlayerSync::mutable_move() {
-  ::UnityMath::Vector3D* _msg = _internal_mutable_move();
-  // @@protoc_insertion_point(field_mutable:GameMessage.PlayerSync.move)
+inline ::UnityMath::Vector3D* PlayerSync::mutable_inputmove() {
+  ::UnityMath::Vector3D* _msg = _internal_mutable_inputmove();
+  // @@protoc_insertion_point(field_mutable:GameMessage.PlayerSync.inputMove)
   return _msg;
 }
-inline void PlayerSync::set_allocated_move(::UnityMath::Vector3D* move) {
+inline void PlayerSync::set_allocated_inputmove(::UnityMath::Vector3D* inputmove) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.move_);
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.inputmove_);
   }
-  if (move) {
+  if (inputmove) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
         ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
-                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(move));
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(inputmove));
     if (message_arena != submessage_arena) {
-      move = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, move, submessage_arena);
+      inputmove = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, inputmove, submessage_arena);
     }
     
   } else {
     
   }
-  _impl_.move_ = move;
-  // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSync.move)
+  _impl_.inputmove_ = inputmove;
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSync.inputMove)
+}
+
+// -------------------------------------------------------------------
+
+// PlayerSnapshotSync
+
+// uint64 playerId = 1;
+inline void PlayerSnapshotSync::clear_playerid() {
+  _impl_.playerid_ = uint64_t{0u};
+}
+inline uint64_t PlayerSnapshotSync::_internal_playerid() const {
+  return _impl_.playerid_;
+}
+inline uint64_t PlayerSnapshotSync::playerid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSnapshotSync.playerId)
+  return _internal_playerid();
+}
+inline void PlayerSnapshotSync::_internal_set_playerid(uint64_t value) {
+  
+  _impl_.playerid_ = value;
+}
+inline void PlayerSnapshotSync::set_playerid(uint64_t value) {
+  _internal_set_playerid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.PlayerSnapshotSync.playerId)
+}
+
+// .UnityMath.Vector3D pos = 2;
+inline bool PlayerSnapshotSync::_internal_has_pos() const {
+  return this != internal_default_instance() && _impl_.pos_ != nullptr;
+}
+inline bool PlayerSnapshotSync::has_pos() const {
+  return _internal_has_pos();
+}
+inline const ::UnityMath::Vector3D& PlayerSnapshotSync::_internal_pos() const {
+  const ::UnityMath::Vector3D* p = _impl_.pos_;
+  return p != nullptr ? *p : reinterpret_cast<const ::UnityMath::Vector3D&>(
+      ::UnityMath::_Vector3D_default_instance_);
+}
+inline const ::UnityMath::Vector3D& PlayerSnapshotSync::pos() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSnapshotSync.pos)
+  return _internal_pos();
+}
+inline void PlayerSnapshotSync::unsafe_arena_set_allocated_pos(
+    ::UnityMath::Vector3D* pos) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.pos_);
+  }
+  _impl_.pos_ = pos;
+  if (pos) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:GameMessage.PlayerSnapshotSync.pos)
+}
+inline ::UnityMath::Vector3D* PlayerSnapshotSync::release_pos() {
+  
+  ::UnityMath::Vector3D* temp = _impl_.pos_;
+  _impl_.pos_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::UnityMath::Vector3D* PlayerSnapshotSync::unsafe_arena_release_pos() {
+  // @@protoc_insertion_point(field_release:GameMessage.PlayerSnapshotSync.pos)
+  
+  ::UnityMath::Vector3D* temp = _impl_.pos_;
+  _impl_.pos_ = nullptr;
+  return temp;
+}
+inline ::UnityMath::Vector3D* PlayerSnapshotSync::_internal_mutable_pos() {
+  
+  if (_impl_.pos_ == nullptr) {
+    auto* p = CreateMaybeMessage<::UnityMath::Vector3D>(GetArenaForAllocation());
+    _impl_.pos_ = p;
+  }
+  return _impl_.pos_;
+}
+inline ::UnityMath::Vector3D* PlayerSnapshotSync::mutable_pos() {
+  ::UnityMath::Vector3D* _msg = _internal_mutable_pos();
+  // @@protoc_insertion_point(field_mutable:GameMessage.PlayerSnapshotSync.pos)
+  return _msg;
+}
+inline void PlayerSnapshotSync::set_allocated_pos(::UnityMath::Vector3D* pos) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.pos_);
+  }
+  if (pos) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(pos));
+    if (message_arena != submessage_arena) {
+      pos = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, pos, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.pos_ = pos;
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSnapshotSync.pos)
+}
+
+// .UnityMath.Vector3D velocity = 3;
+inline bool PlayerSnapshotSync::_internal_has_velocity() const {
+  return this != internal_default_instance() && _impl_.velocity_ != nullptr;
+}
+inline bool PlayerSnapshotSync::has_velocity() const {
+  return _internal_has_velocity();
+}
+inline const ::UnityMath::Vector3D& PlayerSnapshotSync::_internal_velocity() const {
+  const ::UnityMath::Vector3D* p = _impl_.velocity_;
+  return p != nullptr ? *p : reinterpret_cast<const ::UnityMath::Vector3D&>(
+      ::UnityMath::_Vector3D_default_instance_);
+}
+inline const ::UnityMath::Vector3D& PlayerSnapshotSync::velocity() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSnapshotSync.velocity)
+  return _internal_velocity();
+}
+inline void PlayerSnapshotSync::unsafe_arena_set_allocated_velocity(
+    ::UnityMath::Vector3D* velocity) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.velocity_);
+  }
+  _impl_.velocity_ = velocity;
+  if (velocity) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:GameMessage.PlayerSnapshotSync.velocity)
+}
+inline ::UnityMath::Vector3D* PlayerSnapshotSync::release_velocity() {
+  
+  ::UnityMath::Vector3D* temp = _impl_.velocity_;
+  _impl_.velocity_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::UnityMath::Vector3D* PlayerSnapshotSync::unsafe_arena_release_velocity() {
+  // @@protoc_insertion_point(field_release:GameMessage.PlayerSnapshotSync.velocity)
+  
+  ::UnityMath::Vector3D* temp = _impl_.velocity_;
+  _impl_.velocity_ = nullptr;
+  return temp;
+}
+inline ::UnityMath::Vector3D* PlayerSnapshotSync::_internal_mutable_velocity() {
+  
+  if (_impl_.velocity_ == nullptr) {
+    auto* p = CreateMaybeMessage<::UnityMath::Vector3D>(GetArenaForAllocation());
+    _impl_.velocity_ = p;
+  }
+  return _impl_.velocity_;
+}
+inline ::UnityMath::Vector3D* PlayerSnapshotSync::mutable_velocity() {
+  ::UnityMath::Vector3D* _msg = _internal_mutable_velocity();
+  // @@protoc_insertion_point(field_mutable:GameMessage.PlayerSnapshotSync.velocity)
+  return _msg;
+}
+inline void PlayerSnapshotSync::set_allocated_velocity(::UnityMath::Vector3D* velocity) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.velocity_);
+  }
+  if (velocity) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(velocity));
+    if (message_arena != submessage_arena) {
+      velocity = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, velocity, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.velocity_ = velocity;
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSnapshotSync.velocity)
+}
+
+// -------------------------------------------------------------------
+
+// ObjectSnapshotSync
+
+// uint64 objectId = 1;
+inline void ObjectSnapshotSync::clear_objectid() {
+  _impl_.objectid_ = uint64_t{0u};
+}
+inline uint64_t ObjectSnapshotSync::_internal_objectid() const {
+  return _impl_.objectid_;
+}
+inline uint64_t ObjectSnapshotSync::objectid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.ObjectSnapshotSync.objectId)
+  return _internal_objectid();
+}
+inline void ObjectSnapshotSync::_internal_set_objectid(uint64_t value) {
+  
+  _impl_.objectid_ = value;
+}
+inline void ObjectSnapshotSync::set_objectid(uint64_t value) {
+  _internal_set_objectid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.ObjectSnapshotSync.objectId)
+}
+
+// .UnityMath.Vector3D pos = 2;
+inline bool ObjectSnapshotSync::_internal_has_pos() const {
+  return this != internal_default_instance() && _impl_.pos_ != nullptr;
+}
+inline bool ObjectSnapshotSync::has_pos() const {
+  return _internal_has_pos();
+}
+inline const ::UnityMath::Vector3D& ObjectSnapshotSync::_internal_pos() const {
+  const ::UnityMath::Vector3D* p = _impl_.pos_;
+  return p != nullptr ? *p : reinterpret_cast<const ::UnityMath::Vector3D&>(
+      ::UnityMath::_Vector3D_default_instance_);
+}
+inline const ::UnityMath::Vector3D& ObjectSnapshotSync::pos() const {
+  // @@protoc_insertion_point(field_get:GameMessage.ObjectSnapshotSync.pos)
+  return _internal_pos();
+}
+inline void ObjectSnapshotSync::unsafe_arena_set_allocated_pos(
+    ::UnityMath::Vector3D* pos) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.pos_);
+  }
+  _impl_.pos_ = pos;
+  if (pos) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:GameMessage.ObjectSnapshotSync.pos)
+}
+inline ::UnityMath::Vector3D* ObjectSnapshotSync::release_pos() {
+  
+  ::UnityMath::Vector3D* temp = _impl_.pos_;
+  _impl_.pos_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::UnityMath::Vector3D* ObjectSnapshotSync::unsafe_arena_release_pos() {
+  // @@protoc_insertion_point(field_release:GameMessage.ObjectSnapshotSync.pos)
+  
+  ::UnityMath::Vector3D* temp = _impl_.pos_;
+  _impl_.pos_ = nullptr;
+  return temp;
+}
+inline ::UnityMath::Vector3D* ObjectSnapshotSync::_internal_mutable_pos() {
+  
+  if (_impl_.pos_ == nullptr) {
+    auto* p = CreateMaybeMessage<::UnityMath::Vector3D>(GetArenaForAllocation());
+    _impl_.pos_ = p;
+  }
+  return _impl_.pos_;
+}
+inline ::UnityMath::Vector3D* ObjectSnapshotSync::mutable_pos() {
+  ::UnityMath::Vector3D* _msg = _internal_mutable_pos();
+  // @@protoc_insertion_point(field_mutable:GameMessage.ObjectSnapshotSync.pos)
+  return _msg;
+}
+inline void ObjectSnapshotSync::set_allocated_pos(::UnityMath::Vector3D* pos) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.pos_);
+  }
+  if (pos) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(pos));
+    if (message_arena != submessage_arena) {
+      pos = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, pos, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.pos_ = pos;
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.ObjectSnapshotSync.pos)
+}
+
+// .UnityMath.Vector3D velocity = 3;
+inline bool ObjectSnapshotSync::_internal_has_velocity() const {
+  return this != internal_default_instance() && _impl_.velocity_ != nullptr;
+}
+inline bool ObjectSnapshotSync::has_velocity() const {
+  return _internal_has_velocity();
+}
+inline const ::UnityMath::Vector3D& ObjectSnapshotSync::_internal_velocity() const {
+  const ::UnityMath::Vector3D* p = _impl_.velocity_;
+  return p != nullptr ? *p : reinterpret_cast<const ::UnityMath::Vector3D&>(
+      ::UnityMath::_Vector3D_default_instance_);
+}
+inline const ::UnityMath::Vector3D& ObjectSnapshotSync::velocity() const {
+  // @@protoc_insertion_point(field_get:GameMessage.ObjectSnapshotSync.velocity)
+  return _internal_velocity();
+}
+inline void ObjectSnapshotSync::unsafe_arena_set_allocated_velocity(
+    ::UnityMath::Vector3D* velocity) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.velocity_);
+  }
+  _impl_.velocity_ = velocity;
+  if (velocity) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:GameMessage.ObjectSnapshotSync.velocity)
+}
+inline ::UnityMath::Vector3D* ObjectSnapshotSync::release_velocity() {
+  
+  ::UnityMath::Vector3D* temp = _impl_.velocity_;
+  _impl_.velocity_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::UnityMath::Vector3D* ObjectSnapshotSync::unsafe_arena_release_velocity() {
+  // @@protoc_insertion_point(field_release:GameMessage.ObjectSnapshotSync.velocity)
+  
+  ::UnityMath::Vector3D* temp = _impl_.velocity_;
+  _impl_.velocity_ = nullptr;
+  return temp;
+}
+inline ::UnityMath::Vector3D* ObjectSnapshotSync::_internal_mutable_velocity() {
+  
+  if (_impl_.velocity_ == nullptr) {
+    auto* p = CreateMaybeMessage<::UnityMath::Vector3D>(GetArenaForAllocation());
+    _impl_.velocity_ = p;
+  }
+  return _impl_.velocity_;
+}
+inline ::UnityMath::Vector3D* ObjectSnapshotSync::mutable_velocity() {
+  ::UnityMath::Vector3D* _msg = _internal_mutable_velocity();
+  // @@protoc_insertion_point(field_mutable:GameMessage.ObjectSnapshotSync.velocity)
+  return _msg;
+}
+inline void ObjectSnapshotSync::set_allocated_velocity(::UnityMath::Vector3D* velocity) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.velocity_);
+  }
+  if (velocity) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(velocity));
+    if (message_arena != submessage_arena) {
+      velocity = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, velocity, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.velocity_ = velocity;
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.ObjectSnapshotSync.velocity)
 }
 
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 

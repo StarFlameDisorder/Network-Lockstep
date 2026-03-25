@@ -23,9 +23,10 @@ namespace _pbi = _pb::internal;
 namespace GameMessage {
 PROTOBUF_CONSTEXPR GameSyncMessage::GameSyncMessage(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.content_)*/{}
-  , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_._oneof_case_)*/{}} {}
+    /*decltype(_impl_.players_)*/{}
+  , /*decltype(_impl_.id_)*/uint64_t{0u}
+  , /*decltype(_impl_.time_)*/uint64_t{0u}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct GameSyncMessageDefaultTypeInternal {
   PROTOBUF_CONSTEXPR GameSyncMessageDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -35,10 +36,25 @@ struct GameSyncMessageDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GameSyncMessageDefaultTypeInternal _GameSyncMessage_default_instance_;
+PROTOBUF_CONSTEXPR GameSnapshotMessage::GameSnapshotMessage(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.playersss_)*/{}
+  , /*decltype(_impl_.objectsss_)*/{}
+  , /*decltype(_impl_.id_)*/uint64_t{0u}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct GameSnapshotMessageDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GameSnapshotMessageDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GameSnapshotMessageDefaultTypeInternal() {}
+  union {
+    GameSnapshotMessage _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GameSnapshotMessageDefaultTypeInternal _GameSnapshotMessage_default_instance_;
 PROTOBUF_CONSTEXPR PlayerSync::PlayerSync(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.move_)*/nullptr
-  , /*decltype(_impl_.clientid_)*/uint64_t{0u}
+    /*decltype(_impl_.inputmove_)*/nullptr
+  , /*decltype(_impl_.playerid_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct PlayerSyncDefaultTypeInternal {
   PROTOBUF_CONSTEXPR PlayerSyncDefaultTypeInternal()
@@ -49,8 +65,38 @@ struct PlayerSyncDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PlayerSyncDefaultTypeInternal _PlayerSync_default_instance_;
+PROTOBUF_CONSTEXPR PlayerSnapshotSync::PlayerSnapshotSync(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.pos_)*/nullptr
+  , /*decltype(_impl_.velocity_)*/nullptr
+  , /*decltype(_impl_.playerid_)*/uint64_t{0u}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct PlayerSnapshotSyncDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR PlayerSnapshotSyncDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~PlayerSnapshotSyncDefaultTypeInternal() {}
+  union {
+    PlayerSnapshotSync _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PlayerSnapshotSyncDefaultTypeInternal _PlayerSnapshotSync_default_instance_;
+PROTOBUF_CONSTEXPR ObjectSnapshotSync::ObjectSnapshotSync(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.pos_)*/nullptr
+  , /*decltype(_impl_.velocity_)*/nullptr
+  , /*decltype(_impl_.objectid_)*/uint64_t{0u}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct ObjectSnapshotSyncDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ObjectSnapshotSyncDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ObjectSnapshotSyncDefaultTypeInternal() {}
+  union {
+    ObjectSnapshotSync _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ObjectSnapshotSyncDefaultTypeInternal _ObjectSnapshotSync_default_instance_;
 }  // namespace GameMessage
-static ::_pb::Metadata file_level_metadata_GameMessage_2eproto[2];
+static ::_pb::Metadata file_level_metadata_GameMessage_2eproto[5];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_GameMessage_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_GameMessage_2eproto = nullptr;
 
@@ -58,45 +104,89 @@ const uint32_t TableStruct_GameMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::GameMessage::GameSyncMessage, _internal_metadata_),
   ~0u,  // no _extensions_
-  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSyncMessage, _impl_._oneof_case_[0]),
+  ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  ::_pbi::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSyncMessage, _impl_.content_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSyncMessage, _impl_.id_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSyncMessage, _impl_.time_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSyncMessage, _impl_.players_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.id_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.playersss_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.objectsss_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSync, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSync, _impl_.clientid_),
-  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSync, _impl_.move_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSync, _impl_.playerid_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSync, _impl_.inputmove_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSnapshotSync, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSnapshotSync, _impl_.playerid_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSnapshotSync, _impl_.pos_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSnapshotSync, _impl_.velocity_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::GameMessage::ObjectSnapshotSync, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::GameMessage::ObjectSnapshotSync, _impl_.objectid_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::ObjectSnapshotSync, _impl_.pos_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::ObjectSnapshotSync, _impl_.velocity_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::GameMessage::GameSyncMessage)},
-  { 8, -1, -1, sizeof(::GameMessage::PlayerSync)},
+  { 9, -1, -1, sizeof(::GameMessage::GameSnapshotMessage)},
+  { 18, -1, -1, sizeof(::GameMessage::PlayerSync)},
+  { 26, -1, -1, sizeof(::GameMessage::PlayerSnapshotSync)},
+  { 35, -1, -1, sizeof(::GameMessage::ObjectSnapshotSync)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
   &::GameMessage::_GameSyncMessage_default_instance_._instance,
+  &::GameMessage::_GameSnapshotMessage_default_instance_._instance,
   &::GameMessage::_PlayerSync_default_instance_._instance,
+  &::GameMessage::_PlayerSnapshotSync_default_instance_._instance,
+  &::GameMessage::_ObjectSnapshotSync_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_GameMessage_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\021GameMessage.proto\022\013GameMessage\032\017UnityM"
-  "ath.proto\"G\n\017GameSyncMessage\022)\n\006player\030\001"
-  " \001(\0132\027.GameMessage.PlayerSyncH\000B\t\n\007conte"
-  "nt\"A\n\nPlayerSync\022\020\n\010clientId\030\001 \001(\004\022!\n\004mo"
-  "ve\030\002 \001(\0132\023.UnityMath.Vector3Db\006proto3"
+  "ath.proto\"U\n\017GameSyncMessage\022\n\n\002id\030\001 \001(\004"
+  "\022\014\n\004time\030\002 \001(\004\022(\n\007players\030\003 \003(\0132\027.GameMe"
+  "ssage.PlayerSync\"\211\001\n\023GameSnapshotMessage"
+  "\022\n\n\002id\030\001 \001(\004\0222\n\tplayerSSs\030\002 \003(\0132\037.GameMe"
+  "ssage.PlayerSnapshotSync\0222\n\tobjectSSs\030\003 "
+  "\003(\0132\037.GameMessage.ObjectSnapshotSync\"F\n\n"
+  "PlayerSync\022\020\n\010playerId\030\001 \001(\004\022&\n\tinputMov"
+  "e\030\002 \001(\0132\023.UnityMath.Vector3D\"o\n\022PlayerSn"
+  "apshotSync\022\020\n\010playerId\030\001 \001(\004\022 \n\003pos\030\002 \001("
+  "\0132\023.UnityMath.Vector3D\022%\n\010velocity\030\003 \001(\013"
+  "2\023.UnityMath.Vector3D\"o\n\022ObjectSnapshotS"
+  "ync\022\020\n\010objectId\030\001 \001(\004\022 \n\003pos\030\002 \001(\0132\023.Uni"
+  "tyMath.Vector3D\022%\n\010velocity\030\003 \001(\0132\023.Unit"
+  "yMath.Vector3Db\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_GameMessage_2eproto_deps[1] = {
   &::descriptor_table_UnityMath_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_GameMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_GameMessage_2eproto = {
-    false, false, 197, descriptor_table_protodef_GameMessage_2eproto,
+    false, false, 582, descriptor_table_protodef_GameMessage_2eproto,
     "GameMessage.proto",
-    &descriptor_table_GameMessage_2eproto_once, descriptor_table_GameMessage_2eproto_deps, 1, 2,
+    &descriptor_table_GameMessage_2eproto_once, descriptor_table_GameMessage_2eproto_deps, 1, 5,
     schemas, file_default_instances, TableStruct_GameMessage_2eproto::offsets,
     file_level_metadata_GameMessage_2eproto, file_level_enum_descriptors_GameMessage_2eproto,
     file_level_service_descriptors_GameMessage_2eproto,
@@ -113,28 +203,8 @@ namespace GameMessage {
 
 class GameSyncMessage::_Internal {
  public:
-  static const ::GameMessage::PlayerSync& player(const GameSyncMessage* msg);
 };
 
-const ::GameMessage::PlayerSync&
-GameSyncMessage::_Internal::player(const GameSyncMessage* msg) {
-  return *msg->_impl_.content_.player_;
-}
-void GameSyncMessage::set_allocated_player(::GameMessage::PlayerSync* player) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  clear_content();
-  if (player) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(player);
-    if (message_arena != submessage_arena) {
-      player = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, player, submessage_arena);
-    }
-    set_has_player();
-    _impl_.content_.player_ = player;
-  }
-  // @@protoc_insertion_point(field_set_allocated:GameMessage.GameSyncMessage.player)
-}
 GameSyncMessage::GameSyncMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -145,22 +215,15 @@ GameSyncMessage::GameSyncMessage(const GameSyncMessage& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   GameSyncMessage* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.content_){}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , /*decltype(_impl_._oneof_case_)*/{}};
+      decltype(_impl_.players_){from._impl_.players_}
+    , decltype(_impl_.id_){}
+    , decltype(_impl_.time_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  clear_has_content();
-  switch (from.content_case()) {
-    case kPlayer: {
-      _this->_internal_mutable_player()->::GameMessage::PlayerSync::MergeFrom(
-          from._internal_player());
-      break;
-    }
-    case CONTENT_NOT_SET: {
-      break;
-    }
-  }
+  ::memcpy(&_impl_.id_, &from._impl_.id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.time_) -
+    reinterpret_cast<char*>(&_impl_.id_)) + sizeof(_impl_.time_));
   // @@protoc_insertion_point(copy_constructor:GameMessage.GameSyncMessage)
 }
 
@@ -169,11 +232,11 @@ inline void GameSyncMessage::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.content_){}
+      decltype(_impl_.players_){arena}
+    , decltype(_impl_.id_){uint64_t{0u}}
+    , decltype(_impl_.time_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
-    , /*decltype(_impl_._oneof_case_)*/{}
   };
-  clear_has_content();
 }
 
 GameSyncMessage::~GameSyncMessage() {
@@ -187,31 +250,12 @@ GameSyncMessage::~GameSyncMessage() {
 
 inline void GameSyncMessage::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (has_content()) {
-    clear_content();
-  }
+  _impl_.players_.~RepeatedPtrField();
 }
 
 void GameSyncMessage::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
-
-void GameSyncMessage::clear_content() {
-// @@protoc_insertion_point(one_of_clear_start:GameMessage.GameSyncMessage)
-  switch (content_case()) {
-    case kPlayer: {
-      if (GetArenaForAllocation() == nullptr) {
-        delete _impl_.content_.player_;
-      }
-      break;
-    }
-    case CONTENT_NOT_SET: {
-      break;
-    }
-  }
-  _impl_._oneof_case_[0] = CONTENT_NOT_SET;
-}
-
 
 void GameSyncMessage::Clear() {
 // @@protoc_insertion_point(message_clear_start:GameMessage.GameSyncMessage)
@@ -219,7 +263,10 @@ void GameSyncMessage::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  clear_content();
+  _impl_.players_.Clear();
+  ::memset(&_impl_.id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.time_) -
+      reinterpret_cast<char*>(&_impl_.id_)) + sizeof(_impl_.time_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -229,11 +276,32 @@ const char* GameSyncMessage::_InternalParse(const char* ptr, ::_pbi::ParseContex
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .GameMessage.PlayerSync player = 1;
+      // uint64 id = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          ptr = ctx->ParseMessage(_internal_mutable_player(), ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 time = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.time_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .GameMessage.PlayerSync players = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_players(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -266,11 +334,24 @@ uint8_t* GameSyncMessage::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .GameMessage.PlayerSync player = 1;
-  if (_internal_has_player()) {
+  // uint64 id = 1;
+  if (this->_internal_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_id(), target);
+  }
+
+  // uint64 time = 2;
+  if (this->_internal_time() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_time(), target);
+  }
+
+  // repeated .GameMessage.PlayerSync players = 3;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_players_size()); i < n; i++) {
+    const auto& repfield = this->_internal_players(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, _Internal::player(this),
-        _Internal::player(this).GetCachedSize(), target, stream);
+        InternalWriteMessage(3, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -289,18 +370,23 @@ size_t GameSyncMessage::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  switch (content_case()) {
-    // .GameMessage.PlayerSync player = 1;
-    case kPlayer: {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *_impl_.content_.player_);
-      break;
-    }
-    case CONTENT_NOT_SET: {
-      break;
-    }
+  // repeated .GameMessage.PlayerSync players = 3;
+  total_size += 1UL * this->_internal_players_size();
+  for (const auto& msg : this->_impl_.players_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
+
+  // uint64 id = 1;
+  if (this->_internal_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_id());
+  }
+
+  // uint64 time = 2;
+  if (this->_internal_time() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_time());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -319,15 +405,12 @@ void GameSyncMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  switch (from.content_case()) {
-    case kPlayer: {
-      _this->_internal_mutable_player()->::GameMessage::PlayerSync::MergeFrom(
-          from._internal_player());
-      break;
-    }
-    case CONTENT_NOT_SET: {
-      break;
-    }
+  _this->_impl_.players_.MergeFrom(from._impl_.players_);
+  if (from._internal_id() != 0) {
+    _this->_internal_set_id(from._internal_id());
+  }
+  if (from._internal_time() != 0) {
+    _this->_internal_set_time(from._internal_time());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -346,8 +429,13 @@ bool GameSyncMessage::IsInitialized() const {
 void GameSyncMessage::InternalSwap(GameSyncMessage* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_.content_, other->_impl_.content_);
-  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
+  _impl_.players_.InternalSwap(&other->_impl_.players_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(GameSyncMessage, _impl_.time_)
+      + sizeof(GameSyncMessage::_impl_.time_)
+      - PROTOBUF_FIELD_OFFSET(GameSyncMessage, _impl_.id_)>(
+          reinterpret_cast<char*>(&_impl_.id_),
+          reinterpret_cast<char*>(&other->_impl_.id_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata GameSyncMessage::GetMetadata() const {
@@ -358,20 +446,266 @@ void GameSyncMessage::InternalSwap(GameSyncMessage* other) {
 
 // ===================================================================
 
+class GameSnapshotMessage::_Internal {
+ public:
+};
+
+GameSnapshotMessage::GameSnapshotMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:GameMessage.GameSnapshotMessage)
+}
+GameSnapshotMessage::GameSnapshotMessage(const GameSnapshotMessage& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  GameSnapshotMessage* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.playersss_){from._impl_.playersss_}
+    , decltype(_impl_.objectsss_){from._impl_.objectsss_}
+    , decltype(_impl_.id_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.id_ = from._impl_.id_;
+  // @@protoc_insertion_point(copy_constructor:GameMessage.GameSnapshotMessage)
+}
+
+inline void GameSnapshotMessage::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.playersss_){arena}
+    , decltype(_impl_.objectsss_){arena}
+    , decltype(_impl_.id_){uint64_t{0u}}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+GameSnapshotMessage::~GameSnapshotMessage() {
+  // @@protoc_insertion_point(destructor:GameMessage.GameSnapshotMessage)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void GameSnapshotMessage::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.playersss_.~RepeatedPtrField();
+  _impl_.objectsss_.~RepeatedPtrField();
+}
+
+void GameSnapshotMessage::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void GameSnapshotMessage::Clear() {
+// @@protoc_insertion_point(message_clear_start:GameMessage.GameSnapshotMessage)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.playersss_.Clear();
+  _impl_.objectsss_.Clear();
+  _impl_.id_ = uint64_t{0u};
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* GameSnapshotMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .GameMessage.PlayerSnapshotSync playerSSs = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_playersss(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .GameMessage.ObjectSnapshotSync objectSSs = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_objectsss(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* GameSnapshotMessage::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:GameMessage.GameSnapshotMessage)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 id = 1;
+  if (this->_internal_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_id(), target);
+  }
+
+  // repeated .GameMessage.PlayerSnapshotSync playerSSs = 2;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_playersss_size()); i < n; i++) {
+    const auto& repfield = this->_internal_playersss(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // repeated .GameMessage.ObjectSnapshotSync objectSSs = 3;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_objectsss_size()); i < n; i++) {
+    const auto& repfield = this->_internal_objectsss(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(3, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:GameMessage.GameSnapshotMessage)
+  return target;
+}
+
+size_t GameSnapshotMessage::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GameMessage.GameSnapshotMessage)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .GameMessage.PlayerSnapshotSync playerSSs = 2;
+  total_size += 1UL * this->_internal_playersss_size();
+  for (const auto& msg : this->_impl_.playersss_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // repeated .GameMessage.ObjectSnapshotSync objectSSs = 3;
+  total_size += 1UL * this->_internal_objectsss_size();
+  for (const auto& msg : this->_impl_.objectsss_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // uint64 id = 1;
+  if (this->_internal_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_id());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GameSnapshotMessage::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    GameSnapshotMessage::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GameSnapshotMessage::GetClassData() const { return &_class_data_; }
+
+
+void GameSnapshotMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<GameSnapshotMessage*>(&to_msg);
+  auto& from = static_cast<const GameSnapshotMessage&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:GameMessage.GameSnapshotMessage)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  _this->_impl_.playersss_.MergeFrom(from._impl_.playersss_);
+  _this->_impl_.objectsss_.MergeFrom(from._impl_.objectsss_);
+  if (from._internal_id() != 0) {
+    _this->_internal_set_id(from._internal_id());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GameSnapshotMessage::CopyFrom(const GameSnapshotMessage& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GameMessage.GameSnapshotMessage)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GameSnapshotMessage::IsInitialized() const {
+  return true;
+}
+
+void GameSnapshotMessage::InternalSwap(GameSnapshotMessage* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.playersss_.InternalSwap(&other->_impl_.playersss_);
+  _impl_.objectsss_.InternalSwap(&other->_impl_.objectsss_);
+  swap(_impl_.id_, other->_impl_.id_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GameSnapshotMessage::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
+      file_level_metadata_GameMessage_2eproto[1]);
+}
+
+// ===================================================================
+
 class PlayerSync::_Internal {
  public:
-  static const ::UnityMath::Vector3D& move(const PlayerSync* msg);
+  static const ::UnityMath::Vector3D& inputmove(const PlayerSync* msg);
 };
 
 const ::UnityMath::Vector3D&
-PlayerSync::_Internal::move(const PlayerSync* msg) {
-  return *msg->_impl_.move_;
+PlayerSync::_Internal::inputmove(const PlayerSync* msg) {
+  return *msg->_impl_.inputmove_;
 }
-void PlayerSync::clear_move() {
-  if (GetArenaForAllocation() == nullptr && _impl_.move_ != nullptr) {
-    delete _impl_.move_;
+void PlayerSync::clear_inputmove() {
+  if (GetArenaForAllocation() == nullptr && _impl_.inputmove_ != nullptr) {
+    delete _impl_.inputmove_;
   }
-  _impl_.move_ = nullptr;
+  _impl_.inputmove_ = nullptr;
 }
 PlayerSync::PlayerSync(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -383,15 +717,15 @@ PlayerSync::PlayerSync(const PlayerSync& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   PlayerSync* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.move_){nullptr}
-    , decltype(_impl_.clientid_){}
+      decltype(_impl_.inputmove_){nullptr}
+    , decltype(_impl_.playerid_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_move()) {
-    _this->_impl_.move_ = new ::UnityMath::Vector3D(*from._impl_.move_);
+  if (from._internal_has_inputmove()) {
+    _this->_impl_.inputmove_ = new ::UnityMath::Vector3D(*from._impl_.inputmove_);
   }
-  _this->_impl_.clientid_ = from._impl_.clientid_;
+  _this->_impl_.playerid_ = from._impl_.playerid_;
   // @@protoc_insertion_point(copy_constructor:GameMessage.PlayerSync)
 }
 
@@ -400,8 +734,8 @@ inline void PlayerSync::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.move_){nullptr}
-    , decltype(_impl_.clientid_){uint64_t{0u}}
+      decltype(_impl_.inputmove_){nullptr}
+    , decltype(_impl_.playerid_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -417,7 +751,7 @@ PlayerSync::~PlayerSync() {
 
 inline void PlayerSync::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete _impl_.move_;
+  if (this != internal_default_instance()) delete _impl_.inputmove_;
 }
 
 void PlayerSync::SetCachedSize(int size) const {
@@ -430,11 +764,11 @@ void PlayerSync::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArenaForAllocation() == nullptr && _impl_.move_ != nullptr) {
-    delete _impl_.move_;
+  if (GetArenaForAllocation() == nullptr && _impl_.inputmove_ != nullptr) {
+    delete _impl_.inputmove_;
   }
-  _impl_.move_ = nullptr;
-  _impl_.clientid_ = uint64_t{0u};
+  _impl_.inputmove_ = nullptr;
+  _impl_.playerid_ = uint64_t{0u};
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -444,18 +778,18 @@ const char* PlayerSync::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // uint64 clientId = 1;
+      // uint64 playerId = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.clientid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.playerid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // .UnityMath.Vector3D move = 2;
+      // .UnityMath.Vector3D inputMove = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          ptr = ctx->ParseMessage(_internal_mutable_move(), ptr);
+          ptr = ctx->ParseMessage(_internal_mutable_inputmove(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -489,17 +823,17 @@ uint8_t* PlayerSync::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint64 clientId = 1;
-  if (this->_internal_clientid() != 0) {
+  // uint64 playerId = 1;
+  if (this->_internal_playerid() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_clientid(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_playerid(), target);
   }
 
-  // .UnityMath.Vector3D move = 2;
-  if (this->_internal_has_move()) {
+  // .UnityMath.Vector3D inputMove = 2;
+  if (this->_internal_has_inputmove()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, _Internal::move(this),
-        _Internal::move(this).GetCachedSize(), target, stream);
+      InternalWriteMessage(2, _Internal::inputmove(this),
+        _Internal::inputmove(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -518,16 +852,16 @@ size_t PlayerSync::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .UnityMath.Vector3D move = 2;
-  if (this->_internal_has_move()) {
+  // .UnityMath.Vector3D inputMove = 2;
+  if (this->_internal_has_inputmove()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.move_);
+        *_impl_.inputmove_);
   }
 
-  // uint64 clientId = 1;
-  if (this->_internal_clientid() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_clientid());
+  // uint64 playerId = 1;
+  if (this->_internal_playerid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_playerid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -548,12 +882,12 @@ void PlayerSync::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_move()) {
-    _this->_internal_mutable_move()->::UnityMath::Vector3D::MergeFrom(
-        from._internal_move());
+  if (from._internal_has_inputmove()) {
+    _this->_internal_mutable_inputmove()->::UnityMath::Vector3D::MergeFrom(
+        from._internal_inputmove());
   }
-  if (from._internal_clientid() != 0) {
-    _this->_internal_set_clientid(from._internal_clientid());
+  if (from._internal_playerid() != 0) {
+    _this->_internal_set_playerid(from._internal_playerid());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -573,17 +907,571 @@ void PlayerSync::InternalSwap(PlayerSync* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(PlayerSync, _impl_.clientid_)
-      + sizeof(PlayerSync::_impl_.clientid_)
-      - PROTOBUF_FIELD_OFFSET(PlayerSync, _impl_.move_)>(
-          reinterpret_cast<char*>(&_impl_.move_),
-          reinterpret_cast<char*>(&other->_impl_.move_));
+      PROTOBUF_FIELD_OFFSET(PlayerSync, _impl_.playerid_)
+      + sizeof(PlayerSync::_impl_.playerid_)
+      - PROTOBUF_FIELD_OFFSET(PlayerSync, _impl_.inputmove_)>(
+          reinterpret_cast<char*>(&_impl_.inputmove_),
+          reinterpret_cast<char*>(&other->_impl_.inputmove_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata PlayerSync::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
-      file_level_metadata_GameMessage_2eproto[1]);
+      file_level_metadata_GameMessage_2eproto[2]);
+}
+
+// ===================================================================
+
+class PlayerSnapshotSync::_Internal {
+ public:
+  static const ::UnityMath::Vector3D& pos(const PlayerSnapshotSync* msg);
+  static const ::UnityMath::Vector3D& velocity(const PlayerSnapshotSync* msg);
+};
+
+const ::UnityMath::Vector3D&
+PlayerSnapshotSync::_Internal::pos(const PlayerSnapshotSync* msg) {
+  return *msg->_impl_.pos_;
+}
+const ::UnityMath::Vector3D&
+PlayerSnapshotSync::_Internal::velocity(const PlayerSnapshotSync* msg) {
+  return *msg->_impl_.velocity_;
+}
+void PlayerSnapshotSync::clear_pos() {
+  if (GetArenaForAllocation() == nullptr && _impl_.pos_ != nullptr) {
+    delete _impl_.pos_;
+  }
+  _impl_.pos_ = nullptr;
+}
+void PlayerSnapshotSync::clear_velocity() {
+  if (GetArenaForAllocation() == nullptr && _impl_.velocity_ != nullptr) {
+    delete _impl_.velocity_;
+  }
+  _impl_.velocity_ = nullptr;
+}
+PlayerSnapshotSync::PlayerSnapshotSync(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:GameMessage.PlayerSnapshotSync)
+}
+PlayerSnapshotSync::PlayerSnapshotSync(const PlayerSnapshotSync& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  PlayerSnapshotSync* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.pos_){nullptr}
+    , decltype(_impl_.velocity_){nullptr}
+    , decltype(_impl_.playerid_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_pos()) {
+    _this->_impl_.pos_ = new ::UnityMath::Vector3D(*from._impl_.pos_);
+  }
+  if (from._internal_has_velocity()) {
+    _this->_impl_.velocity_ = new ::UnityMath::Vector3D(*from._impl_.velocity_);
+  }
+  _this->_impl_.playerid_ = from._impl_.playerid_;
+  // @@protoc_insertion_point(copy_constructor:GameMessage.PlayerSnapshotSync)
+}
+
+inline void PlayerSnapshotSync::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.pos_){nullptr}
+    , decltype(_impl_.velocity_){nullptr}
+    , decltype(_impl_.playerid_){uint64_t{0u}}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+PlayerSnapshotSync::~PlayerSnapshotSync() {
+  // @@protoc_insertion_point(destructor:GameMessage.PlayerSnapshotSync)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void PlayerSnapshotSync::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.pos_;
+  if (this != internal_default_instance()) delete _impl_.velocity_;
+}
+
+void PlayerSnapshotSync::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void PlayerSnapshotSync::Clear() {
+// @@protoc_insertion_point(message_clear_start:GameMessage.PlayerSnapshotSync)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaForAllocation() == nullptr && _impl_.pos_ != nullptr) {
+    delete _impl_.pos_;
+  }
+  _impl_.pos_ = nullptr;
+  if (GetArenaForAllocation() == nullptr && _impl_.velocity_ != nullptr) {
+    delete _impl_.velocity_;
+  }
+  _impl_.velocity_ = nullptr;
+  _impl_.playerid_ = uint64_t{0u};
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* PlayerSnapshotSync::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 playerId = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.playerid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .UnityMath.Vector3D pos = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_pos(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .UnityMath.Vector3D velocity = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_velocity(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* PlayerSnapshotSync::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:GameMessage.PlayerSnapshotSync)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 playerId = 1;
+  if (this->_internal_playerid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_playerid(), target);
+  }
+
+  // .UnityMath.Vector3D pos = 2;
+  if (this->_internal_has_pos()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(2, _Internal::pos(this),
+        _Internal::pos(this).GetCachedSize(), target, stream);
+  }
+
+  // .UnityMath.Vector3D velocity = 3;
+  if (this->_internal_has_velocity()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, _Internal::velocity(this),
+        _Internal::velocity(this).GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:GameMessage.PlayerSnapshotSync)
+  return target;
+}
+
+size_t PlayerSnapshotSync::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GameMessage.PlayerSnapshotSync)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .UnityMath.Vector3D pos = 2;
+  if (this->_internal_has_pos()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.pos_);
+  }
+
+  // .UnityMath.Vector3D velocity = 3;
+  if (this->_internal_has_velocity()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.velocity_);
+  }
+
+  // uint64 playerId = 1;
+  if (this->_internal_playerid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_playerid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData PlayerSnapshotSync::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    PlayerSnapshotSync::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*PlayerSnapshotSync::GetClassData() const { return &_class_data_; }
+
+
+void PlayerSnapshotSync::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<PlayerSnapshotSync*>(&to_msg);
+  auto& from = static_cast<const PlayerSnapshotSync&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:GameMessage.PlayerSnapshotSync)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_pos()) {
+    _this->_internal_mutable_pos()->::UnityMath::Vector3D::MergeFrom(
+        from._internal_pos());
+  }
+  if (from._internal_has_velocity()) {
+    _this->_internal_mutable_velocity()->::UnityMath::Vector3D::MergeFrom(
+        from._internal_velocity());
+  }
+  if (from._internal_playerid() != 0) {
+    _this->_internal_set_playerid(from._internal_playerid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void PlayerSnapshotSync::CopyFrom(const PlayerSnapshotSync& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GameMessage.PlayerSnapshotSync)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PlayerSnapshotSync::IsInitialized() const {
+  return true;
+}
+
+void PlayerSnapshotSync::InternalSwap(PlayerSnapshotSync* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(PlayerSnapshotSync, _impl_.playerid_)
+      + sizeof(PlayerSnapshotSync::_impl_.playerid_)
+      - PROTOBUF_FIELD_OFFSET(PlayerSnapshotSync, _impl_.pos_)>(
+          reinterpret_cast<char*>(&_impl_.pos_),
+          reinterpret_cast<char*>(&other->_impl_.pos_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata PlayerSnapshotSync::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
+      file_level_metadata_GameMessage_2eproto[3]);
+}
+
+// ===================================================================
+
+class ObjectSnapshotSync::_Internal {
+ public:
+  static const ::UnityMath::Vector3D& pos(const ObjectSnapshotSync* msg);
+  static const ::UnityMath::Vector3D& velocity(const ObjectSnapshotSync* msg);
+};
+
+const ::UnityMath::Vector3D&
+ObjectSnapshotSync::_Internal::pos(const ObjectSnapshotSync* msg) {
+  return *msg->_impl_.pos_;
+}
+const ::UnityMath::Vector3D&
+ObjectSnapshotSync::_Internal::velocity(const ObjectSnapshotSync* msg) {
+  return *msg->_impl_.velocity_;
+}
+void ObjectSnapshotSync::clear_pos() {
+  if (GetArenaForAllocation() == nullptr && _impl_.pos_ != nullptr) {
+    delete _impl_.pos_;
+  }
+  _impl_.pos_ = nullptr;
+}
+void ObjectSnapshotSync::clear_velocity() {
+  if (GetArenaForAllocation() == nullptr && _impl_.velocity_ != nullptr) {
+    delete _impl_.velocity_;
+  }
+  _impl_.velocity_ = nullptr;
+}
+ObjectSnapshotSync::ObjectSnapshotSync(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:GameMessage.ObjectSnapshotSync)
+}
+ObjectSnapshotSync::ObjectSnapshotSync(const ObjectSnapshotSync& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ObjectSnapshotSync* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.pos_){nullptr}
+    , decltype(_impl_.velocity_){nullptr}
+    , decltype(_impl_.objectid_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_pos()) {
+    _this->_impl_.pos_ = new ::UnityMath::Vector3D(*from._impl_.pos_);
+  }
+  if (from._internal_has_velocity()) {
+    _this->_impl_.velocity_ = new ::UnityMath::Vector3D(*from._impl_.velocity_);
+  }
+  _this->_impl_.objectid_ = from._impl_.objectid_;
+  // @@protoc_insertion_point(copy_constructor:GameMessage.ObjectSnapshotSync)
+}
+
+inline void ObjectSnapshotSync::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.pos_){nullptr}
+    , decltype(_impl_.velocity_){nullptr}
+    , decltype(_impl_.objectid_){uint64_t{0u}}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+ObjectSnapshotSync::~ObjectSnapshotSync() {
+  // @@protoc_insertion_point(destructor:GameMessage.ObjectSnapshotSync)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void ObjectSnapshotSync::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.pos_;
+  if (this != internal_default_instance()) delete _impl_.velocity_;
+}
+
+void ObjectSnapshotSync::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void ObjectSnapshotSync::Clear() {
+// @@protoc_insertion_point(message_clear_start:GameMessage.ObjectSnapshotSync)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaForAllocation() == nullptr && _impl_.pos_ != nullptr) {
+    delete _impl_.pos_;
+  }
+  _impl_.pos_ = nullptr;
+  if (GetArenaForAllocation() == nullptr && _impl_.velocity_ != nullptr) {
+    delete _impl_.velocity_;
+  }
+  _impl_.velocity_ = nullptr;
+  _impl_.objectid_ = uint64_t{0u};
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ObjectSnapshotSync::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 objectId = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.objectid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .UnityMath.Vector3D pos = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_pos(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .UnityMath.Vector3D velocity = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_velocity(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* ObjectSnapshotSync::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:GameMessage.ObjectSnapshotSync)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 objectId = 1;
+  if (this->_internal_objectid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_objectid(), target);
+  }
+
+  // .UnityMath.Vector3D pos = 2;
+  if (this->_internal_has_pos()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(2, _Internal::pos(this),
+        _Internal::pos(this).GetCachedSize(), target, stream);
+  }
+
+  // .UnityMath.Vector3D velocity = 3;
+  if (this->_internal_has_velocity()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, _Internal::velocity(this),
+        _Internal::velocity(this).GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:GameMessage.ObjectSnapshotSync)
+  return target;
+}
+
+size_t ObjectSnapshotSync::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GameMessage.ObjectSnapshotSync)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .UnityMath.Vector3D pos = 2;
+  if (this->_internal_has_pos()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.pos_);
+  }
+
+  // .UnityMath.Vector3D velocity = 3;
+  if (this->_internal_has_velocity()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.velocity_);
+  }
+
+  // uint64 objectId = 1;
+  if (this->_internal_objectid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_objectid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ObjectSnapshotSync::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    ObjectSnapshotSync::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ObjectSnapshotSync::GetClassData() const { return &_class_data_; }
+
+
+void ObjectSnapshotSync::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ObjectSnapshotSync*>(&to_msg);
+  auto& from = static_cast<const ObjectSnapshotSync&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:GameMessage.ObjectSnapshotSync)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_pos()) {
+    _this->_internal_mutable_pos()->::UnityMath::Vector3D::MergeFrom(
+        from._internal_pos());
+  }
+  if (from._internal_has_velocity()) {
+    _this->_internal_mutable_velocity()->::UnityMath::Vector3D::MergeFrom(
+        from._internal_velocity());
+  }
+  if (from._internal_objectid() != 0) {
+    _this->_internal_set_objectid(from._internal_objectid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ObjectSnapshotSync::CopyFrom(const ObjectSnapshotSync& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GameMessage.ObjectSnapshotSync)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ObjectSnapshotSync::IsInitialized() const {
+  return true;
+}
+
+void ObjectSnapshotSync::InternalSwap(ObjectSnapshotSync* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ObjectSnapshotSync, _impl_.objectid_)
+      + sizeof(ObjectSnapshotSync::_impl_.objectid_)
+      - PROTOBUF_FIELD_OFFSET(ObjectSnapshotSync, _impl_.pos_)>(
+          reinterpret_cast<char*>(&_impl_.pos_),
+          reinterpret_cast<char*>(&other->_impl_.pos_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ObjectSnapshotSync::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
+      file_level_metadata_GameMessage_2eproto[4]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -593,9 +1481,21 @@ template<> PROTOBUF_NOINLINE ::GameMessage::GameSyncMessage*
 Arena::CreateMaybeMessage< ::GameMessage::GameSyncMessage >(Arena* arena) {
   return Arena::CreateMessageInternal< ::GameMessage::GameSyncMessage >(arena);
 }
+template<> PROTOBUF_NOINLINE ::GameMessage::GameSnapshotMessage*
+Arena::CreateMaybeMessage< ::GameMessage::GameSnapshotMessage >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::GameMessage::GameSnapshotMessage >(arena);
+}
 template<> PROTOBUF_NOINLINE ::GameMessage::PlayerSync*
 Arena::CreateMaybeMessage< ::GameMessage::PlayerSync >(Arena* arena) {
   return Arena::CreateMessageInternal< ::GameMessage::PlayerSync >(arena);
+}
+template<> PROTOBUF_NOINLINE ::GameMessage::PlayerSnapshotSync*
+Arena::CreateMaybeMessage< ::GameMessage::PlayerSnapshotSync >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::GameMessage::PlayerSnapshotSync >(arena);
+}
+template<> PROTOBUF_NOINLINE ::GameMessage::ObjectSnapshotSync*
+Arena::CreateMaybeMessage< ::GameMessage::ObjectSnapshotSync >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::GameMessage::ObjectSnapshotSync >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

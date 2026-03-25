@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using ConnectMessage;
+using GamePlay;
 using Google.Protobuf;
 using TMPro;
 using UnityEngine;
@@ -96,6 +97,7 @@ namespace Network
             this.clientId = clientId;
             _tcpSocket.BindClientId(clientId);
             _udpSocket.bindClientId(clientId);
+            if(GameSync.Instance.GetStatus()==GameStatus.Notstarted)GameSync.Instance.StartGame();
         }
 
         public UInt64 GetClientId()

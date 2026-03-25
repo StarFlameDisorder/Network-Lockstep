@@ -8,21 +8,24 @@
 LoggerStream::LoggerStream(LogLevel level,LogLevel localLogLevel)
     :m_stream(&m_buf),m_level(level),m_localLogLevel(localLogLevel)
 {
-    m_stream<<QTime::currentTime().toString("HH:mm:ss");
-    switch (level)
+    if(m_level>=m_localLogLevel)
     {
+        m_stream<<QTime::currentTime().toString("HH:mm:ss");
+        switch (level)
+        {
         case LogLevel::Debug:
-        m_stream<<" [Debug] ";
-        break;
+            m_stream<<" [Debug] ";
+            break;
         case LogLevel::Info:
-        m_stream<<" [Info] ";
-        break;
+            m_stream<<" [Info] ";
+            break;
         case LogLevel::Warning:
-        m_stream<<" [Warning] ";
-        break;
+            m_stream<<" [Warning] ";
+            break;
         case LogLevel::Error:
-        m_stream<<" [Error] ";
-        break;
+            m_stream<<" [Error] ";
+            break;
+        }
     }
 
 }

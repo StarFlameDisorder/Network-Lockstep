@@ -11,9 +11,10 @@
 using namespace SyncMessage;
 using namespace ConnectMessage;
 
-NetworkDispatcher::NetworkDispatcher():m_tcpServer(this),m_udpServer(this)
+NetworkDispatcher::NetworkDispatcher(QObject *parent):QObject(parent),m_tcpServer(this),m_udpServer(this)
 {
     startTime=QDateTime::currentMSecsSinceEpoch();
+    connect(&m_udpServer,&UdpServer::receiveMessage,this,&NetworkDispatcher::handleUdpMessage);
 }
 
 NetworkDispatcher::~NetworkDispatcher()
@@ -70,7 +71,7 @@ void NetworkDispatcher::handleTcpConnection(QTcpSocket* socket, const ClientConn
     }
 }
 
-void NetworkDispatcher::handleUdpMessage(const QHostAddress &address, quint16 port, const QByteArray& message)
+void NetworkDispatcher::handleUdpMessage(const QHostAddress& address, const quint16& port,const QByteArray& message)
 {
     messageNum++;
     ClientMessage clientMessage;
@@ -94,7 +95,7 @@ void NetworkDispatcher::handleUdpMessage(const QHostAddress &address, quint16 po
     }
 }
 
-void NetworkDispatcher::handleUdpConnection(const QHostAddress &address, quint16 port, const ClientConnectMessage &message)
+void NetworkDispatcher::handleUdpConnection(const QHostAddress &address, const quint16 &port, const ClientConnectMessage &message)
 {
     switch(message.content_case())
     {

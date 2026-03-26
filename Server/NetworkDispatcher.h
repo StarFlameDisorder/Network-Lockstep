@@ -28,10 +28,11 @@ struct Client
 
 
 
-class NetworkDispatcher
+class NetworkDispatcher:public QObject
 {
+    Q_OBJECT
 public:
-    NetworkDispatcher();
+    NetworkDispatcher(QObject *parent=nullptr);
     ~NetworkDispatcher();
 
     void sendTcpMessage(QTcpSocket *socket,const QByteArray &message);
@@ -43,8 +44,8 @@ public:
     //void handleMessage(quint64 clientId,const ClientMessage &message);
 
     //消息处理Udp
-    void handleUdpMessage(const QHostAddress &address,quint16 port,const QByteArray &message);
-    void handleUdpConnection(const QHostAddress &address,quint16 port,const ClientConnectMessage &message);
+    void handleUdpMessage(const QHostAddress& address, const quint16& port,const QByteArray& message);
+    void handleUdpConnection(const QHostAddress &address,const quint16 &port,const ClientConnectMessage &message);
 
     //消息处理
     void handleGameSync(quint64 clientId,const GameSyncMessage& message);

@@ -10,14 +10,14 @@
 #include "LoggerStream.h"
 #include "NetworkDispatcher.h"
 
-UdpServer::UdpServer(NetworkDispatcher *networkDispatcher,QObject* parent)
-    :QObject(parent),_networkDispatcher(networkDispatcher)
+UdpServer::UdpServer(QObject* parent)
+    :QObject(parent)
 {
     Log_Info()<<"初始化UDP服务器 端口："<<1976;
     m_socket=new QUdpSocket(this);
 
     connect(m_socket,&QUdpSocket::readyRead,this,&UdpServer::receiveSocketMessage);
-    connect(this,&UdpServer::udpReadyRead,this,&UdpServer::receiveMessage);
+    //connect(this,&UdpServer::udpReadyRead,this,&UdpServer::receiveMessage);
     m_socket->bind(QHostAddress::Any,1976);
 }
 
@@ -35,7 +35,7 @@ void UdpServer::receiveSocketMessage()
         m_socket->readDatagram(message.data(),length,&addr,&port);
 
         Log_Debug() <<"接受-长度:"<<length<< "原始有效字节:" << message.toHex();//有效载荷长度
-        emit udpReadyRead(addr,port,message);
+        emit receiveMessage(addr,port,message);
     }
 }
 
@@ -63,10 +63,10 @@ std::string UdpServer::getPeerAddressInfo(const UdpEndPoint& udpEndPoint) const
     return  getPeerAddressInfo(udpEndPoint.address,udpEndPoint.port);
 }
 
-void UdpServer::receiveMessage(const QHostAddress& address, const quint16& port,const QByteArray& message)
-{
-    _networkDispatcher->handleUdpMessage(address,port,message);
-    //Log_Info()<<getPeerAddressInfo(address,port)<<" "<<QString::fromUtf8(message);
-    //sendMessage(address,port,message+QString("回传").toUtf8());
-}
+// void UdpServer::receiveMessage(const QHostAddress& address, const quint16& port,const QByteArray& message)
+// {
+//     _networkDispatcher->handleUdpMessage(address,port,message);
+//     //Log_Info()<<getPeerAddressInfo(address,port)<<" "<<QString::fromUtf8(message);
+//     //sendMessage(address,port,message+QString("回传").toUtf8());
+// }
 

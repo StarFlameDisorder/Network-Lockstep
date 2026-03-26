@@ -40,7 +40,8 @@ namespace GamePlay
 
         private void Start()
         {
-            NetworkManager.Instance.RegisterHandler<GameSyncMessage>(Signals.GameSync,ReceiveMessage);
+            NetworkManager.Instance.RegisterHandler<GameSyncMessage>(Signals.GameSync,ReceiveMessage);//服务器消息接收
+            RegisterTimerEvent(RunNextFrame);//注册下帧处理函数
         }
 
         public void PlayerAction(Vector2 mov)
@@ -48,19 +49,46 @@ namespace GamePlay
             _velocity1 = new Vector3(mov.x,0,mov.y);
         }
 
+        public void PlayerAction(GameSyncMessage message)
+        {
+            _localGameSyncMessages.Enqueue(message);
+        }
+
         private void Update()
         {
             _rigidbody1.transform.Translate(_speed*Time.deltaTime*_velocity1);
             _rigidbody2.transform.Translate(_speed*Time.deltaTime*_velocity2);
         }
-
-        private Queue<GameSyncMessage> _gameSyncMessages;
+        
+        private Queue<GameSyncMessage> _localGameSyncMessages=new();
+        private Queue<GameSyncMessage> _gameSyncMessages=new();
         
         void ReceiveMessage(GameSyncMessage message)
         {
-            var player = message.Players[0];
-            var v = player.InputMove;
-            _velocity2 = new Vector3(v.X, v.Y, v.Z);
+            _gameSyncMessages.Enqueue(message);
+            
+        }
+
+        void RunNextFrame()
+        {
+            if(_gameSyncMessages.Count>0&&_localGameSyncMessages.Count>0)
+            {
+                {
+                    GameSyncMessage message = _gameSyncMessages.Dequeue();
+
+                    var player = message.Players[0];
+                    var v = player.InputMove;
+                    _velocity2 = new Vector3(v.X, v.Y, v.Z);
+                }
+                {
+                    GameSyncMessage message = _localGameSyncMessages.Dequeue();
+
+                    var player = message.Players[0];
+                    var v = player.InputMove;
+                    _velocity1 = new Vector3(v.X, v.Y, v.Z);
+                }
+                
+            }
         }
         
         #region 游戏状态及触发器
@@ -69,7 +97,7 @@ namespace GamePlay
         public Action GamePauseEvent;
         public Action GameContinueEvent;
 
-        private TimerHandle _timerHandle = new TimerHandle(10);
+        private TimerHandle _timerHandle = new TimerHandle(30);
         
         GameStatus _status=GameStatus.Notstarted;
 

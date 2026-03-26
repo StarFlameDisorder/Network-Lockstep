@@ -30,26 +30,26 @@ inline size_t qHash(const UdpEndPoint& key,uint seed=0)
     return qHashMulti(seed,key.address,key.port);
 }
 
-class NetworkDispatcher;
+//class NetworkDispatcher;
 
 class UdpServer:public QObject
 {
     Q_OBJECT
 public:
-    UdpServer(NetworkDispatcher *networkDispatcher,QObject *parent=nullptr);
+    UdpServer(QObject *parent=nullptr);
     void sendMessage(const QHostAddress& address,const quint16& port,const QByteArray& message);
     std::string getPeerAddressInfo(const QHostAddress& address,const quint16 &port)const;
     std::string getPeerAddressInfo(const UdpEndPoint& udpEndPoint)const;
 private:
     void receiveSocketMessage();
-    void receiveMessage(const QHostAddress& address,const quint16& port,const QByteArray& message);
+    //void receiveMessage(const QHostAddress& address,const quint16& port,const QByteArray& message);
 
 
     QUdpSocket *m_socket;
     QSet<UdpEndPoint> m_udpEndPoints;
-    NetworkDispatcher *_networkDispatcher;
 signals:
-    void udpReadyRead(const QHostAddress& address,const quint16& port,const QByteArray& message);
+    //void udpReadyRead(const QHostAddress& address,const quint16& port,const QByteArray& message);
+    void receiveMessage(const QHostAddress& address, const quint16& port,const QByteArray& message);
 };
 
 

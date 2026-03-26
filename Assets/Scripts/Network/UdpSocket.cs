@@ -89,5 +89,10 @@ namespace Network
             };
             Send(message.ToByteArray());
         }
+        
+        public void Destroy()
+        {
+            _socketUdp?.Close();
+        }
     }
 }

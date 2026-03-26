@@ -104,5 +104,11 @@ namespace Network
         {
             return clientId;
         }
+
+        private void OnDestroy()
+        {
+            _tcpSocket.Destroy();
+            _udpSocket.Destroy();
+        }
     }
 }

@@ -116,7 +116,7 @@ namespace Network
             }
         }
 
-        private void OnDestroy()
+        public void Destroy()
         {
             _socketTcp?.Close();
         }

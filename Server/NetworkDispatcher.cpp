@@ -13,6 +13,13 @@ using namespace ConnectMessage;
 
 NetworkDispatcher::NetworkDispatcher():m_tcpServer(this),m_udpServer(this)
 {
+    startTime=QDateTime::currentMSecsSinceEpoch();
+}
+
+NetworkDispatcher::~NetworkDispatcher()
+{
+    quint64 endTime=QDateTime::currentMSecsSinceEpoch();
+    //qDebug()<<"服务器运行时处理包:"<<messageNum;
 }
 
 void NetworkDispatcher::sendTcpMessage(QTcpSocket *socket,const QByteArray &message)
@@ -28,6 +35,7 @@ void NetworkDispatcher::sendUdpMessage(const QHostAddress& address, quint16 port
 
 void NetworkDispatcher::handleTcpMessage(QTcpSocket* socket, const QByteArray& message)
 {
+    messageNum++;
     ClientMessage clientMessage;
     clientMessage.ParseFromArray(message,message.size());
     quint64 clientId=clientMessage.clientid();
@@ -64,6 +72,7 @@ void NetworkDispatcher::handleTcpConnection(QTcpSocket* socket, const ClientConn
 
 void NetworkDispatcher::handleUdpMessage(const QHostAddress &address, quint16 port, const QByteArray& message)
 {
+    messageNum++;
     ClientMessage clientMessage;
     clientMessage.ParseFromArray(message,message.size());
     quint64 clientId=clientMessage.clientid();
@@ -150,7 +159,7 @@ void NetworkDispatcher::bindClient(const quint64 clientId, QTcpSocket* tcpSocket
     {
         m_clientsMap[clientId].socket=tcpSocket;
         m_tcpClientsMap[tcpSocket]=clientId;
-        Log_Info()<<"[bindClient]绑定客户端id:[Tcp:"<<m_tcpServer.getTcpSocketInfo(tcpSocket)<<"-"<<clientId<<"]";
+        Log_Debug()<<"[bindClient]绑定客户端id:[Tcp:"<<m_tcpServer.getTcpSocketInfo(tcpSocket)<<"-"<<clientId<<"]";
     }
 }
 
@@ -160,7 +169,7 @@ void NetworkDispatcher::bindClient(const quint64 clientId, const UdpEndPoint& ud
     {
         m_clientsMap[clientId].udpEndPoint=udpEndPoint;
         m_udpClientsMap[udpEndPoint]=clientId;
-        Log_Info()<<"[bindClient]绑定客户端id:[Udp:"<<m_udpServer.getPeerAddressInfo(udpEndPoint)<<"-"<<clientId<<"]";
+        Log_Debug()<<"[bindClient]绑定客户端id:[Udp:"<<m_udpServer.getPeerAddressInfo(udpEndPoint)<<"-"<<clientId<<"]";
     }
 }
 

@@ -14,8 +14,9 @@ namespace GamePlay
     {
         private PlayerInput _playerInput;
         private Vector2 _input=new();
-        private Coroutine _syncCoroutine;
-        private bool _isRunning = true;
+        // private Coroutine _syncCoroutine;
+        // private bool _isRunning = true;
+        private UInt64 _frameId = 0;
         
         private void Awake()
         {
@@ -30,20 +31,21 @@ namespace GamePlay
 
         private void GameStartHandle()
         {
-            _syncCoroutine = StartCoroutine(SyncInputCoroutine());
+            // _syncCoroutine = StartCoroutine(SyncInputCoroutine());
+            GameSync.Instance.RegisterTimerEvent(SyncInput);
         }
         
-        private IEnumerator SyncInputCoroutine()
-        {
-            while (true)
-            {
-                if (_isRunning)
-                {
-                    SyncInput();
-                }
-                yield return new WaitForSeconds(0.1f); // 固定间隔时间
-            }
-        }
+        // private IEnumerator SyncInputCoroutine()
+        // {
+        //     while (true)
+        //     {
+        //         if (_isRunning)
+        //         {
+        //             SyncInput();
+        //         }
+        //         yield return new WaitForSeconds(0.1f); // 固定间隔时间
+        //     }
+        // }
 
 
         public void OnMoveInput(InputAction.CallbackContext ctx)
@@ -64,6 +66,7 @@ namespace GamePlay
                 ClientId = clientId,
                 GameSyncMessage = new GameSyncMessage
                 {
+                    Id=_frameId,
                     Players = 
                     {
                         new PlayerSync

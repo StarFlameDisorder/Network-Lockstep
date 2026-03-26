@@ -50,7 +50,6 @@ private:
     NetworkDispatcher *_networkDispatcher;
 signals:
     void udpReadyRead(const QHostAddress& address,const quint16& port,const QByteArray& message);
-
 };
 
 

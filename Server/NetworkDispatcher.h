@@ -7,9 +7,9 @@
 #define SERVER_NETWORKDISPATCHER_H
 
 
+#include <QTime>
 #include "TcpServer.h"
 #include "UDPServer.h"
-#include <QTime>
 #include "protobuf/output/SyncMessage.pb.h"
 #include "protobuf/output/ConnectMessage.pb.h"
 #include "protobuf/output/GameMessage.pb.h"
@@ -32,6 +32,8 @@ class NetworkDispatcher
 {
 public:
     NetworkDispatcher();
+    ~NetworkDispatcher();
+
     void sendTcpMessage(QTcpSocket *socket,const QByteArray &message);
     void sendUdpMessage(const QHostAddress& address, quint16 port, const QByteArray &message);
 
@@ -66,6 +68,9 @@ private:
     QHash<QTcpSocket*,quint64> m_tcpClientsMap;
     QHash<UdpEndPoint,quint64> m_udpClientsMap;
     quint64 nextClientId=1;
+
+    quint64 messageNum=0;
+    quint64 startTime;
 };
 
 

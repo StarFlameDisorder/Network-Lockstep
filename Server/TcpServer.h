@@ -13,7 +13,7 @@ class TcpServer:public QTcpServer
 {
     Q_OBJECT
 public:
-    TcpServer(NetworkDispatcher *networkDispatcher,QObject *parent = nullptr);
+    TcpServer(QObject *parent = nullptr);
     std::string getTcpSocketInfo(const QTcpSocket *socket)const;
     void sendMessage(QTcpSocket *socket,QByteArray message);
 private:
@@ -21,15 +21,13 @@ private:
     void tcpServerConnectClosed();
     QByteArray receiveTcpMessage(QTcpSocket *socket);
     void receiveSocketMessage();
-    void receiveMessage(QTcpSocket *socket,QByteArray message);
 
-    quint64 m_tcpNextId=1;
     QHash<QTcpSocket*,QByteArray> m_tcpMessageBuffer;
-    NetworkDispatcher *_networkDispatcher;
 
 signals:
     void tcpReadyRead(QTcpSocket* socket,QByteArray data);
-
+    void addNewClient(QTcpSocket* socket);
+    void receiveMessage(QTcpSocket *socket,QByteArray message);
 };
 
 

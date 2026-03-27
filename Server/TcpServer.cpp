@@ -3,7 +3,7 @@
 //
 
 #define FILE_PREFIX "TcpServer:"//日志前缀
-#define LOCAL_LOG_LEVEL LogLevel::Debug//局部日志等级
+#define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
 #include "TcpServer.h"
 #include <QtEndian>
@@ -15,7 +15,7 @@
 #include "protobuf/output/ConnectMessage.pb.h"
 
 
-TcpServer::TcpServer(NetworkDispatcher *networkDispatcher,QObject* parent):QTcpServer(parent),_networkDispatcher(networkDispatcher)
+TcpServer::TcpServer(QObject* parent):QTcpServer(parent)
 {
     Log_Info()<<"初始化TCP服务器 端口："<<1975;
     connect(this,&QTcpServer::newConnection,this,&TcpServer::tcpServerConnectionNew);
@@ -26,37 +26,22 @@ TcpServer::TcpServer(NetworkDispatcher *networkDispatcher,QObject* parent):QTcpS
 void TcpServer::tcpServerConnectionNew()
 {
     QTcpSocket *newTcpSocket=nextPendingConnection();
-    quint64 id=m_tcpNextId;
-    m_tcpNextId++;
-    Log_Info()<<"新连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
+    Log_Info()<<"新连接:"<<getTcpSocketInfo(newTcpSocket);
 
     m_tcpMessageBuffer.insert(newTcpSocket,QByteArray());
-    quint64 clientId=_networkDispatcher->addClient();
-
-    using namespace ConnectMessage;
-
-    using namespace SyncMessage;
-    ServerMessage message;
-    auto *connectMessage= message.mutable_connectmessage();
-    auto *response=connectMessage->mutable_handshakemessage();
-    response->set_content("Tcp-这里是服务器,建立连接");
-    response->set_clientid(clientId);
-    QByteArray data;
-    data.resize(message.ByteSizeLong());
-    message.SerializeToArray(data.data(),data.size());
-    Log_Debug()<<"待发送字节长度:"<<data.size();
-    sendMessage(newTcpSocket,data);
     
+
     connect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
 
-    connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket,id]()
+    connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket]()
     {
-        Log_Info()<<"断开连接:"<<id<<"-"<<getTcpSocketInfo(newTcpSocket);
+        Log_Info()<<"断开连接:"<<getTcpSocketInfo(newTcpSocket);
         m_tcpMessageBuffer.remove(newTcpSocket);
         disconnect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
 
         newTcpSocket->deleteLater();
     });
+    emit addNewClient(newTcpSocket);
 }
 
 void TcpServer::tcpServerConnectClosed()
@@ -134,11 +119,6 @@ void TcpServer::sendMessage(QTcpSocket* socket, QByteArray message)
     send.append(message);
     Log_Debug() <<"发送-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
     socket->write(send);
-}
-
-void TcpServer::receiveMessage(QTcpSocket* socket, QByteArray message)
-{
-    _networkDispatcher->handleTcpMessage(socket,message);
 }
 
 

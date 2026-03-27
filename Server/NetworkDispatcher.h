@@ -55,7 +55,7 @@ public:
     void checkClient(qint64 clientId,QTcpSocket *socket);
     void checkClient(qint64 clientId,const QHostAddress &address, quint16 port);
     Client findClient(qint64 clientId);
-    quint64 addClient();
+    void addClient(QTcpSocket* socket);
     void bindClient(const quint64 clientId,QTcpSocket *tcpSocket);
     void bindClient(const quint64 clientId, const UdpEndPoint& udpEndPoint);
 

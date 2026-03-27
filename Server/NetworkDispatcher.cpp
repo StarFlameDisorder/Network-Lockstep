@@ -14,7 +14,11 @@ using namespace ConnectMessage;
 NetworkDispatcher::NetworkDispatcher(QObject *parent):QObject(parent),m_tcpServer(this),m_udpServer(this)
 {
     startTime=QDateTime::currentMSecsSinceEpoch();
+    connect(&m_tcpServer,&TcpServer::addNewClient,this,&NetworkDispatcher::addClient);//客户端id分配
+
+    connect(&m_tcpServer,&TcpServer::receiveMessage,this,&NetworkDispatcher::handleTcpMessage);
     connect(&m_udpServer,&UdpServer::receiveMessage,this,&NetworkDispatcher::handleUdpMessage);
+
 }
 
 NetworkDispatcher::~NetworkDispatcher()
@@ -144,19 +148,33 @@ Client NetworkDispatcher::findClient(qint64 clientId)
     return m_clientsMap[clientId];
 }
 
-quint64 NetworkDispatcher::addClient()
+void NetworkDispatcher::addClient(QTcpSocket* socket)
 {
     quint64 clientId=nextClientId;
     Client client;
     client.clientId=clientId;
     nextClientId++;
     m_clientsMap[clientId] = client;
-    return clientId;
+
+    using namespace ConnectMessage;
+
+    using namespace SyncMessage;
+    ServerMessage message;
+    auto *connectMessage= message.mutable_connectmessage();
+    auto *response=connectMessage->mutable_handshakemessage();
+    response->set_content("Tcp-这里是服务器,建立连接");
+    response->set_clientid(clientId);
+    QByteArray data;
+    data.resize(message.ByteSizeLong());
+    message.SerializeToArray(data.data(),data.size());
+
+    sendTcpMessage(socket,data);
+    Log_Info()<<"分配id"<<clientId<<":"<<m_tcpServer.getTcpSocketInfo(socket);
 }
 
 void NetworkDispatcher::bindClient(const quint64 clientId, QTcpSocket* tcpSocket)
 {
-    if(m_clientsMap.contains(clientId))
+    if(m_clientsMap.contains(clientId)&&m_tcpClientsMap[tcpSocket]!=clientId)
     {
         m_clientsMap[clientId].socket=tcpSocket;
         m_tcpClientsMap[tcpSocket]=clientId;
@@ -166,7 +184,7 @@ void NetworkDispatcher::bindClient(const quint64 clientId, QTcpSocket* tcpSocket
 
 void NetworkDispatcher::bindClient(const quint64 clientId, const UdpEndPoint& udpEndPoint)
 {
-    if(m_clientsMap.contains(clientId))
+    if(m_clientsMap.contains(clientId)&&m_udpClientsMap[udpEndPoint]!=clientId)
     {
         m_clientsMap[clientId].udpEndPoint=udpEndPoint;
         m_udpClientsMap[udpEndPoint]=clientId;

@@ -15,6 +15,7 @@ namespace GamePlay
         private PlayerInput _playerInput;
         private Vector2 _input=new();
         private UInt64 _frameId = 0;
+        private uint playerId = 0;
         
         private void Awake()
         {

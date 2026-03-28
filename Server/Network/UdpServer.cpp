@@ -7,7 +7,7 @@
 
 #include "UDPServer.h"
 #include <QNetworkDatagram>
-#include "LoggerStream.h"
+#include "../LoggerStream.h"
 #include "NetworkDispatcher.h"
 
 UdpServer::UdpServer(QObject* parent)

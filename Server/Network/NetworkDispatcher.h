@@ -10,9 +10,9 @@
 #include <QTime>
 #include "TcpServer.h"
 #include "UDPServer.h"
-#include "protobuf/output/SyncMessage.pb.h"
-#include "protobuf/output/ConnectMessage.pb.h"
-#include "protobuf/output/GameMessage.pb.h"
+#include "../protobuf/output/SyncMessage.pb.h"
+#include "../protobuf/output/ConnectMessage.pb.h"
+#include "../protobuf/output/GameMessage.pb.h"
 
 using namespace SyncMessage;
 using namespace ConnectMessage;
@@ -61,6 +61,7 @@ public:
 
     //广播
     void broadcastGameSync(const GameSyncMessage& message);
+
 
 private:
     TcpServer m_tcpServer;

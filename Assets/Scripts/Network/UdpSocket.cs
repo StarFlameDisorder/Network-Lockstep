@@ -26,7 +26,6 @@ namespace Network
                 _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port + 1);
                 _socketUdp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 _socketUdp.Connect(_ipEndPoint);
-                //Send(Encoding.UTF8.GetBytes("UDP-这里是客户端，请求连接"));
             }
             catch (SocketException e)
             {

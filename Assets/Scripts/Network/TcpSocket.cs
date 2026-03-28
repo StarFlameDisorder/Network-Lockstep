@@ -22,10 +22,6 @@ namespace Network
         
         private List<byte> _tcpMessageBuffer=new List<byte>();
         private Socket _socketTcp;
-
-        public TcpSocket()
-        {
-        }
         
         public void StartLink(string ip, int port)
         {
@@ -36,12 +32,6 @@ namespace Network
                 _socketTcp=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
-                // ClientMessage message = new ClientMessage
-                // {
-                //     ClientId = 0,
-                //     CommonMessage = "TCP-这是客户端，建立连接"
-                // };
-                // Send(message.ToByteArray());
             }
             catch (SocketException e)
             {
@@ -53,7 +43,6 @@ namespace Network
             {
                 Debug.Log("Tcp:收到消息");
                 NetworkManager.Instance.HandleMessage(message);
-                // Debug.Log(Encoding.UTF8.GetString(message));
                 MessagePanel.Instance?.AddMessage("Tcp:收到消息");
             });
         }

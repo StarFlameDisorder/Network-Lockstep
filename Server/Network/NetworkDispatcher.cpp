@@ -6,7 +6,7 @@
 #define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
 #include "NetworkDispatcher.h"
-#include "LoggerStream.h"
+#include "../LoggerStream.h"
 
 using namespace SyncMessage;
 using namespace ConnectMessage;
@@ -150,11 +150,15 @@ Client NetworkDispatcher::findClient(qint64 clientId)
 
 void NetworkDispatcher::addClient(QTcpSocket* socket)
 {
-    quint64 clientId=nextClientId;
-    Client client;
-    client.clientId=clientId;
-    nextClientId++;
-    m_clientsMap[clientId] = client;
+    quint64 clientId;
+    if (!m_tcpClientsMap.contains(socket))
+    {
+        clientId=nextClientId;
+        Client client;
+        client.clientId=clientId;
+        nextClientId++;
+        m_clientsMap[clientId] = client;
+    }else clientId=m_tcpClientsMap[socket];
 
     using namespace ConnectMessage;
 

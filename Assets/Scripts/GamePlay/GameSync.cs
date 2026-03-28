@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GameMessage;
 using Network;
+using UI;
 using UnityEngine;
 
 namespace GamePlay
@@ -56,6 +57,8 @@ namespace GamePlay
 
         private void Update()
         {
+            
+            
             _rigidbody1.transform.Translate(_speed*Time.deltaTime*_velocity1);
             _rigidbody2.transform.Translate(_speed*Time.deltaTime*_velocity2);
         }
@@ -71,24 +74,29 @@ namespace GamePlay
 
         void RunNextFrame()
         {
-            if(_gameSyncMessages.Count>0&&_localGameSyncMessages.Count>0)
+            if(_gameSyncMessages.Count>0)
             {
                 {
                     GameSyncMessage message = _gameSyncMessages.Dequeue();
-
+            
                     var player = message.Players[0];
                     var v = player.InputMove;
                     _velocity2 = new Vector3(v.X, v.Y, v.Z);
                 }
+            }
+            if(_localGameSyncMessages.Count>0)
+            {
                 {
                     GameSyncMessage message = _localGameSyncMessages.Dequeue();
-
+            
                     var player = message.Players[0];
                     var v = player.InputMove;
                     _velocity1 = new Vector3(v.X, v.Y, v.Z);
                 }
                 
             }
+            StatusControl.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
+            StatusControl.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
         }
         
         #region 游戏状态及触发器

@@ -18,16 +18,16 @@ find_package(Qt6 COMPONENTS
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/protobuf/include)
 
 add_executable(Server main.cpp
-        TcpServer.cpp
-        TcpServer.h
-        LoggerStream.cpp
-        LoggerStream.h
-        NetworkDispatcher.cpp
-        NetworkDispatcher.h
         GameServer.cpp
         GameServer.h
-        UdpServer.cpp
-        UdpServer.h
+        LoggerStream.cpp
+        LoggerStream.h
+        Network/TcpServer.cpp
+        Network/TcpServer.h
+        Network/NetworkDispatcher.cpp
+        Network/NetworkDispatcher.h
+        Network/UdpServer.cpp
+        Network/UdpServer.h
         protobuf/output/test.pb.cc
         protobuf/output/test.pb.h
         protobuf/output/SyncMessage.pb.cc

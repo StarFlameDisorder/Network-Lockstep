@@ -5,7 +5,7 @@
 #ifndef SERVER_GAMESERVER_H
 #define SERVER_GAMESERVER_H
 
-#include "NetworkDispatcher.h"
+#include "Network/NetworkDispatcher.h"
 
 class GameServer
 {

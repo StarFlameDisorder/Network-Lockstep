@@ -95,8 +95,8 @@ namespace GamePlay
                 }
                 
             }
-            StatusControl.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
-            StatusControl.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
+            StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
+            StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
         }
         
         #region 游戏状态及触发器

@@ -48,7 +48,7 @@ namespace GamePlay
             UInt64 clientId = NetworkManager.Instance.GetClientId();
             GameSyncMessage gameSyncMessage = new GameSyncMessage
             {
-                Id = _frameId,
+                FrameId = _frameId,
                 Players =
                 {
                     new PlayerSync

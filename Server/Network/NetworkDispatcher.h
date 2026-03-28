@@ -60,15 +60,18 @@ public:
     void bindClient(const quint64 clientId, const UdpEndPoint& udpEndPoint);
 
     //广播
-    void broadcastGameSync(const GameSyncMessage& message);
+    void broadcastGameSync(const GameSyncMessage& message,quint64 clientId);
 
 
 private:
     TcpServer m_tcpServer;
     UdpServer m_udpServer;
     QHash<quint64,Client> m_clientsMap;
-    QHash<QTcpSocket*,quint64> m_tcpClientsMap;
+
+    QHash<TcpEndPoint,quint64> m_tcpClientsMap;
+    QHash<QTcpSocket *,quint64> m_tcpSocketClientsMap;
     QHash<UdpEndPoint,quint64> m_udpClientsMap;
+
     quint64 nextClientId=1;
 
     quint64 messageNum=0;

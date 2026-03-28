@@ -116,7 +116,7 @@ void NetworkDispatcher::handleUdpConnection(const QHostAddress &address, const q
 void NetworkDispatcher::handleGameSync(quint64 clientId, const GameSyncMessage& message)
 {
     using namespace GameMessage;
-    broadcastGameSync(message);
+    broadcastGameSync(message,clientId);
 }
 
 void NetworkDispatcher::checkClient(qint64 clientId, QTcpSocket* socket)
@@ -151,14 +151,20 @@ Client NetworkDispatcher::findClient(qint64 clientId)
 void NetworkDispatcher::addClient(QTcpSocket* socket)
 {
     quint64 clientId;
-    if (!m_tcpClientsMap.contains(socket))
-    {
-        clientId=nextClientId;
-        Client client;
-        client.clientId=clientId;
-        nextClientId++;
-        m_clientsMap[clientId] = client;
-    }else clientId=m_tcpClientsMap[socket];
+    // if (!m_tcpClientsMap.contains(TcpEndPoint(socket)))
+    // {
+    //     clientId=nextClientId;
+    //     Client client;
+    //     client.clientId=clientId;
+    //     nextClientId++;
+    //     m_clientsMap.insert(clientId,client);
+    //     m_tcpClientsMap.insert(TcpEndPoint(socket),clientId);
+    // }else clientId=m_tcpClientsMap[TcpEndPoint(socket)];
+    clientId=nextClientId;
+    Client client;
+    client.clientId=clientId;
+    nextClientId++;
+    m_clientsMap.insert(clientId,client);
 
     using namespace ConnectMessage;
 
@@ -178,10 +184,10 @@ void NetworkDispatcher::addClient(QTcpSocket* socket)
 
 void NetworkDispatcher::bindClient(const quint64 clientId, QTcpSocket* tcpSocket)
 {
-    if(m_clientsMap.contains(clientId)&&m_tcpClientsMap[tcpSocket]!=clientId)
+    if(m_clientsMap.contains(clientId)&&m_tcpSocketClientsMap[tcpSocket]!=clientId)
     {
-        m_clientsMap[clientId].socket=tcpSocket;
-        m_tcpClientsMap[tcpSocket]=clientId;
+        m_clientsMap[clientId].socket=tcpSocket;//修改数据本体
+        m_tcpSocketClientsMap[tcpSocket]=clientId;
         Log_Debug()<<"[bindClient]绑定客户端id:[Tcp:"<<m_tcpServer.getTcpSocketInfo(tcpSocket)<<"-"<<clientId<<"]";
     }
 }
@@ -196,20 +202,20 @@ void NetworkDispatcher::bindClient(const quint64 clientId, const UdpEndPoint& ud
     }
 }
 
-void NetworkDispatcher::broadcastGameSync(const GameSyncMessage& message)
+void NetworkDispatcher::broadcastGameSync(const GameSyncMessage& message,quint64 clientId)
 {
     Log_Debug()<<"broadcastGameSync!";
 
     // 创建一个新的GameSyncMessage并深复制PlayerSync内容
     ServerMessage sendMessage;
-    // if (message.has_player()) {
-    //     GameSyncMessage* newGameSyncMessage = sendMessage.mutable_gamesyncmessage();
-    //     *newGameSyncMessage->mutable_player() = message.player();  // 深复制PlayerSync
-    // }
+
     // 深复制
     if (message.players_size()>0)
     {
         GameSyncMessage* newGameSyncMessage= sendMessage.mutable_gamesyncmessage();
+        newGameSyncMessage->set_frameid(message.frameid());
+        newGameSyncMessage->set_roomid(message.roomid());
+        newGameSyncMessage->set_time(message.time());
         for (auto &player:message.players())
         {
             *newGameSyncMessage->add_players() = player;
@@ -223,14 +229,10 @@ void NetworkDispatcher::broadcastGameSync(const GameSyncMessage& message)
         Log_Error()<<"Failed to serialize ServerMessage.";
         return;
     }
-
+    UdpEndPoint uep=m_clientsMap[clientId].udpEndPoint;
+    sendUdpMessage(uep.address,uep.port, data);
     // for (const auto& i : m_clientsMap) {
-    //     if (i.socket) {
-    //         sendTcpMessage(i.socket, data);
-    //     }
+    //     sendUdpMessage(i.udpEndPoint.address,i.udpEndPoint.port, data);
     // }
-    for (const auto& i : m_clientsMap) {
-        sendUdpMessage(i.udpEndPoint.address,i.udpEndPoint.port, data);
-    }
 }
 

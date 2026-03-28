@@ -4,6 +4,7 @@
 
 #include "GameServer.h"
 
-GameServer::GameServer()
+GameServer::GameServer(QObject* parent)
+    :QObject(parent),m_networkDispatcher(this),m_playerManager(this),m_roomManager(this)
 {
 }

@@ -28,14 +28,19 @@ void UdpServer::receiveSocketMessage()
     {
         QHostAddress addr;
         quint16 port;
-        quint64 length=m_socket->pendingDatagramSize();
+        int length=m_socket->pendingDatagramSize();
         QByteArray message;
         message.resize(length);
 
         m_socket->readDatagram(message.data(),length,&addr,&port);
 
         Log_Debug() <<"接受-长度:"<<length<< "原始有效字节:" << message.toHex();//有效载荷长度
-        emit receiveMessage(addr,port,message);
+        if (length>0)emit receiveMessage(addr,port,message);
+        else
+        {
+            Log_Error()<<"接收到空包:"<<getPeerAddressInfo(addr,port);
+            Log_Error()<<m_socket->errorString();
+        }
     }
 }
 

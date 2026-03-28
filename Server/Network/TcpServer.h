@@ -5,9 +5,34 @@
 #ifndef SERVER_TCPSERVER_H
 #define SERVER_TCPSERVER_H
 #include <QTcpServer>
+#include <QTcpSocket>
 #include <QHash>
 
-class NetworkDispatcher;
+struct TcpEndPoint
+{
+    TcpEndPoint(){};
+
+    TcpEndPoint(QTcpSocket *socket)
+        :address(socket->peerAddress()),port(socket->peerPort())
+    {}
+
+    TcpEndPoint(const QHostAddress &adr,const quint16 &port)
+        :address(adr),port(port)
+    {}
+
+    bool operator==(const TcpEndPoint& other)const
+    {
+        return address==other.address && port==other.port;
+    }
+
+    QHostAddress address;
+    quint16 port;
+};
+
+inline size_t qHash(const TcpEndPoint& key,uint seed=0)
+{
+    return qHashMulti(seed,key.address,key.port);
+}
 
 class TcpServer:public QTcpServer
 {

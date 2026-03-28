@@ -4,6 +4,7 @@ using ConnectMessage;
 using GamePlay;
 using Google.Protobuf;
 using TMPro;
+using UI;
 using UnityEngine;
 
 namespace Network
@@ -94,6 +95,7 @@ namespace Network
         public void SetClientId(UInt64 clientId)
         {
             Debug.Log($"SetClientId {clientId}");
+            StatusPanel.Instance.UpdateClientIdStatus(clientId);
             this.clientId = clientId;
             _tcpSocket.BindClientId(clientId);
             _udpSocket.bindClientId(clientId);

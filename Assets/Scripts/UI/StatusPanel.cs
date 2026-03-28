@@ -4,9 +4,11 @@ using UnityEngine;
 
 namespace UI
 {
-    public class StatusControl:MonoBehaviour
+    public class StatusPanel:MonoBehaviour
     {
-        public static StatusControl Instance;
+        public static StatusPanel Instance;
+        [SerializeField]private TMP_Text _clientIdStatus;
+        [SerializeField]private TMP_Text _playerIdStatus;
         [SerializeField]private TMP_Text _localStatus;
         [SerializeField]private TMP_Text _externalStatus;
         private int _localTime=0;
@@ -15,6 +17,16 @@ namespace UI
         private void Awake()
         {
             Instance = this;
+        }
+
+        public void UpdateClientIdStatus(UInt64 clientId)
+        {
+            _clientIdStatus.text = $"客户端ID: {clientId}";
+        }
+
+        public void UpdatePlayerIdStatus(UInt64 playerId)
+        {
+            _playerIdStatus.text=$"玩家ID: {playerId}";
         }
 
         public void UpdateLocalStatus(int remainingFrame)

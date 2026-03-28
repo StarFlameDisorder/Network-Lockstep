@@ -194,11 +194,12 @@ class GameSyncMessage final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kPlayersFieldNumber = 3,
-    kIdFieldNumber = 1,
-    kTimeFieldNumber = 2,
+    kPlayersFieldNumber = 4,
+    kRoomIdFieldNumber = 1,
+    kFrameIdFieldNumber = 2,
+    kTimeFieldNumber = 3,
   };
-  // repeated .GameMessage.PlayerSync players = 3;
+  // repeated .GameMessage.PlayerSync players = 4;
   int players_size() const;
   private:
   int _internal_players_size() const;
@@ -216,16 +217,25 @@ class GameSyncMessage final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSync >&
       players() const;
 
-  // uint64 id = 1;
-  void clear_id();
-  uint64_t id() const;
-  void set_id(uint64_t value);
+  // uint64 roomId = 1;
+  void clear_roomid();
+  uint64_t roomid() const;
+  void set_roomid(uint64_t value);
   private:
-  uint64_t _internal_id() const;
-  void _internal_set_id(uint64_t value);
+  uint64_t _internal_roomid() const;
+  void _internal_set_roomid(uint64_t value);
   public:
 
-  // uint64 time = 2;
+  // uint64 frameId = 2;
+  void clear_frameid();
+  uint64_t frameid() const;
+  void set_frameid(uint64_t value);
+  private:
+  uint64_t _internal_frameid() const;
+  void _internal_set_frameid(uint64_t value);
+  public:
+
+  // uint64 time = 3;
   void clear_time();
   uint64_t time() const;
   void set_time(uint64_t value);
@@ -243,7 +253,8 @@ class GameSyncMessage final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSync > players_;
-    uint64_t id_;
+    uint64_t roomid_;
+    uint64_t frameid_;
     uint64_t time_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -373,11 +384,13 @@ class GameSnapshotMessage final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kPlayerSSsFieldNumber = 2,
-    kObjectSSsFieldNumber = 3,
-    kIdFieldNumber = 1,
+    kPlayerSSsFieldNumber = 4,
+    kObjectSSsFieldNumber = 5,
+    kRoomIdFieldNumber = 1,
+    kFrameIdFieldNumber = 2,
+    kTimeFieldNumber = 3,
   };
-  // repeated .GameMessage.PlayerSnapshotSync playerSSs = 2;
+  // repeated .GameMessage.PlayerSnapshotSync playerSSs = 4;
   int playersss_size() const;
   private:
   int _internal_playersss_size() const;
@@ -395,7 +408,7 @@ class GameSnapshotMessage final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSnapshotSync >&
       playersss() const;
 
-  // repeated .GameMessage.ObjectSnapshotSync objectSSs = 3;
+  // repeated .GameMessage.ObjectSnapshotSync objectSSs = 5;
   int objectsss_size() const;
   private:
   int _internal_objectsss_size() const;
@@ -413,13 +426,31 @@ class GameSnapshotMessage final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::ObjectSnapshotSync >&
       objectsss() const;
 
-  // uint64 id = 1;
-  void clear_id();
-  uint64_t id() const;
-  void set_id(uint64_t value);
+  // uint64 roomId = 1;
+  void clear_roomid();
+  uint64_t roomid() const;
+  void set_roomid(uint64_t value);
   private:
-  uint64_t _internal_id() const;
-  void _internal_set_id(uint64_t value);
+  uint64_t _internal_roomid() const;
+  void _internal_set_roomid(uint64_t value);
+  public:
+
+  // uint64 frameId = 2;
+  void clear_frameid();
+  uint64_t frameid() const;
+  void set_frameid(uint64_t value);
+  private:
+  uint64_t _internal_frameid() const;
+  void _internal_set_frameid(uint64_t value);
+  public:
+
+  // uint64 time = 3;
+  void clear_time();
+  uint64_t time() const;
+  void set_time(uint64_t value);
+  private:
+  uint64_t _internal_time() const;
+  void _internal_set_time(uint64_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:GameMessage.GameSnapshotMessage)
@@ -432,7 +463,9 @@ class GameSnapshotMessage final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSnapshotSync > playersss_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::ObjectSnapshotSync > objectsss_;
-    uint64_t id_;
+    uint64_t roomid_;
+    uint64_t frameid_;
+    uint64_t time_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -993,27 +1026,47 @@ class ObjectSnapshotSync final :
 #endif  // __GNUC__
 // GameSyncMessage
 
-// uint64 id = 1;
-inline void GameSyncMessage::clear_id() {
-  _impl_.id_ = uint64_t{0u};
+// uint64 roomId = 1;
+inline void GameSyncMessage::clear_roomid() {
+  _impl_.roomid_ = uint64_t{0u};
 }
-inline uint64_t GameSyncMessage::_internal_id() const {
-  return _impl_.id_;
+inline uint64_t GameSyncMessage::_internal_roomid() const {
+  return _impl_.roomid_;
 }
-inline uint64_t GameSyncMessage::id() const {
-  // @@protoc_insertion_point(field_get:GameMessage.GameSyncMessage.id)
-  return _internal_id();
+inline uint64_t GameSyncMessage::roomid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSyncMessage.roomId)
+  return _internal_roomid();
 }
-inline void GameSyncMessage::_internal_set_id(uint64_t value) {
+inline void GameSyncMessage::_internal_set_roomid(uint64_t value) {
   
-  _impl_.id_ = value;
+  _impl_.roomid_ = value;
 }
-inline void GameSyncMessage::set_id(uint64_t value) {
-  _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:GameMessage.GameSyncMessage.id)
+inline void GameSyncMessage::set_roomid(uint64_t value) {
+  _internal_set_roomid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.GameSyncMessage.roomId)
 }
 
-// uint64 time = 2;
+// uint64 frameId = 2;
+inline void GameSyncMessage::clear_frameid() {
+  _impl_.frameid_ = uint64_t{0u};
+}
+inline uint64_t GameSyncMessage::_internal_frameid() const {
+  return _impl_.frameid_;
+}
+inline uint64_t GameSyncMessage::frameid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSyncMessage.frameId)
+  return _internal_frameid();
+}
+inline void GameSyncMessage::_internal_set_frameid(uint64_t value) {
+  
+  _impl_.frameid_ = value;
+}
+inline void GameSyncMessage::set_frameid(uint64_t value) {
+  _internal_set_frameid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.GameSyncMessage.frameId)
+}
+
+// uint64 time = 3;
 inline void GameSyncMessage::clear_time() {
   _impl_.time_ = uint64_t{0u};
 }
@@ -1033,7 +1086,7 @@ inline void GameSyncMessage::set_time(uint64_t value) {
   // @@protoc_insertion_point(field_set:GameMessage.GameSyncMessage.time)
 }
 
-// repeated .GameMessage.PlayerSync players = 3;
+// repeated .GameMessage.PlayerSync players = 4;
 inline int GameSyncMessage::_internal_players_size() const {
   return _impl_.players_.size();
 }
@@ -1077,27 +1130,67 @@ GameSyncMessage::players() const {
 
 // GameSnapshotMessage
 
-// uint64 id = 1;
-inline void GameSnapshotMessage::clear_id() {
-  _impl_.id_ = uint64_t{0u};
+// uint64 roomId = 1;
+inline void GameSnapshotMessage::clear_roomid() {
+  _impl_.roomid_ = uint64_t{0u};
 }
-inline uint64_t GameSnapshotMessage::_internal_id() const {
-  return _impl_.id_;
+inline uint64_t GameSnapshotMessage::_internal_roomid() const {
+  return _impl_.roomid_;
 }
-inline uint64_t GameSnapshotMessage::id() const {
-  // @@protoc_insertion_point(field_get:GameMessage.GameSnapshotMessage.id)
-  return _internal_id();
+inline uint64_t GameSnapshotMessage::roomid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSnapshotMessage.roomId)
+  return _internal_roomid();
 }
-inline void GameSnapshotMessage::_internal_set_id(uint64_t value) {
+inline void GameSnapshotMessage::_internal_set_roomid(uint64_t value) {
   
-  _impl_.id_ = value;
+  _impl_.roomid_ = value;
 }
-inline void GameSnapshotMessage::set_id(uint64_t value) {
-  _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:GameMessage.GameSnapshotMessage.id)
+inline void GameSnapshotMessage::set_roomid(uint64_t value) {
+  _internal_set_roomid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.GameSnapshotMessage.roomId)
 }
 
-// repeated .GameMessage.PlayerSnapshotSync playerSSs = 2;
+// uint64 frameId = 2;
+inline void GameSnapshotMessage::clear_frameid() {
+  _impl_.frameid_ = uint64_t{0u};
+}
+inline uint64_t GameSnapshotMessage::_internal_frameid() const {
+  return _impl_.frameid_;
+}
+inline uint64_t GameSnapshotMessage::frameid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSnapshotMessage.frameId)
+  return _internal_frameid();
+}
+inline void GameSnapshotMessage::_internal_set_frameid(uint64_t value) {
+  
+  _impl_.frameid_ = value;
+}
+inline void GameSnapshotMessage::set_frameid(uint64_t value) {
+  _internal_set_frameid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.GameSnapshotMessage.frameId)
+}
+
+// uint64 time = 3;
+inline void GameSnapshotMessage::clear_time() {
+  _impl_.time_ = uint64_t{0u};
+}
+inline uint64_t GameSnapshotMessage::_internal_time() const {
+  return _impl_.time_;
+}
+inline uint64_t GameSnapshotMessage::time() const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSnapshotMessage.time)
+  return _internal_time();
+}
+inline void GameSnapshotMessage::_internal_set_time(uint64_t value) {
+  
+  _impl_.time_ = value;
+}
+inline void GameSnapshotMessage::set_time(uint64_t value) {
+  _internal_set_time(value);
+  // @@protoc_insertion_point(field_set:GameMessage.GameSnapshotMessage.time)
+}
+
+// repeated .GameMessage.PlayerSnapshotSync playerSSs = 4;
 inline int GameSnapshotMessage::_internal_playersss_size() const {
   return _impl_.playersss_.size();
 }
@@ -1137,7 +1230,7 @@ GameSnapshotMessage::playersss() const {
   return _impl_.playersss_;
 }
 
-// repeated .GameMessage.ObjectSnapshotSync objectSSs = 3;
+// repeated .GameMessage.ObjectSnapshotSync objectSSs = 5;
 inline int GameSnapshotMessage::_internal_objectsss_size() const {
   return _impl_.objectsss_.size();
 }

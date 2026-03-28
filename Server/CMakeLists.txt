@@ -38,6 +38,12 @@ add_executable(Server main.cpp
         protobuf/output/GameMessage.pb.h
         protobuf/output/UnityMath.pb.cc
         protobuf/output/UnityMath.pb.h
+        Lobby/RoomManager.cpp
+        Lobby/RoomManager.h
+        Lobby/PlayerManager.cpp
+        Lobby/PlayerManager.h
+        Lobby/Room.cpp
+        Lobby/Room.h
 )
 
 

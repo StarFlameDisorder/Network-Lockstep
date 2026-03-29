@@ -28,7 +28,7 @@ NetworkDispatcher::~NetworkDispatcher()
     //qDebug()<<"服务器运行时处理包:"<<messageNum;
 }
 
-void NetworkDispatcher::sendTcpMessage(QTcpSocket *socket,const QByteArray &message)
+void NetworkDispatcher::sendTcpMessageDirect(QTcpSocket *socket,const QByteArray &message)
 {
     m_tcpServer.sendMessage(socket,message);
 }
@@ -37,12 +37,12 @@ void NetworkDispatcher::sendTcpMessage(quint64 clientId, const QByteArray& messa
 {
     if (m_clientsMap.contains(clientId))
     {
-        sendTcpMessage(m_clientsMap[clientId].socket,message);
+        sendTcpMessageDirect(m_clientsMap[clientId].socket,message);
 
     }else Log_Error()<<"[sendTcpMessage]未找到客户端Id"<<clientId;
 }
 
-void NetworkDispatcher::sendUdpMessage(const QHostAddress& address, quint16 port, const QByteArray& message)
+void NetworkDispatcher::sendUdpMessageDirect(const QHostAddress& address, quint16 port, const QByteArray& message)
 {
     m_udpServer.sendMessage(address,port,message);
 }
@@ -52,7 +52,7 @@ void NetworkDispatcher::sendUdpMessage(quint64 clientId, const QByteArray& messa
     if (m_clientsMap.contains(clientId))
     {
         Client &client=m_clientsMap[clientId];
-        sendUdpMessage(client.udpEndPoint.address,client.udpEndPoint.port,message);
+        sendUdpMessageDirect(client.udpEndPoint.address,client.udpEndPoint.port,message);
 
     }else Log_Error()<<"[sendUdpMessage]未找到客户端Id"<<clientId;
 }
@@ -224,7 +224,7 @@ void NetworkDispatcher::addClient(QTcpSocket* socket)
     data.resize(message.ByteSizeLong());
     message.SerializeToArray(data.data(),data.size());
 
-    sendTcpMessage(socket,data);
+    sendTcpMessageDirect(socket,data);
     Log_Info()<<"分配id"<<clientId<<":"<<m_tcpServer.getTcpSocketInfo(socket);
 }
 
@@ -276,7 +276,7 @@ void NetworkDispatcher::broadcastGameSync(const GameSyncMessage& message,quint64
         return;
     }
     UdpEndPoint uep=m_clientsMap[clientId].udpEndPoint;
-    sendUdpMessage(uep.address,uep.port, data);
+    sendUdpMessageDirect(uep.address,uep.port, data);
     // for (const auto& i : m_clientsMap) {
     //     sendUdpMessage(i.udpEndPoint.address,i.udpEndPoint.port, data);
     // }

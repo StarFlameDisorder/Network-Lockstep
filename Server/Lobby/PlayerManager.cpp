@@ -23,6 +23,10 @@ quint64 PlayerManager::addPlayer(QString name, quint64 clientId)
         p.clientId=clientId;
         m_playerMap.insert(playerId,p);
         m_nextPlayerId++;
+        Log_Info()<<"[addPlayer]添加玩家:"<<name<<",playerId"<<playerId;
+    }else
+    {
+        Log_Warning()<<"[addPlayer]发现"<<name<<"重复请求playerId"<<playerId;
     }
     return playerId;
 }

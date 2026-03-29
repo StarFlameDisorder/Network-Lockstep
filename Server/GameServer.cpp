@@ -8,4 +8,5 @@ GameServer::GameServer(QObject* parent)
     :QObject(parent),m_networkDispatcher(this),m_lobbyManager(this)
 {
     connect(&m_networkDispatcher,&NetworkDispatcher::handleTcpLobby,&m_lobbyManager,&LobbyManager::handleLobbySync);
+    connect(&m_lobbyManager,&LobbyManager::sendTcpMessage,&m_networkDispatcher,&NetworkDispatcher::sendTcpMessage);
 }

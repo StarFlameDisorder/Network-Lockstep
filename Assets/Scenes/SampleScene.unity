@@ -5880,6 +5880,7 @@ MonoBehaviour:
   players:
   - {fileID: 1230610679}
   - {fileID: 643124923}
+  _controller: {fileID: 1375543228}
 --- !u!224 &1425003271 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3267227213892833681, guid: 10b0154c5b2c12f48a189c700e09507f, type: 3}

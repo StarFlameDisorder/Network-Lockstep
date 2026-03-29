@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ConnectMessage;
 using Google.Protobuf;
+using LobbyMessage;
 using SyncMessage;
 using UI;
 using UnityEngine;
@@ -49,6 +50,9 @@ namespace Network
                 case ServerMessage.ContentOneofCase.GameSyncMessage:
                     TriggerHandler(Signals.GameSync,message.GameSyncMessage);
                     break;
+                case ServerMessage.ContentOneofCase.LobbySync:
+                    HandleLobbyMessage(message.LobbySync);
+                    break;
                 default:
                     Debug.Log("HandleMessage:未知类型"+message.ContentCase);
                     break;
@@ -56,7 +60,7 @@ namespace Network
 
         }
 
-        public void HandleConnectMessage(ServerConnectMessage message)
+        private void HandleConnectMessage(ServerConnectMessage message)
         {
             switch (message.ContentCase)
             {
@@ -72,6 +76,23 @@ namespace Network
             }
             Action<string> printMessage = Console.WriteLine;
         }
-        
+
+        private void HandleLobbyMessage(LobbySyncResponse message)
+        {
+            switch (message.ContentCase)
+            {
+                case LobbySyncResponse.ContentOneofCase.PlayerLogin:
+                    StatusPanel.Instance.UpdatePlayerIdStatus(message.PlayerLogin.PlayerId);
+                    TriggerHandler(Signals.LobbyPlayerLogin,message.PlayerLogin);
+                    break;
+                case LobbySyncResponse.ContentOneofCase.PlayerJoin:
+                    break;
+                case LobbySyncResponse.ContentOneofCase.PlayerPlayRoom:
+                    break;
+                default:
+                    Debug.Log("HandleLobbyMessage:未知类型"+message.ContentCase);
+                    break;
+            }
+        }
     }
 }

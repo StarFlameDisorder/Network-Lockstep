@@ -3,6 +3,6 @@ namespace Network
 
     public enum Signals
     {
-        ConnectHandShake,GameSync
+        ConnectHandShake,GameSync,LobbyPlayerLogin
     }
 }

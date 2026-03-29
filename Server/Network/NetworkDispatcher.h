@@ -35,9 +35,10 @@ public:
     NetworkDispatcher(QObject *parent=nullptr);
     ~NetworkDispatcher();
 
-    void sendTcpMessage(QTcpSocket *socket,const QByteArray &message);
+    void sendTcpMessageDirect(QTcpSocket *socket,const QByteArray &message);
     void sendTcpMessage(quint64 clientId,const QByteArray &message);
-    void sendUdpMessage(const QHostAddress& address, quint16 port, const QByteArray &message);
+
+    void sendUdpMessageDirect(const QHostAddress& address, quint16 port, const QByteArray &message);
     void sendUdpMessage(quint64 clientId,const QByteArray &message);
 
     //消息处理Tcp

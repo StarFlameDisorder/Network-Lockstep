@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GameMessage;
+using LobbyMessage;
 using Network;
 using UI;
 using UnityEngine;
@@ -22,6 +23,8 @@ namespace GamePlay
         [SerializeField]private GameObject player2;
         [SerializeField]private List<GameObject> players;
         private List<Rigidbody> _rigidbodys=new();
+        [SerializeField]private PlayerController _controller;
+        private UInt64 _playerId;
         
         private Rigidbody _rigidbody1;
         private Rigidbody _rigidbody2;
@@ -42,7 +45,15 @@ namespace GamePlay
         private void Start()
         {
             NetworkManager.Instance.RegisterHandler<GameSyncMessage>(Signals.GameSync,ReceiveMessage);//服务器消息接收
+            NetworkManager.Instance.RegisterHandler<PlayerLoginResponse>(Signals.LobbyPlayerLogin,BindPlayerId);
             RegisterTimerEvent(RunNextFrame);//注册下帧处理函数
+        }
+
+        private void BindPlayerId(PlayerLoginResponse response)
+        {
+            
+            _playerId = response.PlayerId;
+            _controller.BindPlayerId(response.PlayerId);
         }
 
         public void PlayerAction(Vector2 mov)

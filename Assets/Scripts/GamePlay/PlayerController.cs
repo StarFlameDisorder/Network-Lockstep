@@ -15,7 +15,7 @@ namespace GamePlay
         private PlayerInput _playerInput;
         private Vector2 _input=new();
         private UInt64 _frameId = 0;
-        private uint playerId = 0;
+        private UInt64 _playerId = 0;
         
         private void Awake()
         {
@@ -75,5 +75,9 @@ namespace GamePlay
             GameSync.Instance.PlayerAction(gameSyncMessage);
         }
         
+        public void BindPlayerId(UInt64 playerId)
+        {
+            _playerId = playerId;
+        }
     }
 }

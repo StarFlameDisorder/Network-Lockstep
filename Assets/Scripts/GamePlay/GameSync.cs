@@ -5,6 +5,12 @@ using LobbyMessage;
 using Network;
 using UI;
 using UnityEngine;
+using UnityMath;
+using System.Collections;
+using GameMessage;
+using Google.Protobuf;
+using Network;
+using SyncMessage;
 
 namespace GamePlay
 {
@@ -46,36 +52,77 @@ namespace GamePlay
         private void Start()
         {
             NetworkManager.Instance.RegisterHandler<GameSyncMessage>(Signals.GameSync,ReceiveMessage);//服务器消息接收
-            NetworkManager.Instance.RegisterHandler<PlayerJoinRoomResponse>(Signals.LobbyJoinRoom,BindPlayerId);
+            NetworkManager.Instance.RegisterHandler<PlayerJoinRoomResponse>(Signals.LobbyJoinRoom,JoinRoom);//加入房间消息
+            
+            RegisterTimerEvent(SyncPlayerAction);//注册操作同步
             RegisterTimerEvent(RunNextFrame);//注册下帧处理函数
         }
-
-        private void BindPlayerId(PlayerJoinRoomResponse response)
+        
+        private void JoinRoom(PlayerJoinRoomResponse response)
         {
             Debug.Log("收到PlayerJoinRoomResponse");
-            //TODO:逻辑修改
+            if(Instance.GetStatus()==GameStatus.Notstarted)Instance.StartGame();
         }
-
+        
+        #region 玩家操作处理
+        private UInt64 _frameId = 0;
+        private Vector2 _input;
+        
         public void PlayerAction(Vector2 mov)
         {
-            _velocity1 = new Vector3(mov.x,0,mov.y);
+            _input= mov;
         }
 
-        public void PlayerAction(GameSyncMessage message)
+        public void SyncPlayerAction()
         {
-            _localGameSyncMessages.Enqueue(message);
+            UInt64 clientId = NetworkManager.Instance.GetClientId();
+            GameSyncMessage gameSyncMessage = new GameSyncMessage
+            {
+                FrameId = _frameId,
+                Players =
+                {
+                    new PlayerSync
+                    {
+                        PlayerId = clientId,
+                        InputMove = new Vector3D
+                        {
+                            X = _input.x,
+                            Y = 0f,
+                            Z = _input.y
+                        }
+                    }
+                }
+            };
+            
+            ClientMessage message = new ClientMessage
+            {
+                ClientId = clientId,
+                GameSyncMessage = gameSyncMessage
+            };
+            
+            //NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
+            NetworkManager.Instance.UdpSendMessage(message.ToByteArray());
+            PlayerAction(gameSyncMessage);
+            _frameId++;
         }
 
+        #endregion
+
+        #region 游戏状态更新
+        
         private void Update()
         {
-            
-            
             _rigidbody1.transform.Translate(_speed*Time.deltaTime*_velocity1);
             _rigidbody2.transform.Translate(_speed*Time.deltaTime*_velocity2);
         }
         
         private Queue<GameSyncMessage> _localGameSyncMessages=new();
         private Queue<GameSyncMessage> _gameSyncMessages=new();
+        
+        public void PlayerAction(GameSyncMessage message)
+        {
+            _localGameSyncMessages.Enqueue(message);
+        }
         
         void ReceiveMessage(GameSyncMessage message)
         {
@@ -109,6 +156,7 @@ namespace GamePlay
             StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
             StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
         }
+        #endregion
         
         #region 游戏状态及触发器
         
@@ -116,7 +164,7 @@ namespace GamePlay
         public Action GamePauseEvent;
         public Action GameContinueEvent;
 
-        private TimerHandle _timerHandle = new TimerHandle(30);
+        private TimerHandle _timerHandle = new TimerHandle(15);
         
         GameStatus _status=GameStatus.Notstarted;
 

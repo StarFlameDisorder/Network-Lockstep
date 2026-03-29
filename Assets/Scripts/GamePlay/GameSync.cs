@@ -26,6 +26,7 @@ namespace GamePlay
         [SerializeField]private PlayerController _controller;
         private UInt64 _playerId;
         
+        
         private Rigidbody _rigidbody1;
         private Rigidbody _rigidbody2;
         private Vector3 _velocity1;
@@ -45,15 +46,14 @@ namespace GamePlay
         private void Start()
         {
             NetworkManager.Instance.RegisterHandler<GameSyncMessage>(Signals.GameSync,ReceiveMessage);//服务器消息接收
-            NetworkManager.Instance.RegisterHandler<PlayerLoginResponse>(Signals.LobbyPlayerLogin,BindPlayerId);
+            NetworkManager.Instance.RegisterHandler<PlayerJoinRoomResponse>(Signals.LobbyJoinRoom,BindPlayerId);
             RegisterTimerEvent(RunNextFrame);//注册下帧处理函数
         }
 
-        private void BindPlayerId(PlayerLoginResponse response)
+        private void BindPlayerId(PlayerJoinRoomResponse response)
         {
-            
-            _playerId = response.PlayerId;
-            _controller.BindPlayerId(response.PlayerId);
+            Debug.Log("收到PlayerJoinRoomResponse");
+            //TODO:逻辑修改
         }
 
         public void PlayerAction(Vector2 mov)

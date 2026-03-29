@@ -5,20 +5,17 @@ package GameMessage;
 import "UnityMath.proto";
 
 message GameSyncMessage{
-    uint64 roomId = 1;
-    uint64 frameId=2;
-    uint64 time=3;
-    repeated PlayerSync players=4;
+    uint64 frameId=1;
+    uint64 time=2;
+    repeated PlayerSync players=3;
 }
 
 message GameSnapshotMessage{
-    uint64 roomId = 1;
-    uint64 frameId=2;
-    uint64 time=3;
-    repeated PlayerSnapshotSync playerSSs=4;
-    repeated ObjectSnapshotSync objectSSs=5;
+    uint64 frameId=1;
+    uint64 time=2;
+    repeated PlayerSnapshotSync playerSSs=3;
+    repeated ObjectSnapshotSync objectSSs=4;
 }
-
 
 message PlayerSync
 {

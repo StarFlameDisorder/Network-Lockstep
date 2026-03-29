@@ -4,9 +4,24 @@
 
 #ifndef SERVER_ROOMMANAGER_H
 #define SERVER_ROOMMANAGER_H
-#include <QHash>
+
+
 #include <QObject>
-#include "Room.h"
+#include <QHash>
+#include "../protobuf/output/SyncMessage.pb.h"
+
+// struct Player{
+//     Player(quint64 playerId,QString playerName):id{playerId},name(playerName)
+//     {}
+//
+//     Player(){}
+//
+//     quint64 id;
+//     quint64 clientId;
+//     QString name;
+//
+// };
+
 
 class RoomManager:public QObject
 {
@@ -14,15 +29,17 @@ class RoomManager:public QObject
 public:
     RoomManager(QObject* parent=nullptr);
 
-    void addNewRoom();
-    void findRoom(quint64 roomId);
-    void joinRoom(quint64 roomId,quint64 playerId);
-    void leaveRoom(quint64 roomId,quint64 playerId);
-
+    void handleLobbySync(quint64 clientId,const LobbyMessage::LobbySyncRequest& message);
+    void joinRoom(QString name, quint64 clientId);
+    void leaveRoom(QString name);
+    void startRoom();
+    void endRoom();
 
 private:
-    quint64 m_nextRoomId=1;
-    QHash<quint64,Room> m_roomMap;
+    QHash<QString,quint64> m_players;//名称 客户端id
+signals:
+    void sendTcpMessage(quint64 clientId,const QByteArray &message);
+    void sendUdpMessage(quint64 clientId,const QByteArray &message);
 };
 
 

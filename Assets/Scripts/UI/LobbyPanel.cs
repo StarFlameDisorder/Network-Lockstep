@@ -28,10 +28,11 @@ namespace UI
                 ClientId = clientId,
                 LobbySync = new LobbySyncRequest
                 {
-                    PlayerLogin = new PlayerLoginRequest
+                    JoinRoom = new PlayerJoinRoomRequest
                     {
                         Name = _nameInputField.text
                     }
+                    
                 }
             };
             NetworkManager.Instance.TcpSendMessage(message.ToByteArray());

@@ -77,6 +77,7 @@ namespace GamePlay
         
         public void BindPlayerId(UInt64 playerId)
         {
+            //TODO:逻辑修改
             _playerId = playerId;
         }
     }

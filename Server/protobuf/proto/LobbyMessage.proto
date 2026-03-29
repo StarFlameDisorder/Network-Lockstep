@@ -4,46 +4,54 @@ package LobbyMessage;
 
 //客户端->服务器
 message LobbySyncRequest{
-    uint64 playerId = 1;
-    oneof content{
-        PlayerLoginRequest playerLogin=2;
-        PlayerJoinRoomRequest playerJoin= 3;
-        PlayerPlayRoomRequest playerPlayRoom=4;
-    }
-}
-
-
-
-message PlayerLoginRequest{
-    string name=1;
+  string name=1;
+  oneof content{
+    PlayerJoinRoomRequest joinRoom=2;
+    PlayerLeaveRoomRequest leaveRoom=3;
+    PlayerStartRoomRequest startRoom=4;
+    PlayerEndRoomRequest endRoom=5;
+  }
 }
 
 message PlayerJoinRoomRequest{
-
+  string name=1;
 }
 
-message PlayerPlayRoomRequest{
-    uint64 roomId = 1;
+message PlayerLeaveRoomRequest{
+  string name=1;
+}
+
+message PlayerStartRoomRequest{
+  string name=1;
+}
+
+message PlayerEndRoomRequest{
+  string name=1;
 }
 
 //服务器->客户端
 message LobbySyncResponse{
+  string name=1;
   oneof content{
-    PlayerLoginResponse playerLogin=1;
-    PlayerJoinRoomResponse playerJoin= 2;
-    PlayerPlayRoomResponse playerPlayRoom=3;
+    PlayerJoinRoomResponse joinRoom=2;
+    PlayerLeaveRoomResponse leaveRoom=3;
+    PlayerStartRoomResponse startRoom=4;
+    PlayerEndRoomResponse endRoom=5;
   }
 }
 
-
-message PlayerLoginResponse{
-    uint64 playerId=1;
-}
-
 message PlayerJoinRoomResponse{
-    uint64 roomId = 1;
+  string name=1;
 }
 
-message PlayerPlayRoomResponse{
-    uint64 roomId = 1;
+message PlayerLeaveRoomResponse{
+  string name=1;
+}
+
+message PlayerStartRoomResponse{
+  string name=1;
+}
+
+message PlayerEndRoomResponse{
+  string name=1;
 }

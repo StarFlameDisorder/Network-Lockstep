@@ -16,7 +16,7 @@ public:
     LobbyManager(QObject* parent=nullptr);
     void handleLobbySync(quint64 clientId,const LobbyMessage::LobbySyncRequest& message);
 private:
-    void addPlayer(quint64 clientId,const LobbyMessage::PlayerLoginRequest& message);
+    //void addPlayer(quint64 clientId,const LobbyMessage::PlayerLoginRequest& message);
 
     RoomManager m_roomManager;
     PlayerManager m_playerManager;

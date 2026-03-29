@@ -17,7 +17,8 @@ public:
     GameServer(QObject* parent=nullptr);
 private:
     NetworkDispatcher m_networkDispatcher;
-    LobbyManager m_lobbyManager;
+    // LobbyManager m_lobbyManager;
+    RoomManager m_roomManager;
 };
 
 

@@ -19,15 +19,19 @@ void LobbyManager::handleLobbySync(quint64 clientId, const LobbyMessage::LobbySy
     using namespace LobbyMessage;
     switch (message.content_case())
     {
-        case LobbySyncRequest::kPlayerLogin:
-            Log_Debug()<<"[handeleLobbySync]kPlayerLogin";
-            addPlayer(clientId,message.playerlogin());
+        case LobbySyncRequest::kJoinRoom:
+            Log_Debug()<<"[handeleLobbySync]kJoinRoom";
+            m_roomManager.joinRoom(QString::fromStdString(message.joinroom().name()),clientId);
             break;
-        case LobbySyncRequest::kPlayerJoin:
-            Log_Debug()<<"[handeleLobbySync]kPlayerJoin";
+        case LobbySyncRequest::kLeaveRoom:
+            Log_Debug()<<"[handeleLobbySync]kLeaveRoom";
+            m_roomManager.leaveRoom(QString::fromStdString(message.leaveroom().name()));
             break;
-        case LobbySyncRequest::kPlayerPlayRoom:
-            Log_Debug()<<"[handeleLobbySync]kPlayePlayRoom";
+        case LobbySyncRequest::kStartRoom:
+            Log_Debug()<<"[handeleLobbySync]kStartRoom";
+            break;
+        case LobbySyncRequest::kEndRoom:
+            Log_Debug()<<"[handeleLobbySync]kEndRoom";
             break;
         default:
             Log_Error()<<"[handeleLobbySync]未知类型:"<<message.content_case();
@@ -35,23 +39,4 @@ void LobbyManager::handleLobbySync(quint64 clientId, const LobbyMessage::LobbySy
     }
 }
 
-void LobbyManager::addPlayer(quint64 clientId, const LobbyMessage::PlayerLoginRequest& message)
-{
-    using namespace SyncMessage;
-    using namespace LobbyMessage;
 
-    quint64 playerId = m_playerManager.addPlayer(QString::fromStdString(message.name()),clientId);
-    ServerMessage sendMessage;
-    auto *lobbyMes=sendMessage.mutable_lobbysync();
-    auto *playerLogin=lobbyMes->mutable_playerlogin();
-    playerLogin->set_playerid(playerId);
-
-    QByteArray data;
-    data.resize(sendMessage.ByteSizeLong());
-    bool success = sendMessage.SerializeToArray(data.data(), data.size());
-    if (!success) {
-        Log_Error()<<"Failed to serialize ServerMessage.";
-        return;
-    }
-    emit sendTcpMessage(clientId,data);
-}

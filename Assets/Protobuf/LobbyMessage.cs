@@ -24,33 +24,40 @@ namespace LobbyMessage {
     static LobbyMessageReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChJMb2JieU1lc3NhZ2UucHJvdG8SDExvYmJ5TWVzc2FnZSLiAQoQTG9iYnlT",
-            "eW5jUmVxdWVzdBIQCghwbGF5ZXJJZBgBIAEoBBI3CgtwbGF5ZXJMb2dpbhgC",
-            "IAEoCzIgLkxvYmJ5TWVzc2FnZS5QbGF5ZXJMb2dpblJlcXVlc3RIABI5Cgpw",
-            "bGF5ZXJKb2luGAMgASgLMiMuTG9iYnlNZXNzYWdlLlBsYXllckpvaW5Sb29t",
-            "UmVxdWVzdEgAEj0KDnBsYXllclBsYXlSb29tGAQgASgLMiMuTG9iYnlNZXNz",
-            "YWdlLlBsYXllclBsYXlSb29tUmVxdWVzdEgAQgkKB2NvbnRlbnQiIgoSUGxh",
-            "eWVyTG9naW5SZXF1ZXN0EgwKBG5hbWUYASABKAkiFwoVUGxheWVySm9pblJv",
-            "b21SZXF1ZXN0IicKFVBsYXllclBsYXlSb29tUmVxdWVzdBIOCgZyb29tSWQY",
-            "ASABKAQi1AEKEUxvYmJ5U3luY1Jlc3BvbnNlEjgKC3BsYXllckxvZ2luGAEg",
-            "ASgLMiEuTG9iYnlNZXNzYWdlLlBsYXllckxvZ2luUmVzcG9uc2VIABI6Cgpw",
-            "bGF5ZXJKb2luGAIgASgLMiQuTG9iYnlNZXNzYWdlLlBsYXllckpvaW5Sb29t",
-            "UmVzcG9uc2VIABI+Cg5wbGF5ZXJQbGF5Um9vbRgDIAEoCzIkLkxvYmJ5TWVz",
-            "c2FnZS5QbGF5ZXJQbGF5Um9vbVJlc3BvbnNlSABCCQoHY29udGVudCInChNQ",
-            "bGF5ZXJMb2dpblJlc3BvbnNlEhAKCHBsYXllcklkGAEgASgEIigKFlBsYXll",
-            "ckpvaW5Sb29tUmVzcG9uc2USDgoGcm9vbUlkGAEgASgEIigKFlBsYXllclBs",
-            "YXlSb29tUmVzcG9uc2USDgoGcm9vbUlkGAEgASgEYgZwcm90bzM="));
+            "ChJMb2JieU1lc3NhZ2UucHJvdG8SDExvYmJ5TWVzc2FnZSKRAgoQTG9iYnlT",
+            "eW5jUmVxdWVzdBIMCgRuYW1lGAEgASgJEjcKCGpvaW5Sb29tGAIgASgLMiMu",
+            "TG9iYnlNZXNzYWdlLlBsYXllckpvaW5Sb29tUmVxdWVzdEgAEjkKCWxlYXZl",
+            "Um9vbRgDIAEoCzIkLkxvYmJ5TWVzc2FnZS5QbGF5ZXJMZWF2ZVJvb21SZXF1",
+            "ZXN0SAASOQoJc3RhcnRSb29tGAQgASgLMiQuTG9iYnlNZXNzYWdlLlBsYXll",
+            "clN0YXJ0Um9vbVJlcXVlc3RIABI1CgdlbmRSb29tGAUgASgLMiIuTG9iYnlN",
+            "ZXNzYWdlLlBsYXllckVuZFJvb21SZXF1ZXN0SABCCQoHY29udGVudCIlChVQ",
+            "bGF5ZXJKb2luUm9vbVJlcXVlc3QSDAoEbmFtZRgBIAEoCSImChZQbGF5ZXJM",
+            "ZWF2ZVJvb21SZXF1ZXN0EgwKBG5hbWUYASABKAkiJgoWUGxheWVyU3RhcnRS",
+            "b29tUmVxdWVzdBIMCgRuYW1lGAEgASgJIiQKFFBsYXllckVuZFJvb21SZXF1",
+            "ZXN0EgwKBG5hbWUYASABKAkilgIKEUxvYmJ5U3luY1Jlc3BvbnNlEgwKBG5h",
+            "bWUYASABKAkSOAoIam9pblJvb20YAiABKAsyJC5Mb2JieU1lc3NhZ2UuUGxh",
+            "eWVySm9pblJvb21SZXNwb25zZUgAEjoKCWxlYXZlUm9vbRgDIAEoCzIlLkxv",
+            "YmJ5TWVzc2FnZS5QbGF5ZXJMZWF2ZVJvb21SZXNwb25zZUgAEjoKCXN0YXJ0",
+            "Um9vbRgEIAEoCzIlLkxvYmJ5TWVzc2FnZS5QbGF5ZXJTdGFydFJvb21SZXNw",
+            "b25zZUgAEjYKB2VuZFJvb20YBSABKAsyIy5Mb2JieU1lc3NhZ2UuUGxheWVy",
+            "RW5kUm9vbVJlc3BvbnNlSABCCQoHY29udGVudCImChZQbGF5ZXJKb2luUm9v",
+            "bVJlc3BvbnNlEgwKBG5hbWUYASABKAkiJwoXUGxheWVyTGVhdmVSb29tUmVz",
+            "cG9uc2USDAoEbmFtZRgBIAEoCSInChdQbGF5ZXJTdGFydFJvb21SZXNwb25z",
+            "ZRIMCgRuYW1lGAEgASgJIiUKFVBsYXllckVuZFJvb21SZXNwb25zZRIMCgRu",
+            "YW1lGAEgASgJYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.LobbySyncRequest), global::LobbyMessage.LobbySyncRequest.Parser, new[]{ "PlayerId", "PlayerLogin", "PlayerJoin", "PlayerPlayRoom" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerLoginRequest), global::LobbyMessage.PlayerLoginRequest.Parser, new[]{ "Name" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerJoinRoomRequest), global::LobbyMessage.PlayerJoinRoomRequest.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerPlayRoomRequest), global::LobbyMessage.PlayerPlayRoomRequest.Parser, new[]{ "RoomId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.LobbySyncResponse), global::LobbyMessage.LobbySyncResponse.Parser, new[]{ "PlayerLogin", "PlayerJoin", "PlayerPlayRoom" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerLoginResponse), global::LobbyMessage.PlayerLoginResponse.Parser, new[]{ "PlayerId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerJoinRoomResponse), global::LobbyMessage.PlayerJoinRoomResponse.Parser, new[]{ "RoomId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerPlayRoomResponse), global::LobbyMessage.PlayerPlayRoomResponse.Parser, new[]{ "RoomId" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.LobbySyncRequest), global::LobbyMessage.LobbySyncRequest.Parser, new[]{ "Name", "JoinRoom", "LeaveRoom", "StartRoom", "EndRoom" }, new[]{ "Content" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerJoinRoomRequest), global::LobbyMessage.PlayerJoinRoomRequest.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerLeaveRoomRequest), global::LobbyMessage.PlayerLeaveRoomRequest.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerStartRoomRequest), global::LobbyMessage.PlayerStartRoomRequest.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerEndRoomRequest), global::LobbyMessage.PlayerEndRoomRequest.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.LobbySyncResponse), global::LobbyMessage.LobbySyncResponse.Parser, new[]{ "Name", "JoinRoom", "LeaveRoom", "StartRoom", "EndRoom" }, new[]{ "Content" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerJoinRoomResponse), global::LobbyMessage.PlayerJoinRoomResponse.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerLeaveRoomResponse), global::LobbyMessage.PlayerLeaveRoomResponse.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerStartRoomResponse), global::LobbyMessage.PlayerStartRoomResponse.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerEndRoomResponse), global::LobbyMessage.PlayerEndRoomResponse.Parser, new[]{ "Name" }, null, null, null, null)
           }));
     }
     #endregion
@@ -94,16 +101,19 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public LobbySyncRequest(LobbySyncRequest other) : this() {
-      playerId_ = other.playerId_;
+      name_ = other.name_;
       switch (other.ContentCase) {
-        case ContentOneofCase.PlayerLogin:
-          PlayerLogin = other.PlayerLogin.Clone();
+        case ContentOneofCase.JoinRoom:
+          JoinRoom = other.JoinRoom.Clone();
           break;
-        case ContentOneofCase.PlayerJoin:
-          PlayerJoin = other.PlayerJoin.Clone();
+        case ContentOneofCase.LeaveRoom:
+          LeaveRoom = other.LeaveRoom.Clone();
           break;
-        case ContentOneofCase.PlayerPlayRoom:
-          PlayerPlayRoom = other.PlayerPlayRoom.Clone();
+        case ContentOneofCase.StartRoom:
+          StartRoom = other.StartRoom.Clone();
+          break;
+        case ContentOneofCase.EndRoom:
+          EndRoom = other.EndRoom.Clone();
           break;
       }
 
@@ -116,51 +126,63 @@ namespace LobbyMessage {
       return new LobbySyncRequest(this);
     }
 
-    /// <summary>Field number for the "playerId" field.</summary>
-    public const int PlayerIdFieldNumber = 1;
-    private ulong playerId_;
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong PlayerId {
-      get { return playerId_; }
+    public string Name {
+      get { return name_; }
       set {
-        playerId_ = value;
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
-    /// <summary>Field number for the "playerLogin" field.</summary>
-    public const int PlayerLoginFieldNumber = 2;
+    /// <summary>Field number for the "joinRoom" field.</summary>
+    public const int JoinRoomFieldNumber = 2;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::LobbyMessage.PlayerLoginRequest PlayerLogin {
-      get { return contentCase_ == ContentOneofCase.PlayerLogin ? (global::LobbyMessage.PlayerLoginRequest) content_ : null; }
+    public global::LobbyMessage.PlayerJoinRoomRequest JoinRoom {
+      get { return contentCase_ == ContentOneofCase.JoinRoom ? (global::LobbyMessage.PlayerJoinRoomRequest) content_ : null; }
       set {
         content_ = value;
-        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.PlayerLogin;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.JoinRoom;
       }
     }
 
-    /// <summary>Field number for the "playerJoin" field.</summary>
-    public const int PlayerJoinFieldNumber = 3;
+    /// <summary>Field number for the "leaveRoom" field.</summary>
+    public const int LeaveRoomFieldNumber = 3;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::LobbyMessage.PlayerJoinRoomRequest PlayerJoin {
-      get { return contentCase_ == ContentOneofCase.PlayerJoin ? (global::LobbyMessage.PlayerJoinRoomRequest) content_ : null; }
+    public global::LobbyMessage.PlayerLeaveRoomRequest LeaveRoom {
+      get { return contentCase_ == ContentOneofCase.LeaveRoom ? (global::LobbyMessage.PlayerLeaveRoomRequest) content_ : null; }
       set {
         content_ = value;
-        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.PlayerJoin;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.LeaveRoom;
       }
     }
 
-    /// <summary>Field number for the "playerPlayRoom" field.</summary>
-    public const int PlayerPlayRoomFieldNumber = 4;
+    /// <summary>Field number for the "startRoom" field.</summary>
+    public const int StartRoomFieldNumber = 4;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::LobbyMessage.PlayerPlayRoomRequest PlayerPlayRoom {
-      get { return contentCase_ == ContentOneofCase.PlayerPlayRoom ? (global::LobbyMessage.PlayerPlayRoomRequest) content_ : null; }
+    public global::LobbyMessage.PlayerStartRoomRequest StartRoom {
+      get { return contentCase_ == ContentOneofCase.StartRoom ? (global::LobbyMessage.PlayerStartRoomRequest) content_ : null; }
       set {
         content_ = value;
-        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.PlayerPlayRoom;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.StartRoom;
+      }
+    }
+
+    /// <summary>Field number for the "endRoom" field.</summary>
+    public const int EndRoomFieldNumber = 5;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::LobbyMessage.PlayerEndRoomRequest EndRoom {
+      get { return contentCase_ == ContentOneofCase.EndRoom ? (global::LobbyMessage.PlayerEndRoomRequest) content_ : null; }
+      set {
+        content_ = value;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.EndRoom;
       }
     }
 
@@ -168,9 +190,10 @@ namespace LobbyMessage {
     /// <summary>Enum of possible cases for the "content" oneof.</summary>
     public enum ContentOneofCase {
       None = 0,
-      PlayerLogin = 2,
-      PlayerJoin = 3,
-      PlayerPlayRoom = 4,
+      JoinRoom = 2,
+      LeaveRoom = 3,
+      StartRoom = 4,
+      EndRoom = 5,
     }
     private ContentOneofCase contentCase_ = ContentOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -201,10 +224,11 @@ namespace LobbyMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (PlayerId != other.PlayerId) return false;
-      if (!object.Equals(PlayerLogin, other.PlayerLogin)) return false;
-      if (!object.Equals(PlayerJoin, other.PlayerJoin)) return false;
-      if (!object.Equals(PlayerPlayRoom, other.PlayerPlayRoom)) return false;
+      if (Name != other.Name) return false;
+      if (!object.Equals(JoinRoom, other.JoinRoom)) return false;
+      if (!object.Equals(LeaveRoom, other.LeaveRoom)) return false;
+      if (!object.Equals(StartRoom, other.StartRoom)) return false;
+      if (!object.Equals(EndRoom, other.EndRoom)) return false;
       if (ContentCase != other.ContentCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -213,10 +237,11 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (PlayerId != 0UL) hash ^= PlayerId.GetHashCode();
-      if (contentCase_ == ContentOneofCase.PlayerLogin) hash ^= PlayerLogin.GetHashCode();
-      if (contentCase_ == ContentOneofCase.PlayerJoin) hash ^= PlayerJoin.GetHashCode();
-      if (contentCase_ == ContentOneofCase.PlayerPlayRoom) hash ^= PlayerPlayRoom.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (contentCase_ == ContentOneofCase.JoinRoom) hash ^= JoinRoom.GetHashCode();
+      if (contentCase_ == ContentOneofCase.LeaveRoom) hash ^= LeaveRoom.GetHashCode();
+      if (contentCase_ == ContentOneofCase.StartRoom) hash ^= StartRoom.GetHashCode();
+      if (contentCase_ == ContentOneofCase.EndRoom) hash ^= EndRoom.GetHashCode();
       hash ^= (int) contentCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -236,21 +261,25 @@ namespace LobbyMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (PlayerId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(PlayerId);
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
       }
-      if (contentCase_ == ContentOneofCase.PlayerLogin) {
+      if (contentCase_ == ContentOneofCase.JoinRoom) {
         output.WriteRawTag(18);
-        output.WriteMessage(PlayerLogin);
+        output.WriteMessage(JoinRoom);
       }
-      if (contentCase_ == ContentOneofCase.PlayerJoin) {
+      if (contentCase_ == ContentOneofCase.LeaveRoom) {
         output.WriteRawTag(26);
-        output.WriteMessage(PlayerJoin);
+        output.WriteMessage(LeaveRoom);
       }
-      if (contentCase_ == ContentOneofCase.PlayerPlayRoom) {
+      if (contentCase_ == ContentOneofCase.StartRoom) {
         output.WriteRawTag(34);
-        output.WriteMessage(PlayerPlayRoom);
+        output.WriteMessage(StartRoom);
+      }
+      if (contentCase_ == ContentOneofCase.EndRoom) {
+        output.WriteRawTag(42);
+        output.WriteMessage(EndRoom);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -262,21 +291,25 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (PlayerId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(PlayerId);
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
       }
-      if (contentCase_ == ContentOneofCase.PlayerLogin) {
+      if (contentCase_ == ContentOneofCase.JoinRoom) {
         output.WriteRawTag(18);
-        output.WriteMessage(PlayerLogin);
+        output.WriteMessage(JoinRoom);
       }
-      if (contentCase_ == ContentOneofCase.PlayerJoin) {
+      if (contentCase_ == ContentOneofCase.LeaveRoom) {
         output.WriteRawTag(26);
-        output.WriteMessage(PlayerJoin);
+        output.WriteMessage(LeaveRoom);
       }
-      if (contentCase_ == ContentOneofCase.PlayerPlayRoom) {
+      if (contentCase_ == ContentOneofCase.StartRoom) {
         output.WriteRawTag(34);
-        output.WriteMessage(PlayerPlayRoom);
+        output.WriteMessage(StartRoom);
+      }
+      if (contentCase_ == ContentOneofCase.EndRoom) {
+        output.WriteRawTag(42);
+        output.WriteMessage(EndRoom);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -288,17 +321,20 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (PlayerId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(PlayerId);
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
-      if (contentCase_ == ContentOneofCase.PlayerLogin) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayerLogin);
+      if (contentCase_ == ContentOneofCase.JoinRoom) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(JoinRoom);
       }
-      if (contentCase_ == ContentOneofCase.PlayerJoin) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayerJoin);
+      if (contentCase_ == ContentOneofCase.LeaveRoom) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(LeaveRoom);
       }
-      if (contentCase_ == ContentOneofCase.PlayerPlayRoom) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayerPlayRoom);
+      if (contentCase_ == ContentOneofCase.StartRoom) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(StartRoom);
+      }
+      if (contentCase_ == ContentOneofCase.EndRoom) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(EndRoom);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -312,27 +348,33 @@ namespace LobbyMessage {
       if (other == null) {
         return;
       }
-      if (other.PlayerId != 0UL) {
-        PlayerId = other.PlayerId;
+      if (other.Name.Length != 0) {
+        Name = other.Name;
       }
       switch (other.ContentCase) {
-        case ContentOneofCase.PlayerLogin:
-          if (PlayerLogin == null) {
-            PlayerLogin = new global::LobbyMessage.PlayerLoginRequest();
+        case ContentOneofCase.JoinRoom:
+          if (JoinRoom == null) {
+            JoinRoom = new global::LobbyMessage.PlayerJoinRoomRequest();
           }
-          PlayerLogin.MergeFrom(other.PlayerLogin);
+          JoinRoom.MergeFrom(other.JoinRoom);
           break;
-        case ContentOneofCase.PlayerJoin:
-          if (PlayerJoin == null) {
-            PlayerJoin = new global::LobbyMessage.PlayerJoinRoomRequest();
+        case ContentOneofCase.LeaveRoom:
+          if (LeaveRoom == null) {
+            LeaveRoom = new global::LobbyMessage.PlayerLeaveRoomRequest();
           }
-          PlayerJoin.MergeFrom(other.PlayerJoin);
+          LeaveRoom.MergeFrom(other.LeaveRoom);
           break;
-        case ContentOneofCase.PlayerPlayRoom:
-          if (PlayerPlayRoom == null) {
-            PlayerPlayRoom = new global::LobbyMessage.PlayerPlayRoomRequest();
+        case ContentOneofCase.StartRoom:
+          if (StartRoom == null) {
+            StartRoom = new global::LobbyMessage.PlayerStartRoomRequest();
           }
-          PlayerPlayRoom.MergeFrom(other.PlayerPlayRoom);
+          StartRoom.MergeFrom(other.StartRoom);
+          break;
+        case ContentOneofCase.EndRoom:
+          if (EndRoom == null) {
+            EndRoom = new global::LobbyMessage.PlayerEndRoomRequest();
+          }
+          EndRoom.MergeFrom(other.EndRoom);
           break;
       }
 
@@ -351,35 +393,44 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 8: {
-            PlayerId = input.ReadUInt64();
+          case 10: {
+            Name = input.ReadString();
             break;
           }
           case 18: {
-            global::LobbyMessage.PlayerLoginRequest subBuilder = new global::LobbyMessage.PlayerLoginRequest();
-            if (contentCase_ == ContentOneofCase.PlayerLogin) {
-              subBuilder.MergeFrom(PlayerLogin);
+            global::LobbyMessage.PlayerJoinRoomRequest subBuilder = new global::LobbyMessage.PlayerJoinRoomRequest();
+            if (contentCase_ == ContentOneofCase.JoinRoom) {
+              subBuilder.MergeFrom(JoinRoom);
             }
             input.ReadMessage(subBuilder);
-            PlayerLogin = subBuilder;
+            JoinRoom = subBuilder;
             break;
           }
           case 26: {
-            global::LobbyMessage.PlayerJoinRoomRequest subBuilder = new global::LobbyMessage.PlayerJoinRoomRequest();
-            if (contentCase_ == ContentOneofCase.PlayerJoin) {
-              subBuilder.MergeFrom(PlayerJoin);
+            global::LobbyMessage.PlayerLeaveRoomRequest subBuilder = new global::LobbyMessage.PlayerLeaveRoomRequest();
+            if (contentCase_ == ContentOneofCase.LeaveRoom) {
+              subBuilder.MergeFrom(LeaveRoom);
             }
             input.ReadMessage(subBuilder);
-            PlayerJoin = subBuilder;
+            LeaveRoom = subBuilder;
             break;
           }
           case 34: {
-            global::LobbyMessage.PlayerPlayRoomRequest subBuilder = new global::LobbyMessage.PlayerPlayRoomRequest();
-            if (contentCase_ == ContentOneofCase.PlayerPlayRoom) {
-              subBuilder.MergeFrom(PlayerPlayRoom);
+            global::LobbyMessage.PlayerStartRoomRequest subBuilder = new global::LobbyMessage.PlayerStartRoomRequest();
+            if (contentCase_ == ContentOneofCase.StartRoom) {
+              subBuilder.MergeFrom(StartRoom);
             }
             input.ReadMessage(subBuilder);
-            PlayerPlayRoom = subBuilder;
+            StartRoom = subBuilder;
+            break;
+          }
+          case 42: {
+            global::LobbyMessage.PlayerEndRoomRequest subBuilder = new global::LobbyMessage.PlayerEndRoomRequest();
+            if (contentCase_ == ContentOneofCase.EndRoom) {
+              subBuilder.MergeFrom(EndRoom);
+            }
+            input.ReadMessage(subBuilder);
+            EndRoom = subBuilder;
             break;
           }
         }
@@ -397,35 +448,44 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 8: {
-            PlayerId = input.ReadUInt64();
+          case 10: {
+            Name = input.ReadString();
             break;
           }
           case 18: {
-            global::LobbyMessage.PlayerLoginRequest subBuilder = new global::LobbyMessage.PlayerLoginRequest();
-            if (contentCase_ == ContentOneofCase.PlayerLogin) {
-              subBuilder.MergeFrom(PlayerLogin);
+            global::LobbyMessage.PlayerJoinRoomRequest subBuilder = new global::LobbyMessage.PlayerJoinRoomRequest();
+            if (contentCase_ == ContentOneofCase.JoinRoom) {
+              subBuilder.MergeFrom(JoinRoom);
             }
             input.ReadMessage(subBuilder);
-            PlayerLogin = subBuilder;
+            JoinRoom = subBuilder;
             break;
           }
           case 26: {
-            global::LobbyMessage.PlayerJoinRoomRequest subBuilder = new global::LobbyMessage.PlayerJoinRoomRequest();
-            if (contentCase_ == ContentOneofCase.PlayerJoin) {
-              subBuilder.MergeFrom(PlayerJoin);
+            global::LobbyMessage.PlayerLeaveRoomRequest subBuilder = new global::LobbyMessage.PlayerLeaveRoomRequest();
+            if (contentCase_ == ContentOneofCase.LeaveRoom) {
+              subBuilder.MergeFrom(LeaveRoom);
             }
             input.ReadMessage(subBuilder);
-            PlayerJoin = subBuilder;
+            LeaveRoom = subBuilder;
             break;
           }
           case 34: {
-            global::LobbyMessage.PlayerPlayRoomRequest subBuilder = new global::LobbyMessage.PlayerPlayRoomRequest();
-            if (contentCase_ == ContentOneofCase.PlayerPlayRoom) {
-              subBuilder.MergeFrom(PlayerPlayRoom);
+            global::LobbyMessage.PlayerStartRoomRequest subBuilder = new global::LobbyMessage.PlayerStartRoomRequest();
+            if (contentCase_ == ContentOneofCase.StartRoom) {
+              subBuilder.MergeFrom(StartRoom);
             }
             input.ReadMessage(subBuilder);
-            PlayerPlayRoom = subBuilder;
+            StartRoom = subBuilder;
+            break;
+          }
+          case 42: {
+            global::LobbyMessage.PlayerEndRoomRequest subBuilder = new global::LobbyMessage.PlayerEndRoomRequest();
+            if (contentCase_ == ContentOneofCase.EndRoom) {
+              subBuilder.MergeFrom(EndRoom);
+            }
+            input.ReadMessage(subBuilder);
+            EndRoom = subBuilder;
             break;
           }
         }
@@ -435,16 +495,16 @@ namespace LobbyMessage {
 
   }
 
-  public sealed partial class PlayerLoginRequest : pb::IMessage<PlayerLoginRequest>
+  public sealed partial class PlayerJoinRoomRequest : pb::IMessage<PlayerJoinRoomRequest>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<PlayerLoginRequest> _parser = new pb::MessageParser<PlayerLoginRequest>(() => new PlayerLoginRequest());
+    private static readonly pb::MessageParser<PlayerJoinRoomRequest> _parser = new pb::MessageParser<PlayerJoinRoomRequest>(() => new PlayerJoinRoomRequest());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<PlayerLoginRequest> Parser { get { return _parser; } }
+    public static pb::MessageParser<PlayerJoinRoomRequest> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -460,7 +520,7 @@ namespace LobbyMessage {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerLoginRequest() {
+    public PlayerJoinRoomRequest() {
       OnConstruction();
     }
 
@@ -468,15 +528,15 @@ namespace LobbyMessage {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerLoginRequest(PlayerLoginRequest other) : this() {
+    public PlayerJoinRoomRequest(PlayerJoinRoomRequest other) : this() {
       name_ = other.name_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerLoginRequest Clone() {
-      return new PlayerLoginRequest(this);
+    public PlayerJoinRoomRequest Clone() {
+      return new PlayerJoinRoomRequest(this);
     }
 
     /// <summary>Field number for the "name" field.</summary>
@@ -494,12 +554,12 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as PlayerLoginRequest);
+      return Equals(other as PlayerJoinRoomRequest);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(PlayerLoginRequest other) {
+    public bool Equals(PlayerJoinRoomRequest other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -572,7 +632,7 @@ namespace LobbyMessage {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(PlayerLoginRequest other) {
+    public void MergeFrom(PlayerJoinRoomRequest other) {
       if (other == null) {
         return;
       }
@@ -624,16 +684,16 @@ namespace LobbyMessage {
 
   }
 
-  public sealed partial class PlayerJoinRoomRequest : pb::IMessage<PlayerJoinRoomRequest>
+  public sealed partial class PlayerLeaveRoomRequest : pb::IMessage<PlayerLeaveRoomRequest>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<PlayerJoinRoomRequest> _parser = new pb::MessageParser<PlayerJoinRoomRequest>(() => new PlayerJoinRoomRequest());
+    private static readonly pb::MessageParser<PlayerLeaveRoomRequest> _parser = new pb::MessageParser<PlayerLeaveRoomRequest>(() => new PlayerLeaveRoomRequest());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<PlayerJoinRoomRequest> Parser { get { return _parser; } }
+    public static pb::MessageParser<PlayerLeaveRoomRequest> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -649,7 +709,7 @@ namespace LobbyMessage {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerJoinRoomRequest() {
+    public PlayerLeaveRoomRequest() {
       OnConstruction();
     }
 
@@ -657,197 +717,45 @@ namespace LobbyMessage {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerJoinRoomRequest(PlayerJoinRoomRequest other) : this() {
+    public PlayerLeaveRoomRequest(PlayerLeaveRoomRequest other) : this() {
+      name_ = other.name_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerJoinRoomRequest Clone() {
-      return new PlayerJoinRoomRequest(this);
+    public PlayerLeaveRoomRequest Clone() {
+      return new PlayerLeaveRoomRequest(this);
     }
 
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as PlayerJoinRoomRequest);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(PlayerJoinRoomRequest other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int CalculateSize() {
-      int size = 0;
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(PlayerJoinRoomRequest other) {
-      if (other == null) {
-        return;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-        }
-      }
-    }
-    #endif
-
-  }
-
-  public sealed partial class PlayerPlayRoomRequest : pb::IMessage<PlayerPlayRoomRequest>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<PlayerPlayRoomRequest> _parser = new pb::MessageParser<PlayerPlayRoomRequest>(() => new PlayerPlayRoomRequest());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<PlayerPlayRoomRequest> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::LobbyMessage.LobbyMessageReflection.Descriptor.MessageTypes[3]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerPlayRoomRequest() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerPlayRoomRequest(PlayerPlayRoomRequest other) : this() {
-      roomId_ = other.roomId_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerPlayRoomRequest Clone() {
-      return new PlayerPlayRoomRequest(this);
-    }
-
-    /// <summary>Field number for the "roomId" field.</summary>
-    public const int RoomIdFieldNumber = 1;
-    private ulong roomId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong RoomId {
-      get { return roomId_; }
+    public string Name {
+      get { return name_; }
       set {
-        roomId_ = value;
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as PlayerPlayRoomRequest);
+      return Equals(other as PlayerLeaveRoomRequest);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(PlayerPlayRoomRequest other) {
+    public bool Equals(PlayerLeaveRoomRequest other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (RoomId != other.RoomId) return false;
+      if (Name != other.Name) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -855,7 +763,7 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (RoomId != 0UL) hash ^= RoomId.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -874,9 +782,9 @@ namespace LobbyMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (RoomId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -888,9 +796,9 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (RoomId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -902,8 +810,8 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (RoomId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(RoomId);
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -913,12 +821,12 @@ namespace LobbyMessage {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(PlayerPlayRoomRequest other) {
+    public void MergeFrom(PlayerLeaveRoomRequest other) {
       if (other == null) {
         return;
       }
-      if (other.RoomId != 0UL) {
-        RoomId = other.RoomId;
+      if (other.Name.Length != 0) {
+        Name = other.Name;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -935,8 +843,8 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 8: {
-            RoomId = input.ReadUInt64();
+          case 10: {
+            Name = input.ReadString();
             break;
           }
         }
@@ -954,8 +862,386 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 8: {
-            RoomId = input.ReadUInt64();
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class PlayerStartRoomRequest : pb::IMessage<PlayerStartRoomRequest>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<PlayerStartRoomRequest> _parser = new pb::MessageParser<PlayerStartRoomRequest>(() => new PlayerStartRoomRequest());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<PlayerStartRoomRequest> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::LobbyMessage.LobbyMessageReflection.Descriptor.MessageTypes[3]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerStartRoomRequest() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerStartRoomRequest(PlayerStartRoomRequest other) : this() {
+      name_ = other.name_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerStartRoomRequest Clone() {
+      return new PlayerStartRoomRequest(this);
+    }
+
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as PlayerStartRoomRequest);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(PlayerStartRoomRequest other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Name != other.Name) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(PlayerStartRoomRequest other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class PlayerEndRoomRequest : pb::IMessage<PlayerEndRoomRequest>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<PlayerEndRoomRequest> _parser = new pb::MessageParser<PlayerEndRoomRequest>(() => new PlayerEndRoomRequest());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<PlayerEndRoomRequest> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::LobbyMessage.LobbyMessageReflection.Descriptor.MessageTypes[4]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerEndRoomRequest() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerEndRoomRequest(PlayerEndRoomRequest other) : this() {
+      name_ = other.name_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerEndRoomRequest Clone() {
+      return new PlayerEndRoomRequest(this);
+    }
+
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as PlayerEndRoomRequest);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(PlayerEndRoomRequest other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Name != other.Name) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(PlayerEndRoomRequest other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Name = input.ReadString();
             break;
           }
         }
@@ -982,7 +1268,7 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::LobbyMessage.LobbyMessageReflection.Descriptor.MessageTypes[4]; }
+      get { return global::LobbyMessage.LobbyMessageReflection.Descriptor.MessageTypes[5]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1002,15 +1288,19 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public LobbySyncResponse(LobbySyncResponse other) : this() {
+      name_ = other.name_;
       switch (other.ContentCase) {
-        case ContentOneofCase.PlayerLogin:
-          PlayerLogin = other.PlayerLogin.Clone();
+        case ContentOneofCase.JoinRoom:
+          JoinRoom = other.JoinRoom.Clone();
           break;
-        case ContentOneofCase.PlayerJoin:
-          PlayerJoin = other.PlayerJoin.Clone();
+        case ContentOneofCase.LeaveRoom:
+          LeaveRoom = other.LeaveRoom.Clone();
           break;
-        case ContentOneofCase.PlayerPlayRoom:
-          PlayerPlayRoom = other.PlayerPlayRoom.Clone();
+        case ContentOneofCase.StartRoom:
+          StartRoom = other.StartRoom.Clone();
+          break;
+        case ContentOneofCase.EndRoom:
+          EndRoom = other.EndRoom.Clone();
           break;
       }
 
@@ -1023,39 +1313,63 @@ namespace LobbyMessage {
       return new LobbySyncResponse(this);
     }
 
-    /// <summary>Field number for the "playerLogin" field.</summary>
-    public const int PlayerLoginFieldNumber = 1;
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::LobbyMessage.PlayerLoginResponse PlayerLogin {
-      get { return contentCase_ == ContentOneofCase.PlayerLogin ? (global::LobbyMessage.PlayerLoginResponse) content_ : null; }
+    public string Name {
+      get { return name_; }
       set {
-        content_ = value;
-        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.PlayerLogin;
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
-    /// <summary>Field number for the "playerJoin" field.</summary>
-    public const int PlayerJoinFieldNumber = 2;
+    /// <summary>Field number for the "joinRoom" field.</summary>
+    public const int JoinRoomFieldNumber = 2;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::LobbyMessage.PlayerJoinRoomResponse PlayerJoin {
-      get { return contentCase_ == ContentOneofCase.PlayerJoin ? (global::LobbyMessage.PlayerJoinRoomResponse) content_ : null; }
+    public global::LobbyMessage.PlayerJoinRoomResponse JoinRoom {
+      get { return contentCase_ == ContentOneofCase.JoinRoom ? (global::LobbyMessage.PlayerJoinRoomResponse) content_ : null; }
       set {
         content_ = value;
-        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.PlayerJoin;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.JoinRoom;
       }
     }
 
-    /// <summary>Field number for the "playerPlayRoom" field.</summary>
-    public const int PlayerPlayRoomFieldNumber = 3;
+    /// <summary>Field number for the "leaveRoom" field.</summary>
+    public const int LeaveRoomFieldNumber = 3;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::LobbyMessage.PlayerPlayRoomResponse PlayerPlayRoom {
-      get { return contentCase_ == ContentOneofCase.PlayerPlayRoom ? (global::LobbyMessage.PlayerPlayRoomResponse) content_ : null; }
+    public global::LobbyMessage.PlayerLeaveRoomResponse LeaveRoom {
+      get { return contentCase_ == ContentOneofCase.LeaveRoom ? (global::LobbyMessage.PlayerLeaveRoomResponse) content_ : null; }
       set {
         content_ = value;
-        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.PlayerPlayRoom;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.LeaveRoom;
+      }
+    }
+
+    /// <summary>Field number for the "startRoom" field.</summary>
+    public const int StartRoomFieldNumber = 4;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::LobbyMessage.PlayerStartRoomResponse StartRoom {
+      get { return contentCase_ == ContentOneofCase.StartRoom ? (global::LobbyMessage.PlayerStartRoomResponse) content_ : null; }
+      set {
+        content_ = value;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.StartRoom;
+      }
+    }
+
+    /// <summary>Field number for the "endRoom" field.</summary>
+    public const int EndRoomFieldNumber = 5;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::LobbyMessage.PlayerEndRoomResponse EndRoom {
+      get { return contentCase_ == ContentOneofCase.EndRoom ? (global::LobbyMessage.PlayerEndRoomResponse) content_ : null; }
+      set {
+        content_ = value;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.EndRoom;
       }
     }
 
@@ -1063,9 +1377,10 @@ namespace LobbyMessage {
     /// <summary>Enum of possible cases for the "content" oneof.</summary>
     public enum ContentOneofCase {
       None = 0,
-      PlayerLogin = 1,
-      PlayerJoin = 2,
-      PlayerPlayRoom = 3,
+      JoinRoom = 2,
+      LeaveRoom = 3,
+      StartRoom = 4,
+      EndRoom = 5,
     }
     private ContentOneofCase contentCase_ = ContentOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1096,9 +1411,11 @@ namespace LobbyMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(PlayerLogin, other.PlayerLogin)) return false;
-      if (!object.Equals(PlayerJoin, other.PlayerJoin)) return false;
-      if (!object.Equals(PlayerPlayRoom, other.PlayerPlayRoom)) return false;
+      if (Name != other.Name) return false;
+      if (!object.Equals(JoinRoom, other.JoinRoom)) return false;
+      if (!object.Equals(LeaveRoom, other.LeaveRoom)) return false;
+      if (!object.Equals(StartRoom, other.StartRoom)) return false;
+      if (!object.Equals(EndRoom, other.EndRoom)) return false;
       if (ContentCase != other.ContentCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1107,9 +1424,11 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (contentCase_ == ContentOneofCase.PlayerLogin) hash ^= PlayerLogin.GetHashCode();
-      if (contentCase_ == ContentOneofCase.PlayerJoin) hash ^= PlayerJoin.GetHashCode();
-      if (contentCase_ == ContentOneofCase.PlayerPlayRoom) hash ^= PlayerPlayRoom.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (contentCase_ == ContentOneofCase.JoinRoom) hash ^= JoinRoom.GetHashCode();
+      if (contentCase_ == ContentOneofCase.LeaveRoom) hash ^= LeaveRoom.GetHashCode();
+      if (contentCase_ == ContentOneofCase.StartRoom) hash ^= StartRoom.GetHashCode();
+      if (contentCase_ == ContentOneofCase.EndRoom) hash ^= EndRoom.GetHashCode();
       hash ^= (int) contentCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1129,17 +1448,25 @@ namespace LobbyMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (contentCase_ == ContentOneofCase.PlayerLogin) {
+      if (Name.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteMessage(PlayerLogin);
+        output.WriteString(Name);
       }
-      if (contentCase_ == ContentOneofCase.PlayerJoin) {
+      if (contentCase_ == ContentOneofCase.JoinRoom) {
         output.WriteRawTag(18);
-        output.WriteMessage(PlayerJoin);
+        output.WriteMessage(JoinRoom);
       }
-      if (contentCase_ == ContentOneofCase.PlayerPlayRoom) {
+      if (contentCase_ == ContentOneofCase.LeaveRoom) {
         output.WriteRawTag(26);
-        output.WriteMessage(PlayerPlayRoom);
+        output.WriteMessage(LeaveRoom);
+      }
+      if (contentCase_ == ContentOneofCase.StartRoom) {
+        output.WriteRawTag(34);
+        output.WriteMessage(StartRoom);
+      }
+      if (contentCase_ == ContentOneofCase.EndRoom) {
+        output.WriteRawTag(42);
+        output.WriteMessage(EndRoom);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1151,17 +1478,25 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (contentCase_ == ContentOneofCase.PlayerLogin) {
+      if (Name.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteMessage(PlayerLogin);
+        output.WriteString(Name);
       }
-      if (contentCase_ == ContentOneofCase.PlayerJoin) {
+      if (contentCase_ == ContentOneofCase.JoinRoom) {
         output.WriteRawTag(18);
-        output.WriteMessage(PlayerJoin);
+        output.WriteMessage(JoinRoom);
       }
-      if (contentCase_ == ContentOneofCase.PlayerPlayRoom) {
+      if (contentCase_ == ContentOneofCase.LeaveRoom) {
         output.WriteRawTag(26);
-        output.WriteMessage(PlayerPlayRoom);
+        output.WriteMessage(LeaveRoom);
+      }
+      if (contentCase_ == ContentOneofCase.StartRoom) {
+        output.WriteRawTag(34);
+        output.WriteMessage(StartRoom);
+      }
+      if (contentCase_ == ContentOneofCase.EndRoom) {
+        output.WriteRawTag(42);
+        output.WriteMessage(EndRoom);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1173,14 +1508,20 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (contentCase_ == ContentOneofCase.PlayerLogin) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayerLogin);
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
-      if (contentCase_ == ContentOneofCase.PlayerJoin) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayerJoin);
+      if (contentCase_ == ContentOneofCase.JoinRoom) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(JoinRoom);
       }
-      if (contentCase_ == ContentOneofCase.PlayerPlayRoom) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PlayerPlayRoom);
+      if (contentCase_ == ContentOneofCase.LeaveRoom) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(LeaveRoom);
+      }
+      if (contentCase_ == ContentOneofCase.StartRoom) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(StartRoom);
+      }
+      if (contentCase_ == ContentOneofCase.EndRoom) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(EndRoom);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1194,24 +1535,33 @@ namespace LobbyMessage {
       if (other == null) {
         return;
       }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
       switch (other.ContentCase) {
-        case ContentOneofCase.PlayerLogin:
-          if (PlayerLogin == null) {
-            PlayerLogin = new global::LobbyMessage.PlayerLoginResponse();
+        case ContentOneofCase.JoinRoom:
+          if (JoinRoom == null) {
+            JoinRoom = new global::LobbyMessage.PlayerJoinRoomResponse();
           }
-          PlayerLogin.MergeFrom(other.PlayerLogin);
+          JoinRoom.MergeFrom(other.JoinRoom);
           break;
-        case ContentOneofCase.PlayerJoin:
-          if (PlayerJoin == null) {
-            PlayerJoin = new global::LobbyMessage.PlayerJoinRoomResponse();
+        case ContentOneofCase.LeaveRoom:
+          if (LeaveRoom == null) {
+            LeaveRoom = new global::LobbyMessage.PlayerLeaveRoomResponse();
           }
-          PlayerJoin.MergeFrom(other.PlayerJoin);
+          LeaveRoom.MergeFrom(other.LeaveRoom);
           break;
-        case ContentOneofCase.PlayerPlayRoom:
-          if (PlayerPlayRoom == null) {
-            PlayerPlayRoom = new global::LobbyMessage.PlayerPlayRoomResponse();
+        case ContentOneofCase.StartRoom:
+          if (StartRoom == null) {
+            StartRoom = new global::LobbyMessage.PlayerStartRoomResponse();
           }
-          PlayerPlayRoom.MergeFrom(other.PlayerPlayRoom);
+          StartRoom.MergeFrom(other.StartRoom);
+          break;
+        case ContentOneofCase.EndRoom:
+          if (EndRoom == null) {
+            EndRoom = new global::LobbyMessage.PlayerEndRoomResponse();
+          }
+          EndRoom.MergeFrom(other.EndRoom);
           break;
       }
 
@@ -1231,30 +1581,43 @@ namespace LobbyMessage {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            global::LobbyMessage.PlayerLoginResponse subBuilder = new global::LobbyMessage.PlayerLoginResponse();
-            if (contentCase_ == ContentOneofCase.PlayerLogin) {
-              subBuilder.MergeFrom(PlayerLogin);
-            }
-            input.ReadMessage(subBuilder);
-            PlayerLogin = subBuilder;
+            Name = input.ReadString();
             break;
           }
           case 18: {
             global::LobbyMessage.PlayerJoinRoomResponse subBuilder = new global::LobbyMessage.PlayerJoinRoomResponse();
-            if (contentCase_ == ContentOneofCase.PlayerJoin) {
-              subBuilder.MergeFrom(PlayerJoin);
+            if (contentCase_ == ContentOneofCase.JoinRoom) {
+              subBuilder.MergeFrom(JoinRoom);
             }
             input.ReadMessage(subBuilder);
-            PlayerJoin = subBuilder;
+            JoinRoom = subBuilder;
             break;
           }
           case 26: {
-            global::LobbyMessage.PlayerPlayRoomResponse subBuilder = new global::LobbyMessage.PlayerPlayRoomResponse();
-            if (contentCase_ == ContentOneofCase.PlayerPlayRoom) {
-              subBuilder.MergeFrom(PlayerPlayRoom);
+            global::LobbyMessage.PlayerLeaveRoomResponse subBuilder = new global::LobbyMessage.PlayerLeaveRoomResponse();
+            if (contentCase_ == ContentOneofCase.LeaveRoom) {
+              subBuilder.MergeFrom(LeaveRoom);
             }
             input.ReadMessage(subBuilder);
-            PlayerPlayRoom = subBuilder;
+            LeaveRoom = subBuilder;
+            break;
+          }
+          case 34: {
+            global::LobbyMessage.PlayerStartRoomResponse subBuilder = new global::LobbyMessage.PlayerStartRoomResponse();
+            if (contentCase_ == ContentOneofCase.StartRoom) {
+              subBuilder.MergeFrom(StartRoom);
+            }
+            input.ReadMessage(subBuilder);
+            StartRoom = subBuilder;
+            break;
+          }
+          case 42: {
+            global::LobbyMessage.PlayerEndRoomResponse subBuilder = new global::LobbyMessage.PlayerEndRoomResponse();
+            if (contentCase_ == ContentOneofCase.EndRoom) {
+              subBuilder.MergeFrom(EndRoom);
+            }
+            input.ReadMessage(subBuilder);
+            EndRoom = subBuilder;
             break;
           }
         }
@@ -1273,219 +1636,43 @@ namespace LobbyMessage {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            global::LobbyMessage.PlayerLoginResponse subBuilder = new global::LobbyMessage.PlayerLoginResponse();
-            if (contentCase_ == ContentOneofCase.PlayerLogin) {
-              subBuilder.MergeFrom(PlayerLogin);
-            }
-            input.ReadMessage(subBuilder);
-            PlayerLogin = subBuilder;
+            Name = input.ReadString();
             break;
           }
           case 18: {
             global::LobbyMessage.PlayerJoinRoomResponse subBuilder = new global::LobbyMessage.PlayerJoinRoomResponse();
-            if (contentCase_ == ContentOneofCase.PlayerJoin) {
-              subBuilder.MergeFrom(PlayerJoin);
+            if (contentCase_ == ContentOneofCase.JoinRoom) {
+              subBuilder.MergeFrom(JoinRoom);
             }
             input.ReadMessage(subBuilder);
-            PlayerJoin = subBuilder;
+            JoinRoom = subBuilder;
             break;
           }
           case 26: {
-            global::LobbyMessage.PlayerPlayRoomResponse subBuilder = new global::LobbyMessage.PlayerPlayRoomResponse();
-            if (contentCase_ == ContentOneofCase.PlayerPlayRoom) {
-              subBuilder.MergeFrom(PlayerPlayRoom);
+            global::LobbyMessage.PlayerLeaveRoomResponse subBuilder = new global::LobbyMessage.PlayerLeaveRoomResponse();
+            if (contentCase_ == ContentOneofCase.LeaveRoom) {
+              subBuilder.MergeFrom(LeaveRoom);
             }
             input.ReadMessage(subBuilder);
-            PlayerPlayRoom = subBuilder;
+            LeaveRoom = subBuilder;
             break;
           }
-        }
-      }
-    }
-    #endif
-
-  }
-
-  public sealed partial class PlayerLoginResponse : pb::IMessage<PlayerLoginResponse>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<PlayerLoginResponse> _parser = new pb::MessageParser<PlayerLoginResponse>(() => new PlayerLoginResponse());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<PlayerLoginResponse> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::LobbyMessage.LobbyMessageReflection.Descriptor.MessageTypes[5]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerLoginResponse() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerLoginResponse(PlayerLoginResponse other) : this() {
-      playerId_ = other.playerId_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerLoginResponse Clone() {
-      return new PlayerLoginResponse(this);
-    }
-
-    /// <summary>Field number for the "playerId" field.</summary>
-    public const int PlayerIdFieldNumber = 1;
-    private ulong playerId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong PlayerId {
-      get { return playerId_; }
-      set {
-        playerId_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as PlayerLoginResponse);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(PlayerLoginResponse other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (PlayerId != other.PlayerId) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (PlayerId != 0UL) hash ^= PlayerId.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (PlayerId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(PlayerId);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (PlayerId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(PlayerId);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int CalculateSize() {
-      int size = 0;
-      if (PlayerId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(PlayerId);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(PlayerLoginResponse other) {
-      if (other == null) {
-        return;
-      }
-      if (other.PlayerId != 0UL) {
-        PlayerId = other.PlayerId;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 8: {
-            PlayerId = input.ReadUInt64();
+          case 34: {
+            global::LobbyMessage.PlayerStartRoomResponse subBuilder = new global::LobbyMessage.PlayerStartRoomResponse();
+            if (contentCase_ == ContentOneofCase.StartRoom) {
+              subBuilder.MergeFrom(StartRoom);
+            }
+            input.ReadMessage(subBuilder);
+            StartRoom = subBuilder;
             break;
           }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 8: {
-            PlayerId = input.ReadUInt64();
+          case 42: {
+            global::LobbyMessage.PlayerEndRoomResponse subBuilder = new global::LobbyMessage.PlayerEndRoomResponse();
+            if (contentCase_ == ContentOneofCase.EndRoom) {
+              subBuilder.MergeFrom(EndRoom);
+            }
+            input.ReadMessage(subBuilder);
+            EndRoom = subBuilder;
             break;
           }
         }
@@ -1529,7 +1716,7 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public PlayerJoinRoomResponse(PlayerJoinRoomResponse other) : this() {
-      roomId_ = other.roomId_;
+      name_ = other.name_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1539,15 +1726,15 @@ namespace LobbyMessage {
       return new PlayerJoinRoomResponse(this);
     }
 
-    /// <summary>Field number for the "roomId" field.</summary>
-    public const int RoomIdFieldNumber = 1;
-    private ulong roomId_;
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong RoomId {
-      get { return roomId_; }
+    public string Name {
+      get { return name_; }
       set {
-        roomId_ = value;
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1566,7 +1753,7 @@ namespace LobbyMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (RoomId != other.RoomId) return false;
+      if (Name != other.Name) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1574,7 +1761,7 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (RoomId != 0UL) hash ^= RoomId.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1593,9 +1780,9 @@ namespace LobbyMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (RoomId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1607,9 +1794,9 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (RoomId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1621,8 +1808,8 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (RoomId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(RoomId);
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1636,8 +1823,8 @@ namespace LobbyMessage {
       if (other == null) {
         return;
       }
-      if (other.RoomId != 0UL) {
-        RoomId = other.RoomId;
+      if (other.Name.Length != 0) {
+        Name = other.Name;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1654,8 +1841,8 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 8: {
-            RoomId = input.ReadUInt64();
+          case 10: {
+            Name = input.ReadString();
             break;
           }
         }
@@ -1673,8 +1860,8 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 8: {
-            RoomId = input.ReadUInt64();
+          case 10: {
+            Name = input.ReadString();
             break;
           }
         }
@@ -1684,16 +1871,16 @@ namespace LobbyMessage {
 
   }
 
-  public sealed partial class PlayerPlayRoomResponse : pb::IMessage<PlayerPlayRoomResponse>
+  public sealed partial class PlayerLeaveRoomResponse : pb::IMessage<PlayerLeaveRoomResponse>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<PlayerPlayRoomResponse> _parser = new pb::MessageParser<PlayerPlayRoomResponse>(() => new PlayerPlayRoomResponse());
+    private static readonly pb::MessageParser<PlayerLeaveRoomResponse> _parser = new pb::MessageParser<PlayerLeaveRoomResponse>(() => new PlayerLeaveRoomResponse());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<PlayerPlayRoomResponse> Parser { get { return _parser; } }
+    public static pb::MessageParser<PlayerLeaveRoomResponse> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1709,7 +1896,7 @@ namespace LobbyMessage {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerPlayRoomResponse() {
+    public PlayerLeaveRoomResponse() {
       OnConstruction();
     }
 
@@ -1717,45 +1904,45 @@ namespace LobbyMessage {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerPlayRoomResponse(PlayerPlayRoomResponse other) : this() {
-      roomId_ = other.roomId_;
+    public PlayerLeaveRoomResponse(PlayerLeaveRoomResponse other) : this() {
+      name_ = other.name_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public PlayerPlayRoomResponse Clone() {
-      return new PlayerPlayRoomResponse(this);
+    public PlayerLeaveRoomResponse Clone() {
+      return new PlayerLeaveRoomResponse(this);
     }
 
-    /// <summary>Field number for the "roomId" field.</summary>
-    public const int RoomIdFieldNumber = 1;
-    private ulong roomId_;
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong RoomId {
-      get { return roomId_; }
+    public string Name {
+      get { return name_; }
       set {
-        roomId_ = value;
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as PlayerPlayRoomResponse);
+      return Equals(other as PlayerLeaveRoomResponse);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(PlayerPlayRoomResponse other) {
+    public bool Equals(PlayerLeaveRoomResponse other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (RoomId != other.RoomId) return false;
+      if (Name != other.Name) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1763,7 +1950,7 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (RoomId != 0UL) hash ^= RoomId.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1782,9 +1969,9 @@ namespace LobbyMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (RoomId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1796,9 +1983,9 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (RoomId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1810,8 +1997,8 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (RoomId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(RoomId);
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1821,12 +2008,12 @@ namespace LobbyMessage {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(PlayerPlayRoomResponse other) {
+    public void MergeFrom(PlayerLeaveRoomResponse other) {
       if (other == null) {
         return;
       }
-      if (other.RoomId != 0UL) {
-        RoomId = other.RoomId;
+      if (other.Name.Length != 0) {
+        Name = other.Name;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1843,8 +2030,8 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 8: {
-            RoomId = input.ReadUInt64();
+          case 10: {
+            Name = input.ReadString();
             break;
           }
         }
@@ -1862,8 +2049,386 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 8: {
-            RoomId = input.ReadUInt64();
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class PlayerStartRoomResponse : pb::IMessage<PlayerStartRoomResponse>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<PlayerStartRoomResponse> _parser = new pb::MessageParser<PlayerStartRoomResponse>(() => new PlayerStartRoomResponse());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<PlayerStartRoomResponse> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::LobbyMessage.LobbyMessageReflection.Descriptor.MessageTypes[8]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerStartRoomResponse() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerStartRoomResponse(PlayerStartRoomResponse other) : this() {
+      name_ = other.name_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerStartRoomResponse Clone() {
+      return new PlayerStartRoomResponse(this);
+    }
+
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as PlayerStartRoomResponse);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(PlayerStartRoomResponse other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Name != other.Name) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(PlayerStartRoomResponse other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class PlayerEndRoomResponse : pb::IMessage<PlayerEndRoomResponse>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<PlayerEndRoomResponse> _parser = new pb::MessageParser<PlayerEndRoomResponse>(() => new PlayerEndRoomResponse());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<PlayerEndRoomResponse> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::LobbyMessage.LobbyMessageReflection.Descriptor.MessageTypes[9]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerEndRoomResponse() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerEndRoomResponse(PlayerEndRoomResponse other) : this() {
+      name_ = other.name_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PlayerEndRoomResponse Clone() {
+      return new PlayerEndRoomResponse(this);
+    }
+
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as PlayerEndRoomResponse);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(PlayerEndRoomResponse other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Name != other.Name) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(PlayerEndRoomResponse other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Name = input.ReadString();
             break;
           }
         }

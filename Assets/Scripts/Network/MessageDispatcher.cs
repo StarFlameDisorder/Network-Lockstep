@@ -74,20 +74,25 @@ namespace Network
                     Debug.Log("HandleConnectMessage:未知类型"+message.ContentCase);
                     break;
             }
-            Action<string> printMessage = Console.WriteLine;
+            //Action<string> printMessage = Console.WriteLine;
         }
 
         private void HandleLobbyMessage(LobbySyncResponse message)
         {
             switch (message.ContentCase)
             {
-                case LobbySyncResponse.ContentOneofCase.PlayerLogin:
-                    StatusPanel.Instance.UpdatePlayerIdStatus(message.PlayerLogin.PlayerId);
-                    TriggerHandler(Signals.LobbyPlayerLogin,message.PlayerLogin);
+                case LobbySyncResponse.ContentOneofCase.JoinRoom:
+                    Debug.Log("HandleLobbyMessage-JoinRoom");
+                    TriggerHandler(Signals.LobbyJoinRoom,message.JoinRoom);
                     break;
-                case LobbySyncResponse.ContentOneofCase.PlayerJoin:
+                case LobbySyncResponse.ContentOneofCase.LeaveRoom:
+                    Debug.Log("HandleLobbyMessage-LeaveRoom");
                     break;
-                case LobbySyncResponse.ContentOneofCase.PlayerPlayRoom:
+                case LobbySyncResponse.ContentOneofCase.StartRoom:
+                    Debug.Log("HandleLobbyMessage-StartRoom");
+                    break;
+                case LobbySyncResponse.ContentOneofCase.EndRoom:
+                    Debug.Log("HandleLobbyMessage-EndRoom");
                     break;
                 default:
                     Debug.Log("HandleLobbyMessage:未知类型"+message.ContentCase);

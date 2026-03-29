@@ -6,10 +6,7 @@ using Network;
 using UI;
 using UnityEngine;
 using UnityMath;
-using System.Collections;
-using GameMessage;
 using Google.Protobuf;
-using Network;
 using SyncMessage;
 
 namespace GamePlay
@@ -86,9 +83,9 @@ namespace GamePlay
                         PlayerId = clientId,
                         InputMove = new Vector3D
                         {
-                            X = _input.x,
-                            Y = 0f,
-                            Z = _input.y
+                            X = (int)(_input.x * 1000),
+                            Y = 0,
+                            Z = (int)(_input.y * 1000)
                         }
                     }
                 }
@@ -100,7 +97,6 @@ namespace GamePlay
                 GameSyncMessage = gameSyncMessage
             };
             
-            //NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
             NetworkManager.Instance.UdpSendMessage(message.ToByteArray());
             PlayerAction(gameSyncMessage);
             _frameId++;
@@ -134,27 +130,25 @@ namespace GamePlay
         {
             if(_gameSyncMessages.Count>0)
             {
-                {
-                    GameSyncMessage message = _gameSyncMessages.Dequeue();
-            
-                    var player = message.Players[0];
-                    var v = player.InputMove;
-                    _velocity2 = new Vector3(v.X, v.Y, v.Z);
-                }
+                
+                GameSyncMessage message = _gameSyncMessages.Dequeue();
+        
+                var player = message.Players[0];
+                var v = player.InputMove;
+                _velocity2 = new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
+                StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
+                
             }
             if(_localGameSyncMessages.Count>0)
             {
-                {
-                    GameSyncMessage message = _localGameSyncMessages.Dequeue();
-            
-                    var player = message.Players[0];
-                    var v = player.InputMove;
-                    _velocity1 = new Vector3(v.X, v.Y, v.Z);
-                }
                 
+                GameSyncMessage message = _localGameSyncMessages.Dequeue();
+        
+                var player = message.Players[0];
+                var v = player.InputMove;
+                _velocity1 = new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
+                StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
             }
-            StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
-            StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
         }
         #endregion
         

@@ -184,22 +184,22 @@ class Vector2D final :
     kXFieldNumber = 1,
     kYFieldNumber = 2,
   };
-  // float x = 1;
+  // int32 x = 1;
   void clear_x();
-  float x() const;
-  void set_x(float value);
+  int32_t x() const;
+  void set_x(int32_t value);
   private:
-  float _internal_x() const;
-  void _internal_set_x(float value);
+  int32_t _internal_x() const;
+  void _internal_set_x(int32_t value);
   public:
 
-  // float y = 2;
+  // int32 y = 2;
   void clear_y();
-  float y() const;
-  void set_y(float value);
+  int32_t y() const;
+  void set_y(int32_t value);
   private:
-  float _internal_y() const;
-  void _internal_set_y(float value);
+  int32_t _internal_y() const;
+  void _internal_set_y(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:UnityMath.Vector2D)
@@ -210,8 +210,8 @@ class Vector2D final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    float x_;
-    float y_;
+    int32_t x_;
+    int32_t y_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -344,31 +344,31 @@ class Vector3D final :
     kYFieldNumber = 2,
     kZFieldNumber = 3,
   };
-  // float x = 1;
+  // int32 x = 1;
   void clear_x();
-  float x() const;
-  void set_x(float value);
+  int32_t x() const;
+  void set_x(int32_t value);
   private:
-  float _internal_x() const;
-  void _internal_set_x(float value);
+  int32_t _internal_x() const;
+  void _internal_set_x(int32_t value);
   public:
 
-  // float y = 2;
+  // int32 y = 2;
   void clear_y();
-  float y() const;
-  void set_y(float value);
+  int32_t y() const;
+  void set_y(int32_t value);
   private:
-  float _internal_y() const;
-  void _internal_set_y(float value);
+  int32_t _internal_y() const;
+  void _internal_set_y(int32_t value);
   public:
 
-  // float z = 3;
+  // int32 z = 3;
   void clear_z();
-  float z() const;
-  void set_z(float value);
+  int32_t z() const;
+  void set_z(int32_t value);
   private:
-  float _internal_z() const;
-  void _internal_set_z(float value);
+  int32_t _internal_z() const;
+  void _internal_set_z(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:UnityMath.Vector3D)
@@ -379,9 +379,9 @@ class Vector3D final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    float x_;
-    float y_;
-    float z_;
+    int32_t x_;
+    int32_t y_;
+    int32_t z_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -398,42 +398,42 @@ class Vector3D final :
 #endif  // __GNUC__
 // Vector2D
 
-// float x = 1;
+// int32 x = 1;
 inline void Vector2D::clear_x() {
   _impl_.x_ = 0;
 }
-inline float Vector2D::_internal_x() const {
+inline int32_t Vector2D::_internal_x() const {
   return _impl_.x_;
 }
-inline float Vector2D::x() const {
+inline int32_t Vector2D::x() const {
   // @@protoc_insertion_point(field_get:UnityMath.Vector2D.x)
   return _internal_x();
 }
-inline void Vector2D::_internal_set_x(float value) {
+inline void Vector2D::_internal_set_x(int32_t value) {
   
   _impl_.x_ = value;
 }
-inline void Vector2D::set_x(float value) {
+inline void Vector2D::set_x(int32_t value) {
   _internal_set_x(value);
   // @@protoc_insertion_point(field_set:UnityMath.Vector2D.x)
 }
 
-// float y = 2;
+// int32 y = 2;
 inline void Vector2D::clear_y() {
   _impl_.y_ = 0;
 }
-inline float Vector2D::_internal_y() const {
+inline int32_t Vector2D::_internal_y() const {
   return _impl_.y_;
 }
-inline float Vector2D::y() const {
+inline int32_t Vector2D::y() const {
   // @@protoc_insertion_point(field_get:UnityMath.Vector2D.y)
   return _internal_y();
 }
-inline void Vector2D::_internal_set_y(float value) {
+inline void Vector2D::_internal_set_y(int32_t value) {
   
   _impl_.y_ = value;
 }
-inline void Vector2D::set_y(float value) {
+inline void Vector2D::set_y(int32_t value) {
   _internal_set_y(value);
   // @@protoc_insertion_point(field_set:UnityMath.Vector2D.y)
 }
@@ -442,62 +442,62 @@ inline void Vector2D::set_y(float value) {
 
 // Vector3D
 
-// float x = 1;
+// int32 x = 1;
 inline void Vector3D::clear_x() {
   _impl_.x_ = 0;
 }
-inline float Vector3D::_internal_x() const {
+inline int32_t Vector3D::_internal_x() const {
   return _impl_.x_;
 }
-inline float Vector3D::x() const {
+inline int32_t Vector3D::x() const {
   // @@protoc_insertion_point(field_get:UnityMath.Vector3D.x)
   return _internal_x();
 }
-inline void Vector3D::_internal_set_x(float value) {
+inline void Vector3D::_internal_set_x(int32_t value) {
   
   _impl_.x_ = value;
 }
-inline void Vector3D::set_x(float value) {
+inline void Vector3D::set_x(int32_t value) {
   _internal_set_x(value);
   // @@protoc_insertion_point(field_set:UnityMath.Vector3D.x)
 }
 
-// float y = 2;
+// int32 y = 2;
 inline void Vector3D::clear_y() {
   _impl_.y_ = 0;
 }
-inline float Vector3D::_internal_y() const {
+inline int32_t Vector3D::_internal_y() const {
   return _impl_.y_;
 }
-inline float Vector3D::y() const {
+inline int32_t Vector3D::y() const {
   // @@protoc_insertion_point(field_get:UnityMath.Vector3D.y)
   return _internal_y();
 }
-inline void Vector3D::_internal_set_y(float value) {
+inline void Vector3D::_internal_set_y(int32_t value) {
   
   _impl_.y_ = value;
 }
-inline void Vector3D::set_y(float value) {
+inline void Vector3D::set_y(int32_t value) {
   _internal_set_y(value);
   // @@protoc_insertion_point(field_set:UnityMath.Vector3D.y)
 }
 
-// float z = 3;
+// int32 z = 3;
 inline void Vector3D::clear_z() {
   _impl_.z_ = 0;
 }
-inline float Vector3D::_internal_z() const {
+inline int32_t Vector3D::_internal_z() const {
   return _impl_.z_;
 }
-inline float Vector3D::z() const {
+inline int32_t Vector3D::z() const {
   // @@protoc_insertion_point(field_get:UnityMath.Vector3D.z)
   return _internal_z();
 }
-inline void Vector3D::_internal_set_z(float value) {
+inline void Vector3D::_internal_set_z(int32_t value) {
   
   _impl_.z_ = value;
 }
-inline void Vector3D::set_z(float value) {
+inline void Vector3D::set_z(int32_t value) {
   _internal_set_z(value);
   // @@protoc_insertion_point(field_set:UnityMath.Vector3D.z)
 }

@@ -260,7 +260,7 @@ void NetworkDispatcher::broadcastGameSync(const GameSyncMessage& message,quint64
     {
         GameSyncMessage* newGameSyncMessage= sendMessage.mutable_gamesyncmessage();
         newGameSyncMessage->set_frameid(message.frameid());
-        newGameSyncMessage->set_roomid(message.roomid());
+        //newGameSyncMessage->set_roomid(message.roomid());
         newGameSyncMessage->set_time(message.time());
         for (auto &player:message.players())
         {
@@ -277,8 +277,6 @@ void NetworkDispatcher::broadcastGameSync(const GameSyncMessage& message,quint64
     }
     UdpEndPoint uep=m_clientsMap[clientId].udpEndPoint;
     sendUdpMessageDirect(uep.address,uep.port, data);
-    // for (const auto& i : m_clientsMap) {
-    //     sendUdpMessage(i.udpEndPoint.address,i.udpEndPoint.port, data);
-    // }
+
 }
 

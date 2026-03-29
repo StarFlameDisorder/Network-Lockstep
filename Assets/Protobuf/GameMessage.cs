@@ -25,25 +25,24 @@ namespace GameMessage {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChFHYW1lTWVzc2FnZS5wcm90bxILR2FtZU1lc3NhZ2UaD1VuaXR5TWF0aC5w",
-            "cm90byJqCg9HYW1lU3luY01lc3NhZ2USDgoGcm9vbUlkGAEgASgEEg8KB2Zy",
-            "YW1lSWQYAiABKAQSDAoEdGltZRgDIAEoBBIoCgdwbGF5ZXJzGAQgAygLMhcu",
-            "R2FtZU1lc3NhZ2UuUGxheWVyU3luYyKsAQoTR2FtZVNuYXBzaG90TWVzc2Fn",
-            "ZRIOCgZyb29tSWQYASABKAQSDwoHZnJhbWVJZBgCIAEoBBIMCgR0aW1lGAMg",
-            "ASgEEjIKCXBsYXllclNTcxgEIAMoCzIfLkdhbWVNZXNzYWdlLlBsYXllclNu",
-            "YXBzaG90U3luYxIyCglvYmplY3RTU3MYBSADKAsyHy5HYW1lTWVzc2FnZS5P",
-            "YmplY3RTbmFwc2hvdFN5bmMiRgoKUGxheWVyU3luYxIQCghwbGF5ZXJJZBgB",
-            "IAEoBBImCglpbnB1dE1vdmUYAiABKAsyEy5Vbml0eU1hdGguVmVjdG9yM0Qi",
-            "bwoSUGxheWVyU25hcHNob3RTeW5jEhAKCHBsYXllcklkGAEgASgEEiAKA3Bv",
-            "cxgCIAEoCzITLlVuaXR5TWF0aC5WZWN0b3IzRBIlCgh2ZWxvY2l0eRgDIAEo",
-            "CzITLlVuaXR5TWF0aC5WZWN0b3IzRCJvChJPYmplY3RTbmFwc2hvdFN5bmMS",
-            "EAoIb2JqZWN0SWQYASABKAQSIAoDcG9zGAIgASgLMhMuVW5pdHlNYXRoLlZl",
-            "Y3RvcjNEEiUKCHZlbG9jaXR5GAMgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNE",
-            "YgZwcm90bzM="));
+            "cm90byJaCg9HYW1lU3luY01lc3NhZ2USDwoHZnJhbWVJZBgBIAEoBBIMCgR0",
+            "aW1lGAIgASgEEigKB3BsYXllcnMYAyADKAsyFy5HYW1lTWVzc2FnZS5QbGF5",
+            "ZXJTeW5jIpwBChNHYW1lU25hcHNob3RNZXNzYWdlEg8KB2ZyYW1lSWQYASAB",
+            "KAQSDAoEdGltZRgCIAEoBBIyCglwbGF5ZXJTU3MYAyADKAsyHy5HYW1lTWVz",
+            "c2FnZS5QbGF5ZXJTbmFwc2hvdFN5bmMSMgoJb2JqZWN0U1NzGAQgAygLMh8u",
+            "R2FtZU1lc3NhZ2UuT2JqZWN0U25hcHNob3RTeW5jIkYKClBsYXllclN5bmMS",
+            "EAoIcGxheWVySWQYASABKAQSJgoJaW5wdXRNb3ZlGAIgASgLMhMuVW5pdHlN",
+            "YXRoLlZlY3RvcjNEIm8KElBsYXllclNuYXBzaG90U3luYxIQCghwbGF5ZXJJ",
+            "ZBgBIAEoBBIgCgNwb3MYAiABKAsyEy5Vbml0eU1hdGguVmVjdG9yM0QSJQoI",
+            "dmVsb2NpdHkYAyABKAsyEy5Vbml0eU1hdGguVmVjdG9yM0QibwoST2JqZWN0",
+            "U25hcHNob3RTeW5jEhAKCG9iamVjdElkGAEgASgEEiAKA3BvcxgCIAEoCzIT",
+            "LlVuaXR5TWF0aC5WZWN0b3IzRBIlCgh2ZWxvY2l0eRgDIAEoCzITLlVuaXR5",
+            "TWF0aC5WZWN0b3IzRGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::UnityMath.UnityMathReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSyncMessage), global::GameMessage.GameSyncMessage.Parser, new[]{ "RoomId", "FrameId", "Time", "Players" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSnapshotMessage), global::GameMessage.GameSnapshotMessage.Parser, new[]{ "RoomId", "FrameId", "Time", "PlayerSSs", "ObjectSSs" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSyncMessage), global::GameMessage.GameSyncMessage.Parser, new[]{ "FrameId", "Time", "Players" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSnapshotMessage), global::GameMessage.GameSnapshotMessage.Parser, new[]{ "FrameId", "Time", "PlayerSSs", "ObjectSSs" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSync), global::GameMessage.PlayerSync.Parser, new[]{ "PlayerId", "InputMove" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSnapshotSync), global::GameMessage.PlayerSnapshotSync.Parser, new[]{ "PlayerId", "Pos", "Velocity" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.ObjectSnapshotSync), global::GameMessage.ObjectSnapshotSync.Parser, new[]{ "ObjectId", "Pos", "Velocity" }, null, null, null, null)
@@ -87,7 +86,6 @@ namespace GameMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public GameSyncMessage(GameSyncMessage other) : this() {
-      roomId_ = other.roomId_;
       frameId_ = other.frameId_;
       time_ = other.time_;
       players_ = other.players_.Clone();
@@ -100,20 +98,8 @@ namespace GameMessage {
       return new GameSyncMessage(this);
     }
 
-    /// <summary>Field number for the "roomId" field.</summary>
-    public const int RoomIdFieldNumber = 1;
-    private ulong roomId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong RoomId {
-      get { return roomId_; }
-      set {
-        roomId_ = value;
-      }
-    }
-
     /// <summary>Field number for the "frameId" field.</summary>
-    public const int FrameIdFieldNumber = 2;
+    public const int FrameIdFieldNumber = 1;
     private ulong frameId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -125,7 +111,7 @@ namespace GameMessage {
     }
 
     /// <summary>Field number for the "time" field.</summary>
-    public const int TimeFieldNumber = 3;
+    public const int TimeFieldNumber = 2;
     private ulong time_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -137,9 +123,9 @@ namespace GameMessage {
     }
 
     /// <summary>Field number for the "players" field.</summary>
-    public const int PlayersFieldNumber = 4;
+    public const int PlayersFieldNumber = 3;
     private static readonly pb::FieldCodec<global::GameMessage.PlayerSync> _repeated_players_codec
-        = pb::FieldCodec.ForMessage(34, global::GameMessage.PlayerSync.Parser);
+        = pb::FieldCodec.ForMessage(26, global::GameMessage.PlayerSync.Parser);
     private readonly pbc::RepeatedField<global::GameMessage.PlayerSync> players_ = new pbc::RepeatedField<global::GameMessage.PlayerSync>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -162,7 +148,6 @@ namespace GameMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (RoomId != other.RoomId) return false;
       if (FrameId != other.FrameId) return false;
       if (Time != other.Time) return false;
       if(!players_.Equals(other.players_)) return false;
@@ -173,7 +158,6 @@ namespace GameMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (RoomId != 0UL) hash ^= RoomId.GetHashCode();
       if (FrameId != 0UL) hash ^= FrameId.GetHashCode();
       if (Time != 0UL) hash ^= Time.GetHashCode();
       hash ^= players_.GetHashCode();
@@ -195,16 +179,12 @@ namespace GameMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (RoomId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
-      }
       if (FrameId != 0UL) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(8);
         output.WriteUInt64(FrameId);
       }
       if (Time != 0UL) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(16);
         output.WriteUInt64(Time);
       }
       players_.WriteTo(output, _repeated_players_codec);
@@ -218,16 +198,12 @@ namespace GameMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (RoomId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
-      }
       if (FrameId != 0UL) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(8);
         output.WriteUInt64(FrameId);
       }
       if (Time != 0UL) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(16);
         output.WriteUInt64(Time);
       }
       players_.WriteTo(ref output, _repeated_players_codec);
@@ -241,9 +217,6 @@ namespace GameMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (RoomId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(RoomId);
-      }
       if (FrameId != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(FrameId);
       }
@@ -262,9 +235,6 @@ namespace GameMessage {
     public void MergeFrom(GameSyncMessage other) {
       if (other == null) {
         return;
-      }
-      if (other.RoomId != 0UL) {
-        RoomId = other.RoomId;
       }
       if (other.FrameId != 0UL) {
         FrameId = other.FrameId;
@@ -289,18 +259,14 @@ namespace GameMessage {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            RoomId = input.ReadUInt64();
-            break;
-          }
-          case 16: {
             FrameId = input.ReadUInt64();
             break;
           }
-          case 24: {
+          case 16: {
             Time = input.ReadUInt64();
             break;
           }
-          case 34: {
+          case 26: {
             players_.AddEntriesFrom(input, _repeated_players_codec);
             break;
           }
@@ -320,18 +286,14 @@ namespace GameMessage {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            RoomId = input.ReadUInt64();
-            break;
-          }
-          case 16: {
             FrameId = input.ReadUInt64();
             break;
           }
-          case 24: {
+          case 16: {
             Time = input.ReadUInt64();
             break;
           }
-          case 34: {
+          case 26: {
             players_.AddEntriesFrom(ref input, _repeated_players_codec);
             break;
           }
@@ -376,7 +338,6 @@ namespace GameMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public GameSnapshotMessage(GameSnapshotMessage other) : this() {
-      roomId_ = other.roomId_;
       frameId_ = other.frameId_;
       time_ = other.time_;
       playerSSs_ = other.playerSSs_.Clone();
@@ -390,20 +351,8 @@ namespace GameMessage {
       return new GameSnapshotMessage(this);
     }
 
-    /// <summary>Field number for the "roomId" field.</summary>
-    public const int RoomIdFieldNumber = 1;
-    private ulong roomId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong RoomId {
-      get { return roomId_; }
-      set {
-        roomId_ = value;
-      }
-    }
-
     /// <summary>Field number for the "frameId" field.</summary>
-    public const int FrameIdFieldNumber = 2;
+    public const int FrameIdFieldNumber = 1;
     private ulong frameId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -415,7 +364,7 @@ namespace GameMessage {
     }
 
     /// <summary>Field number for the "time" field.</summary>
-    public const int TimeFieldNumber = 3;
+    public const int TimeFieldNumber = 2;
     private ulong time_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -427,9 +376,9 @@ namespace GameMessage {
     }
 
     /// <summary>Field number for the "playerSSs" field.</summary>
-    public const int PlayerSSsFieldNumber = 4;
+    public const int PlayerSSsFieldNumber = 3;
     private static readonly pb::FieldCodec<global::GameMessage.PlayerSnapshotSync> _repeated_playerSSs_codec
-        = pb::FieldCodec.ForMessage(34, global::GameMessage.PlayerSnapshotSync.Parser);
+        = pb::FieldCodec.ForMessage(26, global::GameMessage.PlayerSnapshotSync.Parser);
     private readonly pbc::RepeatedField<global::GameMessage.PlayerSnapshotSync> playerSSs_ = new pbc::RepeatedField<global::GameMessage.PlayerSnapshotSync>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -438,9 +387,9 @@ namespace GameMessage {
     }
 
     /// <summary>Field number for the "objectSSs" field.</summary>
-    public const int ObjectSSsFieldNumber = 5;
+    public const int ObjectSSsFieldNumber = 4;
     private static readonly pb::FieldCodec<global::GameMessage.ObjectSnapshotSync> _repeated_objectSSs_codec
-        = pb::FieldCodec.ForMessage(42, global::GameMessage.ObjectSnapshotSync.Parser);
+        = pb::FieldCodec.ForMessage(34, global::GameMessage.ObjectSnapshotSync.Parser);
     private readonly pbc::RepeatedField<global::GameMessage.ObjectSnapshotSync> objectSSs_ = new pbc::RepeatedField<global::GameMessage.ObjectSnapshotSync>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -463,7 +412,6 @@ namespace GameMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (RoomId != other.RoomId) return false;
       if (FrameId != other.FrameId) return false;
       if (Time != other.Time) return false;
       if(!playerSSs_.Equals(other.playerSSs_)) return false;
@@ -475,7 +423,6 @@ namespace GameMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (RoomId != 0UL) hash ^= RoomId.GetHashCode();
       if (FrameId != 0UL) hash ^= FrameId.GetHashCode();
       if (Time != 0UL) hash ^= Time.GetHashCode();
       hash ^= playerSSs_.GetHashCode();
@@ -498,16 +445,12 @@ namespace GameMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (RoomId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
-      }
       if (FrameId != 0UL) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(8);
         output.WriteUInt64(FrameId);
       }
       if (Time != 0UL) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(16);
         output.WriteUInt64(Time);
       }
       playerSSs_.WriteTo(output, _repeated_playerSSs_codec);
@@ -522,16 +465,12 @@ namespace GameMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (RoomId != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(RoomId);
-      }
       if (FrameId != 0UL) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(8);
         output.WriteUInt64(FrameId);
       }
       if (Time != 0UL) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(16);
         output.WriteUInt64(Time);
       }
       playerSSs_.WriteTo(ref output, _repeated_playerSSs_codec);
@@ -546,9 +485,6 @@ namespace GameMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (RoomId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(RoomId);
-      }
       if (FrameId != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(FrameId);
       }
@@ -568,9 +504,6 @@ namespace GameMessage {
     public void MergeFrom(GameSnapshotMessage other) {
       if (other == null) {
         return;
-      }
-      if (other.RoomId != 0UL) {
-        RoomId = other.RoomId;
       }
       if (other.FrameId != 0UL) {
         FrameId = other.FrameId;
@@ -596,22 +529,18 @@ namespace GameMessage {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            RoomId = input.ReadUInt64();
-            break;
-          }
-          case 16: {
             FrameId = input.ReadUInt64();
             break;
           }
-          case 24: {
+          case 16: {
             Time = input.ReadUInt64();
             break;
           }
-          case 34: {
+          case 26: {
             playerSSs_.AddEntriesFrom(input, _repeated_playerSSs_codec);
             break;
           }
-          case 42: {
+          case 34: {
             objectSSs_.AddEntriesFrom(input, _repeated_objectSSs_codec);
             break;
           }
@@ -631,22 +560,18 @@ namespace GameMessage {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            RoomId = input.ReadUInt64();
-            break;
-          }
-          case 16: {
             FrameId = input.ReadUInt64();
             break;
           }
-          case 24: {
+          case 16: {
             Time = input.ReadUInt64();
             break;
           }
-          case 34: {
+          case 26: {
             playerSSs_.AddEntriesFrom(ref input, _repeated_playerSSs_codec);
             break;
           }
-          case 42: {
+          case 34: {
             objectSSs_.AddEntriesFrom(ref input, _repeated_objectSSs_codec);
             break;
           }

@@ -1,3 +1,49 @@
 syntax = "proto3";
 
 package LobbyMessage;
+
+//客户端->服务器
+message LobbySyncRequest{
+    uint64 playerId = 1;
+    oneof content{
+        PlayerLoginRequest playerLogin=2;
+        PlayerJoinRoomRequest playerJoin= 3;
+        PlayerPlayRoomRequest playerPlayRoom=4;
+    }
+}
+
+
+
+message PlayerLoginRequest{
+    string name=1;
+}
+
+message PlayerJoinRoomRequest{
+
+}
+
+message PlayerPlayRoomRequest{
+    uint64 roomId = 1;
+}
+
+//服务器->客户端
+message LobbySyncResponse{
+  oneof content{
+    PlayerLoginResponse playerLogin=1;
+    PlayerJoinRoomResponse playerJoin= 2;
+    PlayerPlayRoomResponse playerPlayRoom=3;
+  }
+}
+
+
+message PlayerLoginResponse{
+    uint64 playerId=1;
+}
+
+message PlayerJoinRoomResponse{
+    uint64 roomId = 1;
+}
+
+message PlayerPlayRoomResponse{
+    uint64 roomId = 1;
+}

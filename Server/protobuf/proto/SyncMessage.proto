@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "ConnectMessage.proto";
 import "GameMessage.proto";
+import "LobbyMessage.proto";
 
 package SyncMessage;
 
@@ -10,6 +11,7 @@ message ServerMessage{
         string commonMessage = 2;
         ConnectMessage.ServerConnectMessage connectMessage = 3;
         GameMessage.GameSyncMessage gameSyncMessage = 4;
+        LobbyMessage.LobbySyncResponse lobbySync = 5;
     }
 }
 
@@ -19,5 +21,6 @@ message ClientMessage{
         string commonMessage = 2;
         ConnectMessage.ClientConnectMessage connectMessage = 3;
         GameMessage.GameSyncMessage gameSyncMessage = 4;
+        LobbyMessage.LobbySyncRequest lobbySync=5;
     }
 }

@@ -9,6 +9,7 @@ namespace UI
         public static StatusPanel Instance;
         [SerializeField]private TMP_Text _clientIdStatus;
         [SerializeField]private TMP_Text _playerIdStatus;
+        [SerializeField]private TMP_Text _roomIdStatus;
         [SerializeField]private TMP_Text _localStatus;
         [SerializeField]private TMP_Text _externalStatus;
         private int _localTime=0;
@@ -27,6 +28,11 @@ namespace UI
         public void UpdatePlayerIdStatus(UInt64 playerId)
         {
             _playerIdStatus.text=$"玩家ID: {playerId}";
+        }
+
+        public void UpdateRoomIdStatus(UInt64 roomId)
+        {
+            _roomIdStatus.text=$"房价ID: {roomId}";
         }
 
         public void UpdateLocalStatus(int remainingFrame)

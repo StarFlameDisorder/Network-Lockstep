@@ -7,7 +7,7 @@
 #include "PlayerManager.h"
 #include "../LoggerStream.h"
 
-PlayerManager::PlayerManager(QObject* parent)
+PlayerManager::PlayerManager(QObject* parent):QObject(parent)
 {
 }
 

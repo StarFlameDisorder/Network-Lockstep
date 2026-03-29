@@ -11,7 +11,8 @@
 using namespace SyncMessage;
 using namespace ConnectMessage;
 
-NetworkDispatcher::NetworkDispatcher(QObject *parent):QObject(parent),m_tcpServer(this),m_udpServer(this)
+NetworkDispatcher::NetworkDispatcher(QObject *parent)
+    :QObject(parent),m_tcpServer(this),m_udpServer(this)
 {
     startTime=QDateTime::currentMSecsSinceEpoch();
     connect(&m_tcpServer,&TcpServer::addNewClient,this,&NetworkDispatcher::addClient);//客户端id分配
@@ -32,10 +33,28 @@ void NetworkDispatcher::sendTcpMessage(QTcpSocket *socket,const QByteArray &mess
     m_tcpServer.sendMessage(socket,message);
 }
 
+void NetworkDispatcher::sendTcpMessage(quint64 clientId, const QByteArray& message)
+{
+    if (m_clientsMap.contains(clientId))
+    {
+        sendTcpMessage(m_clientsMap[clientId].socket,message);
+
+    }else Log_Error()<<"[sendTcpMessage]未找到客户端Id"<<clientId;
+}
 
 void NetworkDispatcher::sendUdpMessage(const QHostAddress& address, quint16 port, const QByteArray& message)
 {
     m_udpServer.sendMessage(address,port,message);
+}
+
+void NetworkDispatcher::sendUdpMessage(quint64 clientId, const QByteArray& message)
+{
+    if (m_clientsMap.contains(clientId))
+    {
+        Client &client=m_clientsMap[clientId];
+        sendUdpMessage(client.udpEndPoint.address,client.udpEndPoint.port,message);
+
+    }else Log_Error()<<"[sendUdpMessage]未找到客户端Id"<<clientId;
 }
 
 void NetworkDispatcher::handleTcpMessage(QTcpSocket* socket, const QByteArray& message)
@@ -56,6 +75,10 @@ void NetworkDispatcher::handleTcpMessage(QTcpSocket* socket, const QByteArray& m
         case ClientMessage::kGameSyncMessage:
             handleGameSync(clientId,clientMessage.gamesyncmessage());
             break;
+        case ClientMessage::kLobbySync:
+            Log_Info()<<"[handleTcpMessage][Tcp:"<<m_tcpServer.getTcpSocketInfo(socket)<<"-"<<clientId<<"]kLobbySync";
+            emit handleTcpLobby(clientId,clientMessage.lobbysync());
+            break;
         default:
             Log_Error()<<"[handleTcpMessage]未知类型:"<<clientMessage.content_case();
             break;
@@ -74,6 +97,29 @@ void NetworkDispatcher::handleTcpConnection(QTcpSocket* socket, const ClientConn
             break;
     }
 }
+
+// void NetworkDispatcher::handeleTcpLobby(quint64 clientId, const LobbyMessage::LobbySyncRequest& message)
+// {
+//     using namespace LobbyMessage;
+//     switch (message.content_case())
+//     {
+//         case LobbySyncRequest::kPlayerLogin:
+//             Log_Warning()<<"[handeleTcpLobby]kPlayerLogin";
+//             emit lobbyPlayerLogin(clientId,message.playerlogin());
+//             break;
+//         case LobbySyncRequest::kPlayerJoin:
+//             Log_Warning()<<"[handeleTcpLobby]kPlayerJoin";
+//             emit lobbyPlayerJoinRoom(clientId,message.playerjoin());
+//             break;
+//         case LobbySyncRequest::kPlayerPlayRoom:
+//             Log_Warning()<<"[handeleTcpLobby]kPlayePlayRoom";
+//             emit lobbyPlayerPlayRoom(clientId,message.playerplayroom());
+//             break;
+//         default:
+//             Log_Error()<<"[handeleTcpLobby]未知类型:"<<message.content_case();
+//             break;
+//     }
+// }
 
 void NetworkDispatcher::handleUdpMessage(const QHostAddress& address, const quint16& port,const QByteArray& message)
 {

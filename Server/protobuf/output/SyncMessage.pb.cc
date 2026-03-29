@@ -65,6 +65,7 @@ const uint32_t TableStruct_SyncMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
+  ::_pbi::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::SyncMessage::ServerMessage, _impl_.content_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::SyncMessage::ClientMessage, _internal_metadata_),
@@ -76,11 +77,12 @@ const uint32_t TableStruct_SyncMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
+  ::_pbi::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::SyncMessage::ClientMessage, _impl_.content_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::SyncMessage::ServerMessage)},
-  { 10, -1, -1, sizeof(::SyncMessage::ClientMessage)},
+  { 11, -1, -1, sizeof(::SyncMessage::ClientMessage)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -90,27 +92,31 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_SyncMessage_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\021SyncMessage.proto\022\013SyncMessage\032\024Connec"
-  "tMessage.proto\032\021GameMessage.proto\"\254\001\n\rSe"
-  "rverMessage\022\027\n\rcommonMessage\030\002 \001(\tH\000\022>\n\016"
-  "connectMessage\030\003 \001(\0132$.ConnectMessage.Se"
-  "rverConnectMessageH\000\0227\n\017gameSyncMessage\030"
-  "\004 \001(\0132\034.GameMessage.GameSyncMessageH\000B\t\n"
-  "\007content\"\276\001\n\rClientMessage\022\020\n\010clientId\030\001"
-  " \001(\004\022\027\n\rcommonMessage\030\002 \001(\tH\000\022>\n\016connect"
-  "Message\030\003 \001(\0132$.ConnectMessage.ClientCon"
-  "nectMessageH\000\0227\n\017gameSyncMessage\030\004 \001(\0132\034"
-  ".GameMessage.GameSyncMessageH\000B\t\n\007conten"
-  "tb\006proto3"
+  "tMessage.proto\032\021GameMessage.proto\032\022Lobby"
+  "Message.proto\"\342\001\n\rServerMessage\022\027\n\rcommo"
+  "nMessage\030\002 \001(\tH\000\022>\n\016connectMessage\030\003 \001(\013"
+  "2$.ConnectMessage.ServerConnectMessageH\000"
+  "\0227\n\017gameSyncMessage\030\004 \001(\0132\034.GameMessage."
+  "GameSyncMessageH\000\0224\n\tlobbySync\030\005 \001(\0132\037.L"
+  "obbyMessage.LobbySyncResponseH\000B\t\n\007conte"
+  "nt\"\363\001\n\rClientMessage\022\020\n\010clientId\030\001 \001(\004\022\027"
+  "\n\rcommonMessage\030\002 \001(\tH\000\022>\n\016connectMessag"
+  "e\030\003 \001(\0132$.ConnectMessage.ClientConnectMe"
+  "ssageH\000\0227\n\017gameSyncMessage\030\004 \001(\0132\034.GameM"
+  "essage.GameSyncMessageH\000\0223\n\tlobbySync\030\005 "
+  "\001(\0132\036.LobbyMessage.LobbySyncRequestH\000B\t\n"
+  "\007contentb\006proto3"
   ;
-static const ::_pbi::DescriptorTable* const descriptor_table_SyncMessage_2eproto_deps[2] = {
+static const ::_pbi::DescriptorTable* const descriptor_table_SyncMessage_2eproto_deps[3] = {
   &::descriptor_table_ConnectMessage_2eproto,
   &::descriptor_table_GameMessage_2eproto,
+  &::descriptor_table_LobbyMessage_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_SyncMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_SyncMessage_2eproto = {
-    false, false, 449, descriptor_table_protodef_SyncMessage_2eproto,
+    false, false, 576, descriptor_table_protodef_SyncMessage_2eproto,
     "SyncMessage.proto",
-    &descriptor_table_SyncMessage_2eproto_once, descriptor_table_SyncMessage_2eproto_deps, 2, 2,
+    &descriptor_table_SyncMessage_2eproto_once, descriptor_table_SyncMessage_2eproto_deps, 3, 2,
     schemas, file_default_instances, TableStruct_SyncMessage_2eproto::offsets,
     file_level_metadata_SyncMessage_2eproto, file_level_enum_descriptors_SyncMessage_2eproto,
     file_level_service_descriptors_SyncMessage_2eproto,
@@ -129,6 +135,7 @@ class ServerMessage::_Internal {
  public:
   static const ::ConnectMessage::ServerConnectMessage& connectmessage(const ServerMessage* msg);
   static const ::GameMessage::GameSyncMessage& gamesyncmessage(const ServerMessage* msg);
+  static const ::LobbyMessage::LobbySyncResponse& lobbysync(const ServerMessage* msg);
 };
 
 const ::ConnectMessage::ServerConnectMessage&
@@ -138,6 +145,10 @@ ServerMessage::_Internal::connectmessage(const ServerMessage* msg) {
 const ::GameMessage::GameSyncMessage&
 ServerMessage::_Internal::gamesyncmessage(const ServerMessage* msg) {
   return *msg->_impl_.content_.gamesyncmessage_;
+}
+const ::LobbyMessage::LobbySyncResponse&
+ServerMessage::_Internal::lobbysync(const ServerMessage* msg) {
+  return *msg->_impl_.content_.lobbysync_;
 }
 void ServerMessage::set_allocated_connectmessage(::ConnectMessage::ServerConnectMessage* connectmessage) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -187,6 +198,30 @@ void ServerMessage::clear_gamesyncmessage() {
     clear_has_content();
   }
 }
+void ServerMessage::set_allocated_lobbysync(::LobbyMessage::LobbySyncResponse* lobbysync) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_content();
+  if (lobbysync) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(lobbysync));
+    if (message_arena != submessage_arena) {
+      lobbysync = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, lobbysync, submessage_arena);
+    }
+    set_has_lobbysync();
+    _impl_.content_.lobbysync_ = lobbysync;
+  }
+  // @@protoc_insertion_point(field_set_allocated:SyncMessage.ServerMessage.lobbySync)
+}
+void ServerMessage::clear_lobbysync() {
+  if (_internal_has_lobbysync()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.content_.lobbysync_;
+    }
+    clear_has_content();
+  }
+}
 ServerMessage::ServerMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -216,6 +251,11 @@ ServerMessage::ServerMessage(const ServerMessage& from)
     case kGameSyncMessage: {
       _this->_internal_mutable_gamesyncmessage()->::GameMessage::GameSyncMessage::MergeFrom(
           from._internal_gamesyncmessage());
+      break;
+    }
+    case kLobbySync: {
+      _this->_internal_mutable_lobbysync()->::LobbyMessage::LobbySyncResponse::MergeFrom(
+          from._internal_lobbysync());
       break;
     }
     case CONTENT_NOT_SET: {
@@ -276,6 +316,12 @@ void ServerMessage::clear_content() {
       }
       break;
     }
+    case kLobbySync: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.content_.lobbysync_;
+      }
+      break;
+    }
     case CONTENT_NOT_SET: {
       break;
     }
@@ -322,6 +368,14 @@ const char* ServerMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext*
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_gamesyncmessage(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .LobbyMessage.LobbySyncResponse lobbySync = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+          ptr = ctx->ParseMessage(_internal_mutable_lobbysync(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -379,6 +433,13 @@ uint8_t* ServerMessage::_InternalSerialize(
         _Internal::gamesyncmessage(this).GetCachedSize(), target, stream);
   }
 
+  // .LobbyMessage.LobbySyncResponse lobbySync = 5;
+  if (_internal_has_lobbysync()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(5, _Internal::lobbysync(this),
+        _Internal::lobbysync(this).GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -415,6 +476,13 @@ size_t ServerMessage::ByteSizeLong() const {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *_impl_.content_.gamesyncmessage_);
+      break;
+    }
+    // .LobbyMessage.LobbySyncResponse lobbySync = 5;
+    case kLobbySync: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.content_.lobbysync_);
       break;
     }
     case CONTENT_NOT_SET: {
@@ -454,6 +522,11 @@ void ServerMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
           from._internal_gamesyncmessage());
       break;
     }
+    case kLobbySync: {
+      _this->_internal_mutable_lobbysync()->::LobbyMessage::LobbySyncResponse::MergeFrom(
+          from._internal_lobbysync());
+      break;
+    }
     case CONTENT_NOT_SET: {
       break;
     }
@@ -491,6 +564,7 @@ class ClientMessage::_Internal {
  public:
   static const ::ConnectMessage::ClientConnectMessage& connectmessage(const ClientMessage* msg);
   static const ::GameMessage::GameSyncMessage& gamesyncmessage(const ClientMessage* msg);
+  static const ::LobbyMessage::LobbySyncRequest& lobbysync(const ClientMessage* msg);
 };
 
 const ::ConnectMessage::ClientConnectMessage&
@@ -500,6 +574,10 @@ ClientMessage::_Internal::connectmessage(const ClientMessage* msg) {
 const ::GameMessage::GameSyncMessage&
 ClientMessage::_Internal::gamesyncmessage(const ClientMessage* msg) {
   return *msg->_impl_.content_.gamesyncmessage_;
+}
+const ::LobbyMessage::LobbySyncRequest&
+ClientMessage::_Internal::lobbysync(const ClientMessage* msg) {
+  return *msg->_impl_.content_.lobbysync_;
 }
 void ClientMessage::set_allocated_connectmessage(::ConnectMessage::ClientConnectMessage* connectmessage) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -549,6 +627,30 @@ void ClientMessage::clear_gamesyncmessage() {
     clear_has_content();
   }
 }
+void ClientMessage::set_allocated_lobbysync(::LobbyMessage::LobbySyncRequest* lobbysync) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_content();
+  if (lobbysync) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(lobbysync));
+    if (message_arena != submessage_arena) {
+      lobbysync = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, lobbysync, submessage_arena);
+    }
+    set_has_lobbysync();
+    _impl_.content_.lobbysync_ = lobbysync;
+  }
+  // @@protoc_insertion_point(field_set_allocated:SyncMessage.ClientMessage.lobbySync)
+}
+void ClientMessage::clear_lobbysync() {
+  if (_internal_has_lobbysync()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.content_.lobbysync_;
+    }
+    clear_has_content();
+  }
+}
 ClientMessage::ClientMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -580,6 +682,11 @@ ClientMessage::ClientMessage(const ClientMessage& from)
     case kGameSyncMessage: {
       _this->_internal_mutable_gamesyncmessage()->::GameMessage::GameSyncMessage::MergeFrom(
           from._internal_gamesyncmessage());
+      break;
+    }
+    case kLobbySync: {
+      _this->_internal_mutable_lobbysync()->::LobbyMessage::LobbySyncRequest::MergeFrom(
+          from._internal_lobbysync());
       break;
     }
     case CONTENT_NOT_SET: {
@@ -641,6 +748,12 @@ void ClientMessage::clear_content() {
       }
       break;
     }
+    case kLobbySync: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.content_.lobbysync_;
+      }
+      break;
+    }
     case CONTENT_NOT_SET: {
       break;
     }
@@ -696,6 +809,14 @@ const char* ClientMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext*
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_gamesyncmessage(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .LobbyMessage.LobbySyncRequest lobbySync = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+          ptr = ctx->ParseMessage(_internal_mutable_lobbysync(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -759,6 +880,13 @@ uint8_t* ClientMessage::_InternalSerialize(
         _Internal::gamesyncmessage(this).GetCachedSize(), target, stream);
   }
 
+  // .LobbyMessage.LobbySyncRequest lobbySync = 5;
+  if (_internal_has_lobbysync()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(5, _Internal::lobbysync(this),
+        _Internal::lobbysync(this).GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -802,6 +930,13 @@ size_t ClientMessage::ByteSizeLong() const {
           *_impl_.content_.gamesyncmessage_);
       break;
     }
+    // .LobbyMessage.LobbySyncRequest lobbySync = 5;
+    case kLobbySync: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.content_.lobbysync_);
+      break;
+    }
     case CONTENT_NOT_SET: {
       break;
     }
@@ -840,6 +975,11 @@ void ClientMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
     case kGameSyncMessage: {
       _this->_internal_mutable_gamesyncmessage()->::GameMessage::GameSyncMessage::MergeFrom(
           from._internal_gamesyncmessage());
+      break;
+    }
+    case kLobbySync: {
+      _this->_internal_mutable_lobbysync()->::LobbyMessage::LobbySyncRequest::MergeFrom(
+          from._internal_lobbysync());
       break;
     }
     case CONTENT_NOT_SET: {

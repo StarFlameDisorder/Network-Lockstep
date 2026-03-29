@@ -22,12 +22,14 @@ add_executable(Server main.cpp
         GameServer.h
         LoggerStream.cpp
         LoggerStream.h
+
         Network/TcpServer.cpp
         Network/TcpServer.h
         Network/NetworkDispatcher.cpp
         Network/NetworkDispatcher.h
         Network/UdpServer.cpp
         Network/UdpServer.h
+
         protobuf/output/test.pb.cc
         protobuf/output/test.pb.h
         protobuf/output/SyncMessage.pb.cc
@@ -38,12 +40,17 @@ add_executable(Server main.cpp
         protobuf/output/GameMessage.pb.h
         protobuf/output/UnityMath.pb.cc
         protobuf/output/UnityMath.pb.h
+        protobuf/output/LobbyMessage.pb.cc
+        protobuf/output/LobbyMessage.pb.h
+
         Lobby/RoomManager.cpp
         Lobby/RoomManager.h
         Lobby/PlayerManager.cpp
         Lobby/PlayerManager.h
         Lobby/Room.cpp
         Lobby/Room.h
+        Lobby/LobbyManager.cpp
+        Lobby/LobbyManager.h
 )
 
 

@@ -36,12 +36,14 @@ public:
     ~NetworkDispatcher();
 
     void sendTcpMessage(QTcpSocket *socket,const QByteArray &message);
+    void sendTcpMessage(quint64 clientId,const QByteArray &message);
     void sendUdpMessage(const QHostAddress& address, quint16 port, const QByteArray &message);
+    void sendUdpMessage(quint64 clientId,const QByteArray &message);
 
     //消息处理Tcp
     void handleTcpMessage(QTcpSocket *socket,const QByteArray &message);
     void handleTcpConnection(QTcpSocket *socket,const ClientConnectMessage &message);
-    //void handleMessage(quint64 clientId,const ClientMessage &message);
+    //void handeleTcpLobby(quint64 clientId,const LobbyMessage::LobbySyncRequest &message);
 
     //消息处理Udp
     void handleUdpMessage(const QHostAddress& address, const quint16& port,const QByteArray& message);
@@ -61,7 +63,11 @@ public:
 
     //广播
     void broadcastGameSync(const GameSyncMessage& message,quint64 clientId);
-
+signals:
+    // void lobbyPlayerLogin(quint64 clientId,const LobbyMessage::PlayerLoginRequest& message);
+    // void lobbyPlayerJoinRoom(quint64 clientId,const LobbyMessage::PlayerJoinRoomRequest& message);
+    // void lobbyPlayerPlayRoom(quint64 clientId,const LobbyMessage::PlayerPlayRoomRequest& message);
+    void handleTcpLobby(quint64 clientId,const LobbyMessage::LobbySyncRequest &message);
 
 private:
     TcpServer m_tcpServer;

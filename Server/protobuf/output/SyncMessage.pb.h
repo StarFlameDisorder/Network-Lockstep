@@ -32,6 +32,7 @@
 #include <google/protobuf/unknown_field_set.h>
 #include "ConnectMessage.pb.h"
 #include "GameMessage.pb.h"
+#include "LobbyMessage.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_SyncMessage_2eproto
@@ -109,6 +110,7 @@ class ServerMessage final :
     kCommonMessage = 2,
     kConnectMessage = 3,
     kGameSyncMessage = 4,
+    kLobbySync = 5,
     CONTENT_NOT_SET = 0,
   };
 
@@ -193,6 +195,7 @@ class ServerMessage final :
     kCommonMessageFieldNumber = 2,
     kConnectMessageFieldNumber = 3,
     kGameSyncMessageFieldNumber = 4,
+    kLobbySyncFieldNumber = 5,
   };
   // string commonMessage = 2;
   bool has_commonmessage() const;
@@ -248,6 +251,24 @@ class ServerMessage final :
       ::GameMessage::GameSyncMessage* gamesyncmessage);
   ::GameMessage::GameSyncMessage* unsafe_arena_release_gamesyncmessage();
 
+  // .LobbyMessage.LobbySyncResponse lobbySync = 5;
+  bool has_lobbysync() const;
+  private:
+  bool _internal_has_lobbysync() const;
+  public:
+  void clear_lobbysync();
+  const ::LobbyMessage::LobbySyncResponse& lobbysync() const;
+  PROTOBUF_NODISCARD ::LobbyMessage::LobbySyncResponse* release_lobbysync();
+  ::LobbyMessage::LobbySyncResponse* mutable_lobbysync();
+  void set_allocated_lobbysync(::LobbyMessage::LobbySyncResponse* lobbysync);
+  private:
+  const ::LobbyMessage::LobbySyncResponse& _internal_lobbysync() const;
+  ::LobbyMessage::LobbySyncResponse* _internal_mutable_lobbysync();
+  public:
+  void unsafe_arena_set_allocated_lobbysync(
+      ::LobbyMessage::LobbySyncResponse* lobbysync);
+  ::LobbyMessage::LobbySyncResponse* unsafe_arena_release_lobbysync();
+
   void clear_content();
   ContentCase content_case() const;
   // @@protoc_insertion_point(class_scope:SyncMessage.ServerMessage)
@@ -256,6 +277,7 @@ class ServerMessage final :
   void set_has_commonmessage();
   void set_has_connectmessage();
   void set_has_gamesyncmessage();
+  void set_has_lobbysync();
 
   inline bool has_content() const;
   inline void clear_has_content();
@@ -270,6 +292,7 @@ class ServerMessage final :
       ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr commonmessage_;
       ::ConnectMessage::ServerConnectMessage* connectmessage_;
       ::GameMessage::GameSyncMessage* gamesyncmessage_;
+      ::LobbyMessage::LobbySyncResponse* lobbysync_;
     } content_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -327,6 +350,7 @@ class ClientMessage final :
     kCommonMessage = 2,
     kConnectMessage = 3,
     kGameSyncMessage = 4,
+    kLobbySync = 5,
     CONTENT_NOT_SET = 0,
   };
 
@@ -412,6 +436,7 @@ class ClientMessage final :
     kCommonMessageFieldNumber = 2,
     kConnectMessageFieldNumber = 3,
     kGameSyncMessageFieldNumber = 4,
+    kLobbySyncFieldNumber = 5,
   };
   // uint64 clientId = 1;
   void clear_clientid();
@@ -476,6 +501,24 @@ class ClientMessage final :
       ::GameMessage::GameSyncMessage* gamesyncmessage);
   ::GameMessage::GameSyncMessage* unsafe_arena_release_gamesyncmessage();
 
+  // .LobbyMessage.LobbySyncRequest lobbySync = 5;
+  bool has_lobbysync() const;
+  private:
+  bool _internal_has_lobbysync() const;
+  public:
+  void clear_lobbysync();
+  const ::LobbyMessage::LobbySyncRequest& lobbysync() const;
+  PROTOBUF_NODISCARD ::LobbyMessage::LobbySyncRequest* release_lobbysync();
+  ::LobbyMessage::LobbySyncRequest* mutable_lobbysync();
+  void set_allocated_lobbysync(::LobbyMessage::LobbySyncRequest* lobbysync);
+  private:
+  const ::LobbyMessage::LobbySyncRequest& _internal_lobbysync() const;
+  ::LobbyMessage::LobbySyncRequest* _internal_mutable_lobbysync();
+  public:
+  void unsafe_arena_set_allocated_lobbysync(
+      ::LobbyMessage::LobbySyncRequest* lobbysync);
+  ::LobbyMessage::LobbySyncRequest* unsafe_arena_release_lobbysync();
+
   void clear_content();
   ContentCase content_case() const;
   // @@protoc_insertion_point(class_scope:SyncMessage.ClientMessage)
@@ -484,6 +527,7 @@ class ClientMessage final :
   void set_has_commonmessage();
   void set_has_connectmessage();
   void set_has_gamesyncmessage();
+  void set_has_lobbysync();
 
   inline bool has_content() const;
   inline void clear_has_content();
@@ -499,6 +543,7 @@ class ClientMessage final :
       ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr commonmessage_;
       ::ConnectMessage::ClientConnectMessage* connectmessage_;
       ::GameMessage::GameSyncMessage* gamesyncmessage_;
+      ::LobbyMessage::LobbySyncRequest* lobbysync_;
     } content_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -724,6 +769,72 @@ inline ::GameMessage::GameSyncMessage* ServerMessage::_internal_mutable_gamesync
 inline ::GameMessage::GameSyncMessage* ServerMessage::mutable_gamesyncmessage() {
   ::GameMessage::GameSyncMessage* _msg = _internal_mutable_gamesyncmessage();
   // @@protoc_insertion_point(field_mutable:SyncMessage.ServerMessage.gameSyncMessage)
+  return _msg;
+}
+
+// .LobbyMessage.LobbySyncResponse lobbySync = 5;
+inline bool ServerMessage::_internal_has_lobbysync() const {
+  return content_case() == kLobbySync;
+}
+inline bool ServerMessage::has_lobbysync() const {
+  return _internal_has_lobbysync();
+}
+inline void ServerMessage::set_has_lobbysync() {
+  _impl_._oneof_case_[0] = kLobbySync;
+}
+inline ::LobbyMessage::LobbySyncResponse* ServerMessage::release_lobbysync() {
+  // @@protoc_insertion_point(field_release:SyncMessage.ServerMessage.lobbySync)
+  if (_internal_has_lobbysync()) {
+    clear_has_content();
+    ::LobbyMessage::LobbySyncResponse* temp = _impl_.content_.lobbysync_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.content_.lobbysync_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::LobbyMessage::LobbySyncResponse& ServerMessage::_internal_lobbysync() const {
+  return _internal_has_lobbysync()
+      ? *_impl_.content_.lobbysync_
+      : reinterpret_cast< ::LobbyMessage::LobbySyncResponse&>(::LobbyMessage::_LobbySyncResponse_default_instance_);
+}
+inline const ::LobbyMessage::LobbySyncResponse& ServerMessage::lobbysync() const {
+  // @@protoc_insertion_point(field_get:SyncMessage.ServerMessage.lobbySync)
+  return _internal_lobbysync();
+}
+inline ::LobbyMessage::LobbySyncResponse* ServerMessage::unsafe_arena_release_lobbysync() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:SyncMessage.ServerMessage.lobbySync)
+  if (_internal_has_lobbysync()) {
+    clear_has_content();
+    ::LobbyMessage::LobbySyncResponse* temp = _impl_.content_.lobbysync_;
+    _impl_.content_.lobbysync_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ServerMessage::unsafe_arena_set_allocated_lobbysync(::LobbyMessage::LobbySyncResponse* lobbysync) {
+  clear_content();
+  if (lobbysync) {
+    set_has_lobbysync();
+    _impl_.content_.lobbysync_ = lobbysync;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:SyncMessage.ServerMessage.lobbySync)
+}
+inline ::LobbyMessage::LobbySyncResponse* ServerMessage::_internal_mutable_lobbysync() {
+  if (!_internal_has_lobbysync()) {
+    clear_content();
+    set_has_lobbysync();
+    _impl_.content_.lobbysync_ = CreateMaybeMessage< ::LobbyMessage::LobbySyncResponse >(GetArenaForAllocation());
+  }
+  return _impl_.content_.lobbysync_;
+}
+inline ::LobbyMessage::LobbySyncResponse* ServerMessage::mutable_lobbysync() {
+  ::LobbyMessage::LobbySyncResponse* _msg = _internal_mutable_lobbysync();
+  // @@protoc_insertion_point(field_mutable:SyncMessage.ServerMessage.lobbySync)
   return _msg;
 }
 
@@ -966,6 +1077,72 @@ inline ::GameMessage::GameSyncMessage* ClientMessage::_internal_mutable_gamesync
 inline ::GameMessage::GameSyncMessage* ClientMessage::mutable_gamesyncmessage() {
   ::GameMessage::GameSyncMessage* _msg = _internal_mutable_gamesyncmessage();
   // @@protoc_insertion_point(field_mutable:SyncMessage.ClientMessage.gameSyncMessage)
+  return _msg;
+}
+
+// .LobbyMessage.LobbySyncRequest lobbySync = 5;
+inline bool ClientMessage::_internal_has_lobbysync() const {
+  return content_case() == kLobbySync;
+}
+inline bool ClientMessage::has_lobbysync() const {
+  return _internal_has_lobbysync();
+}
+inline void ClientMessage::set_has_lobbysync() {
+  _impl_._oneof_case_[0] = kLobbySync;
+}
+inline ::LobbyMessage::LobbySyncRequest* ClientMessage::release_lobbysync() {
+  // @@protoc_insertion_point(field_release:SyncMessage.ClientMessage.lobbySync)
+  if (_internal_has_lobbysync()) {
+    clear_has_content();
+    ::LobbyMessage::LobbySyncRequest* temp = _impl_.content_.lobbysync_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.content_.lobbysync_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::LobbyMessage::LobbySyncRequest& ClientMessage::_internal_lobbysync() const {
+  return _internal_has_lobbysync()
+      ? *_impl_.content_.lobbysync_
+      : reinterpret_cast< ::LobbyMessage::LobbySyncRequest&>(::LobbyMessage::_LobbySyncRequest_default_instance_);
+}
+inline const ::LobbyMessage::LobbySyncRequest& ClientMessage::lobbysync() const {
+  // @@protoc_insertion_point(field_get:SyncMessage.ClientMessage.lobbySync)
+  return _internal_lobbysync();
+}
+inline ::LobbyMessage::LobbySyncRequest* ClientMessage::unsafe_arena_release_lobbysync() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:SyncMessage.ClientMessage.lobbySync)
+  if (_internal_has_lobbysync()) {
+    clear_has_content();
+    ::LobbyMessage::LobbySyncRequest* temp = _impl_.content_.lobbysync_;
+    _impl_.content_.lobbysync_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ClientMessage::unsafe_arena_set_allocated_lobbysync(::LobbyMessage::LobbySyncRequest* lobbysync) {
+  clear_content();
+  if (lobbysync) {
+    set_has_lobbysync();
+    _impl_.content_.lobbysync_ = lobbysync;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:SyncMessage.ClientMessage.lobbySync)
+}
+inline ::LobbyMessage::LobbySyncRequest* ClientMessage::_internal_mutable_lobbysync() {
+  if (!_internal_has_lobbysync()) {
+    clear_content();
+    set_has_lobbysync();
+    _impl_.content_.lobbysync_ = CreateMaybeMessage< ::LobbyMessage::LobbySyncRequest >(GetArenaForAllocation());
+  }
+  return _impl_.content_.lobbysync_;
+}
+inline ::LobbyMessage::LobbySyncRequest* ClientMessage::mutable_lobbysync() {
+  ::LobbyMessage::LobbySyncRequest* _msg = _internal_mutable_lobbysync();
+  // @@protoc_insertion_point(field_mutable:SyncMessage.ClientMessage.lobbySync)
   return _msg;
 }
 

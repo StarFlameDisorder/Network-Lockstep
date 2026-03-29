@@ -25,20 +25,23 @@ namespace SyncMessage {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChFTeW5jTWVzc2FnZS5wcm90bxILU3luY01lc3NhZ2UaFENvbm5lY3RNZXNz",
-            "YWdlLnByb3RvGhFHYW1lTWVzc2FnZS5wcm90byKsAQoNU2VydmVyTWVzc2Fn",
-            "ZRIXCg1jb21tb25NZXNzYWdlGAIgASgJSAASPgoOY29ubmVjdE1lc3NhZ2UY",
-            "AyABKAsyJC5Db25uZWN0TWVzc2FnZS5TZXJ2ZXJDb25uZWN0TWVzc2FnZUgA",
-            "EjcKD2dhbWVTeW5jTWVzc2FnZRgEIAEoCzIcLkdhbWVNZXNzYWdlLkdhbWVT",
-            "eW5jTWVzc2FnZUgAQgkKB2NvbnRlbnQivgEKDUNsaWVudE1lc3NhZ2USEAoI",
-            "Y2xpZW50SWQYASABKAQSFwoNY29tbW9uTWVzc2FnZRgCIAEoCUgAEj4KDmNv",
-            "bm5lY3RNZXNzYWdlGAMgASgLMiQuQ29ubmVjdE1lc3NhZ2UuQ2xpZW50Q29u",
-            "bmVjdE1lc3NhZ2VIABI3Cg9nYW1lU3luY01lc3NhZ2UYBCABKAsyHC5HYW1l",
-            "TWVzc2FnZS5HYW1lU3luY01lc3NhZ2VIAEIJCgdjb250ZW50YgZwcm90bzM="));
+            "YWdlLnByb3RvGhFHYW1lTWVzc2FnZS5wcm90bxoSTG9iYnlNZXNzYWdlLnBy",
+            "b3RvIuIBCg1TZXJ2ZXJNZXNzYWdlEhcKDWNvbW1vbk1lc3NhZ2UYAiABKAlI",
+            "ABI+Cg5jb25uZWN0TWVzc2FnZRgDIAEoCzIkLkNvbm5lY3RNZXNzYWdlLlNl",
+            "cnZlckNvbm5lY3RNZXNzYWdlSAASNwoPZ2FtZVN5bmNNZXNzYWdlGAQgASgL",
+            "MhwuR2FtZU1lc3NhZ2UuR2FtZVN5bmNNZXNzYWdlSAASNAoJbG9iYnlTeW5j",
+            "GAUgASgLMh8uTG9iYnlNZXNzYWdlLkxvYmJ5U3luY1Jlc3BvbnNlSABCCQoH",
+            "Y29udGVudCLzAQoNQ2xpZW50TWVzc2FnZRIQCghjbGllbnRJZBgBIAEoBBIX",
+            "Cg1jb21tb25NZXNzYWdlGAIgASgJSAASPgoOY29ubmVjdE1lc3NhZ2UYAyAB",
+            "KAsyJC5Db25uZWN0TWVzc2FnZS5DbGllbnRDb25uZWN0TWVzc2FnZUgAEjcK",
+            "D2dhbWVTeW5jTWVzc2FnZRgEIAEoCzIcLkdhbWVNZXNzYWdlLkdhbWVTeW5j",
+            "TWVzc2FnZUgAEjMKCWxvYmJ5U3luYxgFIAEoCzIeLkxvYmJ5TWVzc2FnZS5M",
+            "b2JieVN5bmNSZXF1ZXN0SABCCQoHY29udGVudGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::ConnectMessage.ConnectMessageReflection.Descriptor, global::GameMessage.GameMessageReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::ConnectMessage.ConnectMessageReflection.Descriptor, global::GameMessage.GameMessageReflection.Descriptor, global::LobbyMessage.LobbyMessageReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ServerMessage), global::SyncMessage.ServerMessage.Parser, new[]{ "CommonMessage", "ConnectMessage", "GameSyncMessage" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ClientMessage), global::SyncMessage.ClientMessage.Parser, new[]{ "ClientId", "CommonMessage", "ConnectMessage", "GameSyncMessage" }, new[]{ "Content" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ServerMessage), global::SyncMessage.ServerMessage.Parser, new[]{ "CommonMessage", "ConnectMessage", "GameSyncMessage", "LobbySync" }, new[]{ "Content" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ClientMessage), global::SyncMessage.ClientMessage.Parser, new[]{ "ClientId", "CommonMessage", "ConnectMessage", "GameSyncMessage", "LobbySync" }, new[]{ "Content" }, null, null, null)
           }));
     }
     #endregion
@@ -89,6 +92,9 @@ namespace SyncMessage {
         case ContentOneofCase.GameSyncMessage:
           GameSyncMessage = other.GameSyncMessage.Clone();
           break;
+        case ContentOneofCase.LobbySync:
+          LobbySync = other.LobbySync.Clone();
+          break;
       }
 
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -136,6 +142,18 @@ namespace SyncMessage {
       }
     }
 
+    /// <summary>Field number for the "lobbySync" field.</summary>
+    public const int LobbySyncFieldNumber = 5;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::LobbyMessage.LobbySyncResponse LobbySync {
+      get { return contentCase_ == ContentOneofCase.LobbySync ? (global::LobbyMessage.LobbySyncResponse) content_ : null; }
+      set {
+        content_ = value;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.LobbySync;
+      }
+    }
+
     private object content_;
     /// <summary>Enum of possible cases for the "content" oneof.</summary>
     public enum ContentOneofCase {
@@ -143,6 +161,7 @@ namespace SyncMessage {
       CommonMessage = 2,
       ConnectMessage = 3,
       GameSyncMessage = 4,
+      LobbySync = 5,
     }
     private ContentOneofCase contentCase_ = ContentOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -176,6 +195,7 @@ namespace SyncMessage {
       if (CommonMessage != other.CommonMessage) return false;
       if (!object.Equals(ConnectMessage, other.ConnectMessage)) return false;
       if (!object.Equals(GameSyncMessage, other.GameSyncMessage)) return false;
+      if (!object.Equals(LobbySync, other.LobbySync)) return false;
       if (ContentCase != other.ContentCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -187,6 +207,7 @@ namespace SyncMessage {
       if (contentCase_ == ContentOneofCase.CommonMessage) hash ^= CommonMessage.GetHashCode();
       if (contentCase_ == ContentOneofCase.ConnectMessage) hash ^= ConnectMessage.GetHashCode();
       if (contentCase_ == ContentOneofCase.GameSyncMessage) hash ^= GameSyncMessage.GetHashCode();
+      if (contentCase_ == ContentOneofCase.LobbySync) hash ^= LobbySync.GetHashCode();
       hash ^= (int) contentCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -218,6 +239,10 @@ namespace SyncMessage {
         output.WriteRawTag(34);
         output.WriteMessage(GameSyncMessage);
       }
+      if (contentCase_ == ContentOneofCase.LobbySync) {
+        output.WriteRawTag(42);
+        output.WriteMessage(LobbySync);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -240,6 +265,10 @@ namespace SyncMessage {
         output.WriteRawTag(34);
         output.WriteMessage(GameSyncMessage);
       }
+      if (contentCase_ == ContentOneofCase.LobbySync) {
+        output.WriteRawTag(42);
+        output.WriteMessage(LobbySync);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -258,6 +287,9 @@ namespace SyncMessage {
       }
       if (contentCase_ == ContentOneofCase.GameSyncMessage) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(GameSyncMessage);
+      }
+      if (contentCase_ == ContentOneofCase.LobbySync) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(LobbySync);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -286,6 +318,12 @@ namespace SyncMessage {
             GameSyncMessage = new global::GameMessage.GameSyncMessage();
           }
           GameSyncMessage.MergeFrom(other.GameSyncMessage);
+          break;
+        case ContentOneofCase.LobbySync:
+          if (LobbySync == null) {
+            LobbySync = new global::LobbyMessage.LobbySyncResponse();
+          }
+          LobbySync.MergeFrom(other.LobbySync);
           break;
       }
 
@@ -326,6 +364,15 @@ namespace SyncMessage {
             GameSyncMessage = subBuilder;
             break;
           }
+          case 42: {
+            global::LobbyMessage.LobbySyncResponse subBuilder = new global::LobbyMessage.LobbySyncResponse();
+            if (contentCase_ == ContentOneofCase.LobbySync) {
+              subBuilder.MergeFrom(LobbySync);
+            }
+            input.ReadMessage(subBuilder);
+            LobbySync = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -361,6 +408,15 @@ namespace SyncMessage {
             }
             input.ReadMessage(subBuilder);
             GameSyncMessage = subBuilder;
+            break;
+          }
+          case 42: {
+            global::LobbyMessage.LobbySyncResponse subBuilder = new global::LobbyMessage.LobbySyncResponse();
+            if (contentCase_ == ContentOneofCase.LobbySync) {
+              subBuilder.MergeFrom(LobbySync);
+            }
+            input.ReadMessage(subBuilder);
+            LobbySync = subBuilder;
             break;
           }
         }
@@ -414,6 +470,9 @@ namespace SyncMessage {
           break;
         case ContentOneofCase.GameSyncMessage:
           GameSyncMessage = other.GameSyncMessage.Clone();
+          break;
+        case ContentOneofCase.LobbySync:
+          LobbySync = other.LobbySync.Clone();
           break;
       }
 
@@ -474,6 +533,18 @@ namespace SyncMessage {
       }
     }
 
+    /// <summary>Field number for the "lobbySync" field.</summary>
+    public const int LobbySyncFieldNumber = 5;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::LobbyMessage.LobbySyncRequest LobbySync {
+      get { return contentCase_ == ContentOneofCase.LobbySync ? (global::LobbyMessage.LobbySyncRequest) content_ : null; }
+      set {
+        content_ = value;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.LobbySync;
+      }
+    }
+
     private object content_;
     /// <summary>Enum of possible cases for the "content" oneof.</summary>
     public enum ContentOneofCase {
@@ -481,6 +552,7 @@ namespace SyncMessage {
       CommonMessage = 2,
       ConnectMessage = 3,
       GameSyncMessage = 4,
+      LobbySync = 5,
     }
     private ContentOneofCase contentCase_ = ContentOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -515,6 +587,7 @@ namespace SyncMessage {
       if (CommonMessage != other.CommonMessage) return false;
       if (!object.Equals(ConnectMessage, other.ConnectMessage)) return false;
       if (!object.Equals(GameSyncMessage, other.GameSyncMessage)) return false;
+      if (!object.Equals(LobbySync, other.LobbySync)) return false;
       if (ContentCase != other.ContentCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -527,6 +600,7 @@ namespace SyncMessage {
       if (contentCase_ == ContentOneofCase.CommonMessage) hash ^= CommonMessage.GetHashCode();
       if (contentCase_ == ContentOneofCase.ConnectMessage) hash ^= ConnectMessage.GetHashCode();
       if (contentCase_ == ContentOneofCase.GameSyncMessage) hash ^= GameSyncMessage.GetHashCode();
+      if (contentCase_ == ContentOneofCase.LobbySync) hash ^= LobbySync.GetHashCode();
       hash ^= (int) contentCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -562,6 +636,10 @@ namespace SyncMessage {
         output.WriteRawTag(34);
         output.WriteMessage(GameSyncMessage);
       }
+      if (contentCase_ == ContentOneofCase.LobbySync) {
+        output.WriteRawTag(42);
+        output.WriteMessage(LobbySync);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -588,6 +666,10 @@ namespace SyncMessage {
         output.WriteRawTag(34);
         output.WriteMessage(GameSyncMessage);
       }
+      if (contentCase_ == ContentOneofCase.LobbySync) {
+        output.WriteRawTag(42);
+        output.WriteMessage(LobbySync);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -609,6 +691,9 @@ namespace SyncMessage {
       }
       if (contentCase_ == ContentOneofCase.GameSyncMessage) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(GameSyncMessage);
+      }
+      if (contentCase_ == ContentOneofCase.LobbySync) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(LobbySync);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -640,6 +725,12 @@ namespace SyncMessage {
             GameSyncMessage = new global::GameMessage.GameSyncMessage();
           }
           GameSyncMessage.MergeFrom(other.GameSyncMessage);
+          break;
+        case ContentOneofCase.LobbySync:
+          if (LobbySync == null) {
+            LobbySync = new global::LobbyMessage.LobbySyncRequest();
+          }
+          LobbySync.MergeFrom(other.LobbySync);
           break;
       }
 
@@ -684,6 +775,15 @@ namespace SyncMessage {
             GameSyncMessage = subBuilder;
             break;
           }
+          case 42: {
+            global::LobbyMessage.LobbySyncRequest subBuilder = new global::LobbyMessage.LobbySyncRequest();
+            if (contentCase_ == ContentOneofCase.LobbySync) {
+              subBuilder.MergeFrom(LobbySync);
+            }
+            input.ReadMessage(subBuilder);
+            LobbySync = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -723,6 +823,15 @@ namespace SyncMessage {
             }
             input.ReadMessage(subBuilder);
             GameSyncMessage = subBuilder;
+            break;
+          }
+          case 42: {
+            global::LobbyMessage.LobbySyncRequest subBuilder = new global::LobbyMessage.LobbySyncRequest();
+            if (contentCase_ == ContentOneofCase.LobbySync) {
+              subBuilder.MergeFrom(LobbySync);
+            }
+            input.ReadMessage(subBuilder);
+            LobbySync = subBuilder;
             break;
           }
         }

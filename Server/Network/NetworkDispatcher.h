@@ -14,9 +14,9 @@
 #include "../protobuf/output/ConnectMessage.pb.h"
 #include "../protobuf/output/GameMessage.pb.h"
 
-using namespace SyncMessage;
-using namespace ConnectMessage;
-using namespace GameMessage;
+// using namespace SyncMessage;
+// using namespace ConnectMessage;
+// using namespace GameMessage;
 
 struct Client
 {
@@ -43,15 +43,15 @@ public:
 
     //消息处理Tcp
     void handleTcpMessage(QTcpSocket *socket,const QByteArray &message);
-    void handleTcpConnection(QTcpSocket *socket,const ClientConnectMessage &message);
+    //void handleTcpConnection(QTcpSocket *socket,const ConnectMessage::ClientConnectMessage &message);
     //void handeleTcpLobby(quint64 clientId,const LobbyMessage::LobbySyncRequest &message);
 
     //消息处理Udp
     void handleUdpMessage(const QHostAddress& address, const quint16& port,const QByteArray& message);
-    void handleUdpConnection(const QHostAddress &address,const quint16 &port,const ClientConnectMessage &message);
+    //void handleUdpConnection(const QHostAddress &address,const quint16 &port,const ConnectMessage::ClientConnectMessage &message);
 
     //消息处理
-    void handleGameSync(quint64 clientId,const GameSyncMessage& message);
+    void handleGameSync(quint64 clientId,const GameMessage::GameSyncMessage& message);
 
 
     //客户端相关
@@ -63,11 +63,10 @@ public:
     void bindClient(const quint64 clientId, const UdpEndPoint& udpEndPoint);
 
     //广播
-    void broadcastGameSync(const GameSyncMessage& message,quint64 clientId);
+    void broadcastGameSync(const GameMessage::GameSyncMessage& message,quint64 clientId);
 signals:
-    // void lobbyPlayerLogin(quint64 clientId,const LobbyMessage::PlayerLoginRequest& message);
-    // void lobbyPlayerJoinRoom(quint64 clientId,const LobbyMessage::PlayerJoinRoomRequest& message);
-    // void lobbyPlayerPlayRoom(quint64 clientId,const LobbyMessage::PlayerPlayRoomRequest& message);
+    void handleUdpGameSync(quint64 clientId,const GameMessage::GameSyncMessage &message);
+    void handleUdpGameSnapshot(quint64 clientId,const GameMessage::GameSnapshotMessage &message);//未使用
     void handleTcpLobby(quint64 clientId,const LobbyMessage::LobbySyncRequest &message);
 
 private:

@@ -52,6 +52,9 @@ extern GameSnapshotMessageDefaultTypeInternal _GameSnapshotMessage_default_insta
 class GameSyncMessage;
 struct GameSyncMessageDefaultTypeInternal;
 extern GameSyncMessageDefaultTypeInternal _GameSyncMessage_default_instance_;
+class HeartBeat;
+struct HeartBeatDefaultTypeInternal;
+extern HeartBeatDefaultTypeInternal _HeartBeat_default_instance_;
 class ObjectSnapshotSync;
 struct ObjectSnapshotSyncDefaultTypeInternal;
 extern ObjectSnapshotSyncDefaultTypeInternal _ObjectSnapshotSync_default_instance_;
@@ -65,6 +68,7 @@ extern PlayerSyncDefaultTypeInternal _PlayerSync_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::GameMessage::GameSnapshotMessage* Arena::CreateMaybeMessage<::GameMessage::GameSnapshotMessage>(Arena*);
 template<> ::GameMessage::GameSyncMessage* Arena::CreateMaybeMessage<::GameMessage::GameSyncMessage>(Arena*);
+template<> ::GameMessage::HeartBeat* Arena::CreateMaybeMessage<::GameMessage::HeartBeat>(Arena*);
 template<> ::GameMessage::ObjectSnapshotSync* Arena::CreateMaybeMessage<::GameMessage::ObjectSnapshotSync>(Arena*);
 template<> ::GameMessage::PlayerSnapshotSync* Arena::CreateMaybeMessage<::GameMessage::PlayerSnapshotSync>(Arena*);
 template<> ::GameMessage::PlayerSync* Arena::CreateMaybeMessage<::GameMessage::PlayerSync>(Arena*);
@@ -572,9 +576,23 @@ class PlayerSync final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kNameFieldNumber = 1,
     kInputMoveFieldNumber = 2,
-    kPlayerIdFieldNumber = 1,
   };
+  // string name = 1;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
   // .UnityMath.Vector3D inputMove = 2;
   bool has_inputmove() const;
   private:
@@ -593,15 +611,6 @@ class PlayerSync final :
       ::UnityMath::Vector3D* inputmove);
   ::UnityMath::Vector3D* unsafe_arena_release_inputmove();
 
-  // uint64 playerId = 1;
-  void clear_playerid();
-  uint64_t playerid() const;
-  void set_playerid(uint64_t value);
-  private:
-  uint64_t _internal_playerid() const;
-  void _internal_set_playerid(uint64_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:GameMessage.PlayerSync)
  private:
   class _Internal;
@@ -610,8 +619,8 @@ class PlayerSync final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::UnityMath::Vector3D* inputmove_;
-    uint64_t playerid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -740,10 +749,24 @@ class PlayerSnapshotSync final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kNameFieldNumber = 1,
     kPosFieldNumber = 2,
     kVelocityFieldNumber = 3,
-    kPlayerIdFieldNumber = 1,
   };
+  // string name = 1;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
   // .UnityMath.Vector3D pos = 2;
   bool has_pos() const;
   private:
@@ -780,15 +803,6 @@ class PlayerSnapshotSync final :
       ::UnityMath::Vector3D* velocity);
   ::UnityMath::Vector3D* unsafe_arena_release_velocity();
 
-  // uint64 playerId = 1;
-  void clear_playerid();
-  uint64_t playerid() const;
-  void set_playerid(uint64_t value);
-  private:
-  uint64_t _internal_playerid() const;
-  void _internal_set_playerid(uint64_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:GameMessage.PlayerSnapshotSync)
  private:
   class _Internal;
@@ -797,9 +811,9 @@ class PlayerSnapshotSync final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::UnityMath::Vector3D* pos_;
     ::UnityMath::Vector3D* velocity_;
-    uint64_t playerid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -988,6 +1002,170 @@ class ObjectSnapshotSync final :
     ::UnityMath::Vector3D* pos_;
     ::UnityMath::Vector3D* velocity_;
     uint64_t objectid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_GameMessage_2eproto;
+};
+// -------------------------------------------------------------------
+
+class HeartBeat final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:GameMessage.HeartBeat) */ {
+ public:
+  inline HeartBeat() : HeartBeat(nullptr) {}
+  ~HeartBeat() override;
+  explicit PROTOBUF_CONSTEXPR HeartBeat(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  HeartBeat(const HeartBeat& from);
+  HeartBeat(HeartBeat&& from) noexcept
+    : HeartBeat() {
+    *this = ::std::move(from);
+  }
+
+  inline HeartBeat& operator=(const HeartBeat& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline HeartBeat& operator=(HeartBeat&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const HeartBeat& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const HeartBeat* internal_default_instance() {
+    return reinterpret_cast<const HeartBeat*>(
+               &_HeartBeat_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(HeartBeat& a, HeartBeat& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(HeartBeat* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(HeartBeat* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  HeartBeat* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<HeartBeat>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const HeartBeat& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const HeartBeat& from) {
+    HeartBeat::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(HeartBeat* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "GameMessage.HeartBeat";
+  }
+  protected:
+  explicit HeartBeat(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNameFieldNumber = 1,
+    kTimeFieldNumber = 2,
+  };
+  // string name = 1;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // uint64 time = 2;
+  void clear_time();
+  uint64_t time() const;
+  void set_time(uint64_t value);
+  private:
+  uint64_t _internal_time() const;
+  void _internal_set_time(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:GameMessage.HeartBeat)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+    uint64_t time_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1212,24 +1390,54 @@ GameSnapshotMessage::objectsss() const {
 
 // PlayerSync
 
-// uint64 playerId = 1;
-inline void PlayerSync::clear_playerid() {
-  _impl_.playerid_ = uint64_t{0u};
+// string name = 1;
+inline void PlayerSync::clear_name() {
+  _impl_.name_.ClearToEmpty();
 }
-inline uint64_t PlayerSync::_internal_playerid() const {
-  return _impl_.playerid_;
+inline const std::string& PlayerSync::name() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.name)
+  return _internal_name();
 }
-inline uint64_t PlayerSync::playerid() const {
-  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.playerId)
-  return _internal_playerid();
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void PlayerSync::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:GameMessage.PlayerSync.name)
 }
-inline void PlayerSync::_internal_set_playerid(uint64_t value) {
+inline std::string* PlayerSync::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:GameMessage.PlayerSync.name)
+  return _s;
+}
+inline const std::string& PlayerSync::_internal_name() const {
+  return _impl_.name_.Get();
+}
+inline void PlayerSync::_internal_set_name(const std::string& value) {
   
-  _impl_.playerid_ = value;
+  _impl_.name_.Set(value, GetArenaForAllocation());
 }
-inline void PlayerSync::set_playerid(uint64_t value) {
-  _internal_set_playerid(value);
-  // @@protoc_insertion_point(field_set:GameMessage.PlayerSync.playerId)
+inline std::string* PlayerSync::_internal_mutable_name() {
+  
+  return _impl_.name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* PlayerSync::release_name() {
+  // @@protoc_insertion_point(field_release:GameMessage.PlayerSync.name)
+  return _impl_.name_.Release();
+}
+inline void PlayerSync::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.name_.SetAllocated(name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSync.name)
 }
 
 // .UnityMath.Vector3D inputMove = 2;
@@ -1321,24 +1529,54 @@ inline void PlayerSync::set_allocated_inputmove(::UnityMath::Vector3D* inputmove
 
 // PlayerSnapshotSync
 
-// uint64 playerId = 1;
-inline void PlayerSnapshotSync::clear_playerid() {
-  _impl_.playerid_ = uint64_t{0u};
+// string name = 1;
+inline void PlayerSnapshotSync::clear_name() {
+  _impl_.name_.ClearToEmpty();
 }
-inline uint64_t PlayerSnapshotSync::_internal_playerid() const {
-  return _impl_.playerid_;
+inline const std::string& PlayerSnapshotSync::name() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSnapshotSync.name)
+  return _internal_name();
 }
-inline uint64_t PlayerSnapshotSync::playerid() const {
-  // @@protoc_insertion_point(field_get:GameMessage.PlayerSnapshotSync.playerId)
-  return _internal_playerid();
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void PlayerSnapshotSync::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:GameMessage.PlayerSnapshotSync.name)
 }
-inline void PlayerSnapshotSync::_internal_set_playerid(uint64_t value) {
+inline std::string* PlayerSnapshotSync::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:GameMessage.PlayerSnapshotSync.name)
+  return _s;
+}
+inline const std::string& PlayerSnapshotSync::_internal_name() const {
+  return _impl_.name_.Get();
+}
+inline void PlayerSnapshotSync::_internal_set_name(const std::string& value) {
   
-  _impl_.playerid_ = value;
+  _impl_.name_.Set(value, GetArenaForAllocation());
 }
-inline void PlayerSnapshotSync::set_playerid(uint64_t value) {
-  _internal_set_playerid(value);
-  // @@protoc_insertion_point(field_set:GameMessage.PlayerSnapshotSync.playerId)
+inline std::string* PlayerSnapshotSync::_internal_mutable_name() {
+  
+  return _impl_.name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* PlayerSnapshotSync::release_name() {
+  // @@protoc_insertion_point(field_release:GameMessage.PlayerSnapshotSync.name)
+  return _impl_.name_.Release();
+}
+inline void PlayerSnapshotSync::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.name_.SetAllocated(name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSnapshotSync.name)
 }
 
 // .UnityMath.Vector3D pos = 2;
@@ -1705,9 +1943,85 @@ inline void ObjectSnapshotSync::set_allocated_velocity(::UnityMath::Vector3D* ve
   // @@protoc_insertion_point(field_set_allocated:GameMessage.ObjectSnapshotSync.velocity)
 }
 
+// -------------------------------------------------------------------
+
+// HeartBeat
+
+// string name = 1;
+inline void HeartBeat::clear_name() {
+  _impl_.name_.ClearToEmpty();
+}
+inline const std::string& HeartBeat::name() const {
+  // @@protoc_insertion_point(field_get:GameMessage.HeartBeat.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void HeartBeat::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:GameMessage.HeartBeat.name)
+}
+inline std::string* HeartBeat::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:GameMessage.HeartBeat.name)
+  return _s;
+}
+inline const std::string& HeartBeat::_internal_name() const {
+  return _impl_.name_.Get();
+}
+inline void HeartBeat::_internal_set_name(const std::string& value) {
+  
+  _impl_.name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* HeartBeat::_internal_mutable_name() {
+  
+  return _impl_.name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* HeartBeat::release_name() {
+  // @@protoc_insertion_point(field_release:GameMessage.HeartBeat.name)
+  return _impl_.name_.Release();
+}
+inline void HeartBeat::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.name_.SetAllocated(name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.HeartBeat.name)
+}
+
+// uint64 time = 2;
+inline void HeartBeat::clear_time() {
+  _impl_.time_ = uint64_t{0u};
+}
+inline uint64_t HeartBeat::_internal_time() const {
+  return _impl_.time_;
+}
+inline uint64_t HeartBeat::time() const {
+  // @@protoc_insertion_point(field_get:GameMessage.HeartBeat.time)
+  return _internal_time();
+}
+inline void HeartBeat::_internal_set_time(uint64_t value) {
+  
+  _impl_.time_ = value;
+}
+inline void HeartBeat::set_time(uint64_t value) {
+  _internal_set_time(value);
+  // @@protoc_insertion_point(field_set:GameMessage.HeartBeat.time)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -40,11 +40,11 @@ namespace LobbyMessage {
             "YmJ5TWVzc2FnZS5QbGF5ZXJMZWF2ZVJvb21SZXNwb25zZUgAEjoKCXN0YXJ0",
             "Um9vbRgEIAEoCzIlLkxvYmJ5TWVzc2FnZS5QbGF5ZXJTdGFydFJvb21SZXNw",
             "b25zZUgAEjYKB2VuZFJvb20YBSABKAsyIy5Mb2JieU1lc3NhZ2UuUGxheWVy",
-            "RW5kUm9vbVJlc3BvbnNlSABCCQoHY29udGVudCImChZQbGF5ZXJKb2luUm9v",
-            "bVJlc3BvbnNlEgwKBG5hbWUYASABKAkiJwoXUGxheWVyTGVhdmVSb29tUmVz",
-            "cG9uc2USDAoEbmFtZRgBIAEoCSInChdQbGF5ZXJTdGFydFJvb21SZXNwb25z",
-            "ZRIMCgRuYW1lGAEgASgJIiUKFVBsYXllckVuZFJvb21SZXNwb25zZRIMCgRu",
-            "YW1lGAEgASgJYgZwcm90bzM="));
+            "RW5kUm9vbVJlc3BvbnNlSABCCQoHY29udGVudCIpChZQbGF5ZXJKb2luUm9v",
+            "bVJlc3BvbnNlEg8KB3BsYXllcnMYAiADKAkiJwoXUGxheWVyTGVhdmVSb29t",
+            "UmVzcG9uc2USDAoEbmFtZRgBIAEoCSInChdQbGF5ZXJTdGFydFJvb21SZXNw",
+            "b25zZRIMCgRuYW1lGAEgASgJIiUKFVBsYXllckVuZFJvb21SZXNwb25zZRIM",
+            "CgRuYW1lGAEgASgJYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -54,7 +54,7 @@ namespace LobbyMessage {
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerStartRoomRequest), global::LobbyMessage.PlayerStartRoomRequest.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerEndRoomRequest), global::LobbyMessage.PlayerEndRoomRequest.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.LobbySyncResponse), global::LobbyMessage.LobbySyncResponse.Parser, new[]{ "Name", "JoinRoom", "LeaveRoom", "StartRoom", "EndRoom" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerJoinRoomResponse), global::LobbyMessage.PlayerJoinRoomResponse.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerJoinRoomResponse), global::LobbyMessage.PlayerJoinRoomResponse.Parser, new[]{ "Players" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerLeaveRoomResponse), global::LobbyMessage.PlayerLeaveRoomResponse.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerStartRoomResponse), global::LobbyMessage.PlayerStartRoomResponse.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerEndRoomResponse), global::LobbyMessage.PlayerEndRoomResponse.Parser, new[]{ "Name" }, null, null, null, null)
@@ -1716,7 +1716,7 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public PlayerJoinRoomResponse(PlayerJoinRoomResponse other) : this() {
-      name_ = other.name_;
+      players_ = other.players_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1726,16 +1726,15 @@ namespace LobbyMessage {
       return new PlayerJoinRoomResponse(this);
     }
 
-    /// <summary>Field number for the "name" field.</summary>
-    public const int NameFieldNumber = 1;
-    private string name_ = "";
+    /// <summary>Field number for the "players" field.</summary>
+    public const int PlayersFieldNumber = 2;
+    private static readonly pb::FieldCodec<string> _repeated_players_codec
+        = pb::FieldCodec.ForString(18);
+    private readonly pbc::RepeatedField<string> players_ = new pbc::RepeatedField<string>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Name {
-      get { return name_; }
-      set {
-        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
+    public pbc::RepeatedField<string> Players {
+      get { return players_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1753,7 +1752,7 @@ namespace LobbyMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (Name != other.Name) return false;
+      if(!players_.Equals(other.players_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1761,7 +1760,7 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      hash ^= players_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1780,10 +1779,7 @@ namespace LobbyMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (Name.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Name);
-      }
+      players_.WriteTo(output, _repeated_players_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1794,10 +1790,7 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Name.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Name);
-      }
+      players_.WriteTo(ref output, _repeated_players_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1808,9 +1801,7 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (Name.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
-      }
+      size += players_.CalculateSize(_repeated_players_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1823,9 +1814,7 @@ namespace LobbyMessage {
       if (other == null) {
         return;
       }
-      if (other.Name.Length != 0) {
-        Name = other.Name;
-      }
+      players_.Add(other.players_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1841,8 +1830,8 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
-            Name = input.ReadString();
+          case 18: {
+            players_.AddEntriesFrom(input, _repeated_players_codec);
             break;
           }
         }
@@ -1860,8 +1849,8 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
-            Name = input.ReadString();
+          case 18: {
+            players_.AddEntriesFrom(ref input, _repeated_players_codec);
             break;
           }
         }

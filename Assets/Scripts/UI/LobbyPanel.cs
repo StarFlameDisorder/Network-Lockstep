@@ -1,4 +1,5 @@
 using System;
+using GamePlay;
 using Google.Protobuf;
 using LobbyMessage;
 using Network;
@@ -36,6 +37,7 @@ namespace UI
                 }
             };
             NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
+            GameSync.Instance.SetName(_nameInputField.text);
         }
         
     }

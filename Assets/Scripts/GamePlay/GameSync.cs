@@ -29,12 +29,13 @@ namespace GamePlay
         [SerializeField]private PlayerController _controller;
         private UInt64 _playerId;
         
-        
         private Rigidbody _rigidbody1;
         private Rigidbody _rigidbody2;
         private Vector3 _velocity1;
         private Vector3 _velocity2;
         private float _speed=10f;
+        private string _name="";
+        
         private void Awake()
         {
             Instance = this;
@@ -50,15 +51,56 @@ namespace GamePlay
         {
             NetworkManager.Instance.RegisterHandler<GameSyncMessage>(Signals.GameSync,ReceiveMessage);//服务器消息接收
             NetworkManager.Instance.RegisterHandler<PlayerJoinRoomResponse>(Signals.LobbyJoinRoom,JoinRoom);//加入房间消息
+            NetworkManager.Instance.RegisterHandler<PlayerLeaveRoomResponse>(Signals.LobbyLeaveRoom,LeaveRoom);//离开房间
             
             RegisterTimerEvent(SyncPlayerAction);//注册操作同步
             RegisterTimerEvent(RunNextFrame);//注册下帧处理函数
         }
+
+        public void SetName(string playerName)
+        {
+            _name = playerName;
+            AddPlayer(playerName);
+        }
+
+        [SerializeField] private GameObject _playerPrefab;
+        private Dictionary<string, GameObject> _players=new ();
+        private Dictionary<string, Rigidbody> _rigidbodies=new ();
+        private Dictionary<string,Vector3> _velocities=new ();
         
         private void JoinRoom(PlayerJoinRoomResponse response)
         {
             Debug.Log("收到PlayerJoinRoomResponse");
-            if(Instance.GetStatus()==GameStatus.Notstarted)Instance.StartGame();
+            if (Instance.GetStatus() == GameStatus.Notstarted) Instance.StartGame();
+            foreach (var otherPlayer in response.Players)
+            {
+                if (otherPlayer != _name && !_players.ContainsKey(otherPlayer))
+                {
+                    AddPlayer(otherPlayer);
+                }
+            }
+        }
+
+        private void AddPlayer(string playerName)
+        {
+            if(!_players.ContainsKey(playerName))
+            {
+                Debug.Log("添加玩家");
+                GameObject o = Instantiate(_playerPrefab);
+                _players.Add(playerName, o);
+                Rigidbody rb = o.GetComponent<Rigidbody>();
+                _rigidbodies.Add(playerName, rb);
+                _velocities.Add(playerName, new Vector3());
+            }
+        }
+
+        private void LeaveRoom(PlayerLeaveRoomResponse response)
+        {
+            Debug.Log("收到PlayerLeaveRoomResponse");
+
+            _players.Remove(response.Name);
+            _rigidbodies.Remove(response.Name);
+            _velocities.Remove(response.Name);
         }
         
         #region 玩家操作处理
@@ -80,7 +122,7 @@ namespace GamePlay
                 {
                     new PlayerSync
                     {
-                        PlayerId = clientId,
+                        Name = _name,
                         InputMove = new Vector3D
                         {
                             X = (int)(_input.x * 1000),
@@ -108,12 +150,20 @@ namespace GamePlay
         
         private void FixedUpdate()
         {
-            _rigidbody1.transform.Translate(_speed*Time.deltaTime*_velocity1);
-            _rigidbody2.transform.Translate(_speed*Time.deltaTime*_velocity2);
-
-            _rigidbody1.position = UnitizedPosition(_rigidbody1.position);
-            _rigidbody2.position = UnitizedPosition(_rigidbody2.position);
-
+            // _rigidbody1.transform.Translate(_speed*Time.deltaTime*_velocity1);
+            // _rigidbody2.transform.Translate(_speed*Time.deltaTime*_velocity2);
+            //
+            // _rigidbody1.position = UnitizedPosition(_rigidbody1.position);
+            // _rigidbody2.position = UnitizedPosition(_rigidbody2.position);
+            //string outp=new string("");
+            foreach (var pair in _rigidbodies)
+            {
+                Rigidbody rb = pair.Value;
+                rb.transform.Translate(_speed*Time.deltaTime*_velocities[pair.Key]);
+                rb.position = UnitizedPosition(rb.position);
+                //outp += _velocities[pair.Key].ToString();
+            }
+            //Debug.Log("玩家数"+_rigidbodies.Count+"数据数"+_velocities.Count+outp);
         }
 
         private Vector3 UnitizedPosition(Vector3 v3)
@@ -141,39 +191,49 @@ namespace GamePlay
 
         void RunNextFrame()
         {
-            if(_gameSyncMessages.Count>0)//远程
-            {
-                
-                GameSyncMessage message = _gameSyncMessages.Dequeue();
-            
-                var player = message.Players[0];
-                var v = player.InputMove;
-                _velocity2 = new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
-                StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
-                
-            }
-            if(_localGameSyncMessages.Count>0)//本地
-            {
-                
-                GameSyncMessage message = _localGameSyncMessages.Dequeue();
-            
-                var player = message.Players[0];
-                var v = player.InputMove;
-                _velocity1 = new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
-                StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
-            }
+            // if(_gameSyncMessages.Count>0)//远程
+            // {
+            //     
+            //     GameSyncMessage message = _gameSyncMessages.Dequeue();
+            //
+            //     var player = message.Players[0];
+            //     var v = player.InputMove;
+            //     _velocity2 = new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
+            //     StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
+            //     StatusPanel.Instance.UpdateExternalOffset(_velocity2);
+            //     
+            // }
+            // if(_localGameSyncMessages.Count>0)//本地
+            // {
+            //     
+            //     GameSyncMessage message = _localGameSyncMessages.Dequeue();
+            //
+            //     var player = message.Players[0];
+            //     var v = player.InputMove;
+            //     _velocity1 = new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
+            //     StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
+            //     StatusPanel.Instance.UpdateLocalOffset(_velocity1);
+            // }
             // if(_gameSyncMessages.Count>0&&_localGameSyncMessages.Count>0)
             // {
             //
             //     {
+            //         //TODO:Rb空判断
             //         GameSyncMessage message = _gameSyncMessages.Dequeue();//远程
             //
-            //         var player = message.Players[0];
-            //         var v = player.InputMove;
             //         
-            //         _velocity2 = new Vector3(v.X / 1000f, v.Y / 1000f, v.Z / 1000f);
+            //
+            //         foreach (var player in message.Players)
+            //         {
+            //             if(player.Name!=_name&&_players.ContainsKey(player.Name))
+            //             {
+            //                 var v = player.InputMove;
+            //                 Vector3 realV = new Vector3(v.X / 1000f, v.Y / 1000f, v.Z / 1000f);
+            //                 _velocities[player.Name] = realV;
+            //             }
+            //         }
+            //         
             //         StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
-            //         StatusPanel.Instance.UpdateExternalOffset(_velocity2);
             //     }
             //
             //     {
@@ -181,12 +241,47 @@ namespace GamePlay
             //
             //         var player = message.Players[0];
             //         var v = player.InputMove;
-            //         _velocity1 = new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
+            //         Vector3 realV=new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
+            //         _velocities[player.Name] = realV;
+            //         
             //         StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
-            //         StatusPanel.Instance.UpdateLocalOffset(_velocity1);
+            //         StatusPanel.Instance.UpdateLocalOffset(realV);
             //     }
             //     
             // }
+            if(_gameSyncMessages.Count>0)
+            {
+                //TODO:Rb空判断
+                GameSyncMessage message = _gameSyncMessages.Dequeue();//远程
+        
+                
+                //Debug.Log("玩家数"+message.Players.Count);
+                foreach (var player in message.Players)
+                {
+                    if(player.Name!=_name&&_players.ContainsKey(player.Name))
+                    {
+                        var v = player.InputMove;
+                        Vector3 realV = new Vector3(v.X / 1000f, v.Y / 1000f, v.Z / 1000f);
+                        _velocities[player.Name] = realV;
+                    }
+                }
+                
+                StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
+            }
+            if(_localGameSyncMessages.Count>0)
+            {
+                GameSyncMessage message = _localGameSyncMessages.Dequeue();//本地
+        
+                var player = message.Players[0];
+                var v = player.InputMove;
+                Vector3 realV=new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
+                _velocities[player.Name] = realV;
+                
+                StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
+                StatusPanel.Instance.UpdateLocalOffset(realV);
+            }
+                
+            
             
         }
         #endregion

@@ -7,21 +7,13 @@
 
 
 #include <QObject>
+#include <QTimer>
 #include <QHash>
+#include <queue>
+
 #include "../protobuf/output/SyncMessage.pb.h"
 
-// struct Player{
-//     Player(quint64 playerId,QString playerName):id{playerId},name(playerName)
-//     {}
-//
-//     Player(){}
-//
-//     quint64 id;
-//     quint64 clientId;
-//     QString name;
-//
-// };
-
+using std::queue;
 
 class RoomManager:public QObject
 {
@@ -34,9 +26,16 @@ public:
     void leaveRoom(QString name);
     void startRoom();
     void endRoom();
+    void receiveGameSync(quint64 clientId,const GameMessage::GameSyncMessage& message);
 
 private:
+    void broadcastGameSync();
+
     QHash<QString,quint64> m_players;//名称 客户端id
+    QHash<quint64,QString> m_playersName;
+    QHash<quint64,std::queue<GameMessage::PlayerSync>> m_messages;
+    QTimer m_timer;//定时发送
+
 signals:
     void sendTcpMessage(quint64 clientId,const QByteArray &message);
     void sendUdpMessage(quint64 clientId,const QByteArray &message);

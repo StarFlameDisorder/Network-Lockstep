@@ -351,6 +351,7 @@ class ClientMessage final :
     kConnectMessage = 3,
     kGameSyncMessage = 4,
     kLobbySync = 5,
+    kHeartBeat = 6,
     CONTENT_NOT_SET = 0,
   };
 
@@ -437,6 +438,7 @@ class ClientMessage final :
     kConnectMessageFieldNumber = 3,
     kGameSyncMessageFieldNumber = 4,
     kLobbySyncFieldNumber = 5,
+    kHeartBeatFieldNumber = 6,
   };
   // uint64 clientId = 1;
   void clear_clientid();
@@ -519,6 +521,24 @@ class ClientMessage final :
       ::LobbyMessage::LobbySyncRequest* lobbysync);
   ::LobbyMessage::LobbySyncRequest* unsafe_arena_release_lobbysync();
 
+  // .GameMessage.HeartBeat heartBeat = 6;
+  bool has_heartbeat() const;
+  private:
+  bool _internal_has_heartbeat() const;
+  public:
+  void clear_heartbeat();
+  const ::GameMessage::HeartBeat& heartbeat() const;
+  PROTOBUF_NODISCARD ::GameMessage::HeartBeat* release_heartbeat();
+  ::GameMessage::HeartBeat* mutable_heartbeat();
+  void set_allocated_heartbeat(::GameMessage::HeartBeat* heartbeat);
+  private:
+  const ::GameMessage::HeartBeat& _internal_heartbeat() const;
+  ::GameMessage::HeartBeat* _internal_mutable_heartbeat();
+  public:
+  void unsafe_arena_set_allocated_heartbeat(
+      ::GameMessage::HeartBeat* heartbeat);
+  ::GameMessage::HeartBeat* unsafe_arena_release_heartbeat();
+
   void clear_content();
   ContentCase content_case() const;
   // @@protoc_insertion_point(class_scope:SyncMessage.ClientMessage)
@@ -528,6 +548,7 @@ class ClientMessage final :
   void set_has_connectmessage();
   void set_has_gamesyncmessage();
   void set_has_lobbysync();
+  void set_has_heartbeat();
 
   inline bool has_content() const;
   inline void clear_has_content();
@@ -544,6 +565,7 @@ class ClientMessage final :
       ::ConnectMessage::ClientConnectMessage* connectmessage_;
       ::GameMessage::GameSyncMessage* gamesyncmessage_;
       ::LobbyMessage::LobbySyncRequest* lobbysync_;
+      ::GameMessage::HeartBeat* heartbeat_;
     } content_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -1143,6 +1165,72 @@ inline ::LobbyMessage::LobbySyncRequest* ClientMessage::_internal_mutable_lobbys
 inline ::LobbyMessage::LobbySyncRequest* ClientMessage::mutable_lobbysync() {
   ::LobbyMessage::LobbySyncRequest* _msg = _internal_mutable_lobbysync();
   // @@protoc_insertion_point(field_mutable:SyncMessage.ClientMessage.lobbySync)
+  return _msg;
+}
+
+// .GameMessage.HeartBeat heartBeat = 6;
+inline bool ClientMessage::_internal_has_heartbeat() const {
+  return content_case() == kHeartBeat;
+}
+inline bool ClientMessage::has_heartbeat() const {
+  return _internal_has_heartbeat();
+}
+inline void ClientMessage::set_has_heartbeat() {
+  _impl_._oneof_case_[0] = kHeartBeat;
+}
+inline ::GameMessage::HeartBeat* ClientMessage::release_heartbeat() {
+  // @@protoc_insertion_point(field_release:SyncMessage.ClientMessage.heartBeat)
+  if (_internal_has_heartbeat()) {
+    clear_has_content();
+    ::GameMessage::HeartBeat* temp = _impl_.content_.heartbeat_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.content_.heartbeat_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::GameMessage::HeartBeat& ClientMessage::_internal_heartbeat() const {
+  return _internal_has_heartbeat()
+      ? *_impl_.content_.heartbeat_
+      : reinterpret_cast< ::GameMessage::HeartBeat&>(::GameMessage::_HeartBeat_default_instance_);
+}
+inline const ::GameMessage::HeartBeat& ClientMessage::heartbeat() const {
+  // @@protoc_insertion_point(field_get:SyncMessage.ClientMessage.heartBeat)
+  return _internal_heartbeat();
+}
+inline ::GameMessage::HeartBeat* ClientMessage::unsafe_arena_release_heartbeat() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:SyncMessage.ClientMessage.heartBeat)
+  if (_internal_has_heartbeat()) {
+    clear_has_content();
+    ::GameMessage::HeartBeat* temp = _impl_.content_.heartbeat_;
+    _impl_.content_.heartbeat_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ClientMessage::unsafe_arena_set_allocated_heartbeat(::GameMessage::HeartBeat* heartbeat) {
+  clear_content();
+  if (heartbeat) {
+    set_has_heartbeat();
+    _impl_.content_.heartbeat_ = heartbeat;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:SyncMessage.ClientMessage.heartBeat)
+}
+inline ::GameMessage::HeartBeat* ClientMessage::_internal_mutable_heartbeat() {
+  if (!_internal_has_heartbeat()) {
+    clear_content();
+    set_has_heartbeat();
+    _impl_.content_.heartbeat_ = CreateMaybeMessage< ::GameMessage::HeartBeat >(GetArenaForAllocation());
+  }
+  return _impl_.content_.heartbeat_;
+}
+inline ::GameMessage::HeartBeat* ClientMessage::mutable_heartbeat() {
+  ::GameMessage::HeartBeat* _msg = _internal_mutable_heartbeat();
+  // @@protoc_insertion_point(field_mutable:SyncMessage.ClientMessage.heartBeat)
   return _msg;
 }
 

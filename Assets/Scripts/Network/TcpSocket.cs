@@ -41,7 +41,7 @@ namespace Network
             
             ReceiveAsync((message) =>
             {
-                Debug.Log("Tcp:收到消息");
+                // Debug.Log("Tcp:收到消息");
                 NetworkManager.Instance.HandleMessage(message);
                 MessagePanel.Instance?.AddMessage("Tcp:收到消息");
             });
@@ -66,7 +66,7 @@ namespace Network
                 Buffer.BlockCopy(headBytes, 0, sendBuf, 0, headBytes.Length); //快速复制数据
                 Buffer.BlockCopy(buf, 0, sendBuf, headBytes.Length, buf.Length);
                 _socketTcp.Send(sendBuf);
-                Debug.Log($"发送-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(buf, 0, length)}");//有效载荷长度
+                // Debug.Log($"发送-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(buf, 0, length)}");//有效载荷长度
             }
         }
         
@@ -78,7 +78,7 @@ namespace Network
                 {
                     byte[] buf = new byte[2048];
                     int originalLength = await _socketTcp.ReceiveAsync(buf, SocketFlags.None);
-                    Debug.Log($"接收-Socket长度:{originalLength}");
+                    //Debug.Log($"接收-Socket长度:{originalLength}");
                     _tcpMessageBuffer.AddRange(buf.Take(originalLength));
                     while (_tcpMessageBuffer.Count >= 4)
                     {
@@ -90,8 +90,8 @@ namespace Network
                         {
                             byte[] message = new byte[length];
                             _tcpMessageBuffer.CopyTo(4, message, 0, length);
-                            Debug.Log(
-                                $"接收-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(message, 0, length)}"); //有效载荷长度
+                            // Debug.Log(
+                            //     $"接收-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(message, 0, length)}"); //有效载荷长度
                             _tcpMessageBuffer.RemoveRange(0, length + 4);
                             callback?.Invoke(message);
                         }

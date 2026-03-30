@@ -22,5 +22,6 @@ message ClientMessage{
         ConnectMessage.ClientConnectMessage connectMessage = 3;
         GameMessage.GameSyncMessage gameSyncMessage = 4;
         LobbyMessage.LobbySyncRequest lobbySync=5;
+        GameMessage.HeartBeat heartBeat=6;
     }
 }

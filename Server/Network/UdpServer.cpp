@@ -3,7 +3,7 @@
 //
 
 #define FILE_PREFIX "UdpServer:"
-#define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
+#define LOCAL_LOG_LEVEL LogLevel::Error//局部日志等级
 
 #include "UDPServer.h"
 #include <QNetworkDatagram>
@@ -38,8 +38,8 @@ void UdpServer::receiveSocketMessage()
         if (length>0)emit receiveMessage(addr,port,message);
         else
         {
-            Log_Error()<<"接收到空包:"<<getPeerAddressInfo(addr,port);
-            Log_Error()<<m_socket->errorString();
+            Log_Warning()<<"接收到空包:"<<getPeerAddressInfo(addr,port);
+            Log_Warning()<<m_socket->errorString();
         }
     }
 }

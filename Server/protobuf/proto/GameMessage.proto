@@ -19,13 +19,13 @@ message GameSnapshotMessage{
 
 message PlayerSync
 {
-    uint64 playerId = 1;
+    string name=1;
     UnityMath.Vector3D inputMove= 2;
 }
 
 message PlayerSnapshotSync
 {
-    uint64 playerId=1;
+    string name=1;
     UnityMath.Vector3D pos = 2;
     UnityMath.Vector3D velocity= 3;
 }
@@ -35,4 +35,9 @@ message ObjectSnapshotSync
     uint64 objectId=1;
     UnityMath.Vector3D pos = 2;
     UnityMath.Vector3D velocity= 3;
+}
+
+message HeartBeat{
+    string name=1;
+    uint64 time=2;
 }

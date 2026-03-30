@@ -8,8 +8,8 @@
 #include "NetworkDispatcher.h"
 #include "../LoggerStream.h"
 
-using namespace SyncMessage;
-using namespace ConnectMessage;
+// using namespace SyncMessage;
+// using namespace ConnectMessage;
 
 NetworkDispatcher::NetworkDispatcher(QObject *parent)
     :QObject(parent),m_tcpServer(this),m_udpServer(this)
@@ -59,6 +59,7 @@ void NetworkDispatcher::sendUdpMessage(quint64 clientId, const QByteArray& messa
 
 void NetworkDispatcher::handleTcpMessage(QTcpSocket* socket, const QByteArray& message)
 {
+    using namespace SyncMessage;
     messageNum++;
     ClientMessage clientMessage;
     clientMessage.ParseFromArray(message,message.size());
@@ -70,7 +71,8 @@ void NetworkDispatcher::handleTcpMessage(QTcpSocket* socket, const QByteArray& m
             Log_Info()<<"[handleTcpMessage][Tcp:"<<m_tcpServer.getTcpSocketInfo(socket)<<"-"<<clientId<<"]"<<clientMessage.commonmessage();
             break;
         case ClientMessage::kConnectMessage:
-            handleTcpConnection(socket,clientMessage.connectmessage());
+            //handleTcpConnection(socket,clientMessage.connectmessage());
+            Log_Error()<<"kConnectMessage被删除";
             break;
         case ClientMessage::kGameSyncMessage:
             handleGameSync(clientId,clientMessage.gamesyncmessage());
@@ -85,18 +87,18 @@ void NetworkDispatcher::handleTcpMessage(QTcpSocket* socket, const QByteArray& m
     }
 }
 
-void NetworkDispatcher::handleTcpConnection(QTcpSocket* socket, const ClientConnectMessage &message)
-{
-    switch(message.content_case())
-    {
-        case ClientConnectMessage::kHandShakeMessage://tcp客户端不会发送HandShakeMessage
-            Log_Info()<<message.handshakemessage().content();
-            break;
-        default:
-            Log_Error()<<"[handleTcpConnection]未知类型:"<<message.content_case();
-            break;
-    }
-}
+// void NetworkDispatcher::handleTcpConnection(QTcpSocket* socket, const ClientConnectMessage &message)
+// {
+//     switch(message.content_case())
+//     {
+//         case ClientConnectMessage::kHandShakeMessage://tcp客户端不会发送HandShakeMessage
+//             Log_Info()<<message.handshakemessage().content();
+//             break;
+//         default:
+//             Log_Error()<<"[handleTcpConnection]未知类型:"<<message.content_case();
+//             break;
+//     }
+// }
 
 // void NetworkDispatcher::handeleTcpLobby(quint64 clientId, const LobbyMessage::LobbySyncRequest& message)
 // {
@@ -123,6 +125,7 @@ void NetworkDispatcher::handleTcpConnection(QTcpSocket* socket, const ClientConn
 
 void NetworkDispatcher::handleUdpMessage(const QHostAddress& address, const quint16& port,const QByteArray& message)
 {
+    using namespace SyncMessage;
     messageNum++;
     ClientMessage clientMessage;
     clientMessage.ParseFromArray(message,message.size());
@@ -130,36 +133,38 @@ void NetworkDispatcher::handleUdpMessage(const QHostAddress& address, const quin
     checkClient(clientId,address,port);
     switch (clientMessage.content_case())
     {
-    case ClientMessage::kCommonMessage:
-        Log_Info()<<"[handleUdpMessage][Udp:"<<m_udpServer.getPeerAddressInfo(address,port)<<"-"<<clientId<<"]"<<clientMessage.commonmessage();
-        break;
-    case ClientMessage::kConnectMessage:
-        handleUdpConnection(address,port,clientMessage.connectmessage());
-        break;
-    case ClientMessage::kGameSyncMessage:
-        handleGameSync(clientId,clientMessage.gamesyncmessage());
-        break;
-    default:
-        Log_Error()<<"[handleUdpMessage]未知类型:"<<clientMessage.content_case();
-        break;
+        case ClientMessage::kCommonMessage:
+            Log_Info()<<"[handleUdpMessage][Udp:"<<m_udpServer.getPeerAddressInfo(address,port)<<"-"<<clientId<<"]"<<clientMessage.commonmessage();
+            break;
+        case ClientMessage::kConnectMessage:
+            //handleUdpConnection(address,port,clientMessage.connectmessage());
+            Log_Error()<<"kConnectMessage被删除";
+            break;
+        case ClientMessage::kGameSyncMessage:
+            //handleGameSync(clientId,clientMessage.gamesyncmessage());
+            emit handleUdpGameSync(clientId,clientMessage.gamesyncmessage());
+            break;
+        default:
+            Log_Error()<<"[handleUdpMessage]未知类型:"<<clientMessage.content_case();
+            break;
     }
 }
 
-void NetworkDispatcher::handleUdpConnection(const QHostAddress &address, const quint16 &port, const ClientConnectMessage &message)
-{
-    switch(message.content_case())
-    {
-    case ClientConnectMessage::kHandShakeMessage:
-        Log_Info()<<message.handshakemessage().content()<<": "<<m_udpServer.getPeerAddressInfo(address,port)<<"绑定id-"<<message.handshakemessage().clientid();
-        bindClient(message.handshakemessage().clientid(),UdpEndPoint(address,port));
-        break;
-    default:
-        Log_Error()<<"[handleUdpConnection]未知类型:"<<message.content_case();
-        break;
-    }
-}
+// void NetworkDispatcher::handleUdpConnection(const QHostAddress &address, const quint16 &port, const ClientConnectMessage &message)
+// {
+//     switch(message.content_case())
+//     {
+//     case ClientConnectMessage::kHandShakeMessage:
+//         Log_Info()<<message.handshakemessage().content()<<": "<<m_udpServer.getPeerAddressInfo(address,port)<<"绑定id-"<<message.handshakemessage().clientid();
+//         bindClient(message.handshakemessage().clientid(),UdpEndPoint(address,port));
+//         break;
+//     default:
+//         Log_Error()<<"[handleUdpConnection]未知类型:"<<message.content_case();
+//         break;
+//     }
+// }
 
-void NetworkDispatcher::handleGameSync(quint64 clientId, const GameSyncMessage& message)
+void NetworkDispatcher::handleGameSync(quint64 clientId, const GameMessage::GameSyncMessage& message)
 {
     using namespace GameMessage;
     broadcastGameSync(message,clientId);
@@ -248,9 +253,11 @@ void NetworkDispatcher::bindClient(const quint64 clientId, const UdpEndPoint& ud
     }
 }
 
-void NetworkDispatcher::broadcastGameSync(const GameSyncMessage& message,quint64 clientId)
+void NetworkDispatcher::broadcastGameSync(const GameMessage::GameSyncMessage& message,quint64 clientId)
 {
     Log_Debug()<<"broadcastGameSync!";
+    using namespace GameMessage;
+    using namespace SyncMessage;
 
     // 创建一个新的GameSyncMessage并深复制PlayerSync内容
     ServerMessage sendMessage;

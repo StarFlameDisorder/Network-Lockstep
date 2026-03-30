@@ -105,7 +105,7 @@ struct LobbySyncResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LobbySyncResponseDefaultTypeInternal _LobbySyncResponse_default_instance_;
 PROTOBUF_CONSTEXPR PlayerJoinRoomResponse::PlayerJoinRoomResponse(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+    /*decltype(_impl_.players_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct PlayerJoinRoomResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR PlayerJoinRoomResponseDefaultTypeInternal()
@@ -219,7 +219,7 @@ const uint32_t TableStruct_LobbyMessage_2eproto::offsets[] PROTOBUF_SECTION_VARI
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::LobbyMessage::PlayerJoinRoomResponse, _impl_.name_),
+  PROTOBUF_FIELD_OFFSET(::LobbyMessage::PlayerJoinRoomResponse, _impl_.players_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::LobbyMessage::PlayerLeaveRoomResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -287,15 +287,15 @@ const char descriptor_table_protodef_LobbyMessage_2eproto[] PROTOBUF_SECTION_VAR
   "erLeaveRoomResponseH\000\022:\n\tstartRoom\030\004 \001(\013"
   "2%.LobbyMessage.PlayerStartRoomResponseH"
   "\000\0226\n\007endRoom\030\005 \001(\0132#.LobbyMessage.Player"
-  "EndRoomResponseH\000B\t\n\007content\"&\n\026PlayerJo"
-  "inRoomResponse\022\014\n\004name\030\001 \001(\t\"\'\n\027PlayerLe"
-  "aveRoomResponse\022\014\n\004name\030\001 \001(\t\"\'\n\027PlayerS"
-  "tartRoomResponse\022\014\n\004name\030\001 \001(\t\"%\n\025Player"
-  "EndRoomResponse\022\014\n\004name\030\001 \001(\tb\006proto3"
+  "EndRoomResponseH\000B\t\n\007content\")\n\026PlayerJo"
+  "inRoomResponse\022\017\n\007players\030\002 \003(\t\"\'\n\027Playe"
+  "rLeaveRoomResponse\022\014\n\004name\030\001 \001(\t\"\'\n\027Play"
+  "erStartRoomResponse\022\014\n\004name\030\001 \001(\t\"%\n\025Pla"
+  "yerEndRoomResponse\022\014\n\004name\030\001 \001(\tb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_LobbyMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_LobbyMessage_2eproto = {
-    false, false, 917, descriptor_table_protodef_LobbyMessage_2eproto,
+    false, false, 920, descriptor_table_protodef_LobbyMessage_2eproto,
     "LobbyMessage.proto",
     &descriptor_table_LobbyMessage_2eproto_once, nullptr, 0, 10,
     schemas, file_default_instances, TableStruct_LobbyMessage_2eproto::offsets,
@@ -2084,18 +2084,10 @@ PlayerJoinRoomResponse::PlayerJoinRoomResponse(const PlayerJoinRoomResponse& fro
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   PlayerJoinRoomResponse* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.name_){}
+      decltype(_impl_.players_){from._impl_.players_}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.name_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.name_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_name().empty()) {
-    _this->_impl_.name_.Set(from._internal_name(), 
-      _this->GetArenaForAllocation());
-  }
   // @@protoc_insertion_point(copy_constructor:LobbyMessage.PlayerJoinRoomResponse)
 }
 
@@ -2104,13 +2096,9 @@ inline void PlayerJoinRoomResponse::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.name_){}
+      decltype(_impl_.players_){arena}
     , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.name_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.name_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 PlayerJoinRoomResponse::~PlayerJoinRoomResponse() {
@@ -2124,7 +2112,7 @@ PlayerJoinRoomResponse::~PlayerJoinRoomResponse() {
 
 inline void PlayerJoinRoomResponse::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.name_.Destroy();
+  _impl_.players_.~RepeatedPtrField();
 }
 
 void PlayerJoinRoomResponse::SetCachedSize(int size) const {
@@ -2137,7 +2125,7 @@ void PlayerJoinRoomResponse::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.name_.ClearToEmpty();
+  _impl_.players_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2147,13 +2135,18 @@ const char* PlayerJoinRoomResponse::_InternalParse(const char* ptr, ::_pbi::Pars
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string name = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_name();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "LobbyMessage.PlayerJoinRoomResponse.name"));
+      // repeated string players = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_players();
+            ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(ptr);
+            CHK_(::_pbi::VerifyUTF8(str, "LobbyMessage.PlayerJoinRoomResponse.players"));
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -2186,14 +2179,14 @@ uint8_t* PlayerJoinRoomResponse::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string name = 1;
-  if (!this->_internal_name().empty()) {
+  // repeated string players = 2;
+  for (int i = 0, n = this->_internal_players_size(); i < n; i++) {
+    const auto& s = this->_internal_players(i);
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      s.data(), static_cast<int>(s.length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "LobbyMessage.PlayerJoinRoomResponse.name");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_name(), target);
+      "LobbyMessage.PlayerJoinRoomResponse.players");
+    target = stream->WriteString(2, s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2212,11 +2205,12 @@ size_t PlayerJoinRoomResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string name = 1;
-  if (!this->_internal_name().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_name());
+  // repeated string players = 2;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(_impl_.players_.size());
+  for (int i = 0, n = _impl_.players_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      _impl_.players_.Get(i));
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -2237,9 +2231,7 @@ void PlayerJoinRoomResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg,
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_name().empty()) {
-    _this->_internal_set_name(from._internal_name());
-  }
+  _this->_impl_.players_.MergeFrom(from._impl_.players_);
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -2256,13 +2248,8 @@ bool PlayerJoinRoomResponse::IsInitialized() const {
 
 void PlayerJoinRoomResponse::InternalSwap(PlayerJoinRoomResponse* other) {
   using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.name_, lhs_arena,
-      &other->_impl_.name_, rhs_arena
-  );
+  _impl_.players_.InternalSwap(&other->_impl_.players_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata PlayerJoinRoomResponse::GetMetadata() const {

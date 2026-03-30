@@ -1337,20 +1337,30 @@ class PlayerJoinRoomResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNameFieldNumber = 1,
+    kPlayersFieldNumber = 2,
   };
-  // string name = 1;
-  void clear_name();
-  const std::string& name() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_name(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_name();
-  PROTOBUF_NODISCARD std::string* release_name();
-  void set_allocated_name(std::string* name);
+  // repeated string players = 2;
+  int players_size() const;
   private:
-  const std::string& _internal_name() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
-  std::string* _internal_mutable_name();
+  int _internal_players_size() const;
+  public:
+  void clear_players();
+  const std::string& players(int index) const;
+  std::string* mutable_players(int index);
+  void set_players(int index, const std::string& value);
+  void set_players(int index, std::string&& value);
+  void set_players(int index, const char* value);
+  void set_players(int index, const char* value, size_t size);
+  std::string* add_players();
+  void add_players(const std::string& value);
+  void add_players(std::string&& value);
+  void add_players(const char* value);
+  void add_players(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& players() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_players();
+  private:
+  const std::string& _internal_players(int index) const;
+  std::string* _internal_add_players();
   public:
 
   // @@protoc_insertion_point(class_scope:LobbyMessage.PlayerJoinRoomResponse)
@@ -1361,7 +1371,7 @@ class PlayerJoinRoomResponse final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> players_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2771,54 +2781,79 @@ inline LobbySyncResponse::ContentCase LobbySyncResponse::content_case() const {
 
 // PlayerJoinRoomResponse
 
-// string name = 1;
-inline void PlayerJoinRoomResponse::clear_name() {
-  _impl_.name_.ClearToEmpty();
+// repeated string players = 2;
+inline int PlayerJoinRoomResponse::_internal_players_size() const {
+  return _impl_.players_.size();
 }
-inline const std::string& PlayerJoinRoomResponse::name() const {
-  // @@protoc_insertion_point(field_get:LobbyMessage.PlayerJoinRoomResponse.name)
-  return _internal_name();
+inline int PlayerJoinRoomResponse::players_size() const {
+  return _internal_players_size();
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void PlayerJoinRoomResponse::set_name(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:LobbyMessage.PlayerJoinRoomResponse.name)
+inline void PlayerJoinRoomResponse::clear_players() {
+  _impl_.players_.Clear();
 }
-inline std::string* PlayerJoinRoomResponse::mutable_name() {
-  std::string* _s = _internal_mutable_name();
-  // @@protoc_insertion_point(field_mutable:LobbyMessage.PlayerJoinRoomResponse.name)
+inline std::string* PlayerJoinRoomResponse::add_players() {
+  std::string* _s = _internal_add_players();
+  // @@protoc_insertion_point(field_add_mutable:LobbyMessage.PlayerJoinRoomResponse.players)
   return _s;
 }
-inline const std::string& PlayerJoinRoomResponse::_internal_name() const {
-  return _impl_.name_.Get();
+inline const std::string& PlayerJoinRoomResponse::_internal_players(int index) const {
+  return _impl_.players_.Get(index);
 }
-inline void PlayerJoinRoomResponse::_internal_set_name(const std::string& value) {
-  
-  _impl_.name_.Set(value, GetArenaForAllocation());
+inline const std::string& PlayerJoinRoomResponse::players(int index) const {
+  // @@protoc_insertion_point(field_get:LobbyMessage.PlayerJoinRoomResponse.players)
+  return _internal_players(index);
 }
-inline std::string* PlayerJoinRoomResponse::_internal_mutable_name() {
-  
-  return _impl_.name_.Mutable(GetArenaForAllocation());
+inline std::string* PlayerJoinRoomResponse::mutable_players(int index) {
+  // @@protoc_insertion_point(field_mutable:LobbyMessage.PlayerJoinRoomResponse.players)
+  return _impl_.players_.Mutable(index);
 }
-inline std::string* PlayerJoinRoomResponse::release_name() {
-  // @@protoc_insertion_point(field_release:LobbyMessage.PlayerJoinRoomResponse.name)
-  return _impl_.name_.Release();
+inline void PlayerJoinRoomResponse::set_players(int index, const std::string& value) {
+  _impl_.players_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:LobbyMessage.PlayerJoinRoomResponse.players)
 }
-inline void PlayerJoinRoomResponse::set_allocated_name(std::string* name) {
-  if (name != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.name_.SetAllocated(name, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.name_.IsDefault()) {
-    _impl_.name_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:LobbyMessage.PlayerJoinRoomResponse.name)
+inline void PlayerJoinRoomResponse::set_players(int index, std::string&& value) {
+  _impl_.players_.Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:LobbyMessage.PlayerJoinRoomResponse.players)
+}
+inline void PlayerJoinRoomResponse::set_players(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.players_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:LobbyMessage.PlayerJoinRoomResponse.players)
+}
+inline void PlayerJoinRoomResponse::set_players(int index, const char* value, size_t size) {
+  _impl_.players_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:LobbyMessage.PlayerJoinRoomResponse.players)
+}
+inline std::string* PlayerJoinRoomResponse::_internal_add_players() {
+  return _impl_.players_.Add();
+}
+inline void PlayerJoinRoomResponse::add_players(const std::string& value) {
+  _impl_.players_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:LobbyMessage.PlayerJoinRoomResponse.players)
+}
+inline void PlayerJoinRoomResponse::add_players(std::string&& value) {
+  _impl_.players_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:LobbyMessage.PlayerJoinRoomResponse.players)
+}
+inline void PlayerJoinRoomResponse::add_players(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.players_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:LobbyMessage.PlayerJoinRoomResponse.players)
+}
+inline void PlayerJoinRoomResponse::add_players(const char* value, size_t size) {
+  _impl_.players_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:LobbyMessage.PlayerJoinRoomResponse.players)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+PlayerJoinRoomResponse::players() const {
+  // @@protoc_insertion_point(field_list:LobbyMessage.PlayerJoinRoomResponse.players)
+  return _impl_.players_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+PlayerJoinRoomResponse::mutable_players() {
+  // @@protoc_insertion_point(field_mutable_list:LobbyMessage.PlayerJoinRoomResponse.players)
+  return &_impl_.players_;
 }
 
 // -------------------------------------------------------------------

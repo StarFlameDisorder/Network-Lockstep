@@ -106,10 +106,23 @@ namespace GamePlay
 
         #region 游戏状态更新
         
-        private void Update()
+        private void FixedUpdate()
         {
             _rigidbody1.transform.Translate(_speed*Time.deltaTime*_velocity1);
             _rigidbody2.transform.Translate(_speed*Time.deltaTime*_velocity2);
+
+            _rigidbody1.position = UnitizedPosition(_rigidbody1.position);
+            _rigidbody2.position = UnitizedPosition(_rigidbody2.position);
+
+        }
+
+        private Vector3 UnitizedPosition(Vector3 v3)
+        {
+            return new Vector3(
+                Mathf.Round(v3.x * 1000f) / 1000f,
+                Mathf.Round(v3.y * 1000f) / 1000f,
+                Mathf.Round(v3.z * 1000f) / 1000f
+            );
         }
         
         private Queue<GameSyncMessage> _localGameSyncMessages=new();
@@ -128,27 +141,53 @@ namespace GamePlay
 
         void RunNextFrame()
         {
-            if(_gameSyncMessages.Count>0)
+            if(_gameSyncMessages.Count>0)//远程
             {
                 
                 GameSyncMessage message = _gameSyncMessages.Dequeue();
-        
+            
                 var player = message.Players[0];
                 var v = player.InputMove;
                 _velocity2 = new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
-                StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
+                StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
                 
             }
-            if(_localGameSyncMessages.Count>0)
+            if(_localGameSyncMessages.Count>0)//本地
             {
                 
                 GameSyncMessage message = _localGameSyncMessages.Dequeue();
-        
+            
                 var player = message.Players[0];
                 var v = player.InputMove;
                 _velocity1 = new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
-                StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
+                StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
             }
+            // if(_gameSyncMessages.Count>0&&_localGameSyncMessages.Count>0)
+            // {
+            //
+            //     {
+            //         GameSyncMessage message = _gameSyncMessages.Dequeue();//远程
+            //
+            //         var player = message.Players[0];
+            //         var v = player.InputMove;
+            //         
+            //         _velocity2 = new Vector3(v.X / 1000f, v.Y / 1000f, v.Z / 1000f);
+            //         StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
+            //         StatusPanel.Instance.UpdateExternalOffset(_velocity2);
+            //     }
+            //
+            //     {
+            //         GameSyncMessage message = _localGameSyncMessages.Dequeue();//本地
+            //
+            //         var player = message.Players[0];
+            //         var v = player.InputMove;
+            //         _velocity1 = new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
+            //         StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
+            //         StatusPanel.Instance.UpdateLocalOffset(_velocity1);
+            //     }
+            //     
+            // }
+            
         }
         #endregion
         

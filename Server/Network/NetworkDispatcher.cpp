@@ -1,15 +1,13 @@
-//
-// Created by StarFlame on 2026/2/28.
-//
+/*
+ * Created by StarFlame on 2026/2/28.
+ * 网络消息分发
+ */
 
 #define FILE_PREFIX "Dispatcher:"//日志前缀
 #define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
 #include "NetworkDispatcher.h"
 #include "../LoggerStream.h"
-
-// using namespace SyncMessage;
-// using namespace ConnectMessage;
 
 NetworkDispatcher::NetworkDispatcher(QObject *parent)
     :QObject(parent),m_tcpServer(this),m_udpServer(this)
@@ -71,11 +69,10 @@ void NetworkDispatcher::handleTcpMessage(QTcpSocket* socket, const QByteArray& m
             Log_Info()<<"[handleTcpMessage][Tcp:"<<m_tcpServer.getTcpSocketInfo(socket)<<"-"<<clientId<<"]"<<clientMessage.commonmessage();
             break;
         case ClientMessage::kConnectMessage:
-            //handleTcpConnection(socket,clientMessage.connectmessage());
             Log_Error()<<"kConnectMessage被删除";
             break;
         case ClientMessage::kGameSyncMessage:
-            handleGameSync(clientId,clientMessage.gamesyncmessage());
+            Log_Error()<<"Tcp-kGameSyncMessage被删除";
             break;
         case ClientMessage::kLobbySync:
             Log_Info()<<"[handleTcpMessage][Tcp:"<<m_tcpServer.getTcpSocketInfo(socket)<<"-"<<clientId<<"]kLobbySync";
@@ -86,42 +83,6 @@ void NetworkDispatcher::handleTcpMessage(QTcpSocket* socket, const QByteArray& m
             break;
     }
 }
-
-// void NetworkDispatcher::handleTcpConnection(QTcpSocket* socket, const ClientConnectMessage &message)
-// {
-//     switch(message.content_case())
-//     {
-//         case ClientConnectMessage::kHandShakeMessage://tcp客户端不会发送HandShakeMessage
-//             Log_Info()<<message.handshakemessage().content();
-//             break;
-//         default:
-//             Log_Error()<<"[handleTcpConnection]未知类型:"<<message.content_case();
-//             break;
-//     }
-// }
-
-// void NetworkDispatcher::handeleTcpLobby(quint64 clientId, const LobbyMessage::LobbySyncRequest& message)
-// {
-//     using namespace LobbyMessage;
-//     switch (message.content_case())
-//     {
-//         case LobbySyncRequest::kPlayerLogin:
-//             Log_Warning()<<"[handeleTcpLobby]kPlayerLogin";
-//             emit lobbyPlayerLogin(clientId,message.playerlogin());
-//             break;
-//         case LobbySyncRequest::kPlayerJoin:
-//             Log_Warning()<<"[handeleTcpLobby]kPlayerJoin";
-//             emit lobbyPlayerJoinRoom(clientId,message.playerjoin());
-//             break;
-//         case LobbySyncRequest::kPlayerPlayRoom:
-//             Log_Warning()<<"[handeleTcpLobby]kPlayePlayRoom";
-//             emit lobbyPlayerPlayRoom(clientId,message.playerplayroom());
-//             break;
-//         default:
-//             Log_Error()<<"[handeleTcpLobby]未知类型:"<<message.content_case();
-//             break;
-//     }
-// }
 
 void NetworkDispatcher::handleUdpMessage(const QHostAddress& address, const quint16& port,const QByteArray& message)
 {
@@ -137,37 +98,15 @@ void NetworkDispatcher::handleUdpMessage(const QHostAddress& address, const quin
             Log_Info()<<"[handleUdpMessage][Udp:"<<m_udpServer.getPeerAddressInfo(address,port)<<"-"<<clientId<<"]"<<clientMessage.commonmessage();
             break;
         case ClientMessage::kConnectMessage:
-            //handleUdpConnection(address,port,clientMessage.connectmessage());
             Log_Error()<<"kConnectMessage被删除";
             break;
         case ClientMessage::kGameSyncMessage:
-            //handleGameSync(clientId,clientMessage.gamesyncmessage());
             emit handleUdpGameSync(clientId,clientMessage.gamesyncmessage());
             break;
         default:
             Log_Error()<<"[handleUdpMessage]未知类型:"<<clientMessage.content_case();
             break;
     }
-}
-
-// void NetworkDispatcher::handleUdpConnection(const QHostAddress &address, const quint16 &port, const ClientConnectMessage &message)
-// {
-//     switch(message.content_case())
-//     {
-//     case ClientConnectMessage::kHandShakeMessage:
-//         Log_Info()<<message.handshakemessage().content()<<": "<<m_udpServer.getPeerAddressInfo(address,port)<<"绑定id-"<<message.handshakemessage().clientid();
-//         bindClient(message.handshakemessage().clientid(),UdpEndPoint(address,port));
-//         break;
-//     default:
-//         Log_Error()<<"[handleUdpConnection]未知类型:"<<message.content_case();
-//         break;
-//     }
-// }
-
-void NetworkDispatcher::handleGameSync(quint64 clientId, const GameMessage::GameSyncMessage& message)
-{
-    using namespace GameMessage;
-    broadcastGameSync(message,clientId);
 }
 
 void NetworkDispatcher::checkClient(qint64 clientId, QTcpSocket* socket)
@@ -202,23 +141,14 @@ Client NetworkDispatcher::findClient(qint64 clientId)
 void NetworkDispatcher::addClient(QTcpSocket* socket)
 {
     quint64 clientId;
-    // if (!m_tcpClientsMap.contains(TcpEndPoint(socket)))
-    // {
-    //     clientId=nextClientId;
-    //     Client client;
-    //     client.clientId=clientId;
-    //     nextClientId++;
-    //     m_clientsMap.insert(clientId,client);
-    //     m_tcpClientsMap.insert(TcpEndPoint(socket),clientId);
-    // }else clientId=m_tcpClientsMap[TcpEndPoint(socket)];
     clientId=nextClientId;
     Client client;
     client.clientId=clientId;
     nextClientId++;
     m_clientsMap.insert(clientId,client);
 
-    using namespace ConnectMessage;
 
+    using namespace ConnectMessage;
     using namespace SyncMessage;
     ServerMessage message;
     auto *connectMessage= message.mutable_connectmessage();
@@ -230,6 +160,8 @@ void NetworkDispatcher::addClient(QTcpSocket* socket)
     message.SerializeToArray(data.data(),data.size());
 
     sendTcpMessageDirect(socket,data);
+
+
     Log_Info()<<"分配id"<<clientId<<":"<<m_tcpServer.getTcpSocketInfo(socket);
 }
 
@@ -252,38 +184,3 @@ void NetworkDispatcher::bindClient(const quint64 clientId, const UdpEndPoint& ud
         Log_Debug()<<"[bindClient]绑定客户端id:[Udp:"<<m_udpServer.getPeerAddressInfo(udpEndPoint)<<"-"<<clientId<<"]";
     }
 }
-
-void NetworkDispatcher::broadcastGameSync(const GameMessage::GameSyncMessage& message,quint64 clientId)
-{
-    Log_Debug()<<"broadcastGameSync!";
-    using namespace GameMessage;
-    using namespace SyncMessage;
-
-    // 创建一个新的GameSyncMessage并深复制PlayerSync内容
-    ServerMessage sendMessage;
-
-    // 深复制
-    if (message.players_size()>0)
-    {
-        GameSyncMessage* newGameSyncMessage= sendMessage.mutable_gamesyncmessage();
-        newGameSyncMessage->set_frameid(message.frameid());
-        //newGameSyncMessage->set_roomid(message.roomid());
-        newGameSyncMessage->set_time(message.time());
-        for (auto &player:message.players())
-        {
-            *newGameSyncMessage->add_players() = player;
-        }
-    }
-
-    QByteArray data;
-    data.resize(sendMessage.ByteSizeLong());
-    bool success = sendMessage.SerializeToArray(data.data(), data.size());
-    if (!success) {
-        Log_Error()<<"Failed to serialize ServerMessage.";
-        return;
-    }
-    UdpEndPoint uep=m_clientsMap[clientId].udpEndPoint;
-    sendUdpMessageDirect(uep.address,uep.port, data);
-
-}
-

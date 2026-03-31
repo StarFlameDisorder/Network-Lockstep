@@ -1,6 +1,10 @@
-//
-// Created by StarFlame on 2026/2/18.
-//
+/*
+* Created by StarFlame on 2026/2/18.
+ * 日志显示处理
+ * 使用LOCAL_LOG_LEVEL宏决定当前文件内的日志输出等级 Debug,Info,Warning,Error
+ * 限制日志等级时，过低等级日志不记录不输出
+ * 使用FILE_PREFIX宏决定日志输出的前缀
+ */
 
 #ifndef SERVER_LOGGER_H
 #define SERVER_LOGGER_H

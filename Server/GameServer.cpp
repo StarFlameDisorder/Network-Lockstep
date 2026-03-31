@@ -1,6 +1,7 @@
-//
-// Created by StarFlame on 2026/2/28.
-//
+/*
+* Created by StarFlame on 2026/2/28.
+ * 游戏服务器
+ */
 
 #include "GameServer.h"
 

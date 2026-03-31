@@ -1,6 +1,7 @@
-//
-// Created by StarFlame on 2026/3/28.
-//
+/*
+ * Created by StarFlame on 2026/3/28.
+ * 房间数据管理及同步
+ */
 
 #ifndef SERVER_ROOMMANAGER_H
 #define SERVER_ROOMMANAGER_H

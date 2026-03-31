@@ -1,6 +1,7 @@
-//
-// Created by StarFlame on 2026/2/18.
-//
+/*
+ * Created by StarFlame on 2026/2/18.
+ * 日志显示处理
+ */
 
 #include "LoggerStream.h"
 #include <QTime>

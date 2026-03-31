@@ -1,6 +1,7 @@
-//
-// Created by StarFlame on 2026/3/5.
-//
+/*
+* Created by StarFlame on 2026/3/5.
+ * UDPSocket通信
+ */
 
 #define FILE_PREFIX "UdpServer:"
 #define LOCAL_LOG_LEVEL LogLevel::Error//局部日志等级
@@ -17,7 +18,6 @@ UdpServer::UdpServer(QObject* parent)
     m_socket=new QUdpSocket(this);
 
     connect(m_socket,&QUdpSocket::readyRead,this,&UdpServer::receiveSocketMessage);
-    //connect(this,&UdpServer::udpReadyRead,this,&UdpServer::receiveMessage);
     m_socket->bind(QHostAddress::Any,1976);
 }
 
@@ -51,7 +51,7 @@ void UdpServer::sendMessage(const QHostAddress& address, const quint16& port,con
     m_socket->writeDatagram(message,address,port);
 }
 
-
+//获取字符串形式的ip+端口
 std::string UdpServer::getPeerAddressInfo(const QHostAddress& address, const quint16& port) const
 {
     QString out=address.toString();
@@ -63,15 +63,10 @@ std::string UdpServer::getPeerAddressInfo(const QHostAddress& address, const qui
     return out.toStdString();
 }
 
+//获取字符串形式的ip+端口
 std::string UdpServer::getPeerAddressInfo(const UdpEndPoint& udpEndPoint) const
 {
     return  getPeerAddressInfo(udpEndPoint.address,udpEndPoint.port);
 }
 
-// void UdpServer::receiveMessage(const QHostAddress& address, const quint16& port,const QByteArray& message)
-// {
-//     _networkDispatcher->handleUdpMessage(address,port,message);
-//     //Log_Info()<<getPeerAddressInfo(address,port)<<" "<<QString::fromUtf8(message);
-//     //sendMessage(address,port,message+QString("回传").toUtf8());
-// }
 

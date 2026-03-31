@@ -1,16 +1,15 @@
-//
-// Created by StarFlame on 2026/2/14.
-//
+/*
+* Created by StarFlame on 2026/2/14.
+ * TcpSocket通信
+ */
 
 #define FILE_PREFIX "TcpServer:"//日志前缀
 #define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
 #include "TcpServer.h"
-#include <QtEndian>
 #include <QTcpSocket>
 #include <QJsonObject>
 #include "../LoggerStream.h"
-#include "NetworkDispatcher.h"
 #include "../protobuf/output/SyncMessage.pb.h"
 #include "../protobuf/output/ConnectMessage.pb.h"
 

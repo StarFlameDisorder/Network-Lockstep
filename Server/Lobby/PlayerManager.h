@@ -19,6 +19,7 @@ struct Player{
 
 };
 
+//弃用
 class PlayerManager:public QObject
 {
     Q_OBJECT

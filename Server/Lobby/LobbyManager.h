@@ -9,6 +9,7 @@
 #include "PlayerManager.h"
 #include "../protobuf/output/LobbyMessage.pb.h"
 
+//弃用
 class LobbyManager:public QObject
 {
     Q_OBJECT

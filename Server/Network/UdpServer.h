@@ -1,6 +1,8 @@
-//
-// Created by StarFlame on 2026/3/5.
-//
+/*
+ * Created by StarFlame on 2026/3/5.
+ * UDPSocket通信
+ * 可靠UDP待实现
+ */
 
 #ifndef SERVER_UDPSERVER_H
 #define SERVER_UDPSERVER_H
@@ -30,8 +32,6 @@ inline size_t qHash(const UdpEndPoint& key,uint seed=0)
     return qHashMulti(seed,key.address,key.port);
 }
 
-//class NetworkDispatcher;
-
 class UdpServer:public QObject
 {
     Q_OBJECT
@@ -42,13 +42,10 @@ public:
     std::string getPeerAddressInfo(const UdpEndPoint& udpEndPoint)const;
 private:
     void receiveSocketMessage();
-    //void receiveMessage(const QHostAddress& address,const quint16& port,const QByteArray& message);
-
 
     QUdpSocket *m_socket;
     QSet<UdpEndPoint> m_udpEndPoints;
 signals:
-    //void udpReadyRead(const QHostAddress& address,const quint16& port,const QByteArray& message);
     void receiveMessage(const QHostAddress& address, const quint16& port,const QByteArray& message);
 };
 

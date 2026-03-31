@@ -1,6 +1,7 @@
-//
-// Created by StarFlame on 2026/2/28.
-//
+/*
+ * Created by StarFlame on 2026/2/28.
+ * 游戏服务器
+ */
 
 #ifndef SERVER_GAMESERVER_H
 #define SERVER_GAMESERVER_H
@@ -17,7 +18,6 @@ public:
     GameServer(QObject* parent=nullptr);
 private:
     NetworkDispatcher m_networkDispatcher;
-    // LobbyManager m_lobbyManager;
     RoomManager m_roomManager;
 };
 

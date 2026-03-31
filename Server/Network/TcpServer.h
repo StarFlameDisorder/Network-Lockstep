@@ -1,6 +1,8 @@
-//
-// Created by StarFlame on 2026/2/14.
-//
+/*
+* Created by StarFlame on 2026/2/14.
+ * TcpSocket通信
+ * 支持分包黏包处理
+ */
 
 #ifndef SERVER_TCPSERVER_H
 #define SERVER_TCPSERVER_H

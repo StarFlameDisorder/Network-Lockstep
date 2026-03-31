@@ -1,6 +1,7 @@
-//
-// Created by StarFlame on 2026/3/28.
-//
+/*
+* Created by StarFlame on 2026/3/28.
+ * 房间数据管理及同步
+ */
 
 #define FILE_PREFIX "RoomManager:"//日志前缀
 #define LOCAL_LOG_LEVEL LogLevel::Debug//局部日志等级
@@ -52,7 +53,6 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
     ServerMessage sendMessage;
     auto *lobbyMes=sendMessage.mutable_lobbysync();
     auto *playerJoin=lobbyMes->mutable_joinroom();
-    //playerJoin->set_name(name.toStdString());
     for (auto i:m_players.keys())
     {
         playerJoin->add_players(i.toStdString());
@@ -129,14 +129,11 @@ void RoomManager::broadcastGameSync()
             i.pop();
         }
     }
-    //QString out;
     for (auto &i:newGameSyncMessage->players())
     {
         UnityMath::Vector3D v3= i.inputmove();
-        //out+="z"+QString::number(v3.x())+"y"+QString::number(v3.y())+"z"+QString::number(v3.z());
     }
 
-    //Log_Debug() <<"玩家数"<<newGameSyncMessage->players_size()<<out;
 
     QByteArray data;
     data.resize(sendMessage.ByteSizeLong());

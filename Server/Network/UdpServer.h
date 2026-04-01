@@ -44,7 +44,8 @@ private:
     void receiveSocketMessage();
 
     QUdpSocket *m_socket;
-    QSet<UdpEndPoint> m_udpEndPoints;
+    //QSet<UdpEndPoint> m_udpEndPoints;
+    QHash<UdpEndPoint,qint64> m_udpIndex;
 signals:
     void receiveMessage(const QHostAddress& address, const quint16& port,const QByteArray& message);
 };

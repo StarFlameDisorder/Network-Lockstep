@@ -1,8 +1,10 @@
 using System;
 using System.Text;
+using Google.Protobuf;
 using TMPro;
 using UnityEngine;
 using Network;
+using SyncMessage;
 
 namespace UI
 {
@@ -44,16 +46,28 @@ namespace UI
         private void TcpSendTest()
         {
             tcpMessage.text = tcpTimes.ToString();
-            String s = "Tcp-消息"+tcpTimes;
-            NetworkManager.Instance.TcpSendMessage(Encoding.UTF8.GetBytes(s));
+            
+            ClientMessage message = new ClientMessage
+            {
+                ClientId = NetworkManager.Instance.GetClientId(),
+                CommonMessage = "Tcp-消息"+tcpTimes
+            };
+            NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
+            
             tcpTimes++;
         }
 
         private void UdpSendTest()
         {
             udpMessage.text = udpTimes.ToString();
-            String s = "Udp-消息"+udpTimes;
-            NetworkManager.Instance.UdpSendMessage(Encoding.UTF8.GetBytes(s));
+            
+            ClientMessage message = new ClientMessage
+            {
+                ClientId = NetworkManager.Instance.GetClientId(),
+                CommonMessage = "Udp-消息"+udpTimes
+            };
+            NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
+            
             udpTimes++;
         }
     }

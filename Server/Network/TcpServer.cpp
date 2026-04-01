@@ -8,11 +8,10 @@
 
 #include "TcpServer.h"
 #include <QTcpSocket>
-#include <QJsonObject>
 #include "../LoggerStream.h"
 #include "../protobuf/output/SyncMessage.pb.h"
 #include "../protobuf/output/ConnectMessage.pb.h"
-
+#include "QtEndian"
 
 TcpServer::TcpServer(QObject* parent):QTcpServer(parent)
 {

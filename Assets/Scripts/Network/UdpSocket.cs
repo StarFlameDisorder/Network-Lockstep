@@ -15,7 +15,8 @@ namespace Network
     {
         private IPEndPoint _ipEndPoint;
         private Socket _socketUdp;
-        private UInt64  _clientId=0; 
+        private UInt64  _clientId=0;
+        private Int64 _index=0;
         
         public void StartLink(string ip, int port)
         {
@@ -53,9 +54,30 @@ namespace Network
         {
             if (IsConnected())
             {
+                byte[] headerBuf = Encoding.ASCII.GetBytes("SEQ");
                 int length = buf.Length;
-                //Debug.Log($"发送-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(buf, 0, length)}");//有效载荷长度
-                _socketUdp.Send(buf);
+                byte[] indexBytes=BitConverter.GetBytes(IPAddress.HostToNetworkOrder(_index));
+                byte[] lengthBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(length));
+                if(length>548)Debug.LogWarning("UDP包过长，可能出现分包！");
+                
+                byte[] sendBuf = new byte[buf.Length +indexBytes.Length +lengthBytes.Length+headerBuf.Length];
+                
+                int offset=0;
+                Buffer.BlockCopy(headerBuf, 0, sendBuf, 0, headerBuf.Length);//类型
+                
+                offset+=headerBuf.Length;
+                Buffer.BlockCopy(indexBytes, 0, sendBuf, offset, indexBytes.Length);//序号
+
+                offset += indexBytes.Length;
+                Buffer.BlockCopy(lengthBytes,0,sendBuf,offset,lengthBytes.Length);//长度
+                
+                offset+= lengthBytes.Length;
+                Buffer.BlockCopy(buf, 0, sendBuf, offset, buf.Length);//数据
+                
+                
+                Debug.Log($"发送-序号{_index}-长度:{length}原始有效字节(十六进制): {BitConverter.ToString(buf, 0, length)}");//有效载荷长度
+                _socketUdp.Send(sendBuf);
+                _index++;
             }
         }
 
@@ -65,10 +87,19 @@ namespace Network
             {
                 byte[] buf = new byte[600];
                 int originalLength=await _socketUdp.ReceiveAsync(buf, SocketFlags.None);
-                byte[] actualData = new byte[originalLength];
-                Array.Copy(buf, 0, actualData, 0, originalLength);
-                //Debug.Log($"接收-Socket长度:{originalLength}原始有效字节(十六进制): {BitConverter.ToString(actualData, 0, originalLength)}");
-                callback?.Invoke(actualData);
+                
+                string t=Encoding.UTF8.GetString(buf, 0, 3);
+                if (t == "SEQ")
+                {
+
+                    Int64 index= IPAddress.NetworkToHostOrder(BitConverter.ToInt64(buf, 3)); 
+                    int length=IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buf, 11)); 
+                    Debug.Log($"接收-长度{length}序号{index}");
+                    byte[] actualData = new byte[length];
+                    Array.Copy(buf, 15, actualData, 0, length);
+                    Debug.Log($"接收-Socket长度:{originalLength}原始有效字节(十六进制): {BitConverter.ToString(actualData, 0, length)}");
+                    callback?.Invoke(actualData);
+                }
             }
         }
          

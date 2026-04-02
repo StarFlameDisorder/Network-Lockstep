@@ -42,6 +42,7 @@ public:
     std::string getPeerAddressInfo(const UdpEndPoint& udpEndPoint)const;
 private:
     void receiveSocketMessage();
+    void sendACKMessage(const QHostAddress& address,const quint16 &port,qint64 index);
 
     QUdpSocket *m_socket;
     //QSet<UdpEndPoint> m_udpEndPoints;

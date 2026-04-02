@@ -35,7 +35,6 @@ void UdpServer::receiveSocketMessage()
 
         m_socket->readDatagram(message.data(),length,&addr,&port);
 
-        Log_Debug() <<"接受-长度:"<<length<< "原始有效字节:" << message.toHex();//有效载荷长度
         if (length<=0)
         {
             Log_Warning()<<"接收到空包:"<<getPeerAddressInfo(addr,port);
@@ -44,18 +43,38 @@ void UdpServer::receiveSocketMessage()
         }
 
         QString header=QString::fromUtf8(message.mid(0,3));
+        qint64 index=qFromBigEndian<qint64>(reinterpret_cast<const char*>(message.mid(3,8).constData()));
+        Log_Debug() <<"接受-序号:"<<index<<"-Socket长度:"<<length<<"-总字节:" << message.toHex();
+
         if (header=="SEQ")
         {
-            qint64 index=qFromBigEndian<int>(reinterpret_cast<const char*>(message.mid(3,8).constData()));
-            int length=qFromBigEndian<int>(reinterpret_cast<const char*>(message.mid(11,4).constData()));
-            Log_Debug()<<"接收-数据长度"<<length<<"包序号"<<index;
-            emit receiveMessage(addr,port,message.mid(15,length));
+            int dataLength=qFromBigEndian<int>(reinterpret_cast<const char*>(message.mid(11,4).constData()));
+            QByteArray array=message.mid(15,dataLength);
+            Log_Debug() <<"接受-长度:"<<length<< "原始有效字节(十六进制):" << array.toHex();//有效载荷长度
+            sendACKMessage(addr,port,index);
+            emit receiveMessage(addr,port,array);
         }else
         {
-            Log_Error()<<"错误类型";
+            if (header=="ACK")
+            {
+                Log_Debug()<<"接收-ACK序号"<<index;
+            }else Log_Error()<<"接收未知类型"+header;
         }
-
     }
+}
+
+void UdpServer::sendACKMessage(const QHostAddress& address, const quint16& port, qint64 index)
+{
+    QString header="ACK";
+    QByteArray sendBuffer;
+    qint64 indexheader=qToBigEndian(index);//序号
+    sendBuffer.append(header.toUtf8());
+    sendBuffer.append(reinterpret_cast<const char*>(&indexheader), sizeof(indexheader));
+
+    Log_Debug()<<"发送ACK"<<getPeerAddressInfo(address,port)<<"-序号"<<index<<"-Socket长度:"<<sendBuffer.size()<<"-总字节:" << sendBuffer.toHex();
+    Log_Debug()<<"发送ACK-序号"<<index<<" "<<getPeerAddressInfo(address,port);
+
+    m_socket->writeDatagram(sendBuffer,address,port);
 }
 
 void UdpServer::sendMessage(const QHostAddress& address, const quint16& port,const QByteArray& message)
@@ -68,7 +87,6 @@ void UdpServer::sendMessage(const QHostAddress& address, const quint16& port,con
 
     qint32 originalLen = message.length();//转成32位
 
-    Log_Debug() <<"发送"<<getPeerAddressInfo(address,port)<<"-序号"<<m_udpIndex[endPoint]<<"-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
     QString header="SEQ";
     QByteArray sendBuffer;
     sendBuffer.append(header.toUtf8());//类型
@@ -80,6 +98,11 @@ void UdpServer::sendMessage(const QHostAddress& address, const quint16& port,con
     sendBuffer.append(reinterpret_cast<const char*>(&networkLen), sizeof(networkLen));
 
     sendBuffer.append(message);
+
+    //getPeerAddressInfo(address,port)//信息获取
+    Log_Debug()<<"发送"<<"-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
+    Log_Debug()<<"发送"<<"-序号"<<m_udpIndex[endPoint]<<"-Socket长度:"<<sendBuffer.size()<<"-总字节:" << sendBuffer.toHex();
+
     m_socket->writeDatagram(sendBuffer,address,port);
     m_udpIndex[endPoint]++;
 }

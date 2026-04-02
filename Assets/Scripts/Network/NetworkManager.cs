@@ -98,7 +98,7 @@ namespace Network
             StatusPanel.Instance.UpdateClientIdStatus(clientId);
             this.clientId = clientId;
             _tcpSocket.BindClientId(clientId);
-            _udpSocket.bindClientId(clientId);
+            _udpSocket.BindClientId(clientId);
         }
 
         public UInt64 GetClientId()

@@ -187,6 +187,8 @@ namespace Network
             _socketUdp?.Send(sendBuf);
         }
 
+        private Dictionary<Int64,byte[]> _receiveBuf = new Dictionary<Int64, byte[]>();
+        private Int64 _invokeIndex=0;//下一个应传出的序号
         
         private CancellationTokenSource _cancelTokenSource;
         private async void ReceiveAsync(UnityAction<byte[]> callback,CancellationToken token)
@@ -213,7 +215,26 @@ namespace Network
                     Debug.Log($"接收-长度{length}-原始有效字节(十六进制): {BitConverter.ToString(actualData, 0, length)}");
 #endif
                     SendAck(index);
-                    callback?.Invoke(actualData);
+                    
+                    //重复判断 排序
+                    if (index >= _invokeIndex)
+                    {
+                        if (!_receiveBuf.TryAdd(index, actualData)) Debug.LogWarning("重复包" + index);
+                    }
+                    else Debug.LogWarning("接收到旧包"+index);
+                    
+                    while (_receiveBuf.TryGetValue(_invokeIndex, out byte[] data))
+                    {
+                        callback?.Invoke(data);
+                        _receiveBuf.Remove(_invokeIndex);
+                        _invokeIndex++;
+                    }
+                    while(_receiveBuf.Count>50)
+                    {
+                        Debug.LogWarning("UDP缓冲区包过多" + _receiveBuf.Count+"跳过"+_invokeIndex);
+                        _receiveBuf.Remove(_invokeIndex);
+                        _invokeIndex++;
+                    };
                 }
                 else
                 {

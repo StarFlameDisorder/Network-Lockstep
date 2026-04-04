@@ -48,19 +48,42 @@ void UdpServer::receiveSocketMessage()
         qint64 index=qFromBigEndian<qint64>(reinterpret_cast<const char*>(message.mid(3,8).constData()));
         Log_Debug() <<"接受-序号:"<<index<<"-Socket长度:"<<length<<"-总字节:" << message.toHex();
 
+        UdpEndPoint udpEndPoint(addr,port);
         if (header=="SEQ")
         {
             int dataLength=qFromBigEndian<int>(reinterpret_cast<const char*>(message.mid(11,4).constData()));
             QByteArray array=message.mid(15,dataLength);
             Log_Debug() <<"接受-长度:"<<length<< "原始有效字节(十六进制):" << array.toHex();//有效载荷长度
             sendACKMessage(addr,port,index);
-            emit receiveMessage(addr,port,array);
+
+            //重复判断 排序
+            auto &receiveBuf=m_receiveBuf[udpEndPoint];
+            auto &invokeIndex=m_invokeIndex[udpEndPoint];
+            if (index>=invokeIndex)
+            {
+                if (!receiveBuf.contains(index))receiveBuf.insert(index,std::move(array));
+                else Log_Warning()<<"重复包" << index;
+            }else Log_Warning()<<"接收到旧包" << index;
+
+            while (receiveBuf.contains(invokeIndex))
+            {
+                emit receiveMessage(addr,port,receiveBuf[invokeIndex]);//潜在跨线程注意点
+                receiveBuf.remove(invokeIndex);
+                invokeIndex++;
+            }
+            while (receiveBuf.count()>50)
+            {
+                Log_Warning()<<"UDP缓冲区包过多"<<receiveBuf.count();
+                receiveBuf.remove(invokeIndex);
+                invokeIndex++;
+            }
+
         }else
         {
             if (header=="ACK")
             {
                 Log_Debug()<<"接收-ACK序号"<<index;
-                m_pendingPackets[UdpEndPoint(addr,port)][index].isAck=true;
+                m_pendingPackets[udpEndPoint][index].isAck=true;
             }else Log_Error()<<"接收未知类型"+header;
         }
     }

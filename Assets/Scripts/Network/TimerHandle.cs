@@ -8,7 +8,7 @@ namespace Network
     
     public class TimerHandle
     {
-        public Action OnTimeTriggerEvent;
+        public event Action OnTimeTriggerEvent;
         private Coroutine _syncCoroutine;
         private bool _isRunning = true;
         private int _refreshRate;

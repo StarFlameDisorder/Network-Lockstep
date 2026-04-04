@@ -4,10 +4,12 @@
  */
 
 #define FILE_PREFIX "UdpServer:"
-#define LOCAL_LOG_LEVEL LogLevel::Debug//局部日志等级
+#define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
 #include "UDPServer.h"
 #include <QNetworkDatagram>
+#include <QTimer>
+
 #include "../LoggerStream.h"
 #include "NetworkDispatcher.h"
 #include "QtEndian"
@@ -58,6 +60,7 @@ void UdpServer::receiveSocketMessage()
             if (header=="ACK")
             {
                 Log_Debug()<<"接收-ACK序号"<<index;
+                m_pendingPackets[UdpEndPoint(addr,port)][index].isAck=true;
             }else Log_Error()<<"接收未知类型"+header;
         }
     }
@@ -104,7 +107,15 @@ void UdpServer::sendMessage(const QHostAddress& address, const quint16& port,con
     Log_Debug()<<"发送"<<"-序号"<<m_udpIndex[endPoint]<<"-Socket长度:"<<sendBuffer.size()<<"-总字节:" << sendBuffer.toHex();
 
     m_socket->writeDatagram(sendBuffer,address,port);
+
+    qint64 sendIndex=m_udpIndex[endPoint];
+    m_pendingPackets[endPoint][sendIndex]=PendingPacket{
+        sendIndex,std::move(sendBuffer),QDateTime::currentMSecsSinceEpoch(),0,false //移动构造
+    };
+    m_sendQueue[endPoint].enqueue(sendIndex);
+
     m_udpIndex[endPoint]++;
+    checkAndResend();
 }
 
 //获取字符串形式的ip+端口
@@ -125,4 +136,38 @@ std::string UdpServer::getPeerAddressInfo(const UdpEndPoint& udpEndPoint) const
     return  getPeerAddressInfo(udpEndPoint.address,udpEndPoint.port);
 }
 
+void UdpServer::checkAndResend()//发送消息后会检查旧数据是否发送
+{
+    for (auto &udpEndPoint:m_pendingPackets.keys())
+    {
+        qint64 time=QDateTime::currentMSecsSinceEpoch();
+        while (m_sendQueue[udpEndPoint].size()>0)
+        {
+            qint64 index=m_sendQueue[udpEndPoint].head();
+            if (m_pendingPackets[udpEndPoint][index].isAck)
+            {
+                m_pendingPackets[udpEndPoint].remove(index);
+                m_sendQueue[udpEndPoint].dequeue();
+            }else
+            {
+                PendingPacket &packet=m_pendingPackets[udpEndPoint][index];
 
+                if (time-packet.previousTime<200)break;
+                if (packet.times>3)
+                {
+                    Log_Warning()<<"[checkAndResend]重传3次失败，序号:"<<index;
+                    m_pendingPackets[udpEndPoint].remove(index);
+                    m_sendQueue[udpEndPoint].dequeue();
+                }else
+                {
+                    packet.times++;
+                    packet.previousTime=time;
+                    m_socket->writeDatagram(packet.sendData,udpEndPoint.address,udpEndPoint.port);
+                    m_sendQueue[udpEndPoint].dequeue();
+                    m_sendQueue[udpEndPoint].enqueue(index);
+                    Log_Warning()<<"[checkAndResend]重传，序号:"<<index;
+                }
+            }
+        }
+    }
+}

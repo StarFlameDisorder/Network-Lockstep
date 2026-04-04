@@ -209,9 +209,9 @@ namespace GamePlay
         
         #region 游戏状态及触发器
         
-        public Action GameStartEvent;
-        public Action GamePauseEvent;
-        public Action GameContinueEvent;
+        public event Action GameStartEvent;
+        public event Action GamePauseEvent;
+        public event Action GameContinueEvent;
 
         private TimerHandle _timerHandle = new TimerHandle(15);
         

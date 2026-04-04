@@ -10,6 +10,7 @@
 #include <QSet>
 #include <QUdpSocket>
 #include <QHash>
+#include <QQueue>
 
 struct UdpEndPoint
 {
@@ -32,6 +33,15 @@ inline size_t qHash(const UdpEndPoint& key,uint seed=0)
     return qHashMulti(seed,key.address,key.port);
 }
 
+struct PendingPacket
+{
+    qint64 index;//包序号
+    QByteArray sendData;
+    qint64 previousTime; //上次发送时间(包括重传)
+    int times; //发送尝试次数
+    bool isAck; //是否确认
+};
+
 class UdpServer:public QObject
 {
     Q_OBJECT
@@ -43,10 +53,13 @@ public:
 private:
     void receiveSocketMessage();
     void sendACKMessage(const QHostAddress& address,const quint16 &port,qint64 index);
+    void checkAndResend();
 
     QUdpSocket *m_socket;
     //QSet<UdpEndPoint> m_udpEndPoints;
     QHash<UdpEndPoint,qint64> m_udpIndex;
+    QHash<UdpEndPoint,QHash<qint64,PendingPacket>> m_pendingPackets;
+    QHash<UdpEndPoint,QQueue<qint64>> m_sendQueue;
 signals:
     void receiveMessage(const QHostAddress& address, const quint16& port,const QByteArray& message);
 };

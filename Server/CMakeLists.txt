@@ -45,10 +45,6 @@ add_executable(Server main.cpp
 
         Lobby/RoomManager.cpp
         Lobby/RoomManager.h
-        Lobby/PlayerManager.cpp
-        Lobby/PlayerManager.h
-        Lobby/LobbyManager.cpp
-        Lobby/LobbyManager.h
 )
 
 

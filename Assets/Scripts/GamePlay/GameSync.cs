@@ -42,6 +42,7 @@ namespace GamePlay
             
             RegisterTimerEvent(SyncPlayerAction);//注册操作同步
             RegisterTimerEvent(RunNextFrame);//注册下帧处理函数
+            _heartBeatHandle.OnTimeTriggerEvent += HeartBeat;
         }
 
         public void SetName(string playerName)
@@ -205,6 +206,22 @@ namespace GamePlay
             
             
         }
+
+        void HeartBeat()
+        {
+            UInt64 clientId = NetworkManager.Instance.GetClientId();
+            ClientMessage message = new ClientMessage
+            {
+                ClientId = clientId,
+                HeartBeat = new HeartBeat
+                {
+                    Name = _name
+                }
+                
+            };
+            NetworkManager.Instance.UdpSendMessage(message.ToByteArray());
+        }
+        
         #endregion
         
         #region 游戏状态及触发器
@@ -214,6 +231,7 @@ namespace GamePlay
         public event Action GameContinueEvent;
 
         private TimerHandle _timerHandle = new TimerHandle(15);
+        private TimerHandle _heartBeatHandle = new TimerHandle(1);
         
         GameStatus _status=GameStatus.Notstarted;
 
@@ -232,6 +250,7 @@ namespace GamePlay
             _status = GameStatus.Started;
             GameStartEvent?.Invoke();
             _timerHandle.StartTimer();
+            _heartBeatHandle.StartTimer();
         }
         
         public void PauseGame()
@@ -252,6 +271,7 @@ namespace GamePlay
         {
             _status = GameStatus.Notstarted;
             _timerHandle.Destroy();
+            _heartBeatHandle.Destroy();
         }
         
         #endregion

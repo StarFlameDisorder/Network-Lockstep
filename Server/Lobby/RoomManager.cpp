@@ -27,7 +27,7 @@ void RoomManager::handleLobbySync(quint64 clientId, const LobbyMessage::LobbySyn
             break;
         case LobbySyncRequest::kLeaveRoom:
             Log_Debug()<<"[handeleLobbySync]kLeaveRoom";
-            leaveRoom(QString::fromStdString(message.leaveroom().name()));
+            leaveRoom(QString::fromStdString(message.leaveroom().name()),clientId);
             break;
         case LobbySyncRequest::kStartRoom:
             Log_Debug()<<"[handeleLobbySync]kStartRoom";
@@ -43,9 +43,22 @@ void RoomManager::handleLobbySync(quint64 clientId, const LobbyMessage::LobbySyn
 
 void RoomManager::joinRoom(QString name, quint64 clientId)
 {
-    if (m_players.contains(name))Log_Warning()<<"出现同名：断线重连/玩家重名";
-    m_players[name]=clientId;
-    m_playersName[clientId]=name;
+    quint64 playerId=containPlayer(name);
+    if (playerId!=0)Log_Warning()<<"出现同名：断线重连/玩家重名";
+    else
+    {
+        playerId=m_nextPlayerId;
+        m_nextPlayerId++;
+    }
+
+    Player &player= m_players[playerId];
+    player.id=playerId;
+    player.clientId=clientId;
+    player.name=name;
+    player.activeTime=QDateTime::currentMSecsSinceEpoch();
+    player.receiveMessages={};//清空
+
+    m_playerId[clientId]=playerId;
 
     using namespace SyncMessage;
     using namespace LobbyMessage;
@@ -53,9 +66,9 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
     ServerMessage sendMessage;
     auto *lobbyMes=sendMessage.mutable_lobbysync();
     auto *playerJoin=lobbyMes->mutable_joinroom();
-    for (auto i:m_players.keys())
+    for (auto i:m_players)
     {
-        playerJoin->add_players(i.toStdString());
+        playerJoin->add_players(i.name.toStdString());
     }
 
     QByteArray data;
@@ -66,20 +79,25 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
         return;
     }
 
-    for (auto i:m_players)
+    for (auto &i:m_players)
     {
-        emit sendTcpMessage(i,data);
+        emit sendTcpMessage(i.id,data);
     }
 
     Log_Info()<<"[joinRoom]玩家加入:"<<name<<"客户端Id:"<<clientId;
     if (m_players.size()>0)startRoom();
 }
 
-void RoomManager::leaveRoom(QString name)
+void RoomManager::leaveRoom(QString name,quint64 clientId)
 {
-    quint64 clientId=m_players.value(name);
-    m_players.remove(name);
-    m_playersName.remove(clientId);
+    qint64 playerId=m_playerId[clientId];
+    if (m_players[playerId].name!=name)
+    {
+        Log_Error()<<"[leaveRoom]名称不一致"<<clientId<<name<<"内部名称"<<m_players[playerId].name;
+    }
+
+    m_players.remove(playerId);
+    m_playerId.remove(clientId);
 
     Log_Info()<<"[leaveRoom]玩家离开:"<<name<<"客户端Id:"<<clientId;
     if (m_players.size()==0)endRoom();
@@ -99,18 +117,22 @@ void RoomManager::endRoom()
 void RoomManager::receiveGameSync(quint64 clientId,const GameMessage::GameSyncMessage& message)
 {
     using namespace GameMessage;
-    if (!m_messages.contains(clientId))
-    {
-        m_messages.insert(clientId,queue<PlayerSync>());
-    }
+    quint64 playerId=m_playerId[clientId];
 
     if (message.players_size()>0)
     {
-        queue<PlayerSync> &queue=m_messages[clientId];
+        queue<PlayerSync> &queue=m_players[playerId].receiveMessages;
         PlayerSync p;
         p.CopyFrom(message.players(0));
         queue.push(p);
     }
+}
+
+void RoomManager::receiveHeartBeat(quint64 clientId, const GameMessage::HeartBeat& message)
+{
+    Log_Debug()<<"[receiveHeartBeat]收到来自"<<clientId<<" "<<message.name();
+    m_players[m_playerId[clientId]].activeTime=QDateTime::currentMSecsSinceEpoch();
+    //TODO:心跳处理
 }
 
 void RoomManager::broadcastGameSync()
@@ -120,19 +142,21 @@ void RoomManager::broadcastGameSync()
 
     ServerMessage sendMessage;
     GameSyncMessage* newGameSyncMessage= sendMessage.mutable_gamesyncmessage();
-    for (auto &i:m_messages)
+    for (auto &p:m_players)
     {
-        if (!i.empty())
+        queue<PlayerSync> &queue=p.receiveMessages;
+        while (!queue.empty())
         {
-            PlayerSync sync=i.front();
+            PlayerSync sync=queue.front();
             newGameSyncMessage->add_players()->CopyFrom(sync);
-            i.pop();
+            queue.pop();
         }
     }
-    for (auto &i:newGameSyncMessage->players())
-    {
-        UnityMath::Vector3D v3= i.inputmove();
-    }
+
+    // for (auto &i:newGameSyncMessage->players())
+    // {
+    //     UnityMath::Vector3D v3= i.inputmove();
+    // }
 
 
     QByteArray data;
@@ -142,9 +166,18 @@ void RoomManager::broadcastGameSync()
         Log_Error()<<"Failed to serialize ServerMessage.";
         return;
     }
-    for (auto i:m_players)
+    for (auto &i:m_players)
     {
-        emit sendUdpMessage(i,data);
+        emit sendUdpMessage(i.id,data);
     }
+}
+
+quint64 RoomManager::containPlayer(QString name)
+{
+    for (auto &i:m_players)
+    {
+        if (i.name==name)return i.id;
+    }
+    return 0;
 }
 

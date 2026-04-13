@@ -56,6 +56,7 @@ public:
 signals:
     void handleUdpGameSync(quint64 clientId,const GameMessage::GameSyncMessage &message);
     void handleUdpGameSnapshot(quint64 clientId,const GameMessage::GameSnapshotMessage &message);//未使用
+    void handleUdpHeartBeat(quint64 clientId,const GameMessage::HeartBeat& message);
     void handleTcpLobby(quint64 clientId,const LobbyMessage::LobbySyncRequest &message);
 
 private:

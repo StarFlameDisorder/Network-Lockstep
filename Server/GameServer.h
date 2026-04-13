@@ -9,7 +9,7 @@
 #include <QObject>
 
 #include "Network/NetworkDispatcher.h"
-#include  "Lobby/LobbyManager.h"
+#include  "Lobby/RoomManager.h"
 
 class GameServer:public QObject
 {

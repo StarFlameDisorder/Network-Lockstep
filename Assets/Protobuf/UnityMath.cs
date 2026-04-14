@@ -40,7 +40,7 @@ namespace UnityMath {
   #region Messages
   /// <summary>
   /// ==================================================
-  ///Unity 数据结构
+  ///Unity 数据结构 采用int传输数据 需要使用时自己决定小数处理
   ///================================================== 
   /// </summary>
   public sealed partial class Vector2D : pb::IMessage<Vector2D>

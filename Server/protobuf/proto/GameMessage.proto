@@ -19,8 +19,10 @@ message GameSnapshotMessage{
 
 message PlayerSync
 {
-    string name=1;
-    UnityMath.Vector3D inputMove= 2;
+    uint64 frameId=1;
+    uint64 time=2;
+    string name=3;
+    UnityMath.Vector3D inputMove= 4;
 }
 
 message PlayerSnapshotSync

@@ -36,7 +36,7 @@ public:
     void handleLobbySync(quint64 clientId,const LobbyMessage::LobbySyncRequest& message);
     void joinRoom(QString name, quint64 clientId);
     void leaveRoom(QString name,quint64 clientId);
-    void startRoom();
+    void startRoom(QString name);
     void endRoom();
     void receiveGameSync(quint64 clientId,const GameMessage::GameSyncMessage& message);
     void receiveHeartBeat(quint64 clientId,const GameMessage::HeartBeat& message);
@@ -49,6 +49,7 @@ private:
     QHash<quint64,Player> m_players;//玩家id 玩家信息
     QTimer m_timer;//定时发送
     quint64 m_nextPlayerId=1;//从1开始
+    quint64 m_sendIndex=0;
 
 signals:
     void sendTcpMessage(quint64 clientId,const QByteArray &message);

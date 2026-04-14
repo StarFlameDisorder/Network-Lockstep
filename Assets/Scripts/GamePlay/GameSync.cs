@@ -39,6 +39,7 @@ namespace GamePlay
             NetworkManager.Instance.RegisterHandler<GameSyncMessage>(Signals.GameSync,ReceiveMessage);//服务器消息接收
             NetworkManager.Instance.RegisterHandler<PlayerJoinRoomResponse>(Signals.LobbyJoinRoom,JoinRoom);//加入房间消息
             NetworkManager.Instance.RegisterHandler<PlayerLeaveRoomResponse>(Signals.LobbyLeaveRoom,LeaveRoom);//离开房间
+            NetworkManager.Instance.RegisterHandler<PlayerStartRoomResponse>(Signals.LobbyStartRoom,StartRoom);//开始游戏
             
             RegisterTimerEvent(SyncPlayerAction);//注册操作同步
             RegisterTimerEvent(RunNextFrame);//注册下帧处理函数
@@ -59,7 +60,7 @@ namespace GamePlay
         private void JoinRoom(PlayerJoinRoomResponse response)
         {
             Debug.Log("收到PlayerJoinRoomResponse");
-            if (Instance.GetStatus() == GameStatus.Notstarted) Instance.StartGame();
+            
             foreach (var otherPlayer in response.Players)
             {
                 if (otherPlayer != _name && !_players.ContainsKey(otherPlayer))
@@ -90,6 +91,13 @@ namespace GamePlay
             _rigidbodies.Remove(response.Name);
             _velocities.Remove(response.Name);
         }
+
+        private void StartRoom(PlayerStartRoomResponse response)
+        {
+            Debug.Log("收到PlayerStartRoomResponse");
+            
+            StartGame();
+        }
         
         #region 玩家操作处理
         private UInt64 _frameId = 0;
@@ -110,6 +118,7 @@ namespace GamePlay
                 {
                     new PlayerSync
                     {
+                        FrameId = _frameId,
                         Name = _name,
                         InputMove = new Vector3D
                         {
@@ -144,6 +153,8 @@ namespace GamePlay
                 rb.transform.Translate(_speed*Time.deltaTime*_velocities[pair.Key]);
                 rb.position = UnitizedPosition(rb.position);
             }
+            if(_name!="")StatusPanel.Instance.UpdateLocalPos(_rigidbodies[_name].position);
+            if(_otherName!="")StatusPanel.Instance.UpdateExternalPos(_rigidbodies[_otherName].position);
         }
 
         private Vector3 UnitizedPosition(Vector3 v3)
@@ -169,32 +180,52 @@ namespace GamePlay
             
         }
 
+        private string _otherName = "";
+        
+        private UInt64 _nextFrameId = 0;
+        private UInt64 _eNextFrameId = 0;
         void RunNextFrame()
         {
             
             if(_gameSyncMessages.Count>0)
             {
                 GameSyncMessage message = _gameSyncMessages.Dequeue();//远程
-        
                 
                 //Debug.Log("玩家数"+message.Players.Count);
                 foreach (var player in message.Players)
                 {
                     if(player.Name!=_name&&_players.ContainsKey(player.Name))
                     {
+                        if (player.FrameId != _eNextFrameId)
+                        {
+                            Debug.Log("远程 帧序号不一致 本地"+_eNextFrameId+"收到"+player.FrameId);
+                            MessagePanel.Instance.AddMessage("远程 帧序号不一致 本地"+_eNextFrameId+"收到"+player.FrameId);
+                            _eNextFrameId = player.FrameId;
+                        }
+
+                        _eNextFrameId++;
                         var v = player.InputMove;
                         Vector3 realV = new Vector3(v.X / 1000f, v.Y / 1000f, v.Z / 1000f);
                         _velocities[player.Name] = realV;
+                        if (_otherName == "") _otherName = player.Name;
                     }
                 }
                 
                 StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
+                if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_velocities[_otherName]);
             }
             if(_localGameSyncMessages.Count>0)
             {
                 GameSyncMessage message = _localGameSyncMessages.Dequeue();//本地
         
                 var player = message.Players[0];
+                if (player.FrameId != _nextFrameId)
+                {
+                    Debug.Log("本地 帧序号不一致 本地"+_nextFrameId+"收到"+player.FrameId);
+                    MessagePanel.Instance.AddMessage("本地 帧序号不一致 本地"+_nextFrameId+"收到"+player.FrameId);
+                    _nextFrameId = player.FrameId;
+                }
+                _nextFrameId++;
                 var v = player.InputMove;
                 Vector3 realV=new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
                 _velocities[player.Name] = realV;

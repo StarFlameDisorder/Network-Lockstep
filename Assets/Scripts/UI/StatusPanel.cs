@@ -8,8 +8,12 @@ namespace UI
     {
         public static StatusPanel Instance;
         [SerializeField]private TMP_Text _clientIdStatus;
+        
         [SerializeField]private TMP_Text _localOffset;
+        [SerializeField]private TMP_Text _localPosition;
         [SerializeField]private TMP_Text _externalOffset;
+        [SerializeField]private TMP_Text _externalPosition;
+        
         [SerializeField]private TMP_Text _localStatus;
         [SerializeField]private TMP_Text _externalStatus;
         private int _localTime=0;
@@ -32,12 +36,22 @@ namespace UI
             _localSum += mov;
             _localOffset.text = $"本地:{_localSum}";
         }
+
+        public void UpdateLocalPos(Vector3 pos)
+        {
+            _localPosition.text = $"本地位置:{pos}";
+        }
         
         public void UpdateExternalOffset(Vector3 mov)
         {
             _externalSum+=mov;
             _externalOffset.text=$"外部:{_externalSum}";
             
+        }
+
+        public void UpdateExternalPos(Vector3 pos)
+        {
+            _externalPosition.text=$"外部位置:{pos}";
         }
         
         public void UpdateLocalStatus(int remainingFrame)

@@ -4,7 +4,7 @@
  */
 
 #define FILE_PREFIX "RoomManager:"//日志前缀
-#define LOCAL_LOG_LEVEL LogLevel::Debug//局部日志等级
+#define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
 
 #include "RoomManager.h"
@@ -31,6 +31,7 @@ void RoomManager::handleLobbySync(quint64 clientId, const LobbyMessage::LobbySyn
             break;
         case LobbySyncRequest::kStartRoom:
             Log_Debug()<<"[handeleLobbySync]kStartRoom";
+            startRoom(QString::fromStdString(message.startroom().name()));
             break;
         case LobbySyncRequest::kEndRoom:
             Log_Debug()<<"[handeleLobbySync]kEndRoom";
@@ -85,7 +86,7 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
     }
 
     Log_Info()<<"[joinRoom]玩家加入:"<<name<<"客户端Id:"<<clientId;
-    if (m_players.size()>0)startRoom();
+    //if (m_players.size()>0)startRoom();
 }
 
 void RoomManager::leaveRoom(QString name,quint64 clientId)
@@ -103,10 +104,30 @@ void RoomManager::leaveRoom(QString name,quint64 clientId)
     if (m_players.size()==0)endRoom();
 }
 
-void RoomManager::startRoom()
+void RoomManager::startRoom(QString name)
 {
-    Log_Info()<<"[startRoom]开始";
+    Log_Info()<<"[startRoom]开始"<<name;
     m_timer.start(((float)1000)/15);
+
+    using namespace SyncMessage;
+    using namespace LobbyMessage;
+    ServerMessage sendMessage;
+    auto *lobbyMes=sendMessage.mutable_lobbysync();
+    auto *startMes=lobbyMes->mutable_startroom();
+    startMes->set_name(name.toStdString());
+
+    QByteArray data;
+    data.resize(sendMessage.ByteSizeLong());
+    bool success = sendMessage.SerializeToArray(data.data(), data.size());
+    if (!success) {
+        Log_Error()<<"[startRoom]无法生成ServerMessage.";
+        return;
+    }
+
+    for (auto &i:m_players)
+    {
+        emit sendTcpMessage(i.id,data);
+    }
 }
 
 void RoomManager::endRoom()
@@ -137,6 +158,14 @@ void RoomManager::receiveHeartBeat(quint64 clientId, const GameMessage::HeartBea
 
 void RoomManager::broadcastGameSync()
 {
+    QString pack=QString::number(m_sendIndex)+":";
+    m_sendIndex++;
+    // for (auto &p:m_players)
+    // {
+    //     if (p.receiveMessages.empty())return;
+    // }
+
+
     using namespace GameMessage;
     using namespace SyncMessage;
 
@@ -148,6 +177,10 @@ void RoomManager::broadcastGameSync()
         while (!queue.empty())
         {
             PlayerSync sync=queue.front();
+
+            pack.append(" "+sync.name()+"-");
+            pack.append(QString::number(sync.frameid()));
+
             newGameSyncMessage->add_players()->CopyFrom(sync);
             queue.pop();
         }
@@ -157,7 +190,7 @@ void RoomManager::broadcastGameSync()
     // {
     //     UnityMath::Vector3D v3= i.inputmove();
     // }
-
+    if (pack.size()>0)Log_Info()<<pack;
 
     QByteArray data;
     data.resize(sendMessage.ByteSizeLong());

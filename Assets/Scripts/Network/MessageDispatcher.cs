@@ -90,6 +90,7 @@ namespace Network
                     break;
                 case LobbySyncResponse.ContentOneofCase.StartRoom:
                     Debug.Log("HandleLobbyMessage-StartRoom");
+                    TriggerHandler(Signals.LobbyStartRoom,message.StartRoom);
                     break;
                 case LobbySyncResponse.ContentOneofCase.EndRoom:
                     Debug.Log("HandleLobbyMessage-EndRoom");

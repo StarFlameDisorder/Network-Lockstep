@@ -30,21 +30,21 @@ namespace GameMessage {
             "ZXJTeW5jIpwBChNHYW1lU25hcHNob3RNZXNzYWdlEg8KB2ZyYW1lSWQYASAB",
             "KAQSDAoEdGltZRgCIAEoBBIyCglwbGF5ZXJTU3MYAyADKAsyHy5HYW1lTWVz",
             "c2FnZS5QbGF5ZXJTbmFwc2hvdFN5bmMSMgoJb2JqZWN0U1NzGAQgAygLMh8u",
-            "R2FtZU1lc3NhZ2UuT2JqZWN0U25hcHNob3RTeW5jIkIKClBsYXllclN5bmMS",
-            "DAoEbmFtZRgBIAEoCRImCglpbnB1dE1vdmUYAiABKAsyEy5Vbml0eU1hdGgu",
-            "VmVjdG9yM0QiawoSUGxheWVyU25hcHNob3RTeW5jEgwKBG5hbWUYASABKAkS",
-            "IAoDcG9zGAIgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEEiUKCHZlbG9jaXR5",
-            "GAMgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEIm8KEk9iamVjdFNuYXBzaG90",
-            "U3luYxIQCghvYmplY3RJZBgBIAEoBBIgCgNwb3MYAiABKAsyEy5Vbml0eU1h",
-            "dGguVmVjdG9yM0QSJQoIdmVsb2NpdHkYAyABKAsyEy5Vbml0eU1hdGguVmVj",
-            "dG9yM0QiJwoJSGVhcnRCZWF0EgwKBG5hbWUYASABKAkSDAoEdGltZRgCIAEo",
-            "BGIGcHJvdG8z"));
+            "R2FtZU1lc3NhZ2UuT2JqZWN0U25hcHNob3RTeW5jImEKClBsYXllclN5bmMS",
+            "DwoHZnJhbWVJZBgBIAEoBBIMCgR0aW1lGAIgASgEEgwKBG5hbWUYAyABKAkS",
+            "JgoJaW5wdXRNb3ZlGAQgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEImsKElBs",
+            "YXllclNuYXBzaG90U3luYxIMCgRuYW1lGAEgASgJEiAKA3BvcxgCIAEoCzIT",
+            "LlVuaXR5TWF0aC5WZWN0b3IzRBIlCgh2ZWxvY2l0eRgDIAEoCzITLlVuaXR5",
+            "TWF0aC5WZWN0b3IzRCJvChJPYmplY3RTbmFwc2hvdFN5bmMSEAoIb2JqZWN0",
+            "SWQYASABKAQSIAoDcG9zGAIgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEEiUK",
+            "CHZlbG9jaXR5GAMgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEIicKCUhlYXJ0",
+            "QmVhdBIMCgRuYW1lGAEgASgJEgwKBHRpbWUYAiABKARiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::UnityMath.UnityMathReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSyncMessage), global::GameMessage.GameSyncMessage.Parser, new[]{ "FrameId", "Time", "Players" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSnapshotMessage), global::GameMessage.GameSnapshotMessage.Parser, new[]{ "FrameId", "Time", "PlayerSSs", "ObjectSSs" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSync), global::GameMessage.PlayerSync.Parser, new[]{ "Name", "InputMove" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSync), global::GameMessage.PlayerSync.Parser, new[]{ "FrameId", "Time", "Name", "InputMove" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSnapshotSync), global::GameMessage.PlayerSnapshotSync.Parser, new[]{ "Name", "Pos", "Velocity" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.ObjectSnapshotSync), global::GameMessage.ObjectSnapshotSync.Parser, new[]{ "ObjectId", "Pos", "Velocity" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.HeartBeat), global::GameMessage.HeartBeat.Parser, new[]{ "Name", "Time" }, null, null, null, null)
@@ -618,6 +618,8 @@ namespace GameMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public PlayerSync(PlayerSync other) : this() {
+      frameId_ = other.frameId_;
+      time_ = other.time_;
       name_ = other.name_;
       inputMove_ = other.inputMove_ != null ? other.inputMove_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -629,8 +631,32 @@ namespace GameMessage {
       return new PlayerSync(this);
     }
 
+    /// <summary>Field number for the "frameId" field.</summary>
+    public const int FrameIdFieldNumber = 1;
+    private ulong frameId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong FrameId {
+      get { return frameId_; }
+      set {
+        frameId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "time" field.</summary>
+    public const int TimeFieldNumber = 2;
+    private ulong time_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong Time {
+      get { return time_; }
+      set {
+        time_ = value;
+      }
+    }
+
     /// <summary>Field number for the "name" field.</summary>
-    public const int NameFieldNumber = 1;
+    public const int NameFieldNumber = 3;
     private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -642,7 +668,7 @@ namespace GameMessage {
     }
 
     /// <summary>Field number for the "inputMove" field.</summary>
-    public const int InputMoveFieldNumber = 2;
+    public const int InputMoveFieldNumber = 4;
     private global::UnityMath.Vector3D inputMove_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -668,6 +694,8 @@ namespace GameMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (FrameId != other.FrameId) return false;
+      if (Time != other.Time) return false;
       if (Name != other.Name) return false;
       if (!object.Equals(InputMove, other.InputMove)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -677,6 +705,8 @@ namespace GameMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (FrameId != 0UL) hash ^= FrameId.GetHashCode();
+      if (Time != 0UL) hash ^= Time.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (inputMove_ != null) hash ^= InputMove.GetHashCode();
       if (_unknownFields != null) {
@@ -697,12 +727,20 @@ namespace GameMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
+      if (FrameId != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(FrameId);
+      }
+      if (Time != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Time);
+      }
       if (Name.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(26);
         output.WriteString(Name);
       }
       if (inputMove_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(34);
         output.WriteMessage(InputMove);
       }
       if (_unknownFields != null) {
@@ -715,12 +753,20 @@ namespace GameMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (FrameId != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(FrameId);
+      }
+      if (Time != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Time);
+      }
       if (Name.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(26);
         output.WriteString(Name);
       }
       if (inputMove_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(34);
         output.WriteMessage(InputMove);
       }
       if (_unknownFields != null) {
@@ -733,6 +779,12 @@ namespace GameMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (FrameId != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(FrameId);
+      }
+      if (Time != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Time);
+      }
       if (Name.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
@@ -750,6 +802,12 @@ namespace GameMessage {
     public void MergeFrom(PlayerSync other) {
       if (other == null) {
         return;
+      }
+      if (other.FrameId != 0UL) {
+        FrameId = other.FrameId;
+      }
+      if (other.Time != 0UL) {
+        Time = other.Time;
       }
       if (other.Name.Length != 0) {
         Name = other.Name;
@@ -775,11 +833,19 @@ namespace GameMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
+          case 8: {
+            FrameId = input.ReadUInt64();
+            break;
+          }
+          case 16: {
+            Time = input.ReadUInt64();
+            break;
+          }
+          case 26: {
             Name = input.ReadString();
             break;
           }
-          case 18: {
+          case 34: {
             if (inputMove_ == null) {
               InputMove = new global::UnityMath.Vector3D();
             }
@@ -801,11 +867,19 @@ namespace GameMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
+          case 8: {
+            FrameId = input.ReadUInt64();
+            break;
+          }
+          case 16: {
+            Time = input.ReadUInt64();
+            break;
+          }
+          case 26: {
             Name = input.ReadString();
             break;
           }
-          case 18: {
+          case 34: {
             if (inputMove_ == null) {
               InputMove = new global::UnityMath.Vector3D();
             }

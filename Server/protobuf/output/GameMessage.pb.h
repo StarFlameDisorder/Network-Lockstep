@@ -576,10 +576,12 @@ class PlayerSync final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNameFieldNumber = 1,
-    kInputMoveFieldNumber = 2,
+    kNameFieldNumber = 3,
+    kInputMoveFieldNumber = 4,
+    kFrameIdFieldNumber = 1,
+    kTimeFieldNumber = 2,
   };
-  // string name = 1;
+  // string name = 3;
   void clear_name();
   const std::string& name() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -593,7 +595,7 @@ class PlayerSync final :
   std::string* _internal_mutable_name();
   public:
 
-  // .UnityMath.Vector3D inputMove = 2;
+  // .UnityMath.Vector3D inputMove = 4;
   bool has_inputmove() const;
   private:
   bool _internal_has_inputmove() const;
@@ -611,6 +613,24 @@ class PlayerSync final :
       ::UnityMath::Vector3D* inputmove);
   ::UnityMath::Vector3D* unsafe_arena_release_inputmove();
 
+  // uint64 frameId = 1;
+  void clear_frameid();
+  uint64_t frameid() const;
+  void set_frameid(uint64_t value);
+  private:
+  uint64_t _internal_frameid() const;
+  void _internal_set_frameid(uint64_t value);
+  public:
+
+  // uint64 time = 2;
+  void clear_time();
+  uint64_t time() const;
+  void set_time(uint64_t value);
+  private:
+  uint64_t _internal_time() const;
+  void _internal_set_time(uint64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:GameMessage.PlayerSync)
  private:
   class _Internal;
@@ -621,6 +641,8 @@ class PlayerSync final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::UnityMath::Vector3D* inputmove_;
+    uint64_t frameid_;
+    uint64_t time_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1390,7 +1412,47 @@ GameSnapshotMessage::objectsss() const {
 
 // PlayerSync
 
-// string name = 1;
+// uint64 frameId = 1;
+inline void PlayerSync::clear_frameid() {
+  _impl_.frameid_ = uint64_t{0u};
+}
+inline uint64_t PlayerSync::_internal_frameid() const {
+  return _impl_.frameid_;
+}
+inline uint64_t PlayerSync::frameid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.frameId)
+  return _internal_frameid();
+}
+inline void PlayerSync::_internal_set_frameid(uint64_t value) {
+  
+  _impl_.frameid_ = value;
+}
+inline void PlayerSync::set_frameid(uint64_t value) {
+  _internal_set_frameid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.PlayerSync.frameId)
+}
+
+// uint64 time = 2;
+inline void PlayerSync::clear_time() {
+  _impl_.time_ = uint64_t{0u};
+}
+inline uint64_t PlayerSync::_internal_time() const {
+  return _impl_.time_;
+}
+inline uint64_t PlayerSync::time() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSync.time)
+  return _internal_time();
+}
+inline void PlayerSync::_internal_set_time(uint64_t value) {
+  
+  _impl_.time_ = value;
+}
+inline void PlayerSync::set_time(uint64_t value) {
+  _internal_set_time(value);
+  // @@protoc_insertion_point(field_set:GameMessage.PlayerSync.time)
+}
+
+// string name = 3;
 inline void PlayerSync::clear_name() {
   _impl_.name_.ClearToEmpty();
 }
@@ -1440,7 +1502,7 @@ inline void PlayerSync::set_allocated_name(std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSync.name)
 }
 
-// .UnityMath.Vector3D inputMove = 2;
+// .UnityMath.Vector3D inputMove = 4;
 inline bool PlayerSync::_internal_has_inputmove() const {
   return this != internal_default_instance() && _impl_.inputmove_ != nullptr;
 }

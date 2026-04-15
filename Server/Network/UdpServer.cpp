@@ -175,7 +175,7 @@ void UdpServer::checkAndResend()//发送消息后会检查旧数据是否发送
             {
                 PendingPacket &packet=m_pendingPackets[udpEndPoint][index];
 
-                if (time-packet.previousTime<200)break;
+                if (time-packet.previousTime<500)break;
                 if (packet.times>3)
                 {
                     Log_Warning()<<"[checkAndResend]重传3次失败，序号:"<<index;

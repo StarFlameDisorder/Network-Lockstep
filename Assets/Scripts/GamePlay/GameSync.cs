@@ -32,6 +32,8 @@ namespace GamePlay
         private void Awake()
         {
             Instance = this;
+            Application.targetFrameRate = 60;
+            Screen.SetResolution(1920, 1080, false);
         }
 
         private void Start()
@@ -41,8 +43,9 @@ namespace GamePlay
             NetworkManager.Instance.RegisterHandler<PlayerLeaveRoomResponse>(Signals.LobbyLeaveRoom,LeaveRoom);//离开房间
             NetworkManager.Instance.RegisterHandler<PlayerStartRoomResponse>(Signals.LobbyStartRoom,StartRoom);//开始游戏
             
-            RegisterTimerEvent(SyncPlayerAction);//注册操作同步
-            RegisterTimerEvent(RunNextFrame);//注册下帧处理函数
+            // RegisterTimerEvent(SyncPlayerAction);//注册操作同步
+            // RegisterTimerEvent(RunNextFrame);//注册下帧处理函数
+            RegisterTimerEvent(UpdateGame);
             _heartBeatHandle.OnTimeTriggerEvent += HeartBeat;
         }
 
@@ -80,6 +83,7 @@ namespace GamePlay
                 Rigidbody rb = o.GetComponent<Rigidbody>();
                 _rigidbodies.Add(playerName, rb);
                 _velocities.Add(playerName, new Vector3());
+                _playerSyncMessgae.Add(playerName,new Queue<PlayerSync>());
             }
         }
 
@@ -145,8 +149,18 @@ namespace GamePlay
 
         #region 游戏状态更新
         
+        private int _fixedUpdateCounter = 0;
         private void FixedUpdate()
         {
+        }
+
+        private void UpdateGame()
+        {
+            if (_status != GameStatus.Started)return;
+            
+            SyncPlayerAction();
+            RunNextFrame();
+            
             foreach (var pair in _rigidbodies)
             {
                 Rigidbody rb = pair.Value;
@@ -154,7 +168,38 @@ namespace GamePlay
                 rb.position = UnitizedPosition(rb.position);
             }
             if(_name!="")StatusPanel.Instance.UpdateLocalPos(_rigidbodies[_name].position);
-            if(_otherName!="")StatusPanel.Instance.UpdateExternalPos(_rigidbodies[_otherName].position);
+            if (_otherName != "") StatusPanel.Instance.UpdateExternalPos(_rigidbodies[_otherName].position);
+                
+            // if(_name!="" && _status == GameStatus.Started)try
+            // {
+            //     string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+            //     string dirPath = System.IO.Path.Combine(desktopPath, "logs");
+            //     if (!System.IO.Directory.Exists(dirPath))
+            //         System.IO.Directory.CreateDirectory(dirPath);
+            //
+            //     // 用玩家名区分不同客户端的日志
+            //     string filePath = System.IO.Path.Combine(dirPath, $"fixedupdate_log_{_name}.txt");
+            //
+            //     using (System.IO.StreamWriter writer = new System.IO.StreamWriter(filePath, true))
+            //     {
+            //         // 写入帧标记（时间戳 + FixedUpdate调用序号）
+            //         writer.WriteLine($"===== FixedUpdate #{_fixedUpdateCounter} at {System.DateTime.Now:HH:mm:ss.fff} =====");
+            //
+            //         foreach (var kvp in _velocities)
+            //         {
+            //             string playerName = kvp.Key;
+            //             Vector3 vel = kvp.Value;
+            //             Vector3 pos = _rigidbodies.ContainsKey(playerName) ? _rigidbodies[playerName].position : Vector3.zero;
+            //             writer.WriteLine($"{playerName}: vel=({vel.x:F3}, {vel.y:F3}, {vel.z:F3}), pos=({pos.x:F3}, {pos.y:F3}, {pos.z:F3})");
+            //         }
+            //         writer.WriteLine(); // 空行分隔
+            //     }
+            //     _fixedUpdateCounter++;
+            // }
+            // catch (System.Exception e)
+            // {
+            //     Debug.LogError($"记录FixedUpdate状态失败: {e.Message}");
+            // }
         }
 
         private Vector3 UnitizedPosition(Vector3 v3)
@@ -166,75 +211,113 @@ namespace GamePlay
             );
         }
         
-        private Queue<GameSyncMessage> _localGameSyncMessages=new();
-        private Queue<GameSyncMessage> _gameSyncMessages=new();
+        // private Queue<GameSyncMessage> _localGameSyncMessages=new();
+        // private Queue<GameSyncMessage> _gameSyncMessages=new();
+        private Dictionary<string, Queue<PlayerSync>> _playerSyncMessgae = new();
         
         public void PlayerAction(GameSyncMessage message)
         {
-            _localGameSyncMessages.Enqueue(message);
+            //_localGameSyncMessages.Enqueue(message);
+            var player = message.Players[0];
+            _playerSyncMessgae[player.Name].Enqueue(player);
         }
         
         void ReceiveMessage(GameSyncMessage message)
         {
-            _gameSyncMessages.Enqueue(message);
-            
+            //_gameSyncMessages.Enqueue(message);
+            foreach (var player in message.Players)
+            {
+                if(player.Name!=_name&&_players.ContainsKey(player.Name))_playerSyncMessgae[player.Name].Enqueue(player);
+            }
         }
 
         private string _otherName = "";
         
         private UInt64 _nextFrameId = 0;
         private UInt64 _eNextFrameId = 0;
+        private Dictionary<string, bool> _checkPlayers=new();
         void RunNextFrame()
         {
+            // if(_gameSyncMessages.Count>0)
+            // {
+            //     GameSyncMessage message = _gameSyncMessages.Dequeue();//远程
+            //     
+            //     //Debug.Log("玩家数"+message.Players.Count);
+            //     foreach (var player in message.Players)
+            //     {
+            //         if(player.Name!=_name&&_players.ContainsKey(player.Name))
+            //         {
+            //             if (player.FrameId != _eNextFrameId)
+            //             {
+            //                 Debug.Log("远程 帧序号不一致 本地"+_eNextFrameId+"收到"+player.FrameId);
+            //                 MessagePanel.Instance.AddMessage("远程 帧序号不一致 本地"+_eNextFrameId+"收到"+player.FrameId);
+            //                 _eNextFrameId = player.FrameId;
+            //             }
+            //
+            //             _eNextFrameId++;
+            //             var v = player.InputMove;
+            //             Vector3 realV = new Vector3(v.X / 1000f, v.Y / 1000f, v.Z / 1000f);
+            //             _velocities[player.Name] = realV;
+            //             if (_otherName == "") _otherName = player.Name;
+            //
+            //             _checkPlayers[player.Name] = true;
+            //         }
+            //     }
+            //     
+            //     StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
+            //     if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_velocities[_otherName]);
+            // }
+            // if(_localGameSyncMessages.Count>0)
+            // {
+            //     GameSyncMessage message = _localGameSyncMessages.Dequeue();//本地
+            //
+            //     var player = message.Players[0];
+            //     if (player.FrameId != _nextFrameId)
+            //     {
+            //         Debug.Log("本地 帧序号不一致 本地"+_nextFrameId+"收到"+player.FrameId);
+            //         MessagePanel.Instance.AddMessage("本地 帧序号不一致 本地"+_nextFrameId+"收到"+player.FrameId);
+            //         _nextFrameId = player.FrameId;
+            //     }
+            //     _nextFrameId++;
+            //     var v = player.InputMove;
+            //     Vector3 realV=new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
+            //     _velocities[player.Name] = realV;
+            //     
+            //     _checkPlayers[player.Name] = true;
+            //     
+            //     StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
+            //     StatusPanel.Instance.UpdateLocalOffset(realV);
+            // }
             
-            if(_gameSyncMessages.Count>0)
+            foreach (var syncMes in _playerSyncMessgae.Values)
             {
-                GameSyncMessage message = _gameSyncMessages.Dequeue();//远程
-                
-                //Debug.Log("玩家数"+message.Players.Count);
-                foreach (var player in message.Players)
-                {
-                    if(player.Name!=_name&&_players.ContainsKey(player.Name))
-                    {
-                        if (player.FrameId != _eNextFrameId)
-                        {
-                            Debug.Log("远程 帧序号不一致 本地"+_eNextFrameId+"收到"+player.FrameId);
-                            MessagePanel.Instance.AddMessage("远程 帧序号不一致 本地"+_eNextFrameId+"收到"+player.FrameId);
-                            _eNextFrameId = player.FrameId;
-                        }
-
-                        _eNextFrameId++;
-                        var v = player.InputMove;
-                        Vector3 realV = new Vector3(v.X / 1000f, v.Y / 1000f, v.Z / 1000f);
-                        _velocities[player.Name] = realV;
-                        if (_otherName == "") _otherName = player.Name;
-                    }
-                }
-                
-                StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
-                if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_velocities[_otherName]);
-            }
-            if(_localGameSyncMessages.Count>0)
-            {
-                GameSyncMessage message = _localGameSyncMessages.Dequeue();//本地
-        
-                var player = message.Players[0];
-                if (player.FrameId != _nextFrameId)
-                {
-                    Debug.Log("本地 帧序号不一致 本地"+_nextFrameId+"收到"+player.FrameId);
-                    MessagePanel.Instance.AddMessage("本地 帧序号不一致 本地"+_nextFrameId+"收到"+player.FrameId);
-                    _nextFrameId = player.FrameId;
-                }
-                _nextFrameId++;
+                if(syncMes.Count==0)continue;
+                var player = syncMes.Dequeue();
                 var v = player.InputMove;
                 Vector3 realV=new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
                 _velocities[player.Name] = realV;
                 
-                StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
-                StatusPanel.Instance.UpdateLocalOffset(realV);
+                _checkPlayers[player.Name] = true;
+
+                if (player.Name == _name)
+                {
+                    StatusPanel.Instance.UpdateLocalStatus(syncMes.Count);
+                    StatusPanel.Instance.UpdateLocalOffset(realV);
+                }
+                else
+                {
+                    if (_otherName == "") _otherName = player.Name;
+                    StatusPanel.Instance.UpdateExternalStatus(syncMes.Count);
+                    if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_velocities[_otherName]);
+                }
             }
-                
             
+
+            foreach (var p in _rigidbodies)
+            {
+                if (!p.Value) _velocities[p.Key] = Vector3.zero;
+                _checkPlayers[p.Key] = false;
+            }
             
         }
 

@@ -93,7 +93,7 @@ namespace Network
                     {
                         PendingPacket packet = _pendingPackets[index];
 
-                        if (time - packet.previousTime < 200) //未到时间，等到超时时间
+                        if (time - packet.previousTime < 500) //未到时间，等到超时时间
                         {
                             break;
                         }
@@ -240,8 +240,8 @@ namespace Network
                 {
                     if (t == "ACK")
                     {
-                        _pendingPackets[index].isAck = true;
-                        
+                        if(_pendingPackets.ContainsKey(index))_pendingPackets[index].isAck = true;
+                        else Debug.Log($"接收-超前ACK序号{index}");
 #if Log_Debug
                         Debug.Log($"接收-ACK序号{index}");
 #endif

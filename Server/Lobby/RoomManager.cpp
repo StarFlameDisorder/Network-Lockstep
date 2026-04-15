@@ -107,7 +107,7 @@ void RoomManager::leaveRoom(QString name,quint64 clientId)
 void RoomManager::startRoom(QString name)
 {
     Log_Info()<<"[startRoom]开始"<<name;
-    m_timer.start(((float)1000)/15);
+    m_timer.start(((float)1000)/30);
 
     using namespace SyncMessage;
     using namespace LobbyMessage;
@@ -190,7 +190,7 @@ void RoomManager::broadcastGameSync()
     // {
     //     UnityMath::Vector3D v3= i.inputmove();
     // }
-    if (pack.size()>0)Log_Info()<<pack;
+    if (pack.size()>0)Log_Debug()<<pack;
 
     QByteArray data;
     data.resize(sendMessage.ByteSizeLong());

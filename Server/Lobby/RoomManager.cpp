@@ -5,7 +5,7 @@
 
 #define FILE_PREFIX "RoomManager:"//日志前缀
 #define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
-
+#define GameFrameRate 30
 
 #include "RoomManager.h"
 #include "../LoggerStream.h"
@@ -107,7 +107,7 @@ void RoomManager::leaveRoom(QString name,quint64 clientId)
 void RoomManager::startRoom(QString name)
 {
     Log_Info()<<"[startRoom]开始"<<name;
-    m_timer.start(((float)1000)/30);
+    m_timer.start(((float)1000)/GameFrameRate);
 
     using namespace SyncMessage;
     using namespace LobbyMessage;

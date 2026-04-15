@@ -20,6 +20,8 @@ namespace GamePlay
     
     public class GameSync:MonoBehaviour
     {
+        private static int _gameFrameRate = 30;
+        private static float _gameFrameSpace = 1f / _gameFrameRate;
         
         public static GameSync Instance;
         
@@ -43,8 +45,6 @@ namespace GamePlay
             NetworkManager.Instance.RegisterHandler<PlayerLeaveRoomResponse>(Signals.LobbyLeaveRoom,LeaveRoom);//离开房间
             NetworkManager.Instance.RegisterHandler<PlayerStartRoomResponse>(Signals.LobbyStartRoom,StartRoom);//开始游戏
             
-            // RegisterTimerEvent(SyncPlayerAction);//注册操作同步
-            // RegisterTimerEvent(RunNextFrame);//注册下帧处理函数
             RegisterTimerEvent(UpdateGame);
             _heartBeatHandle.OnTimeTriggerEvent += HeartBeat;
         }
@@ -164,7 +164,7 @@ namespace GamePlay
             foreach (var pair in _rigidbodies)
             {
                 Rigidbody rb = pair.Value;
-                rb.transform.Translate(_speed*Time.fixedDeltaTime*_velocities[pair.Key]);
+                rb.transform.Translate(_speed*_gameFrameSpace*_velocities[pair.Key]);
                 rb.position = UnitizedPosition(rb.position);
             }
             if(_name!="")StatusPanel.Instance.UpdateLocalPos(_rigidbodies[_name].position);
@@ -205,9 +205,9 @@ namespace GamePlay
         private Vector3 UnitizedPosition(Vector3 v3)
         {
             return new Vector3(
-                Mathf.Round(v3.x * 1000f) / 1000f,
-                Mathf.Round(v3.y * 1000f) / 1000f,
-                Mathf.Round(v3.z * 1000f) / 1000f
+                Mathf.Round(v3.x * 100f) / 100f,
+                Mathf.Round(v3.y * 100f) / 100f,
+                Mathf.Round(v3.z * 100f) / 100f
             );
         }
         
@@ -215,14 +215,12 @@ namespace GamePlay
         
         public void PlayerAction(GameSyncMessage message)
         {
-            //_localGameSyncMessages.Enqueue(message);
             var player = message.Players[0];
             _playerSyncMessgae[player.Name].Enqueue(player);
         }
         
         void ReceiveMessage(GameSyncMessage message)
         {
-            //_gameSyncMessages.Enqueue(message);
             foreach (var player in message.Players)
             {
                 if(player.Name!=_name&&_players.ContainsKey(player.Name))_playerSyncMessgae[player.Name].Enqueue(player);
@@ -291,7 +289,7 @@ namespace GamePlay
         public event Action GamePauseEvent;
         public event Action GameContinueEvent;
 
-        private TimerHandle _timerHandle = new TimerHandle(15);
+        private TimerHandle _timerHandle = new TimerHandle(_gameFrameRate);
         private TimerHandle _heartBeatHandle = new TimerHandle(1);
         
         GameStatus _status=GameStatus.Notstarted;

@@ -164,13 +164,13 @@ namespace GamePlay
             foreach (var pair in _rigidbodies)
             {
                 Rigidbody rb = pair.Value;
-                rb.transform.Translate(_speed*Time.deltaTime*_velocities[pair.Key]);
+                rb.transform.Translate(_speed*Time.fixedDeltaTime*_velocities[pair.Key]);
                 rb.position = UnitizedPosition(rb.position);
             }
             if(_name!="")StatusPanel.Instance.UpdateLocalPos(_rigidbodies[_name].position);
             if (_otherName != "") StatusPanel.Instance.UpdateExternalPos(_rigidbodies[_otherName].position);
                 
-            // if(_name!="" && _status == GameStatus.Started)try
+            // if(_name!="" && _status == GameStatus.Started)try//日志输出
             // {
             //     string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
             //     string dirPath = System.IO.Path.Combine(desktopPath, "logs");
@@ -211,8 +211,6 @@ namespace GamePlay
             );
         }
         
-        // private Queue<GameSyncMessage> _localGameSyncMessages=new();
-        // private Queue<GameSyncMessage> _gameSyncMessages=new();
         private Dictionary<string, Queue<PlayerSync>> _playerSyncMessgae = new();
         
         public void PlayerAction(GameSyncMessage message)
@@ -238,57 +236,6 @@ namespace GamePlay
         private Dictionary<string, bool> _checkPlayers=new();
         void RunNextFrame()
         {
-            // if(_gameSyncMessages.Count>0)
-            // {
-            //     GameSyncMessage message = _gameSyncMessages.Dequeue();//远程
-            //     
-            //     //Debug.Log("玩家数"+message.Players.Count);
-            //     foreach (var player in message.Players)
-            //     {
-            //         if(player.Name!=_name&&_players.ContainsKey(player.Name))
-            //         {
-            //             if (player.FrameId != _eNextFrameId)
-            //             {
-            //                 Debug.Log("远程 帧序号不一致 本地"+_eNextFrameId+"收到"+player.FrameId);
-            //                 MessagePanel.Instance.AddMessage("远程 帧序号不一致 本地"+_eNextFrameId+"收到"+player.FrameId);
-            //                 _eNextFrameId = player.FrameId;
-            //             }
-            //
-            //             _eNextFrameId++;
-            //             var v = player.InputMove;
-            //             Vector3 realV = new Vector3(v.X / 1000f, v.Y / 1000f, v.Z / 1000f);
-            //             _velocities[player.Name] = realV;
-            //             if (_otherName == "") _otherName = player.Name;
-            //
-            //             _checkPlayers[player.Name] = true;
-            //         }
-            //     }
-            //     
-            //     StatusPanel.Instance.UpdateExternalStatus(_gameSyncMessages.Count);
-            //     if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_velocities[_otherName]);
-            // }
-            // if(_localGameSyncMessages.Count>0)
-            // {
-            //     GameSyncMessage message = _localGameSyncMessages.Dequeue();//本地
-            //
-            //     var player = message.Players[0];
-            //     if (player.FrameId != _nextFrameId)
-            //     {
-            //         Debug.Log("本地 帧序号不一致 本地"+_nextFrameId+"收到"+player.FrameId);
-            //         MessagePanel.Instance.AddMessage("本地 帧序号不一致 本地"+_nextFrameId+"收到"+player.FrameId);
-            //         _nextFrameId = player.FrameId;
-            //     }
-            //     _nextFrameId++;
-            //     var v = player.InputMove;
-            //     Vector3 realV=new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
-            //     _velocities[player.Name] = realV;
-            //     
-            //     _checkPlayers[player.Name] = true;
-            //     
-            //     StatusPanel.Instance.UpdateLocalStatus(_localGameSyncMessages.Count);
-            //     StatusPanel.Instance.UpdateLocalOffset(realV);
-            // }
-            
             foreach (var syncMes in _playerSyncMessgae.Values)
             {
                 if(syncMes.Count==0)continue;

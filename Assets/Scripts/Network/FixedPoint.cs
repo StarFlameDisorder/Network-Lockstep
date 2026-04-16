@@ -65,6 +65,7 @@ namespace Network
                 throw new DivideByZeroException();
             return new FixedPoint((a._value<<FractionBits)/ b._value);
         }
+        
     }
     
     //定点数Vector3 Q16.16 高32位不应该使用

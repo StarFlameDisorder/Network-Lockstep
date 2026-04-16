@@ -58,7 +58,8 @@ namespace GamePlay
         [SerializeField] private GameObject _playerPrefab;
         private Dictionary<string, GameObject> _players=new ();
         private Dictionary<string, Rigidbody> _rigidbodies=new ();
-        private Dictionary<string,Vector3> _velocities=new ();
+        private Dictionary<string,Vector3> _inputMove=new ();
+        private Dictionary<string, Vector3> _playerPos = new();
         
         private void JoinRoom(PlayerJoinRoomResponse response)
         {
@@ -82,8 +83,9 @@ namespace GamePlay
                 _players.Add(playerName, o);
                 Rigidbody rb = o.GetComponent<Rigidbody>();
                 _rigidbodies.Add(playerName, rb);
-                _velocities.Add(playerName, new Vector3());
+                _inputMove.Add(playerName, new Vector3());
                 _playerSyncMessgae.Add(playerName,new Queue<PlayerSync>());
+                _playerPos.Add(playerName, new Vector3());
             }
         }
 
@@ -93,7 +95,7 @@ namespace GamePlay
 
             _players.Remove(response.Name);
             _rigidbodies.Remove(response.Name);
-            _velocities.Remove(response.Name);
+            _inputMove.Remove(response.Name);
         }
 
         private void StartRoom(PlayerStartRoomResponse response)
@@ -126,9 +128,9 @@ namespace GamePlay
                         Name = _name,
                         InputMove = new Vector3D
                         {
-                            X = (int)(_input.x * 1000),
+                            X = (int)(_input.x * 10000),
                             Y = 0,
-                            Z = (int)(_input.y * 1000)
+                            Z = (int)(_input.y * 10000)
                         }
                     }
                 }
@@ -164,8 +166,8 @@ namespace GamePlay
             foreach (var pair in _rigidbodies)
             {
                 Rigidbody rb = pair.Value;
-                rb.transform.Translate(_speed*_gameFrameSpace*_velocities[pair.Key]);
-                rb.position = UnitizedPosition(rb.position);
+                rb.transform.Translate(_speed*_gameFrameSpace*_inputMove[pair.Key]);
+                //rb.position = UnitizedPosition(rb.position);
             }
             if(_name!="")StatusPanel.Instance.UpdateLocalPos(_rigidbodies[_name].position);
             if (_otherName != "") StatusPanel.Instance.UpdateExternalPos(_rigidbodies[_otherName].position);
@@ -239,8 +241,8 @@ namespace GamePlay
                 if(syncMes.Count==0)continue;
                 var player = syncMes.Dequeue();
                 var v = player.InputMove;
-                Vector3 realV=new Vector3(v.X/1000f, v.Y/1000f, v.Z/1000f);
-                _velocities[player.Name] = realV;
+                Vector3 realV=new Vector3(v.X/10000f, v.Y/10000f, v.Z/10000f);
+                _inputMove[player.Name] = realV;
                 
                 _checkPlayers[player.Name] = true;
 
@@ -253,14 +255,14 @@ namespace GamePlay
                 {
                     if (_otherName == "") _otherName = player.Name;
                     StatusPanel.Instance.UpdateExternalStatus(syncMes.Count);
-                    if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_velocities[_otherName]);
+                    if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_inputMove[_otherName]);
                 }
             }
             
 
             foreach (var p in _rigidbodies)
             {
-                if (!p.Value) _velocities[p.Key] = Vector3.zero;
+                if (!p.Value) _inputMove[p.Key] = Vector3.zero;
                 _checkPlayers[p.Key] = false;
             }
             

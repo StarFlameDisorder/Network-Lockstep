@@ -73,6 +73,8 @@ namespace Network
     {
         private FixedPoint _x, _y, _z;
 
+        public static FixedPointVector3 zero = FixedPointVector3.FromVector3(Vector3.zero);
+        
         public FixedPointVector3(FixedPoint x, FixedPoint y, FixedPoint z)
         {
             _x = x;
@@ -88,6 +90,8 @@ namespace Network
                 FixedPoint.FromFloat(vec.z)
             );
         }
+        
+        
         
         public Vector3 ToVector3()
         {

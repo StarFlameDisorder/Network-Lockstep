@@ -241,7 +241,7 @@ namespace Network
                     if (t == "ACK")
                     {
                         if(_pendingPackets.ContainsKey(index))_pendingPackets[index].isAck = true;
-                        else Debug.Log($"接收-超前ACK序号{index}");
+                        else Debug.Log($"接收-接收到旧ACK序号{index}");
 #if Log_Debug
                         Debug.Log($"接收-ACK序号{index}");
 #endif

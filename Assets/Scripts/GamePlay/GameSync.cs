@@ -21,14 +21,14 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
     public class GameSync:MonoBehaviour
     {
         private static int _gameFrameRate = 15;
-        private static float _gameFrameSpace = 1f / _gameFrameRate;
+        private static FixedPoint _gameFrameSpace = FixedPoint.FromFloat(1f / _gameFrameRate);
         
         public static GameSync Instance;
         
         [SerializeField]private PlayerController _controller;
         private UInt64 _playerId;
         
-        private float _speed=10f;
+        private FixedPoint _speed= FixedPoint.FromFloat(10f);
         private string _name="";
         
         private void Awake()
@@ -57,7 +57,7 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
 
         [SerializeField] private GameObject _playerPrefab;
         private Dictionary<string, GameObject> _players=new ();
-        private Dictionary<string, Rigidbody> _rigidbodies=new ();
+        //private Dictionary<string, Rigidbody> _rigidbodies=new ();
         private Dictionary<string,FixedPointVector3> _inputMove=new ();
         private Dictionary<string, FixedPointVector3> _playerPos = new();
         
@@ -81,11 +81,10 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
                 Debug.Log("添加玩家");
                 GameObject o = Instantiate(_playerPrefab);
                 _players.Add(playerName, o);
-                Rigidbody rb = o.GetComponent<Rigidbody>();
-                _rigidbodies.Add(playerName, rb);
+                //_rigidbodies.Add(playerName, rb);
                 _inputMove.Add(playerName, new FixedPointVector3());
                 _playerSyncMessgae.Add(playerName,new Queue<PlayerSync>());
-                _playerPos.Add(playerName, FixedPointVector3.FromVector3(rb.position));
+                _playerPos.Add(playerName, FixedPointVector3.FromVector3(o.transform.position));
             }
         }
 
@@ -94,7 +93,7 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
             Debug.Log("收到PlayerLeaveRoomResponse");
 
             _players.Remove(response.Name);
-            _rigidbodies.Remove(response.Name);
+            //_rigidbodies.Remove(response.Name);
             _inputMove.Remove(response.Name);
         }
 
@@ -116,6 +115,7 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
 
         public void SyncPlayerAction()
         {
+            FixedPointVector3 _inputV3 = FixedPointVector3.FromFloat(_input.x,0,_input.y);
             UInt64 clientId = NetworkManager.Instance.GetClientId();
             GameSyncMessage gameSyncMessage = new GameSyncMessage
             {
@@ -128,9 +128,9 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
                         Name = _name,
                         InputMove = new Vector3D
                         {
-                            X = (int)(_input.x * 10000),
-                            Y = 0,
-                            Z = (int)(_input.y * 10000)
+                            X = _inputV3.GetRawX(),
+                            Y = _inputV3.GetRawY(),
+                            Z = _inputV3.GetRawZ()
                         }
                     }
                 }
@@ -154,6 +154,7 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
         private int _fixedUpdateCounter = 0;
         private void FixedUpdate()
         {
+            
         }
 
         private void UpdateGame()
@@ -162,18 +163,16 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
             
             SyncPlayerAction();
             RunNextFrame();
-            
-            foreach (var pair in _rigidbodies)
+
+            foreach (var pair in _players)
             {
-                Rigidbody rb = pair.Value;
+                GameObject o = pair.Value;
                 _playerPos[pair.Key] += (_speed * _gameFrameSpace * _inputMove[pair.Key]);
-                rb.position = _playerPos[pair.Key].ToVector3();
-                //rb.transform.Translate(_speed*_gameFrameSpace*_inputMove[pair.Key]);
-                //rb.position = UnitizedPosition(rb.position);
+                o.transform.position = _playerPos[pair.Key].ToVector3();
             }
-            if(_name!="")StatusPanel.Instance.UpdateLocalPos(_rigidbodies[_name].position);
-            if (_otherName != "") StatusPanel.Instance.UpdateExternalPos(_rigidbodies[_otherName].position);
-                
+            
+            if(_name!="")StatusPanel.Instance.UpdateLocalPos(_players[_name].transform.position);
+            if (_otherName != "") StatusPanel.Instance.UpdateExternalPos(_players[_otherName].transform.position);
             // if(_name!="" && _status == GameStatus.Started)try//日志输出
             // {
             //     string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
@@ -243,15 +242,15 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
                 if(syncMes.Count==0)continue;
                 var player = syncMes.Dequeue();
                 var v = player.InputMove;
-                Vector3 realV=new Vector3(v.X/10000f, v.Y/10000f, v.Z/10000f);
-                _inputMove[player.Name] = FixedPointVector3.FromVector3(realV);
+                FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X,v.Y,v.Z);
+                _inputMove[player.Name] = realV;
                 
                 _checkPlayers[player.Name] = true;
 
                 if (player.Name == _name)
                 {
                     StatusPanel.Instance.UpdateLocalStatus(syncMes.Count);
-                    StatusPanel.Instance.UpdateLocalOffset(realV);
+                    StatusPanel.Instance.UpdateLocalOffset(realV.ToVector3());
                 }
                 else
                 {
@@ -262,7 +261,7 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
             }
             
 
-            foreach (var p in _rigidbodies)
+            foreach (var p in _players)
             {
                 if (!p.Value) _inputMove[p.Key] = FixedPointVector3.zero;
                 _checkPlayers[p.Key] = false;

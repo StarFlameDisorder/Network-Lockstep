@@ -51,6 +51,8 @@ public:
     void sendMessage(const QHostAddress& address,const quint16& port,const QByteArray& message);
     std::string getPeerAddressInfo(const QHostAddress& address,const quint16 &port)const;
     std::string getPeerAddressInfo(const UdpEndPoint& udpEndPoint)const;
+
+    void cleanClient(const QHostAddress& address,const quint16 &port);
 private:
     void receiveSocketMessage();
     void sendACKMessage(const QHostAddress& address,const quint16 &port,qint64 index);

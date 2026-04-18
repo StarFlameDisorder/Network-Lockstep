@@ -55,6 +55,7 @@ signals:
     void tcpReadyRead(QTcpSocket* socket,QByteArray data);
     void addNewClient(QTcpSocket* socket);
     void receiveMessage(QTcpSocket *socket,QByteArray message);
+    void deleteClient(QTcpSocket* socket);
 };
 
 

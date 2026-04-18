@@ -34,7 +34,9 @@ void TcpServer::tcpServerConnectionNew()
     connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket]()
     {
         Log_Info()<<"断开连接:"<<getTcpSocketInfo(newTcpSocket);
+        emit deleteClient(newTcpSocket);
         m_tcpMessageBuffer.remove(newTcpSocket);
+
         disconnect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
 
         newTcpSocket->deleteLater();

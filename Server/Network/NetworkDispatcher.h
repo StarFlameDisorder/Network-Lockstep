@@ -50,6 +50,8 @@ public:
     void checkClient(qint64 clientId,const QHostAddress &address, quint16 port);
     Client findClient(qint64 clientId);
     void addClient(QTcpSocket* socket);
+    void deleteClient(QTcpSocket* socket);
+
     void bindClient(const quint64 clientId,QTcpSocket *tcpSocket);
     void bindClient(const quint64 clientId, const UdpEndPoint& udpEndPoint);
 
@@ -57,15 +59,18 @@ signals:
     void handleUdpGameSync(quint64 clientId,const GameMessage::GameSyncMessage &message);
     void handleUdpGameSnapshot(quint64 clientId,const GameMessage::GameSnapshotMessage &message);//未使用
     void handleUdpHeartBeat(quint64 clientId,const GameMessage::HeartBeat& message);
+
     void handleTcpLobby(quint64 clientId,const LobbyMessage::LobbySyncRequest &message);
+
+    void handleClientDelete(quint64 clientId);
 
 private:
     TcpServer m_tcpServer;
     UdpServer m_udpServer;
     QHash<quint64,Client> m_clientsMap;
 
-    QHash<TcpEndPoint,quint64> m_tcpClientsMap;
-    QHash<QTcpSocket *,quint64> m_tcpSocketClientsMap;
+    //QHash<TcpEndPoint,quint64> m_tcpClientsMap;
+    QHash<QTcpSocket *,quint64> m_tcpClientsMap;
     QHash<UdpEndPoint,quint64> m_udpClientsMap;
 
     quint64 nextClientId=1;

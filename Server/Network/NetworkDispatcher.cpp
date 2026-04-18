@@ -14,6 +14,7 @@ NetworkDispatcher::NetworkDispatcher(QObject *parent)
 {
     startTime=QDateTime::currentMSecsSinceEpoch();
     connect(&m_tcpServer,&TcpServer::addNewClient,this,&NetworkDispatcher::addClient);//客户端id分配
+    connect(&m_tcpServer,&TcpServer::deleteClient,this,&NetworkDispatcher::deleteClient);//移除客户端
 
     connect(&m_tcpServer,&TcpServer::receiveMessage,this,&NetworkDispatcher::handleTcpMessage);
     connect(&m_udpServer,&UdpServer::receiveMessage,this,&NetworkDispatcher::handleUdpMessage);
@@ -168,12 +169,29 @@ void NetworkDispatcher::addClient(QTcpSocket* socket)
     Log_Info()<<"分配id"<<clientId<<":"<<m_tcpServer.getTcpSocketInfo(socket);
 }
 
+void NetworkDispatcher::deleteClient(QTcpSocket* socket)
+{
+    if (m_tcpClientsMap.contains(socket))
+    {
+        quint64 clientId=m_tcpClientsMap[socket];
+        Client &c=m_clientsMap[clientId];
+        Log_Info()<<"移除"<<m_tcpServer.getTcpSocketInfo(socket)<<"客户端id"<<c.clientId;
+        emit handleClientDelete(c.clientId);
+
+        UdpEndPoint udp= c.udpEndPoint;
+        m_udpServer.cleanClient(udp.address,udp.port);
+        m_clientsMap.remove(clientId);
+        m_tcpClientsMap.remove(socket);
+        m_udpClientsMap.remove(udp);
+    }
+}
+
 void NetworkDispatcher::bindClient(const quint64 clientId, QTcpSocket* tcpSocket)
 {
-    if(m_clientsMap.contains(clientId)&&m_tcpSocketClientsMap[tcpSocket]!=clientId)
+    if(m_clientsMap.contains(clientId)&&m_tcpClientsMap[tcpSocket]!=clientId)
     {
         m_clientsMap[clientId].socket=tcpSocket;//修改数据本体
-        m_tcpSocketClientsMap[tcpSocket]=clientId;
+        m_tcpClientsMap[tcpSocket]=clientId;
         Log_Debug()<<"[bindClient]绑定客户端id:[Tcp:"<<m_tcpServer.getTcpSocketInfo(tcpSocket)<<"-"<<clientId<<"]";
     }
 }

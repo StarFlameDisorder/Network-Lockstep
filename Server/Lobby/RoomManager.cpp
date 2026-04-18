@@ -10,6 +10,7 @@
 #include "RoomManager.h"
 #include "../LoggerStream.h"
 
+//TODO:断线重连
 RoomManager::RoomManager(QObject* parent):QObject(parent),m_timer(this)
 {
     connect(&m_timer,&QTimer::timeout,this,&RoomManager::broadcastGameSync);
@@ -58,6 +59,7 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
     player.name=name;
     player.activeTime=QDateTime::currentMSecsSinceEpoch();
     player.receiveMessages={};//清空
+    player.online=true;
 
     m_playerId[clientId]=playerId;
 
@@ -85,7 +87,7 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
         emit sendTcpMessage(i.id,data);
     }
 
-    Log_Info()<<"[joinRoom]玩家加入:"<<name<<"客户端Id:"<<clientId;
+    Log_Info()<<"[joinRoom]玩家加入:"<<name<<"客户端Id:"<<clientId<<"玩家id:"<<playerId<<"总数："<<m_players.size();
     //if (m_players.size()>0)startRoom();
 }
 
@@ -153,18 +155,37 @@ void RoomManager::receiveHeartBeat(quint64 clientId, const GameMessage::HeartBea
 {
     Log_Debug()<<"[receiveHeartBeat]收到来自"<<clientId<<" "<<message.name();
     m_players[m_playerId[clientId]].activeTime=QDateTime::currentMSecsSinceEpoch();
-    //TODO:心跳处理
+    m_players[m_playerId[clientId]].online=true;
+
+}
+
+//断线判断逻辑：tcp断开连接/心跳超时
+void RoomManager::receiveClientDisconnection(quint64 clientId)
+{
+    auto &p=m_players[m_playerId[clientId]];
+    if (p.online==true)
+    {
+        p.online=false;
+        Log_Info()<<p.name<<"tcp断开连接，玩家断线";
+    }
 }
 
 void RoomManager::broadcastGameSync()
 {
+    for (auto &i:m_players)
+    {
+        if (i.online==true)
+        {
+            if (QDateTime::currentMSecsSinceEpoch()-i.activeTime>4000)
+            {
+                i.online=false;
+                Log_Info()<<i.name<<"心跳超时，玩家断线";
+            }
+        }
+    }
+
     QString pack=QString::number(m_sendIndex)+":";
     m_sendIndex++;
-    // for (auto &p:m_players)
-    // {
-    //     if (p.receiveMessages.empty())return;
-    // }
-
 
     using namespace GameMessage;
     using namespace SyncMessage;
@@ -186,10 +207,6 @@ void RoomManager::broadcastGameSync()
         }
     }
 
-    // for (auto &i:newGameSyncMessage->players())
-    // {
-    //     UnityMath::Vector3D v3= i.inputmove();
-    // }
     if (pack.size()>0)Log_Debug()<<pack;
 
     QByteArray data;
@@ -201,7 +218,7 @@ void RoomManager::broadcastGameSync()
     }
     for (auto &i:m_players)
     {
-        emit sendUdpMessage(i.id,data);
+        if (i.online)emit sendUdpMessage(i.clientId,data);
     }
 }
 

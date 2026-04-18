@@ -43,7 +43,7 @@ void UdpServer::receiveSocketMessage()
         if (length<=0)
         {
             Log_Warning()<<"接收到空包:"<<getPeerAddressInfo(addr,port);
-            Log_Warning()<<m_socket->errorString();
+            Log_Warning()<<getPeerAddressInfo(addr,port)<<"-"<<m_socket->errorString();
             return;
         }
 
@@ -200,40 +200,14 @@ void UdpServer::checkAndResend()//发送消息后会检查旧数据是否发送
             }
         }
     }
+}
 
-
-    // for (auto &udpEndPoint:m_pendingPackets.keys())
-    // {
-    //     qint64 time=QDateTime::currentMSecsSinceEpoch();
-    //
-    //     while (m_sendQueue[udpEndPoint].size()>0)
-    //     {
-    //         qint64 index=m_sendQueue[udpEndPoint].head();
-    //         if (m_pendingPackets[udpEndPoint][index].isAck)
-    //         {
-    //             m_pendingPackets[udpEndPoint].remove(index);
-    //             m_sendQueue[udpEndPoint].dequeue();
-    //         }else
-    //         {
-    //             PendingPacket &packet=m_pendingPackets[udpEndPoint][index];
-    //
-    //             if (time-packet.previousTime<DELAY*(1<<(packet.times)))//指数退避
-    //                 break;
-    //             if (packet.times>3)
-    //             {
-    //                 Log_Warning()<<"[checkAndResend]重传3次失败，序号:"<<index;
-    //                 m_pendingPackets[udpEndPoint].remove(index);
-    //                 m_sendQueue[udpEndPoint].dequeue();
-    //             }else
-    //             {
-    // packet.times++;
-    // packet.previousTime=time;
-    // m_socket->writeDatagram(packet.sendData,udpEndPoint.address,udpEndPoint.port);
-    // m_sendQueue[udpEndPoint].dequeue();
-    // m_sendQueue[udpEndPoint].enqueue(index);
-    // Log_Warning()<<"[checkAndResend]重传，序号:"<<index;
-    //             }
-    //         }
-    //     }
-    // }
+void UdpServer::cleanClient(const QHostAddress& address,const quint16 &port)
+{
+    Log_Info()<<"断开与"<<getPeerAddressInfo(address,port)<<"的连接";
+    UdpEndPoint endPoint(address,port);
+    m_udpIndex.remove(endPoint);
+    m_pendingPackets.remove(endPoint);
+    m_receiveBuf.remove(endPoint);
+    m_invokeIndex.remove(endPoint);
 }

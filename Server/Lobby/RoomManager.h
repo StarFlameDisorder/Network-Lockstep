@@ -25,6 +25,7 @@ struct Player{
     QString name;//名称
     quint64 activeTime;//上次心跳时间
     std::queue<GameMessage::PlayerSync> receiveMessages;//收到的帧同步消息
+    bool online;
 };
 
 class RoomManager:public QObject
@@ -40,6 +41,7 @@ public:
     void endRoom();
     void receiveGameSync(quint64 clientId,const GameMessage::GameSyncMessage& message);
     void receiveHeartBeat(quint64 clientId,const GameMessage::HeartBeat& message);
+    void receiveClientDisconnection(quint64 clientId);
 
 private:
     void broadcastGameSync();

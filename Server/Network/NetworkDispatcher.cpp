@@ -7,6 +7,9 @@
 #define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
 #include "NetworkDispatcher.h"
+
+#include <bits/fs_fwd.h>
+
 #include "../LoggerStream.h"
 
 NetworkDispatcher::NetworkDispatcher(QObject *parent)
@@ -14,7 +17,7 @@ NetworkDispatcher::NetworkDispatcher(QObject *parent)
 {
     startTime=QDateTime::currentMSecsSinceEpoch();
     connect(&m_tcpServer,&TcpServer::addNewClient,this,&NetworkDispatcher::addClient);//客户端id分配
-    connect(&m_tcpServer,&TcpServer::deleteClient,this,&NetworkDispatcher::deleteClient);//移除客户端
+    connect(&m_tcpServer,&TcpServer::clientDisconnectRequest,this,&NetworkDispatcher::receiveClientDisconnection);//移除客户端
 
     connect(&m_tcpServer,&TcpServer::receiveMessage,this,&NetworkDispatcher::handleTcpMessage);
     connect(&m_udpServer,&UdpServer::receiveMessage,this,&NetworkDispatcher::handleUdpMessage);
@@ -169,20 +172,32 @@ void NetworkDispatcher::addClient(QTcpSocket* socket)
     Log_Info()<<"分配id"<<clientId<<":"<<m_tcpServer.getTcpSocketInfo(socket);
 }
 
-void NetworkDispatcher::deleteClient(QTcpSocket* socket)
+//断线处理
+void NetworkDispatcher::receiveClientDisconnection(QTcpSocket* socket)
 {
     if (m_tcpClientsMap.contains(socket))
     {
         quint64 clientId=m_tcpClientsMap[socket];
         Client &c=m_clientsMap[clientId];
-        Log_Info()<<"移除"<<m_tcpServer.getTcpSocketInfo(socket)<<"客户端id"<<c.clientId;
-        emit handleClientDelete(c.clientId);
+        emit clientDisconnectRequest(c.clientId);
+    }
+}
+
+
+void NetworkDispatcher::deleteClient(quint64 clientId)
+{
+    if (m_clientsMap.contains(clientId))
+    {
+        Client &c=m_clientsMap[clientId];
+        Log_Info()<<"移除"<<m_tcpServer.getTcpSocketInfo(c.socket)<<"客户端id"<<c.clientId;
 
         UdpEndPoint udp= c.udpEndPoint;
         m_udpServer.cleanClient(udp.address,udp.port);
-        m_clientsMap.remove(clientId);
-        m_tcpClientsMap.remove(socket);
+        m_tcpServer.cleanClient(c.socket);
+
+        m_tcpClientsMap.remove(c.socket);
         m_udpClientsMap.remove(udp);
+        m_clientsMap.remove(clientId);
     }
 }
 

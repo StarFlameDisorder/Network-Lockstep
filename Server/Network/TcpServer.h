@@ -43,9 +43,10 @@ public:
     TcpServer(QObject *parent = nullptr);
     std::string getTcpSocketInfo(const QTcpSocket *socket)const;
     void sendMessage(QTcpSocket *socket,QByteArray message);
+
+    void cleanClient(QTcpSocket *socket);
 private:
     void tcpServerConnectionNew();
-    void tcpServerConnectClosed();
     QByteArray receiveTcpMessage(QTcpSocket *socket);
     void receiveSocketMessage();
 
@@ -55,7 +56,7 @@ signals:
     void tcpReadyRead(QTcpSocket* socket,QByteArray data);
     void addNewClient(QTcpSocket* socket);
     void receiveMessage(QTcpSocket *socket,QByteArray message);
-    void deleteClient(QTcpSocket* socket);
+    void clientDisconnectRequest(QTcpSocket* socket);
 };
 
 

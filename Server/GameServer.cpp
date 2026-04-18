@@ -10,7 +10,9 @@ GameServer::GameServer(QObject* parent)
 {
     connect(&m_networkDispatcher,&NetworkDispatcher::handleTcpLobby,&m_roomManager,&RoomManager::handleLobbySync);
 
-    connect(&m_networkDispatcher,&NetworkDispatcher::handleClientDelete,&m_roomManager,&RoomManager::receiveClientDisconnection);
+    //断线处理
+    connect(&m_networkDispatcher,&NetworkDispatcher::clientDisconnectRequest,&m_roomManager,&RoomManager::receiveClientDisconnection);
+    connect(&m_roomManager,&RoomManager::removeClient,&m_networkDispatcher,&NetworkDispatcher::deleteClient);
 
     //局内Udp
     connect(&m_networkDispatcher,&NetworkDispatcher::handleUdpGameSync,&m_roomManager,&RoomManager::receiveGameSync);

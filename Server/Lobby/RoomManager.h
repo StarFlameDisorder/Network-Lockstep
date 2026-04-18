@@ -41,7 +41,8 @@ public:
     void endRoom();
     void receiveGameSync(quint64 clientId,const GameMessage::GameSyncMessage& message);
     void receiveHeartBeat(quint64 clientId,const GameMessage::HeartBeat& message);
-    void receiveClientDisconnection(quint64 clientId);
+
+    void receiveClientDisconnection(quint64 clientId);//接收tcp断线消息
 
 private:
     void broadcastGameSync();
@@ -56,6 +57,8 @@ private:
 signals:
     void sendTcpMessage(quint64 clientId,const QByteArray &message);
     void sendUdpMessage(quint64 clientId,const QByteArray &message);
+
+    void removeClient(quint64 clientId);//向下传播
 };
 
 

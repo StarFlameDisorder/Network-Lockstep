@@ -50,7 +50,10 @@ public:
     void checkClient(qint64 clientId,const QHostAddress &address, quint16 port);
     Client findClient(qint64 clientId);
     void addClient(QTcpSocket* socket);
-    void deleteClient(QTcpSocket* socket);
+
+    void receiveClientDisconnection(QTcpSocket* socket);//向上传递
+    void deleteClient(quint64 clientId);//向下执行
+
 
     void bindClient(const quint64 clientId,QTcpSocket *tcpSocket);
     void bindClient(const quint64 clientId, const UdpEndPoint& udpEndPoint);
@@ -62,7 +65,7 @@ signals:
 
     void handleTcpLobby(quint64 clientId,const LobbyMessage::LobbySyncRequest &message);
 
-    void handleClientDelete(quint64 clientId);
+    void clientDisconnectRequest(quint64 clientId);//向上传递tcp断线消息
 
 private:
     TcpServer m_tcpServer;

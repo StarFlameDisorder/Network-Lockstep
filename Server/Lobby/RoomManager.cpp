@@ -167,6 +167,7 @@ void RoomManager::receiveClientDisconnection(quint64 clientId)
     {
         p.online=false;
         Log_Info()<<p.name<<"tcp断开连接，玩家断线";
+        emit removeClient(clientId);
     }
 }
 
@@ -180,6 +181,7 @@ void RoomManager::broadcastGameSync()
             {
                 i.online=false;
                 Log_Info()<<i.name<<"心跳超时，玩家断线";
+                emit removeClient(i.clientId);
             }
         }
     }

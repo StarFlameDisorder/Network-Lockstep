@@ -33,21 +33,10 @@ void TcpServer::tcpServerConnectionNew()
 
     connect(newTcpSocket,&QTcpSocket::disconnected,this,[this,newTcpSocket]()
     {
-        Log_Info()<<"断开连接:"<<getTcpSocketInfo(newTcpSocket);
-        emit deleteClient(newTcpSocket);
-        m_tcpMessageBuffer.remove(newTcpSocket);
-
-        disconnect(newTcpSocket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
-
-        newTcpSocket->deleteLater();
+        emit clientDisconnectRequest(newTcpSocket);
     });
+
     emit addNewClient(newTcpSocket);
-}
-
-void TcpServer::tcpServerConnectClosed()
-{
-    Log_Info()<<"连接断开";
-
 }
 
 /**
@@ -119,6 +108,18 @@ void TcpServer::sendMessage(QTcpSocket* socket, QByteArray message)
     send.append(message);
     Log_Debug() <<"发送-长度:"<<originalLen<< "原始有效字节:" << message.toHex();//有效载荷长度
     socket->write(send);
+}
+
+void TcpServer::cleanClient(QTcpSocket* socket)
+{
+    if (!socket)return;
+
+    Log_Info()<<"断开连接:"<<getTcpSocketInfo(socket);
+    m_tcpMessageBuffer.remove(socket);
+
+    disconnect(socket,&QTcpSocket::readyRead,this,&TcpServer::receiveSocketMessage);
+
+    socket->deleteLater();
 }
 
 

@@ -24,24 +24,32 @@ namespace Network
         public int times; //发送尝试次数
         public bool isAck; //是否确认
     }
-
-
+    
     public class UdpSocket
     {
         private IPEndPoint _ipEndPoint;
         private Socket _socketUdp;
         private UInt64 _clientId = 0;
         private Int64 _index = 0;
+
+        public UdpSocket()
+        {
+            _timerHandle.OnTimeTriggerEvent += CheckAndResend;
+        }
+        
+        
+        private TimerHandle _timerHandle = new TimerHandle(1);
         
         public void StartLink(string ip, int port)
         {
             try
             {
                 if (IsConnected()) CloseLink();
-                Debug.Log("初始化UDP客户端" + ip + ":" + (port + 1));
-                _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port + 1);
+                Debug.Log("初始化UDP客户端" + ip + ":" + port);
+                _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 _socketUdp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 _socketUdp.Connect(_ipEndPoint);
+                _timerHandle.StartTimer();
             }
             catch (SocketException e)
             {
@@ -67,12 +75,13 @@ namespace Network
             _socketUdp.Shutdown(SocketShutdown.Both);
             _socketUdp.Close();
             _socketUdp = null;
-            _sendQueue.Clear();
+            //_sendQueue.Clear();
             _pendingPackets.Clear();
+            _timerHandle.StopTimer();
         }
 
         Dictionary<Int64, PendingPacket> _pendingPackets = new Dictionary<Int64, PendingPacket>(); //发送消息缓存
-        Queue<Int64> _sendQueue = new Queue<Int64>();
+        //Queue<Int64> _sendQueue = new Queue<Int64>();
 
         
         private void CheckAndResend() //发送消息后会检查旧数据是否发送 
@@ -81,28 +90,27 @@ namespace Network
             if (IsConnected())
             {
                 Int64 time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                while (_sendQueue.Count > 0)
+                
+                var remove=new List<Int64>();//待删除 (遍历时不能修改元素)
+                foreach (var pair in _pendingPackets)
                 {
-                    Int64 index = _sendQueue.Peek();
-                    if (_pendingPackets[index].isAck) //收到确认的移除
+                    Int64 index = pair.Key;
+                    if (pair.Value.isAck)//收到确认的移除
                     {
-                        _pendingPackets.Remove(index);
-                        _sendQueue.Dequeue();
+                        remove.Add(pair.Key);
                     }
                     else
                     {
-                        PendingPacket packet = _pendingPackets[index];
-
-                        if (time - packet.previousTime < 1000) //未到时间，等到超时时间
+                        PendingPacket packet = pair.Value;
+                        if (time - packet.previousTime < 1000 * (1 << (packet.times)))//未到时间，等到超时时间 指数退避
                         {
-                            break;
+                            continue;
                         }
-
+                        
                         if (packet.times > 3) //超过次数的报错
                         {
                             Debug.LogWarning("重传3次失败，序号:" + index);
-                            _pendingPackets.Remove(index);
-                            _sendQueue.Dequeue();
+                            remove.Add(pair.Key);
                         }
                         else
                         {
@@ -110,11 +118,14 @@ namespace Network
                             packet.times++;
                             packet.previousTime = time;
                             _socketUdp.Send(packet.sendBuf);
-                            _sendQueue.Dequeue();
-                            _sendQueue.Enqueue(index);
                             Debug.LogWarning("重传，序号:" + index);
                         }
                     }
+                }
+
+                foreach (var index in remove)
+                {
+                    _pendingPackets.Remove(index);
                 }
             }
         }
@@ -160,10 +171,10 @@ namespace Network
                     times = 0
                 };
                 _pendingPackets.Add(_index, packet);
-                _sendQueue.Enqueue(_index);
+                //_sendQueue.Enqueue(_index);
 
                 _index++;
-                CheckAndResend();
+                //CheckAndResend();
             }
         }
 
@@ -222,12 +233,6 @@ namespace Network
                         if (!_receiveBuf.TryAdd(index, actualData)) Debug.LogWarning("重复包" + index);
                     }
                     else Debug.LogWarning("接收到旧包"+index);
-
-                    if (!_receiveBuf.ContainsKey(index) && _receiveBuf.Count>600)
-                    {
-                        _invokeIndex++;
-                        Debug.LogWarning($"{_invokeIndex}过长时间未收到，舍弃");
-                    }
                     
                     while (_receiveBuf.TryGetValue(_invokeIndex, out byte[] data))
                     {

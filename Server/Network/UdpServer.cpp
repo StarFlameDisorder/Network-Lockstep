@@ -18,11 +18,13 @@
 UdpServer::UdpServer(QObject* parent)
     :QObject(parent)
 {
-    Log_Info()<<"初始化UDP服务器 端口："<<1976;
+    Log_Info()<<"初始化UDP服务器 端口："<<1975;
     m_socket=new QUdpSocket(this);
 
     connect(m_socket,&QUdpSocket::readyRead,this,&UdpServer::receiveSocketMessage);
-    m_socket->bind(QHostAddress::Any,1976);
+    m_socket->bind(QHostAddress::Any,1975);
+    connect(&m_timer,&QTimer::timeout,this,&UdpServer::checkAndResend);
+    m_timer.start(((float)1000)/2);
 }
 
 void UdpServer::receiveSocketMessage()
@@ -136,10 +138,10 @@ void UdpServer::sendMessage(const QHostAddress& address, const quint16& port,con
     m_pendingPackets[endPoint][sendIndex]=PendingPacket{
         sendIndex,std::move(sendBuffer),QDateTime::currentMSecsSinceEpoch(),0,false //移动构造
     };
-    m_sendQueue[endPoint].enqueue(sendIndex);
+    //m_sendQueue[endPoint].enqueue(sendIndex);
 
     m_udpIndex[endPoint]++;
-    checkAndResend();
+    //checkAndResend();
 }
 
 //获取字符串形式的ip+端口
@@ -164,34 +166,74 @@ void UdpServer::checkAndResend()//发送消息后会检查旧数据是否发送
 {
     for (auto &udpEndPoint:m_pendingPackets.keys())
     {
+        auto &pair=m_pendingPackets[udpEndPoint];
         qint64 time=QDateTime::currentMSecsSinceEpoch();
-        while (m_sendQueue[udpEndPoint].size()>0)
+        for (auto it=pair.begin();it!=pair.end();)
         {
-            qint64 index=m_sendQueue[udpEndPoint].head();
-            if (m_pendingPackets[udpEndPoint][index].isAck)
+            qint64 index=it.key();
+            PendingPacket& packet = it.value();
+
+            if (packet.isAck)//已应答
             {
-                m_pendingPackets[udpEndPoint].remove(index);
-                m_sendQueue[udpEndPoint].dequeue();
+                it=pair.erase(it);
+                continue;
+            }
+
+            if (time-packet.previousTime<DELAY*(1<<(packet.times)))//指数退避
+            {
+                ++it;
+                continue;
+            }
+
+            if (packet.times>3)
+            {
+                Log_Warning()<<"[checkAndResend]重传3次失败，序号:"<<index;
+                // NACK
+                it=pair.erase(it);
             }else
             {
-                PendingPacket &packet=m_pendingPackets[udpEndPoint][index];
-
-                if (time-packet.previousTime<DELAY)break;
-                if (packet.times>3)
-                {
-                    Log_Warning()<<"[checkAndResend]重传3次失败，序号:"<<index;
-                    m_pendingPackets[udpEndPoint].remove(index);
-                    m_sendQueue[udpEndPoint].dequeue();
-                }else
-                {
-                    packet.times++;
-                    packet.previousTime=time;
-                    m_socket->writeDatagram(packet.sendData,udpEndPoint.address,udpEndPoint.port);
-                    m_sendQueue[udpEndPoint].dequeue();
-                    m_sendQueue[udpEndPoint].enqueue(index);
-                    Log_Warning()<<"[checkAndResend]重传，序号:"<<index;
-                }
+                packet.previousTime=time;
+                m_socket->writeDatagram(packet.sendData,udpEndPoint.address,udpEndPoint.port);
+                Log_Warning()<<"[checkAndResend]重传,延迟"<<DELAY*(1<<(packet.times))<<"序号:"<<index;
+                packet.times++;
+                ++it;
             }
         }
     }
+
+
+    // for (auto &udpEndPoint:m_pendingPackets.keys())
+    // {
+    //     qint64 time=QDateTime::currentMSecsSinceEpoch();
+    //
+    //     while (m_sendQueue[udpEndPoint].size()>0)
+    //     {
+    //         qint64 index=m_sendQueue[udpEndPoint].head();
+    //         if (m_pendingPackets[udpEndPoint][index].isAck)
+    //         {
+    //             m_pendingPackets[udpEndPoint].remove(index);
+    //             m_sendQueue[udpEndPoint].dequeue();
+    //         }else
+    //         {
+    //             PendingPacket &packet=m_pendingPackets[udpEndPoint][index];
+    //
+    //             if (time-packet.previousTime<DELAY*(1<<(packet.times)))//指数退避
+    //                 break;
+    //             if (packet.times>3)
+    //             {
+    //                 Log_Warning()<<"[checkAndResend]重传3次失败，序号:"<<index;
+    //                 m_pendingPackets[udpEndPoint].remove(index);
+    //                 m_sendQueue[udpEndPoint].dequeue();
+    //             }else
+    //             {
+    // packet.times++;
+    // packet.previousTime=time;
+    // m_socket->writeDatagram(packet.sendData,udpEndPoint.address,udpEndPoint.port);
+    // m_sendQueue[udpEndPoint].dequeue();
+    // m_sendQueue[udpEndPoint].enqueue(index);
+    // Log_Warning()<<"[checkAndResend]重传，序号:"<<index;
+    //             }
+    //         }
+    //     }
+    // }
 }

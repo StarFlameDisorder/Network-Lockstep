@@ -85,7 +85,6 @@ namespace GamePlay//TODO: UDP重传风暴
                 _inputMove.Add(playerName, new FixedPointVector3());//玩家输入
                 _playerSyncMessgae.Add(playerName,new Queue<PlayerSync>());//玩家消息
                 _playerPos.Add(playerName, FixedPointVector3.FromVector3(o.transform.position));//玩家当前位置
-                _checkPlayers.Add(playerName,false);//玩家输入更新检测
             }
         }
 
@@ -95,8 +94,8 @@ namespace GamePlay//TODO: UDP重传风暴
 
             _players.Remove(response.Name);
             _inputMove.Remove(response.Name);
-            
-            
+            _playerSyncMessgae.Remove(response.Name);
+            _playerPos.Remove(response.Name);
         }
 
         private void StartRoom(PlayerStartRoomResponse response)
@@ -164,14 +163,58 @@ namespace GamePlay//TODO: UDP重传风暴
             if (_status != GameStatus.Started)return;
             
             SyncPlayerAction();
-            RunNextFrame();
-
-            foreach (var pair in _players)
+            
+            //RunNextFrame();
+            
+            foreach (var pair in _playerSyncMessgae)
             {
-                GameObject o = pair.Value;
-                _playerPos[pair.Key] += (_speed * _gameFrameSpace * _inputMove[pair.Key]);
+                var syncMes = pair.Value;
+                if(syncMes.Count==0)continue;//接收操作为空
+                if(!_players.ContainsKey(pair.Key))continue;//判断玩家是否存在
+                
+                //输入接收
+                var player = syncMes.Dequeue();
+                var v = player.InputMove;
+                FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X,v.Y,v.Z);
+                
+                
+                //输入逻辑处理
+                GameObject o = _players[pair.Key];
+                _playerPos[pair.Key] += (_speed * _gameFrameSpace * realV);
                 o.transform.position = _playerPos[pair.Key].ToVector3();
+                
+                //操作显示
+                if (player.Name == _name)
+                {
+                    StatusPanel.Instance.UpdateLocalStatus(syncMes.Count);
+                    StatusPanel.Instance.UpdateLocalOffset(realV.ToVector3());
+                }
+                else
+                {
+                    if (_otherName == "") _otherName = player.Name;//测试用，查找另一个玩家
+                    StatusPanel.Instance.UpdateExternalStatus(syncMes.Count);
+                    if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_inputMove[_otherName].ToVector3());
+                }
             }
+            
+
+            // foreach (var p in _players)
+            // {
+            //     if (!_checkPlayers[p.Key])
+            //     {
+            //         _inputMove[p.Key] = FixedPointVector3.zero;
+            //         Debug.LogWarning("空帧，归零");
+            //     }
+            //     _checkPlayers[p.Key] = false;
+            // }
+            
+
+            // foreach (var pair in _players)
+            // {
+            //     GameObject o = pair.Value;
+            //     _playerPos[pair.Key] += (_speed * _gameFrameSpace * _inputMove[pair.Key]);
+            //     o.transform.position = _playerPos[pair.Key].ToVector3();
+            // }
             
             if(_name!="")StatusPanel.Instance.UpdateLocalPos(_players[_name].transform.position);
             if (_otherName != "") StatusPanel.Instance.UpdateExternalPos(_players[_otherName].transform.position);
@@ -207,15 +250,6 @@ namespace GamePlay//TODO: UDP重传风暴
             //     Debug.LogError($"记录FixedUpdate状态失败: {e.Message}");
             // }
         }
-
-        private Vector3 UnitizedPosition(Vector3 v3)
-        {
-            return new Vector3(
-                Mathf.Round(v3.x * 100f) / 100f,
-                Mathf.Round(v3.y * 100f) / 100f,
-                Mathf.Round(v3.z * 100f) / 100f
-            );
-        }
         
         private Dictionary<string, Queue<PlayerSync>> _playerSyncMessgae = new();
         
@@ -235,48 +269,48 @@ namespace GamePlay//TODO: UDP重传风暴
 
         private string _otherName = "";
         
-        private UInt64 _nextFrameId = 0;
-        private UInt64 _eNextFrameId = 0;
+        // private UInt64 _nextFrameId = 0;
+        // private UInt64 _eNextFrameId = 0;
         
         //空帧判断
-        private Dictionary<string, bool> _checkPlayers=new();
-        void RunNextFrame()
-        {
-            foreach (var syncMes in _playerSyncMessgae.Values)
-            {
-                if(syncMes.Count==0)continue;
-                var player = syncMes.Dequeue();
-                var v = player.InputMove;
-                FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X,v.Y,v.Z);
-                _inputMove[player.Name] = realV;
-                
-                _checkPlayers[player.Name] = true;
-
-                if (player.Name == _name)
-                {
-                    StatusPanel.Instance.UpdateLocalStatus(syncMes.Count);
-                    StatusPanel.Instance.UpdateLocalOffset(realV.ToVector3());
-                }
-                else
-                {
-                    if (_otherName == "") _otherName = player.Name;
-                    StatusPanel.Instance.UpdateExternalStatus(syncMes.Count);
-                    if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_inputMove[_otherName].ToVector3());
-                }
-            }
-            
-
-            foreach (var p in _players)
-            {
-                if (!_checkPlayers[p.Key])
-                {
-                    _inputMove[p.Key] = FixedPointVector3.zero;
-                    Debug.LogWarning("空帧，归零");
-                }
-                _checkPlayers[p.Key] = false;
-            }
-            
-        }
+        // private Dictionary<string, bool> _checkPlayers=new();
+        // void RunNextFrame()
+        // {
+        //     foreach (var syncMes in _playerSyncMessgae.Values)
+        //     {
+        //         if(syncMes.Count==0)continue;
+        //         var player = syncMes.Dequeue();
+        //         var v = player.InputMove;
+        //         FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X,v.Y,v.Z);
+        //         _inputMove[player.Name] = realV;
+        //         
+        //         _checkPlayers[player.Name] = true;
+        //
+        //         if (player.Name == _name)
+        //         {
+        //             StatusPanel.Instance.UpdateLocalStatus(syncMes.Count);
+        //             StatusPanel.Instance.UpdateLocalOffset(realV.ToVector3());
+        //         }
+        //         else
+        //         {
+        //             if (_otherName == "") _otherName = player.Name;
+        //             StatusPanel.Instance.UpdateExternalStatus(syncMes.Count);
+        //             if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_inputMove[_otherName].ToVector3());
+        //         }
+        //     }
+        //     
+        //
+        //     foreach (var p in _players)
+        //     {
+        //         if (!_checkPlayers[p.Key])
+        //         {
+        //             _inputMove[p.Key] = FixedPointVector3.zero;
+        //             Debug.LogWarning("空帧，归零");
+        //         }
+        //         _checkPlayers[p.Key] = false;
+        //     }
+        //     
+        // }
 
         void HeartBeat()
         {

@@ -93,7 +93,7 @@ namespace Network
                     {
                         PendingPacket packet = _pendingPackets[index];
 
-                        if (time - packet.previousTime < 500) //未到时间，等到超时时间
+                        if (time - packet.previousTime < 1000) //未到时间，等到超时时间
                         {
                             break;
                         }
@@ -222,6 +222,12 @@ namespace Network
                         if (!_receiveBuf.TryAdd(index, actualData)) Debug.LogWarning("重复包" + index);
                     }
                     else Debug.LogWarning("接收到旧包"+index);
+
+                    if (!_receiveBuf.ContainsKey(index) && _receiveBuf.Count>600)
+                    {
+                        _invokeIndex++;
+                        Debug.LogWarning($"{_invokeIndex}过长时间未收到，舍弃");
+                    }
                     
                     while (_receiveBuf.TryGetValue(_invokeIndex, out byte[] data))
                     {
@@ -229,7 +235,7 @@ namespace Network
                         _receiveBuf.Remove(_invokeIndex);
                         _invokeIndex++;
                     }
-                    while(_receiveBuf.Count>50)
+                    while(_receiveBuf.Count>600)
                     {
                         Debug.LogWarning("UDP缓冲区包过多" + _receiveBuf.Count+"跳过"+_invokeIndex);
                         _receiveBuf.Remove(_invokeIndex);

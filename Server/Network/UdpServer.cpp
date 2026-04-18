@@ -6,6 +6,7 @@
 #define FILE_PREFIX "UdpServer:"
 #define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
 
+#define DELAY 1000
 #include "UDPServer.h"
 #include <QNetworkDatagram>
 #include <QTimer>
@@ -71,7 +72,7 @@ void UdpServer::receiveSocketMessage()
                 receiveBuf.remove(invokeIndex);
                 invokeIndex++;
             }
-            while (receiveBuf.count()>50)
+            while (receiveBuf.count()>600)
             {
                 Log_Warning()<<"UDP缓冲区包过多"<<receiveBuf.count();
                 receiveBuf.remove(invokeIndex);
@@ -175,7 +176,7 @@ void UdpServer::checkAndResend()//发送消息后会检查旧数据是否发送
             {
                 PendingPacket &packet=m_pendingPackets[udpEndPoint][index];
 
-                if (time-packet.previousTime<500)break;
+                if (time-packet.previousTime<DELAY)break;
                 if (packet.times>3)
                 {
                     Log_Warning()<<"[checkAndResend]重传3次失败，序号:"<<index;

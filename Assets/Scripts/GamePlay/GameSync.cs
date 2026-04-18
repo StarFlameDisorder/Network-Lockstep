@@ -9,7 +9,7 @@ using UnityMath;
 using Google.Protobuf;
 using SyncMessage;
 
-namespace GamePlay//TODO: UDP重传风暴  30hz问题
+namespace GamePlay//TODO: UDP重传风暴
 {
     public enum GameStatus
     {
@@ -20,7 +20,7 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
     
     public class GameSync:MonoBehaviour
     {
-        private static int _gameFrameRate = 15;
+        private static int _gameFrameRate = 30;
         private static FixedPoint _gameFrameSpace = FixedPoint.FromFloat(1f / _gameFrameRate);
         
         public static GameSync Instance;
@@ -57,7 +57,7 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
 
         [SerializeField] private GameObject _playerPrefab;
         private Dictionary<string, GameObject> _players=new ();
-        //private Dictionary<string, Rigidbody> _rigidbodies=new ();
+        
         private Dictionary<string,FixedPointVector3> _inputMove=new ();
         private Dictionary<string, FixedPointVector3> _playerPos = new();
         
@@ -80,11 +80,12 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
             {
                 Debug.Log("添加玩家");
                 GameObject o = Instantiate(_playerPrefab);
-                _players.Add(playerName, o);
-                //_rigidbodies.Add(playerName, rb);
-                _inputMove.Add(playerName, new FixedPointVector3());
-                _playerSyncMessgae.Add(playerName,new Queue<PlayerSync>());
-                _playerPos.Add(playerName, FixedPointVector3.FromVector3(o.transform.position));
+                
+                _players.Add(playerName, o);//玩家游戏对象
+                _inputMove.Add(playerName, new FixedPointVector3());//玩家输入
+                _playerSyncMessgae.Add(playerName,new Queue<PlayerSync>());//玩家消息
+                _playerPos.Add(playerName, FixedPointVector3.FromVector3(o.transform.position));//玩家当前位置
+                _checkPlayers.Add(playerName,false);//玩家输入更新检测
             }
         }
 
@@ -93,8 +94,9 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
             Debug.Log("收到PlayerLeaveRoomResponse");
 
             _players.Remove(response.Name);
-            //_rigidbodies.Remove(response.Name);
             _inputMove.Remove(response.Name);
+            
+            
         }
 
         private void StartRoom(PlayerStartRoomResponse response)
@@ -173,6 +175,7 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
             
             if(_name!="")StatusPanel.Instance.UpdateLocalPos(_players[_name].transform.position);
             if (_otherName != "") StatusPanel.Instance.UpdateExternalPos(_players[_otherName].transform.position);
+            
             // if(_name!="" && _status == GameStatus.Started)try//日志输出
             // {
             //     string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
@@ -188,11 +191,11 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
             //         // 写入帧标记（时间戳 + FixedUpdate调用序号）
             //         writer.WriteLine($"===== FixedUpdate #{_fixedUpdateCounter} at {System.DateTime.Now:HH:mm:ss.fff} =====");
             //
-            //         foreach (var kvp in _velocities)
+            //         foreach (var kvp in _inputMove)
             //         {
             //             string playerName = kvp.Key;
-            //             Vector3 vel = kvp.Value;
-            //             Vector3 pos = _rigidbodies.ContainsKey(playerName) ? _rigidbodies[playerName].position : Vector3.zero;
+            //             Vector3 vel = kvp.Value.ToVector3();
+            //             Vector3 pos = _playerPos.ContainsKey(playerName) ? _playerPos[playerName].ToVector3() : Vector3.zero;
             //             writer.WriteLine($"{playerName}: vel=({vel.x:F3}, {vel.y:F3}, {vel.z:F3}), pos=({pos.x:F3}, {pos.y:F3}, {pos.z:F3})");
             //         }
             //         writer.WriteLine(); // 空行分隔
@@ -234,6 +237,8 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
         
         private UInt64 _nextFrameId = 0;
         private UInt64 _eNextFrameId = 0;
+        
+        //空帧判断
         private Dictionary<string, bool> _checkPlayers=new();
         void RunNextFrame()
         {
@@ -263,7 +268,11 @@ namespace GamePlay//TODO: UDP重传风暴  30hz问题
 
             foreach (var p in _players)
             {
-                if (!p.Value) _inputMove[p.Key] = FixedPointVector3.zero;
+                if (!_checkPlayers[p.Key])
+                {
+                    _inputMove[p.Key] = FixedPointVector3.zero;
+                    Debug.LogWarning("空帧，归零");
+                }
                 _checkPlayers[p.Key] = false;
             }
             

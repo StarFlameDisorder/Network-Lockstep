@@ -5,7 +5,7 @@
 
 #define FILE_PREFIX "RoomManager:"//日志前缀
 #define LOCAL_LOG_LEVEL LogLevel::Info//局部日志等级
-#define GameFrameRate 15
+#define GameFrameRate 30
 
 #include "RoomManager.h"
 #include "../LoggerStream.h"

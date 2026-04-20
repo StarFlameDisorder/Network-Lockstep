@@ -12,6 +12,7 @@ message ServerMessage{
         ConnectMessage.ServerConnectMessage connectMessage = 3;
         GameMessage.GameSyncMessage gameSyncMessage = 4;
         LobbyMessage.LobbySyncResponse lobbySync = 5;
+        GameMessage.GameSnapshotMessage gameSnapshotMessage=6;
     }
 }
 
@@ -23,5 +24,6 @@ message ClientMessage{
         GameMessage.GameSyncMessage gameSyncMessage = 4;
         LobbyMessage.LobbySyncRequest lobbySync=5;
         GameMessage.HeartBeat heartBeat=6;
+        GameMessage.GameSnapshotMessage gameSnapshotMessage=7;
     }
 }

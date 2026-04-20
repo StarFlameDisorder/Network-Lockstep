@@ -40,11 +40,11 @@ namespace LobbyMessage {
             "YmJ5TWVzc2FnZS5QbGF5ZXJMZWF2ZVJvb21SZXNwb25zZUgAEjoKCXN0YXJ0",
             "Um9vbRgEIAEoCzIlLkxvYmJ5TWVzc2FnZS5QbGF5ZXJTdGFydFJvb21SZXNw",
             "b25zZUgAEjYKB2VuZFJvb20YBSABKAsyIy5Mb2JieU1lc3NhZ2UuUGxheWVy",
-            "RW5kUm9vbVJlc3BvbnNlSABCCQoHY29udGVudCIpChZQbGF5ZXJKb2luUm9v",
-            "bVJlc3BvbnNlEg8KB3BsYXllcnMYAiADKAkiJwoXUGxheWVyTGVhdmVSb29t",
-            "UmVzcG9uc2USDAoEbmFtZRgBIAEoCSInChdQbGF5ZXJTdGFydFJvb21SZXNw",
-            "b25zZRIMCgRuYW1lGAEgASgJIiUKFVBsYXllckVuZFJvb21SZXNwb25zZRIM",
-            "CgRuYW1lGAEgASgJYgZwcm90bzM="));
+            "RW5kUm9vbVJlc3BvbnNlSABCCQoHY29udGVudCI4ChZQbGF5ZXJKb2luUm9v",
+            "bVJlc3BvbnNlEg0KBW93bmVyGAEgASgJEg8KB3BsYXllcnMYAiADKAkiJwoX",
+            "UGxheWVyTGVhdmVSb29tUmVzcG9uc2USDAoEbmFtZRgBIAEoCSInChdQbGF5",
+            "ZXJTdGFydFJvb21SZXNwb25zZRIMCgRuYW1lGAEgASgJIiUKFVBsYXllckVu",
+            "ZFJvb21SZXNwb25zZRIMCgRuYW1lGAEgASgJYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -54,7 +54,7 @@ namespace LobbyMessage {
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerStartRoomRequest), global::LobbyMessage.PlayerStartRoomRequest.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerEndRoomRequest), global::LobbyMessage.PlayerEndRoomRequest.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.LobbySyncResponse), global::LobbyMessage.LobbySyncResponse.Parser, new[]{ "Name", "JoinRoom", "LeaveRoom", "StartRoom", "EndRoom" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerJoinRoomResponse), global::LobbyMessage.PlayerJoinRoomResponse.Parser, new[]{ "Players" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerJoinRoomResponse), global::LobbyMessage.PlayerJoinRoomResponse.Parser, new[]{ "Owner", "Players" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerLeaveRoomResponse), global::LobbyMessage.PlayerLeaveRoomResponse.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerStartRoomResponse), global::LobbyMessage.PlayerStartRoomResponse.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerEndRoomResponse), global::LobbyMessage.PlayerEndRoomResponse.Parser, new[]{ "Name" }, null, null, null, null)
@@ -1716,6 +1716,7 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public PlayerJoinRoomResponse(PlayerJoinRoomResponse other) : this() {
+      owner_ = other.owner_;
       players_ = other.players_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -1724,6 +1725,18 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public PlayerJoinRoomResponse Clone() {
       return new PlayerJoinRoomResponse(this);
+    }
+
+    /// <summary>Field number for the "owner" field.</summary>
+    public const int OwnerFieldNumber = 1;
+    private string owner_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Owner {
+      get { return owner_; }
+      set {
+        owner_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
     }
 
     /// <summary>Field number for the "players" field.</summary>
@@ -1752,6 +1765,7 @@ namespace LobbyMessage {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Owner != other.Owner) return false;
       if(!players_.Equals(other.players_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1760,6 +1774,7 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (Owner.Length != 0) hash ^= Owner.GetHashCode();
       hash ^= players_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1779,6 +1794,10 @@ namespace LobbyMessage {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
+      if (Owner.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Owner);
+      }
       players_.WriteTo(output, _repeated_players_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1790,6 +1809,10 @@ namespace LobbyMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Owner.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Owner);
+      }
       players_.WriteTo(ref output, _repeated_players_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1801,6 +1824,9 @@ namespace LobbyMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (Owner.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Owner);
+      }
       size += players_.CalculateSize(_repeated_players_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1813,6 +1839,9 @@ namespace LobbyMessage {
     public void MergeFrom(PlayerJoinRoomResponse other) {
       if (other == null) {
         return;
+      }
+      if (other.Owner.Length != 0) {
+        Owner = other.Owner;
       }
       players_.Add(other.players_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -1830,6 +1859,10 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
+          case 10: {
+            Owner = input.ReadString();
+            break;
+          }
           case 18: {
             players_.AddEntriesFrom(input, _repeated_players_codec);
             break;
@@ -1849,6 +1882,10 @@ namespace LobbyMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
+          case 10: {
+            Owner = input.ReadString();
+            break;
+          }
           case 18: {
             players_.AddEntriesFrom(ref input, _repeated_players_codec);
             break;

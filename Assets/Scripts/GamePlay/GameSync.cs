@@ -52,6 +52,7 @@ namespace GamePlay//TODO: UDP重传风暴
         
         private string _name="";
         private string _otherName = "";
+        private string _ownerName = "";
 
         public void SetName(string playerName)
         {
@@ -62,9 +63,6 @@ namespace GamePlay//TODO: UDP重传风暴
         [SerializeField] private GameObject _playerPrefab;
         
         private Dictionary<string,Player> _players = new();
-
-
-
         
         private void JoinRoom(PlayerJoinRoomResponse response)
         {
@@ -77,6 +75,7 @@ namespace GamePlay//TODO: UDP重传风暴
                     AddPlayer(otherPlayer);
                 }
             }
+            _ownerName=response.Owner;
         }
 
         private void AddPlayer(string playerName)
@@ -145,6 +144,25 @@ namespace GamePlay//TODO: UDP重传风暴
             
             NetworkManager.Instance.UdpSendMessage(message.ToByteArray());
             PlayerAction(gameSyncMessage);
+
+            if (_name==_ownerName&&_frameId % (UInt64)_gameFrameRate * 10 == 0)
+            {
+                GameSnapshotMessage snapshotMessage = new GameSnapshotMessage();
+                snapshotMessage.FrameId = _frameId;
+                foreach (var pair in _players)
+                {
+                    snapshotMessage.PlayerSSs.Add(pair.Value.GetSnapshotSync(_frameId));
+                }
+
+                ClientMessage snapMessage = new ClientMessage
+                {
+                    ClientId = clientId,
+                    GameSnapshotMessage = snapshotMessage
+                };
+                NetworkManager.Instance.UdpSendMessage(snapMessage.ToByteArray());
+                
+            }
+            
             _frameId++;
         }
         
@@ -163,7 +181,7 @@ namespace GamePlay//TODO: UDP重传风暴
             };
             NetworkManager.Instance.UdpSendMessage(message.ToByteArray());
         }
-
+        
         #endregion
 
         #region 游戏状态更新

@@ -111,6 +111,7 @@ class ServerMessage final :
     kConnectMessage = 3,
     kGameSyncMessage = 4,
     kLobbySync = 5,
+    kGameSnapshotMessage = 6,
     CONTENT_NOT_SET = 0,
   };
 
@@ -196,6 +197,7 @@ class ServerMessage final :
     kConnectMessageFieldNumber = 3,
     kGameSyncMessageFieldNumber = 4,
     kLobbySyncFieldNumber = 5,
+    kGameSnapshotMessageFieldNumber = 6,
   };
   // string commonMessage = 2;
   bool has_commonmessage() const;
@@ -269,6 +271,24 @@ class ServerMessage final :
       ::LobbyMessage::LobbySyncResponse* lobbysync);
   ::LobbyMessage::LobbySyncResponse* unsafe_arena_release_lobbysync();
 
+  // .GameMessage.GameSnapshotMessage gameSnapshotMessage = 6;
+  bool has_gamesnapshotmessage() const;
+  private:
+  bool _internal_has_gamesnapshotmessage() const;
+  public:
+  void clear_gamesnapshotmessage();
+  const ::GameMessage::GameSnapshotMessage& gamesnapshotmessage() const;
+  PROTOBUF_NODISCARD ::GameMessage::GameSnapshotMessage* release_gamesnapshotmessage();
+  ::GameMessage::GameSnapshotMessage* mutable_gamesnapshotmessage();
+  void set_allocated_gamesnapshotmessage(::GameMessage::GameSnapshotMessage* gamesnapshotmessage);
+  private:
+  const ::GameMessage::GameSnapshotMessage& _internal_gamesnapshotmessage() const;
+  ::GameMessage::GameSnapshotMessage* _internal_mutable_gamesnapshotmessage();
+  public:
+  void unsafe_arena_set_allocated_gamesnapshotmessage(
+      ::GameMessage::GameSnapshotMessage* gamesnapshotmessage);
+  ::GameMessage::GameSnapshotMessage* unsafe_arena_release_gamesnapshotmessage();
+
   void clear_content();
   ContentCase content_case() const;
   // @@protoc_insertion_point(class_scope:SyncMessage.ServerMessage)
@@ -278,6 +298,7 @@ class ServerMessage final :
   void set_has_connectmessage();
   void set_has_gamesyncmessage();
   void set_has_lobbysync();
+  void set_has_gamesnapshotmessage();
 
   inline bool has_content() const;
   inline void clear_has_content();
@@ -293,6 +314,7 @@ class ServerMessage final :
       ::ConnectMessage::ServerConnectMessage* connectmessage_;
       ::GameMessage::GameSyncMessage* gamesyncmessage_;
       ::LobbyMessage::LobbySyncResponse* lobbysync_;
+      ::GameMessage::GameSnapshotMessage* gamesnapshotmessage_;
     } content_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -352,6 +374,7 @@ class ClientMessage final :
     kGameSyncMessage = 4,
     kLobbySync = 5,
     kHeartBeat = 6,
+    kGameSnapshotMessage = 7,
     CONTENT_NOT_SET = 0,
   };
 
@@ -439,6 +462,7 @@ class ClientMessage final :
     kGameSyncMessageFieldNumber = 4,
     kLobbySyncFieldNumber = 5,
     kHeartBeatFieldNumber = 6,
+    kGameSnapshotMessageFieldNumber = 7,
   };
   // uint64 clientId = 1;
   void clear_clientid();
@@ -539,6 +563,24 @@ class ClientMessage final :
       ::GameMessage::HeartBeat* heartbeat);
   ::GameMessage::HeartBeat* unsafe_arena_release_heartbeat();
 
+  // .GameMessage.GameSnapshotMessage gameSnapshotMessage = 7;
+  bool has_gamesnapshotmessage() const;
+  private:
+  bool _internal_has_gamesnapshotmessage() const;
+  public:
+  void clear_gamesnapshotmessage();
+  const ::GameMessage::GameSnapshotMessage& gamesnapshotmessage() const;
+  PROTOBUF_NODISCARD ::GameMessage::GameSnapshotMessage* release_gamesnapshotmessage();
+  ::GameMessage::GameSnapshotMessage* mutable_gamesnapshotmessage();
+  void set_allocated_gamesnapshotmessage(::GameMessage::GameSnapshotMessage* gamesnapshotmessage);
+  private:
+  const ::GameMessage::GameSnapshotMessage& _internal_gamesnapshotmessage() const;
+  ::GameMessage::GameSnapshotMessage* _internal_mutable_gamesnapshotmessage();
+  public:
+  void unsafe_arena_set_allocated_gamesnapshotmessage(
+      ::GameMessage::GameSnapshotMessage* gamesnapshotmessage);
+  ::GameMessage::GameSnapshotMessage* unsafe_arena_release_gamesnapshotmessage();
+
   void clear_content();
   ContentCase content_case() const;
   // @@protoc_insertion_point(class_scope:SyncMessage.ClientMessage)
@@ -549,6 +591,7 @@ class ClientMessage final :
   void set_has_gamesyncmessage();
   void set_has_lobbysync();
   void set_has_heartbeat();
+  void set_has_gamesnapshotmessage();
 
   inline bool has_content() const;
   inline void clear_has_content();
@@ -566,6 +609,7 @@ class ClientMessage final :
       ::GameMessage::GameSyncMessage* gamesyncmessage_;
       ::LobbyMessage::LobbySyncRequest* lobbysync_;
       ::GameMessage::HeartBeat* heartbeat_;
+      ::GameMessage::GameSnapshotMessage* gamesnapshotmessage_;
     } content_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -857,6 +901,72 @@ inline ::LobbyMessage::LobbySyncResponse* ServerMessage::_internal_mutable_lobby
 inline ::LobbyMessage::LobbySyncResponse* ServerMessage::mutable_lobbysync() {
   ::LobbyMessage::LobbySyncResponse* _msg = _internal_mutable_lobbysync();
   // @@protoc_insertion_point(field_mutable:SyncMessage.ServerMessage.lobbySync)
+  return _msg;
+}
+
+// .GameMessage.GameSnapshotMessage gameSnapshotMessage = 6;
+inline bool ServerMessage::_internal_has_gamesnapshotmessage() const {
+  return content_case() == kGameSnapshotMessage;
+}
+inline bool ServerMessage::has_gamesnapshotmessage() const {
+  return _internal_has_gamesnapshotmessage();
+}
+inline void ServerMessage::set_has_gamesnapshotmessage() {
+  _impl_._oneof_case_[0] = kGameSnapshotMessage;
+}
+inline ::GameMessage::GameSnapshotMessage* ServerMessage::release_gamesnapshotmessage() {
+  // @@protoc_insertion_point(field_release:SyncMessage.ServerMessage.gameSnapshotMessage)
+  if (_internal_has_gamesnapshotmessage()) {
+    clear_has_content();
+    ::GameMessage::GameSnapshotMessage* temp = _impl_.content_.gamesnapshotmessage_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.content_.gamesnapshotmessage_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::GameMessage::GameSnapshotMessage& ServerMessage::_internal_gamesnapshotmessage() const {
+  return _internal_has_gamesnapshotmessage()
+      ? *_impl_.content_.gamesnapshotmessage_
+      : reinterpret_cast< ::GameMessage::GameSnapshotMessage&>(::GameMessage::_GameSnapshotMessage_default_instance_);
+}
+inline const ::GameMessage::GameSnapshotMessage& ServerMessage::gamesnapshotmessage() const {
+  // @@protoc_insertion_point(field_get:SyncMessage.ServerMessage.gameSnapshotMessage)
+  return _internal_gamesnapshotmessage();
+}
+inline ::GameMessage::GameSnapshotMessage* ServerMessage::unsafe_arena_release_gamesnapshotmessage() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:SyncMessage.ServerMessage.gameSnapshotMessage)
+  if (_internal_has_gamesnapshotmessage()) {
+    clear_has_content();
+    ::GameMessage::GameSnapshotMessage* temp = _impl_.content_.gamesnapshotmessage_;
+    _impl_.content_.gamesnapshotmessage_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ServerMessage::unsafe_arena_set_allocated_gamesnapshotmessage(::GameMessage::GameSnapshotMessage* gamesnapshotmessage) {
+  clear_content();
+  if (gamesnapshotmessage) {
+    set_has_gamesnapshotmessage();
+    _impl_.content_.gamesnapshotmessage_ = gamesnapshotmessage;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:SyncMessage.ServerMessage.gameSnapshotMessage)
+}
+inline ::GameMessage::GameSnapshotMessage* ServerMessage::_internal_mutable_gamesnapshotmessage() {
+  if (!_internal_has_gamesnapshotmessage()) {
+    clear_content();
+    set_has_gamesnapshotmessage();
+    _impl_.content_.gamesnapshotmessage_ = CreateMaybeMessage< ::GameMessage::GameSnapshotMessage >(GetArenaForAllocation());
+  }
+  return _impl_.content_.gamesnapshotmessage_;
+}
+inline ::GameMessage::GameSnapshotMessage* ServerMessage::mutable_gamesnapshotmessage() {
+  ::GameMessage::GameSnapshotMessage* _msg = _internal_mutable_gamesnapshotmessage();
+  // @@protoc_insertion_point(field_mutable:SyncMessage.ServerMessage.gameSnapshotMessage)
   return _msg;
 }
 
@@ -1231,6 +1341,72 @@ inline ::GameMessage::HeartBeat* ClientMessage::_internal_mutable_heartbeat() {
 inline ::GameMessage::HeartBeat* ClientMessage::mutable_heartbeat() {
   ::GameMessage::HeartBeat* _msg = _internal_mutable_heartbeat();
   // @@protoc_insertion_point(field_mutable:SyncMessage.ClientMessage.heartBeat)
+  return _msg;
+}
+
+// .GameMessage.GameSnapshotMessage gameSnapshotMessage = 7;
+inline bool ClientMessage::_internal_has_gamesnapshotmessage() const {
+  return content_case() == kGameSnapshotMessage;
+}
+inline bool ClientMessage::has_gamesnapshotmessage() const {
+  return _internal_has_gamesnapshotmessage();
+}
+inline void ClientMessage::set_has_gamesnapshotmessage() {
+  _impl_._oneof_case_[0] = kGameSnapshotMessage;
+}
+inline ::GameMessage::GameSnapshotMessage* ClientMessage::release_gamesnapshotmessage() {
+  // @@protoc_insertion_point(field_release:SyncMessage.ClientMessage.gameSnapshotMessage)
+  if (_internal_has_gamesnapshotmessage()) {
+    clear_has_content();
+    ::GameMessage::GameSnapshotMessage* temp = _impl_.content_.gamesnapshotmessage_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.content_.gamesnapshotmessage_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::GameMessage::GameSnapshotMessage& ClientMessage::_internal_gamesnapshotmessage() const {
+  return _internal_has_gamesnapshotmessage()
+      ? *_impl_.content_.gamesnapshotmessage_
+      : reinterpret_cast< ::GameMessage::GameSnapshotMessage&>(::GameMessage::_GameSnapshotMessage_default_instance_);
+}
+inline const ::GameMessage::GameSnapshotMessage& ClientMessage::gamesnapshotmessage() const {
+  // @@protoc_insertion_point(field_get:SyncMessage.ClientMessage.gameSnapshotMessage)
+  return _internal_gamesnapshotmessage();
+}
+inline ::GameMessage::GameSnapshotMessage* ClientMessage::unsafe_arena_release_gamesnapshotmessage() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:SyncMessage.ClientMessage.gameSnapshotMessage)
+  if (_internal_has_gamesnapshotmessage()) {
+    clear_has_content();
+    ::GameMessage::GameSnapshotMessage* temp = _impl_.content_.gamesnapshotmessage_;
+    _impl_.content_.gamesnapshotmessage_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ClientMessage::unsafe_arena_set_allocated_gamesnapshotmessage(::GameMessage::GameSnapshotMessage* gamesnapshotmessage) {
+  clear_content();
+  if (gamesnapshotmessage) {
+    set_has_gamesnapshotmessage();
+    _impl_.content_.gamesnapshotmessage_ = gamesnapshotmessage;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:SyncMessage.ClientMessage.gameSnapshotMessage)
+}
+inline ::GameMessage::GameSnapshotMessage* ClientMessage::_internal_mutable_gamesnapshotmessage() {
+  if (!_internal_has_gamesnapshotmessage()) {
+    clear_content();
+    set_has_gamesnapshotmessage();
+    _impl_.content_.gamesnapshotmessage_ = CreateMaybeMessage< ::GameMessage::GameSnapshotMessage >(GetArenaForAllocation());
+  }
+  return _impl_.content_.gamesnapshotmessage_;
+}
+inline ::GameMessage::GameSnapshotMessage* ClientMessage::mutable_gamesnapshotmessage() {
+  ::GameMessage::GameSnapshotMessage* _msg = _internal_mutable_gamesnapshotmessage();
+  // @@protoc_insertion_point(field_mutable:SyncMessage.ClientMessage.gameSnapshotMessage)
   return _msg;
 }
 

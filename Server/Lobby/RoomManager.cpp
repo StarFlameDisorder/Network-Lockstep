@@ -74,6 +74,8 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
         playerJoin->add_players(i.name.toStdString());
     }
 
+    if (m_players.contains(1))playerJoin->set_owner(m_players[1].name.toStdString());
+
     QByteArray data;
     data.resize(sendMessage.ByteSizeLong());
     bool success = sendMessage.SerializeToArray(data.data(), data.size());

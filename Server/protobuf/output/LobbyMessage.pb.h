@@ -1338,6 +1338,7 @@ class PlayerJoinRoomResponse final :
 
   enum : int {
     kPlayersFieldNumber = 2,
+    kOwnerFieldNumber = 1,
   };
   // repeated string players = 2;
   int players_size() const;
@@ -1363,6 +1364,20 @@ class PlayerJoinRoomResponse final :
   std::string* _internal_add_players();
   public:
 
+  // string owner = 1;
+  void clear_owner();
+  const std::string& owner() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_owner(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_owner();
+  PROTOBUF_NODISCARD std::string* release_owner();
+  void set_allocated_owner(std::string* owner);
+  private:
+  const std::string& _internal_owner() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_owner(const std::string& value);
+  std::string* _internal_mutable_owner();
+  public:
+
   // @@protoc_insertion_point(class_scope:LobbyMessage.PlayerJoinRoomResponse)
  private:
   class _Internal;
@@ -1372,6 +1387,7 @@ class PlayerJoinRoomResponse final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> players_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr owner_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2780,6 +2796,56 @@ inline LobbySyncResponse::ContentCase LobbySyncResponse::content_case() const {
 // -------------------------------------------------------------------
 
 // PlayerJoinRoomResponse
+
+// string owner = 1;
+inline void PlayerJoinRoomResponse::clear_owner() {
+  _impl_.owner_.ClearToEmpty();
+}
+inline const std::string& PlayerJoinRoomResponse::owner() const {
+  // @@protoc_insertion_point(field_get:LobbyMessage.PlayerJoinRoomResponse.owner)
+  return _internal_owner();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void PlayerJoinRoomResponse::set_owner(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.owner_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:LobbyMessage.PlayerJoinRoomResponse.owner)
+}
+inline std::string* PlayerJoinRoomResponse::mutable_owner() {
+  std::string* _s = _internal_mutable_owner();
+  // @@protoc_insertion_point(field_mutable:LobbyMessage.PlayerJoinRoomResponse.owner)
+  return _s;
+}
+inline const std::string& PlayerJoinRoomResponse::_internal_owner() const {
+  return _impl_.owner_.Get();
+}
+inline void PlayerJoinRoomResponse::_internal_set_owner(const std::string& value) {
+  
+  _impl_.owner_.Set(value, GetArenaForAllocation());
+}
+inline std::string* PlayerJoinRoomResponse::_internal_mutable_owner() {
+  
+  return _impl_.owner_.Mutable(GetArenaForAllocation());
+}
+inline std::string* PlayerJoinRoomResponse::release_owner() {
+  // @@protoc_insertion_point(field_release:LobbyMessage.PlayerJoinRoomResponse.owner)
+  return _impl_.owner_.Release();
+}
+inline void PlayerJoinRoomResponse::set_allocated_owner(std::string* owner) {
+  if (owner != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.owner_.SetAllocated(owner, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.owner_.IsDefault()) {
+    _impl_.owner_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:LobbyMessage.PlayerJoinRoomResponse.owner)
+}
 
 // repeated string players = 2;
 inline int PlayerJoinRoomResponse::_internal_players_size() const {

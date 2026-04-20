@@ -106,6 +106,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR PlayerJoinRoomResponse::PlayerJoinRoomResponse(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.players_)*/{}
+  , /*decltype(_impl_.owner_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct PlayerJoinRoomResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR PlayerJoinRoomResponseDefaultTypeInternal()
@@ -219,6 +220,7 @@ const uint32_t TableStruct_LobbyMessage_2eproto::offsets[] PROTOBUF_SECTION_VARI
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::LobbyMessage::PlayerJoinRoomResponse, _impl_.owner_),
   PROTOBUF_FIELD_OFFSET(::LobbyMessage::PlayerJoinRoomResponse, _impl_.players_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::LobbyMessage::PlayerLeaveRoomResponse, _internal_metadata_),
@@ -250,9 +252,9 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 33, -1, -1, sizeof(::LobbyMessage::PlayerEndRoomRequest)},
   { 40, -1, -1, sizeof(::LobbyMessage::LobbySyncResponse)},
   { 52, -1, -1, sizeof(::LobbyMessage::PlayerJoinRoomResponse)},
-  { 59, -1, -1, sizeof(::LobbyMessage::PlayerLeaveRoomResponse)},
-  { 66, -1, -1, sizeof(::LobbyMessage::PlayerStartRoomResponse)},
-  { 73, -1, -1, sizeof(::LobbyMessage::PlayerEndRoomResponse)},
+  { 60, -1, -1, sizeof(::LobbyMessage::PlayerLeaveRoomResponse)},
+  { 67, -1, -1, sizeof(::LobbyMessage::PlayerStartRoomResponse)},
+  { 74, -1, -1, sizeof(::LobbyMessage::PlayerEndRoomResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -287,15 +289,16 @@ const char descriptor_table_protodef_LobbyMessage_2eproto[] PROTOBUF_SECTION_VAR
   "erLeaveRoomResponseH\000\022:\n\tstartRoom\030\004 \001(\013"
   "2%.LobbyMessage.PlayerStartRoomResponseH"
   "\000\0226\n\007endRoom\030\005 \001(\0132#.LobbyMessage.Player"
-  "EndRoomResponseH\000B\t\n\007content\")\n\026PlayerJo"
-  "inRoomResponse\022\017\n\007players\030\002 \003(\t\"\'\n\027Playe"
-  "rLeaveRoomResponse\022\014\n\004name\030\001 \001(\t\"\'\n\027Play"
-  "erStartRoomResponse\022\014\n\004name\030\001 \001(\t\"%\n\025Pla"
-  "yerEndRoomResponse\022\014\n\004name\030\001 \001(\tb\006proto3"
+  "EndRoomResponseH\000B\t\n\007content\"8\n\026PlayerJo"
+  "inRoomResponse\022\r\n\005owner\030\001 \001(\t\022\017\n\007players"
+  "\030\002 \003(\t\"\'\n\027PlayerLeaveRoomResponse\022\014\n\004nam"
+  "e\030\001 \001(\t\"\'\n\027PlayerStartRoomResponse\022\014\n\004na"
+  "me\030\001 \001(\t\"%\n\025PlayerEndRoomResponse\022\014\n\004nam"
+  "e\030\001 \001(\tb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_LobbyMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_LobbyMessage_2eproto = {
-    false, false, 920, descriptor_table_protodef_LobbyMessage_2eproto,
+    false, false, 935, descriptor_table_protodef_LobbyMessage_2eproto,
     "LobbyMessage.proto",
     &descriptor_table_LobbyMessage_2eproto_once, nullptr, 0, 10,
     schemas, file_default_instances, TableStruct_LobbyMessage_2eproto::offsets,
@@ -2085,9 +2088,18 @@ PlayerJoinRoomResponse::PlayerJoinRoomResponse(const PlayerJoinRoomResponse& fro
   PlayerJoinRoomResponse* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.players_){from._impl_.players_}
+    , decltype(_impl_.owner_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.owner_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.owner_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_owner().empty()) {
+    _this->_impl_.owner_.Set(from._internal_owner(), 
+      _this->GetArenaForAllocation());
+  }
   // @@protoc_insertion_point(copy_constructor:LobbyMessage.PlayerJoinRoomResponse)
 }
 
@@ -2097,8 +2109,13 @@ inline void PlayerJoinRoomResponse::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.players_){arena}
+    , decltype(_impl_.owner_){}
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.owner_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.owner_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 PlayerJoinRoomResponse::~PlayerJoinRoomResponse() {
@@ -2113,6 +2130,7 @@ PlayerJoinRoomResponse::~PlayerJoinRoomResponse() {
 inline void PlayerJoinRoomResponse::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.players_.~RepeatedPtrField();
+  _impl_.owner_.Destroy();
 }
 
 void PlayerJoinRoomResponse::SetCachedSize(int size) const {
@@ -2126,6 +2144,7 @@ void PlayerJoinRoomResponse::Clear() {
   (void) cached_has_bits;
 
   _impl_.players_.Clear();
+  _impl_.owner_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2135,6 +2154,16 @@ const char* PlayerJoinRoomResponse::_InternalParse(const char* ptr, ::_pbi::Pars
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
+      // string owner = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_owner();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "LobbyMessage.PlayerJoinRoomResponse.owner"));
+        } else
+          goto handle_unusual;
+        continue;
       // repeated string players = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
@@ -2179,6 +2208,16 @@ uint8_t* PlayerJoinRoomResponse::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  // string owner = 1;
+  if (!this->_internal_owner().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_owner().data(), static_cast<int>(this->_internal_owner().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "LobbyMessage.PlayerJoinRoomResponse.owner");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_owner(), target);
+  }
+
   // repeated string players = 2;
   for (int i = 0, n = this->_internal_players_size(); i < n; i++) {
     const auto& s = this->_internal_players(i);
@@ -2213,6 +2252,13 @@ size_t PlayerJoinRoomResponse::ByteSizeLong() const {
       _impl_.players_.Get(i));
   }
 
+  // string owner = 1;
+  if (!this->_internal_owner().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_owner());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -2232,6 +2278,9 @@ void PlayerJoinRoomResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg,
   (void) cached_has_bits;
 
   _this->_impl_.players_.MergeFrom(from._impl_.players_);
+  if (!from._internal_owner().empty()) {
+    _this->_internal_set_owner(from._internal_owner());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -2248,8 +2297,14 @@ bool PlayerJoinRoomResponse::IsInitialized() const {
 
 void PlayerJoinRoomResponse::InternalSwap(PlayerJoinRoomResponse* other) {
   using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.players_.InternalSwap(&other->_impl_.players_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.owner_, lhs_arena,
+      &other->_impl_.owner_, rhs_arena
+  );
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata PlayerJoinRoomResponse::GetMetadata() const {

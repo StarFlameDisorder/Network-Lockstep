@@ -66,6 +66,7 @@ const uint32_t TableStruct_SyncMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
+  ::_pbi::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::SyncMessage::ServerMessage, _impl_.content_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::SyncMessage::ClientMessage, _internal_metadata_),
@@ -79,11 +80,12 @@ const uint32_t TableStruct_SyncMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
+  ::_pbi::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::SyncMessage::ClientMessage, _impl_.content_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::SyncMessage::ServerMessage)},
-  { 11, -1, -1, sizeof(::SyncMessage::ClientMessage)},
+  { 12, -1, -1, sizeof(::SyncMessage::ClientMessage)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -94,20 +96,23 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_SyncMessage_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\021SyncMessage.proto\022\013SyncMessage\032\024Connec"
   "tMessage.proto\032\021GameMessage.proto\032\022Lobby"
-  "Message.proto\"\342\001\n\rServerMessage\022\027\n\rcommo"
+  "Message.proto\"\243\002\n\rServerMessage\022\027\n\rcommo"
   "nMessage\030\002 \001(\tH\000\022>\n\016connectMessage\030\003 \001(\013"
   "2$.ConnectMessage.ServerConnectMessageH\000"
   "\0227\n\017gameSyncMessage\030\004 \001(\0132\034.GameMessage."
   "GameSyncMessageH\000\0224\n\tlobbySync\030\005 \001(\0132\037.L"
-  "obbyMessage.LobbySyncResponseH\000B\t\n\007conte"
-  "nt\"\240\002\n\rClientMessage\022\020\n\010clientId\030\001 \001(\004\022\027"
-  "\n\rcommonMessage\030\002 \001(\tH\000\022>\n\016connectMessag"
-  "e\030\003 \001(\0132$.ConnectMessage.ClientConnectMe"
-  "ssageH\000\0227\n\017gameSyncMessage\030\004 \001(\0132\034.GameM"
-  "essage.GameSyncMessageH\000\0223\n\tlobbySync\030\005 "
-  "\001(\0132\036.LobbyMessage.LobbySyncRequestH\000\022+\n"
-  "\theartBeat\030\006 \001(\0132\026.GameMessage.HeartBeat"
-  "H\000B\t\n\007contentb\006proto3"
+  "obbyMessage.LobbySyncResponseH\000\022\?\n\023gameS"
+  "napshotMessage\030\006 \001(\0132 .GameMessage.GameS"
+  "napshotMessageH\000B\t\n\007content\"\341\002\n\rClientMe"
+  "ssage\022\020\n\010clientId\030\001 \001(\004\022\027\n\rcommonMessage"
+  "\030\002 \001(\tH\000\022>\n\016connectMessage\030\003 \001(\0132$.Conne"
+  "ctMessage.ClientConnectMessageH\000\0227\n\017game"
+  "SyncMessage\030\004 \001(\0132\034.GameMessage.GameSync"
+  "MessageH\000\0223\n\tlobbySync\030\005 \001(\0132\036.LobbyMess"
+  "age.LobbySyncRequestH\000\022+\n\theartBeat\030\006 \001("
+  "\0132\026.GameMessage.HeartBeatH\000\022\?\n\023gameSnaps"
+  "hotMessage\030\007 \001(\0132 .GameMessage.GameSnaps"
+  "hotMessageH\000B\t\n\007contentb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_SyncMessage_2eproto_deps[3] = {
   &::descriptor_table_ConnectMessage_2eproto,
@@ -116,7 +121,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_SyncMessage_2eproto
 };
 static ::_pbi::once_flag descriptor_table_SyncMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_SyncMessage_2eproto = {
-    false, false, 621, descriptor_table_protodef_SyncMessage_2eproto,
+    false, false, 751, descriptor_table_protodef_SyncMessage_2eproto,
     "SyncMessage.proto",
     &descriptor_table_SyncMessage_2eproto_once, descriptor_table_SyncMessage_2eproto_deps, 3, 2,
     schemas, file_default_instances, TableStruct_SyncMessage_2eproto::offsets,
@@ -138,6 +143,7 @@ class ServerMessage::_Internal {
   static const ::ConnectMessage::ServerConnectMessage& connectmessage(const ServerMessage* msg);
   static const ::GameMessage::GameSyncMessage& gamesyncmessage(const ServerMessage* msg);
   static const ::LobbyMessage::LobbySyncResponse& lobbysync(const ServerMessage* msg);
+  static const ::GameMessage::GameSnapshotMessage& gamesnapshotmessage(const ServerMessage* msg);
 };
 
 const ::ConnectMessage::ServerConnectMessage&
@@ -151,6 +157,10 @@ ServerMessage::_Internal::gamesyncmessage(const ServerMessage* msg) {
 const ::LobbyMessage::LobbySyncResponse&
 ServerMessage::_Internal::lobbysync(const ServerMessage* msg) {
   return *msg->_impl_.content_.lobbysync_;
+}
+const ::GameMessage::GameSnapshotMessage&
+ServerMessage::_Internal::gamesnapshotmessage(const ServerMessage* msg) {
+  return *msg->_impl_.content_.gamesnapshotmessage_;
 }
 void ServerMessage::set_allocated_connectmessage(::ConnectMessage::ServerConnectMessage* connectmessage) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -224,6 +234,30 @@ void ServerMessage::clear_lobbysync() {
     clear_has_content();
   }
 }
+void ServerMessage::set_allocated_gamesnapshotmessage(::GameMessage::GameSnapshotMessage* gamesnapshotmessage) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_content();
+  if (gamesnapshotmessage) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(gamesnapshotmessage));
+    if (message_arena != submessage_arena) {
+      gamesnapshotmessage = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, gamesnapshotmessage, submessage_arena);
+    }
+    set_has_gamesnapshotmessage();
+    _impl_.content_.gamesnapshotmessage_ = gamesnapshotmessage;
+  }
+  // @@protoc_insertion_point(field_set_allocated:SyncMessage.ServerMessage.gameSnapshotMessage)
+}
+void ServerMessage::clear_gamesnapshotmessage() {
+  if (_internal_has_gamesnapshotmessage()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.content_.gamesnapshotmessage_;
+    }
+    clear_has_content();
+  }
+}
 ServerMessage::ServerMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -258,6 +292,11 @@ ServerMessage::ServerMessage(const ServerMessage& from)
     case kLobbySync: {
       _this->_internal_mutable_lobbysync()->::LobbyMessage::LobbySyncResponse::MergeFrom(
           from._internal_lobbysync());
+      break;
+    }
+    case kGameSnapshotMessage: {
+      _this->_internal_mutable_gamesnapshotmessage()->::GameMessage::GameSnapshotMessage::MergeFrom(
+          from._internal_gamesnapshotmessage());
       break;
     }
     case CONTENT_NOT_SET: {
@@ -324,6 +363,12 @@ void ServerMessage::clear_content() {
       }
       break;
     }
+    case kGameSnapshotMessage: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.content_.gamesnapshotmessage_;
+      }
+      break;
+    }
     case CONTENT_NOT_SET: {
       break;
     }
@@ -378,6 +423,14 @@ const char* ServerMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext*
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           ptr = ctx->ParseMessage(_internal_mutable_lobbysync(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .GameMessage.GameSnapshotMessage gameSnapshotMessage = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+          ptr = ctx->ParseMessage(_internal_mutable_gamesnapshotmessage(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -442,6 +495,13 @@ uint8_t* ServerMessage::_InternalSerialize(
         _Internal::lobbysync(this).GetCachedSize(), target, stream);
   }
 
+  // .GameMessage.GameSnapshotMessage gameSnapshotMessage = 6;
+  if (_internal_has_gamesnapshotmessage()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(6, _Internal::gamesnapshotmessage(this),
+        _Internal::gamesnapshotmessage(this).GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -487,6 +547,13 @@ size_t ServerMessage::ByteSizeLong() const {
           *_impl_.content_.lobbysync_);
       break;
     }
+    // .GameMessage.GameSnapshotMessage gameSnapshotMessage = 6;
+    case kGameSnapshotMessage: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.content_.gamesnapshotmessage_);
+      break;
+    }
     case CONTENT_NOT_SET: {
       break;
     }
@@ -529,6 +596,11 @@ void ServerMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
           from._internal_lobbysync());
       break;
     }
+    case kGameSnapshotMessage: {
+      _this->_internal_mutable_gamesnapshotmessage()->::GameMessage::GameSnapshotMessage::MergeFrom(
+          from._internal_gamesnapshotmessage());
+      break;
+    }
     case CONTENT_NOT_SET: {
       break;
     }
@@ -568,6 +640,7 @@ class ClientMessage::_Internal {
   static const ::GameMessage::GameSyncMessage& gamesyncmessage(const ClientMessage* msg);
   static const ::LobbyMessage::LobbySyncRequest& lobbysync(const ClientMessage* msg);
   static const ::GameMessage::HeartBeat& heartbeat(const ClientMessage* msg);
+  static const ::GameMessage::GameSnapshotMessage& gamesnapshotmessage(const ClientMessage* msg);
 };
 
 const ::ConnectMessage::ClientConnectMessage&
@@ -585,6 +658,10 @@ ClientMessage::_Internal::lobbysync(const ClientMessage* msg) {
 const ::GameMessage::HeartBeat&
 ClientMessage::_Internal::heartbeat(const ClientMessage* msg) {
   return *msg->_impl_.content_.heartbeat_;
+}
+const ::GameMessage::GameSnapshotMessage&
+ClientMessage::_Internal::gamesnapshotmessage(const ClientMessage* msg) {
+  return *msg->_impl_.content_.gamesnapshotmessage_;
 }
 void ClientMessage::set_allocated_connectmessage(::ConnectMessage::ClientConnectMessage* connectmessage) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -682,6 +759,30 @@ void ClientMessage::clear_heartbeat() {
     clear_has_content();
   }
 }
+void ClientMessage::set_allocated_gamesnapshotmessage(::GameMessage::GameSnapshotMessage* gamesnapshotmessage) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_content();
+  if (gamesnapshotmessage) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(gamesnapshotmessage));
+    if (message_arena != submessage_arena) {
+      gamesnapshotmessage = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, gamesnapshotmessage, submessage_arena);
+    }
+    set_has_gamesnapshotmessage();
+    _impl_.content_.gamesnapshotmessage_ = gamesnapshotmessage;
+  }
+  // @@protoc_insertion_point(field_set_allocated:SyncMessage.ClientMessage.gameSnapshotMessage)
+}
+void ClientMessage::clear_gamesnapshotmessage() {
+  if (_internal_has_gamesnapshotmessage()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.content_.gamesnapshotmessage_;
+    }
+    clear_has_content();
+  }
+}
 ClientMessage::ClientMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -723,6 +824,11 @@ ClientMessage::ClientMessage(const ClientMessage& from)
     case kHeartBeat: {
       _this->_internal_mutable_heartbeat()->::GameMessage::HeartBeat::MergeFrom(
           from._internal_heartbeat());
+      break;
+    }
+    case kGameSnapshotMessage: {
+      _this->_internal_mutable_gamesnapshotmessage()->::GameMessage::GameSnapshotMessage::MergeFrom(
+          from._internal_gamesnapshotmessage());
       break;
     }
     case CONTENT_NOT_SET: {
@@ -793,6 +899,12 @@ void ClientMessage::clear_content() {
     case kHeartBeat: {
       if (GetArenaForAllocation() == nullptr) {
         delete _impl_.content_.heartbeat_;
+      }
+      break;
+    }
+    case kGameSnapshotMessage: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.content_.gamesnapshotmessage_;
       }
       break;
     }
@@ -871,6 +983,14 @@ const char* ClientMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext*
         } else
           goto handle_unusual;
         continue;
+      // .GameMessage.GameSnapshotMessage gameSnapshotMessage = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+          ptr = ctx->ParseMessage(_internal_mutable_gamesnapshotmessage(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -944,6 +1064,13 @@ uint8_t* ClientMessage::_InternalSerialize(
         _Internal::heartbeat(this).GetCachedSize(), target, stream);
   }
 
+  // .GameMessage.GameSnapshotMessage gameSnapshotMessage = 7;
+  if (_internal_has_gamesnapshotmessage()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(7, _Internal::gamesnapshotmessage(this),
+        _Internal::gamesnapshotmessage(this).GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1001,6 +1128,13 @@ size_t ClientMessage::ByteSizeLong() const {
           *_impl_.content_.heartbeat_);
       break;
     }
+    // .GameMessage.GameSnapshotMessage gameSnapshotMessage = 7;
+    case kGameSnapshotMessage: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.content_.gamesnapshotmessage_);
+      break;
+    }
     case CONTENT_NOT_SET: {
       break;
     }
@@ -1049,6 +1183,11 @@ void ClientMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
     case kHeartBeat: {
       _this->_internal_mutable_heartbeat()->::GameMessage::HeartBeat::MergeFrom(
           from._internal_heartbeat());
+      break;
+    }
+    case kGameSnapshotMessage: {
+      _this->_internal_mutable_gamesnapshotmessage()->::GameMessage::GameSnapshotMessage::MergeFrom(
+          from._internal_gamesnapshotmessage());
       break;
     }
     case CONTENT_NOT_SET: {

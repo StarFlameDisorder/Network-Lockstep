@@ -41,6 +41,7 @@ message LobbySyncResponse{
 }
 
 message PlayerJoinRoomResponse{
+  string owner = 1;
   repeated string players=2;
 }
 

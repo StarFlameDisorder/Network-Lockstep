@@ -32,20 +32,21 @@ namespace GameMessage {
             "c2FnZS5QbGF5ZXJTbmFwc2hvdFN5bmMSMgoJb2JqZWN0U1NzGAQgAygLMh8u",
             "R2FtZU1lc3NhZ2UuT2JqZWN0U25hcHNob3RTeW5jImEKClBsYXllclN5bmMS",
             "DwoHZnJhbWVJZBgBIAEoBBIMCgR0aW1lGAIgASgEEgwKBG5hbWUYAyABKAkS",
-            "JgoJaW5wdXRNb3ZlGAQgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEImsKElBs",
-            "YXllclNuYXBzaG90U3luYxIMCgRuYW1lGAEgASgJEiAKA3BvcxgCIAEoCzIT",
-            "LlVuaXR5TWF0aC5WZWN0b3IzRBIlCgh2ZWxvY2l0eRgDIAEoCzITLlVuaXR5",
-            "TWF0aC5WZWN0b3IzRCJvChJPYmplY3RTbmFwc2hvdFN5bmMSEAoIb2JqZWN0",
-            "SWQYASABKAQSIAoDcG9zGAIgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEEiUK",
-            "CHZlbG9jaXR5GAMgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEIicKCUhlYXJ0",
-            "QmVhdBIMCgRuYW1lGAEgASgJEgwKBHRpbWUYAiABKARiBnByb3RvMw=="));
+            "JgoJaW5wdXRNb3ZlGAQgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEInwKElBs",
+            "YXllclNuYXBzaG90U3luYxIMCgRuYW1lGAEgASgJEg8KB2ZyYW1lSWQYAiAB",
+            "KAQSIAoDcG9zGAMgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEEiUKCHZlbG9j",
+            "aXR5GAQgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEIm8KEk9iamVjdFNuYXBz",
+            "aG90U3luYxIQCghvYmplY3RJZBgBIAEoBBIgCgNwb3MYAiABKAsyEy5Vbml0",
+            "eU1hdGguVmVjdG9yM0QSJQoIdmVsb2NpdHkYAyABKAsyEy5Vbml0eU1hdGgu",
+            "VmVjdG9yM0QiJwoJSGVhcnRCZWF0EgwKBG5hbWUYASABKAkSDAoEdGltZRgC",
+            "IAEoBGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::UnityMath.UnityMathReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSyncMessage), global::GameMessage.GameSyncMessage.Parser, new[]{ "FrameId", "Time", "Players" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSnapshotMessage), global::GameMessage.GameSnapshotMessage.Parser, new[]{ "FrameId", "Time", "PlayerSSs", "ObjectSSs" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSync), global::GameMessage.PlayerSync.Parser, new[]{ "FrameId", "Time", "Name", "InputMove" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSnapshotSync), global::GameMessage.PlayerSnapshotSync.Parser, new[]{ "Name", "Pos", "Velocity" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSnapshotSync), global::GameMessage.PlayerSnapshotSync.Parser, new[]{ "Name", "FrameId", "Pos", "Velocity" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.ObjectSnapshotSync), global::GameMessage.ObjectSnapshotSync.Parser, new[]{ "ObjectId", "Pos", "Velocity" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.HeartBeat), global::GameMessage.HeartBeat.Parser, new[]{ "Name", "Time" }, null, null, null, null)
           }));
@@ -928,6 +929,7 @@ namespace GameMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public PlayerSnapshotSync(PlayerSnapshotSync other) : this() {
       name_ = other.name_;
+      frameId_ = other.frameId_;
       pos_ = other.pos_ != null ? other.pos_.Clone() : null;
       velocity_ = other.velocity_ != null ? other.velocity_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -951,8 +953,20 @@ namespace GameMessage {
       }
     }
 
+    /// <summary>Field number for the "frameId" field.</summary>
+    public const int FrameIdFieldNumber = 2;
+    private ulong frameId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong FrameId {
+      get { return frameId_; }
+      set {
+        frameId_ = value;
+      }
+    }
+
     /// <summary>Field number for the "pos" field.</summary>
-    public const int PosFieldNumber = 2;
+    public const int PosFieldNumber = 3;
     private global::UnityMath.Vector3D pos_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -964,7 +978,7 @@ namespace GameMessage {
     }
 
     /// <summary>Field number for the "velocity" field.</summary>
-    public const int VelocityFieldNumber = 3;
+    public const int VelocityFieldNumber = 4;
     private global::UnityMath.Vector3D velocity_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -991,6 +1005,7 @@ namespace GameMessage {
         return true;
       }
       if (Name != other.Name) return false;
+      if (FrameId != other.FrameId) return false;
       if (!object.Equals(Pos, other.Pos)) return false;
       if (!object.Equals(Velocity, other.Velocity)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -1001,6 +1016,7 @@ namespace GameMessage {
     public override int GetHashCode() {
       int hash = 1;
       if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (FrameId != 0UL) hash ^= FrameId.GetHashCode();
       if (pos_ != null) hash ^= Pos.GetHashCode();
       if (velocity_ != null) hash ^= Velocity.GetHashCode();
       if (_unknownFields != null) {
@@ -1025,12 +1041,16 @@ namespace GameMessage {
         output.WriteRawTag(10);
         output.WriteString(Name);
       }
+      if (FrameId != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(FrameId);
+      }
       if (pos_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteMessage(Pos);
       }
       if (velocity_ != null) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(34);
         output.WriteMessage(Velocity);
       }
       if (_unknownFields != null) {
@@ -1047,12 +1067,16 @@ namespace GameMessage {
         output.WriteRawTag(10);
         output.WriteString(Name);
       }
+      if (FrameId != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(FrameId);
+      }
       if (pos_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteMessage(Pos);
       }
       if (velocity_ != null) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(34);
         output.WriteMessage(Velocity);
       }
       if (_unknownFields != null) {
@@ -1067,6 +1091,9 @@ namespace GameMessage {
       int size = 0;
       if (Name.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (FrameId != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(FrameId);
       }
       if (pos_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Pos);
@@ -1088,6 +1115,9 @@ namespace GameMessage {
       }
       if (other.Name.Length != 0) {
         Name = other.Name;
+      }
+      if (other.FrameId != 0UL) {
+        FrameId = other.FrameId;
       }
       if (other.pos_ != null) {
         if (pos_ == null) {
@@ -1120,14 +1150,18 @@ namespace GameMessage {
             Name = input.ReadString();
             break;
           }
-          case 18: {
+          case 16: {
+            FrameId = input.ReadUInt64();
+            break;
+          }
+          case 26: {
             if (pos_ == null) {
               Pos = new global::UnityMath.Vector3D();
             }
             input.ReadMessage(Pos);
             break;
           }
-          case 26: {
+          case 34: {
             if (velocity_ == null) {
               Velocity = new global::UnityMath.Vector3D();
             }
@@ -1153,14 +1187,18 @@ namespace GameMessage {
             Name = input.ReadString();
             break;
           }
-          case 18: {
+          case 16: {
+            FrameId = input.ReadUInt64();
+            break;
+          }
+          case 26: {
             if (pos_ == null) {
               Pos = new global::UnityMath.Vector3D();
             }
             input.ReadMessage(Pos);
             break;
           }
-          case 26: {
+          case 34: {
             if (velocity_ == null) {
               Velocity = new global::UnityMath.Vector3D();
             }

@@ -56,10 +56,12 @@ namespace GamePlay//TODO: UDP重传风暴
         }
 
         [SerializeField] private GameObject _playerPrefab;
-        private Dictionary<string, GameObject> _players=new ();
         
-        private Dictionary<string,FixedPointVector3> _inputMove=new ();
-        private Dictionary<string, FixedPointVector3> _playerPos = new();
+        // private Dictionary<string, GameObject> _players=new ();
+        //private Dictionary<string,FixedPointVector3> _inputMove=new ();
+        // private Dictionary<string, FixedPointVector3> _playerPos = new();
+        private Dictionary<string,Player> _players = new();
+        
         
         private void JoinRoom(PlayerJoinRoomResponse response)
         {
@@ -80,11 +82,12 @@ namespace GamePlay//TODO: UDP重传风暴
             {
                 Debug.Log("添加玩家");
                 GameObject o = Instantiate(_playerPrefab);
+                _players.Add(playerName, new Player(playerName,o,_gameFrameSpace,_speed));
                 
-                _players.Add(playerName, o);//玩家游戏对象
-                _inputMove.Add(playerName, new FixedPointVector3());//玩家输入
-                _playerSyncMessgae.Add(playerName,new Queue<PlayerSync>());//玩家消息
-                _playerPos.Add(playerName, FixedPointVector3.FromVector3(o.transform.position));//玩家当前位置
+                // _players.Add(playerName, o);//玩家游戏对象
+                // //_inputMove.Add(playerName, new FixedPointVector3());//玩家输入
+                // _playerSyncMessgae.Add(playerName,new Queue<PlayerSync>());//玩家消息
+                // _playerPos.Add(playerName, FixedPointVector3.FromVector3(o.transform.position));//玩家当前位置
             }
         }
 
@@ -93,9 +96,9 @@ namespace GamePlay//TODO: UDP重传风暴
             Debug.Log("收到PlayerLeaveRoomResponse");
 
             _players.Remove(response.Name);
-            _inputMove.Remove(response.Name);
-            _playerSyncMessgae.Remove(response.Name);
-            _playerPos.Remove(response.Name);
+            //_inputMove.Remove(response.Name);
+            // _playerSyncMessgae.Remove(response.Name);
+            // _playerPos.Remove(response.Name);
         }
 
         private void StartRoom(PlayerStartRoomResponse response)
@@ -165,37 +168,56 @@ namespace GamePlay//TODO: UDP重传风暴
             SyncPlayerAction();
             
             //RunNextFrame();
-            
-            foreach (var pair in _playerSyncMessgae)
+            foreach (var pair in _players)
             {
-                var syncMes = pair.Value;
-                if(syncMes.Count==0)continue;//接收操作为空
-                if(!_players.ContainsKey(pair.Key))continue;//判断玩家是否存在
-                
-                //输入接收
-                var player = syncMes.Dequeue();
-                var v = player.InputMove;
-                FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X,v.Y,v.Z);
-                
-                
-                //输入逻辑处理
-                GameObject o = _players[pair.Key];
-                _playerPos[pair.Key] += (_speed * _gameFrameSpace * realV);
-                o.transform.position = _playerPos[pair.Key].ToVector3();
+                var player = pair.Value;
+                player.UpdateFrame();
                 
                 //操作显示
-                if (player.Name == _name)
+                if (pair.Key == _name)
                 {
-                    StatusPanel.Instance.UpdateLocalStatus(syncMes.Count);
-                    StatusPanel.Instance.UpdateLocalOffset(realV.ToVector3());
+                    StatusPanel.Instance.UpdateLocalStatus(player.GetFrameCount());
+                    StatusPanel.Instance.UpdateLocalPos(player.GetPosition().ToVector3());
                 }
                 else
                 {
-                    if (_otherName == "") _otherName = player.Name;//测试用，查找另一个玩家
-                    StatusPanel.Instance.UpdateExternalStatus(syncMes.Count);
-                    if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(_inputMove[_otherName].ToVector3());
+                    if (_otherName == "") _otherName = pair.Key;//测试用，查找另一个玩家
+                    StatusPanel.Instance.UpdateExternalStatus(player.GetFrameCount());
+                    StatusPanel.Instance.UpdateExternalPos(player.GetPosition().ToVector3());
                 }
             }
+            
+            
+            // foreach (var pair in _playerSyncMessgae)
+            // {
+            //     var syncMes = pair.Value;
+            //     if(syncMes.Count==0)continue;//接收操作为空
+            //     if(!_players.ContainsKey(pair.Key))continue;//判断玩家是否存在
+            //     
+            //     //输入接收
+            //     var player = syncMes.Dequeue();
+            //     var v = player.InputMove;
+            //     FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X,v.Y,v.Z);
+            //     
+            //     
+            //     //输入逻辑处理
+            //     GameObject o = _players[pair.Key];
+            //     _playerPos[pair.Key] += (_speed * _gameFrameSpace * realV);
+            //     o.transform.position = _playerPos[pair.Key].ToVector3();
+            //     
+            //     //操作显示
+            //     if (player.Name == _name)
+            //     {
+            //         StatusPanel.Instance.UpdateLocalStatus(syncMes.Count);
+            //         StatusPanel.Instance.UpdateLocalOffset(realV.ToVector3());
+            //     }
+            //     else
+            //     {
+            //         if (_otherName == "") _otherName = player.Name;//测试用，查找另一个玩家
+            //         StatusPanel.Instance.UpdateExternalStatus(syncMes.Count);
+            //         if(_otherName!="")StatusPanel.Instance.UpdateExternalOffset(realV.ToVector3());
+            //     }
+            // }
             
 
             // foreach (var p in _players)
@@ -216,8 +238,8 @@ namespace GamePlay//TODO: UDP重传风暴
             //     o.transform.position = _playerPos[pair.Key].ToVector3();
             // }
             
-            if(_name!="")StatusPanel.Instance.UpdateLocalPos(_players[_name].transform.position);
-            if (_otherName != "") StatusPanel.Instance.UpdateExternalPos(_players[_otherName].transform.position);
+            // if(_name!="")StatusPanel.Instance.UpdateLocalPos(_players[_name].transform.position);
+            // if (_otherName != "") StatusPanel.Instance.UpdateExternalPos(_players[_otherName].transform.position);
             
             // if(_name!="" && _status == GameStatus.Started)try//日志输出
             // {
@@ -251,19 +273,24 @@ namespace GamePlay//TODO: UDP重传风暴
             // }
         }
         
-        private Dictionary<string, Queue<PlayerSync>> _playerSyncMessgae = new();
+        // private Dictionary<string, Queue<PlayerSync>> _playerSyncMessgae = new();
         
         public void PlayerAction(GameSyncMessage message)
         {
             var player = message.Players[0];
-            _playerSyncMessgae[player.Name].Enqueue(player);
+            //_playerSyncMessgae[player.Name].Enqueue(player);
+            _players[player.Name].AddSyncMessage(player);
         }
         
         void ReceiveMessage(GameSyncMessage message)
         {
             foreach (var player in message.Players)
             {
-                if(player.Name!=_name&&_players.ContainsKey(player.Name))_playerSyncMessgae[player.Name].Enqueue(player);
+                if(player.Name!=_name&&_players.ContainsKey(player.Name))
+                {
+                    _players[player.Name].AddSyncMessage(player);
+                    // _playerSyncMessgae[player.Name].Enqueue(player);
+                }
             }
         }
 

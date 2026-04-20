@@ -28,8 +28,10 @@ message PlayerSync
 message PlayerSnapshotSync
 {
     string name=1;
-    UnityMath.Vector3D pos = 2;
-    UnityMath.Vector3D velocity= 3;
+    uint64 frameId=2;
+
+    UnityMath.Vector3D pos = 3;
+    UnityMath.Vector3D velocity= 4;
 }
 
 message ObjectSnapshotSync

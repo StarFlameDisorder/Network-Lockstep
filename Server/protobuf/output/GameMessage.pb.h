@@ -772,8 +772,9 @@ class PlayerSnapshotSync final :
 
   enum : int {
     kNameFieldNumber = 1,
-    kPosFieldNumber = 2,
-    kVelocityFieldNumber = 3,
+    kPosFieldNumber = 3,
+    kVelocityFieldNumber = 4,
+    kFrameIdFieldNumber = 2,
   };
   // string name = 1;
   void clear_name();
@@ -789,7 +790,7 @@ class PlayerSnapshotSync final :
   std::string* _internal_mutable_name();
   public:
 
-  // .UnityMath.Vector3D pos = 2;
+  // .UnityMath.Vector3D pos = 3;
   bool has_pos() const;
   private:
   bool _internal_has_pos() const;
@@ -807,7 +808,7 @@ class PlayerSnapshotSync final :
       ::UnityMath::Vector3D* pos);
   ::UnityMath::Vector3D* unsafe_arena_release_pos();
 
-  // .UnityMath.Vector3D velocity = 3;
+  // .UnityMath.Vector3D velocity = 4;
   bool has_velocity() const;
   private:
   bool _internal_has_velocity() const;
@@ -825,6 +826,15 @@ class PlayerSnapshotSync final :
       ::UnityMath::Vector3D* velocity);
   ::UnityMath::Vector3D* unsafe_arena_release_velocity();
 
+  // uint64 frameId = 2;
+  void clear_frameid();
+  uint64_t frameid() const;
+  void set_frameid(uint64_t value);
+  private:
+  uint64_t _internal_frameid() const;
+  void _internal_set_frameid(uint64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:GameMessage.PlayerSnapshotSync)
  private:
   class _Internal;
@@ -836,6 +846,7 @@ class PlayerSnapshotSync final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::UnityMath::Vector3D* pos_;
     ::UnityMath::Vector3D* velocity_;
+    uint64_t frameid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1641,7 +1652,27 @@ inline void PlayerSnapshotSync::set_allocated_name(std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSnapshotSync.name)
 }
 
-// .UnityMath.Vector3D pos = 2;
+// uint64 frameId = 2;
+inline void PlayerSnapshotSync::clear_frameid() {
+  _impl_.frameid_ = uint64_t{0u};
+}
+inline uint64_t PlayerSnapshotSync::_internal_frameid() const {
+  return _impl_.frameid_;
+}
+inline uint64_t PlayerSnapshotSync::frameid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSnapshotSync.frameId)
+  return _internal_frameid();
+}
+inline void PlayerSnapshotSync::_internal_set_frameid(uint64_t value) {
+  
+  _impl_.frameid_ = value;
+}
+inline void PlayerSnapshotSync::set_frameid(uint64_t value) {
+  _internal_set_frameid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.PlayerSnapshotSync.frameId)
+}
+
+// .UnityMath.Vector3D pos = 3;
 inline bool PlayerSnapshotSync::_internal_has_pos() const {
   return this != internal_default_instance() && _impl_.pos_ != nullptr;
 }
@@ -1726,7 +1757,7 @@ inline void PlayerSnapshotSync::set_allocated_pos(::UnityMath::Vector3D* pos) {
   // @@protoc_insertion_point(field_set_allocated:GameMessage.PlayerSnapshotSync.pos)
 }
 
-// .UnityMath.Vector3D velocity = 3;
+// .UnityMath.Vector3D velocity = 4;
 inline bool PlayerSnapshotSync::_internal_has_velocity() const {
   return this != internal_default_instance() && _impl_.velocity_ != nullptr;
 }

@@ -27,17 +27,6 @@ namespace GamePlay
             _speed = speed;
             _position = FixedPointVector3.FromVector3(o.transform.position);
         }
-
-        public void UpdateFrame()
-        {
-            if(_playerSyncMessgae.Count== 0)return;
-            PlayerSync sync = _playerSyncMessgae.Dequeue();
-            var v = sync.InputMove;
-            FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X,v.Y,v.Z);
-            _position += (_speed * _gameFrameSpace * realV);
-            _gameObject.transform.position=_position.ToVector3();
-        }
-
         public FixedPointVector3 GetPosition()
         {
             return _position;
@@ -48,6 +37,27 @@ namespace GamePlay
             return _playerSyncMessgae.Count;
         }
 
+        #region 帧同步
+        
+        public void UpdateFrame()
+        {
+            if(_playerSyncMessgae.Count== 0)return;
+            PlayerSync sync = _playerSyncMessgae.Dequeue();
+            var v = sync.InputMove;
+            FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X,v.Y,v.Z);
+            _position += (_speed * _gameFrameSpace * realV);
+            _gameObject.transform.position=_position.ToVector3();
+        }
+        
+        public void AddSyncMessage(PlayerSync sync)
+        {
+            _playerSyncMessgae.Enqueue(sync);
+        }
+        
+        #endregion
+        
+        #region 快照
+        
         public void ApplySnapShot()
         {
             if (_playerSnapshotSync != null)
@@ -61,11 +71,6 @@ namespace GamePlay
             {
                 Debug.LogError("No snapshot sync");
             }
-        }
-        
-        public void AddSyncMessage(PlayerSync sync)
-        {
-            _playerSyncMessgae.Enqueue(sync);
         }
         
         public void SetSnapshotSync(PlayerSnapshotSync sync)
@@ -87,6 +92,8 @@ namespace GamePlay
                 }
             };
         }
+        
+        #endregion
         
     }
 }

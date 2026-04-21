@@ -21,7 +21,10 @@ namespace GamePlay//TODO: UDP重传风暴
     public class GameSync:MonoBehaviour
     {
         public static GameSync Instance;
-        
+
+        public const int BufferSize = 3;
+        public const int MaxCatchupTime = 5;
+
         private static int _gameFrameRate = 30;
         private static FixedPoint _gameFrameSpacing = FixedPoint.FromFloat(1f / _gameFrameRate);
         private static int _snapshotSpacing = 5;

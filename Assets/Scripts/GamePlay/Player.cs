@@ -42,19 +42,29 @@ namespace GamePlay
         
         public void UpdateFrame()
         {
-            if(_playerSyncMessgae.Count== 0)return;
-            PlayerSync sync = _playerSyncMessgae.Dequeue();
-            
-            if(_preFrameId+1!=sync.FrameId)
+            int times = 1;
+            if (_playerSyncMessgae.Count > GameSync.BufferSize)
             {
-                Debug.LogError($"{_name}: 帧id错误 旧{_preFrameId} 新{sync.FrameId}");    
+                times = Math.Min((int)Math.Sqrt(_playerSyncMessgae.Count), GameSync.MaxCatchupTime);
+                
+                Debug.Log($"{_name}追帧{times-1}");
             }
-            
-            _preFrameId=sync.FrameId;
-            var v = sync.InputMove;
-            FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X,v.Y,v.Z);
-            _position += (_speed * _gameFrameSpace * realV);
-            _gameObject.transform.position=_position.ToVector3();
+            for(int i=0;i<times;i++)
+            {
+                if (_playerSyncMessgae.Count == 0) return;
+                PlayerSync sync = _playerSyncMessgae.Dequeue();
+
+                if (_preFrameId + 1 != sync.FrameId)
+                {
+                    Debug.LogError($"{_name}: 帧id错误 旧{_preFrameId} 新{sync.FrameId}");
+                }
+
+                _preFrameId = sync.FrameId;
+                var v = sync.InputMove;
+                FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X, v.Y, v.Z);
+                _position += (_speed * _gameFrameSpace * realV);
+                _gameObject.transform.position = _position.ToVector3();
+            }
         }
         
         public void AddSyncMessage(PlayerSync sync)//应用快照时注意存在有的有的玩家没记录位置

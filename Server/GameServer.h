@@ -7,6 +7,7 @@
 #define SERVER_GAMESERVER_H
 
 #include <QObject>
+#include <QThread>
 
 #include "Network/NetworkDispatcher.h"
 #include  "Lobby/RoomManager.h"
@@ -16,9 +17,13 @@ class GameServer:public QObject
     Q_OBJECT
 public:
     GameServer(QObject* parent=nullptr);
+    ~GameServer();
 private:
-    NetworkDispatcher m_networkDispatcher;
+    NetworkDispatcher *m_networkDispatcher;
     RoomManager m_roomManager;
+
+
+    QThread m_networkThread;//网络线程
 };
 
 

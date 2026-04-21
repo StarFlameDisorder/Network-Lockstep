@@ -18,6 +18,7 @@ namespace GamePlay
         private FixedPoint _gameFrameSpace;
         private FixedPoint _speed;
         UInt64 _preSnapshotFrameId;//上次应用的快照帧id
+        UInt64 _preFrameId;//上次执行的帧序号
 
         public Player(String name,GameObject o,FixedPoint gameFrameSpace,FixedPoint speed)
         {
@@ -43,13 +44,20 @@ namespace GamePlay
         {
             if(_playerSyncMessgae.Count== 0)return;
             PlayerSync sync = _playerSyncMessgae.Dequeue();
+            
+            if(_preFrameId+1!=sync.FrameId)
+            {
+                Debug.LogError($"{_name}: 帧id错误 旧{_preFrameId} 新{sync.FrameId}");    
+            }
+            
+            _preFrameId=sync.FrameId;
             var v = sync.InputMove;
             FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X,v.Y,v.Z);
             _position += (_speed * _gameFrameSpace * realV);
             _gameObject.transform.position=_position.ToVector3();
         }
         
-        public void AddSyncMessage(PlayerSync sync)
+        public void AddSyncMessage(PlayerSync sync)//应用快照时注意存在有的有的玩家没记录位置
         {
             _playerSyncMessgae.Enqueue(sync);
         }
@@ -78,12 +86,12 @@ namespace GamePlay
             _playerSnapshotSync = sync;
         }
 
-        public PlayerSnapshotSync GetSnapshotSync(UInt64 frameId)
+        public PlayerSnapshotSync GetSnapshotSync()
         {
             return new PlayerSnapshotSync
             {
                 Name = _name,
-                FrameId = frameId,
+                FrameId = _preFrameId,
                 Pos = new Vector3D
                 {
                     X = _position.GetRawX(),

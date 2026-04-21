@@ -26,6 +26,10 @@ struct Player{
     quint64 activeTime;//上次心跳时间
     std::queue<GameMessage::PlayerSync> receiveMessages;//收到的帧同步消息
     bool online;
+
+    QHash<quint64,GameMessage::PlayerSync> frames;//历史帧记录 帧序号 帧
+    std::queue<quint64> currentFrameIds;//TODO:改为Qqueue
+    quint64 preSnapshotId=0;
 };
 
 class RoomManager:public QObject
@@ -39,7 +43,9 @@ public:
     void leaveRoom(QString name,quint64 clientId);
     void startRoom(QString name);
     void endRoom();
+
     void receiveGameSync(quint64 clientId,const GameMessage::GameSyncMessage& message);
+    void receiveSnapshot(quint64 clientId,const GameMessage::GameSnapshotMessage &message);
     void receiveHeartBeat(quint64 clientId,const GameMessage::HeartBeat& message);
 
     void receiveClientDisconnection(quint64 clientId);//接收tcp断线消息
@@ -53,6 +59,9 @@ private:
     QTimer m_timer;//定时发送
     quint64 m_nextPlayerId=1;//从1开始
     quint64 m_sendIndex=0;
+
+    //TODO:帧的处理未完成 分发、删除 帧应该是已经发送过的 现在把未发送的也塞里面了
+    GameMessage::GameSnapshotMessage m_gameSnapshot;//最新快照
 
 signals:
     void sendTcpMessage(quint64 clientId,const QByteArray &message);

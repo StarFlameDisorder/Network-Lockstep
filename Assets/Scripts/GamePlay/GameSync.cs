@@ -23,7 +23,8 @@ namespace GamePlay//TODO: UDP重传风暴
         public static GameSync Instance;
         
         private static int _gameFrameRate = 30;
-        private static FixedPoint _gameFrameSpace = FixedPoint.FromFloat(1f / _gameFrameRate);
+        private static FixedPoint _gameFrameSpacing = FixedPoint.FromFloat(1f / _gameFrameRate);
+        private static int _snapshotSpacing = 5;
         
         [SerializeField]private PlayerController _controller;
         private UInt64 _playerId;
@@ -84,7 +85,7 @@ namespace GamePlay//TODO: UDP重传风暴
             {
                 Debug.Log("添加玩家");
                 GameObject o = Instantiate(_playerPrefab);
-                _players.Add(playerName, new Player(playerName,o,_gameFrameSpace,_speed));
+                _players.Add(playerName, new Player(playerName,o,_gameFrameSpacing,_speed));
                 
             }
         }
@@ -105,7 +106,7 @@ namespace GamePlay//TODO: UDP重传风暴
         #endregion
         
         #region 玩家输入操作处理及心跳
-        private UInt64 _frameId = 0;
+        private UInt64 _frameId = 1;
         private Vector2 _input;
         
         public void PlayerAction(Vector2 mov)
@@ -145,13 +146,13 @@ namespace GamePlay//TODO: UDP重传风暴
             NetworkManager.Instance.UdpSendMessage(message.ToByteArray());
             PlayerAction(gameSyncMessage);
 
-            if (_name==_ownerName&&_frameId % (UInt64)_gameFrameRate * 10 == 0)
+            if (_name==_ownerName&&_frameId % (UInt64)(_gameFrameRate * _snapshotSpacing) == 0)
             {
                 GameSnapshotMessage snapshotMessage = new GameSnapshotMessage();
-                snapshotMessage.FrameId = _frameId;
+                snapshotMessage.FrameId = _frameId-1;//应该是上一帧 因为这一帧还没执行  TODO:确认是否frameId正确
                 foreach (var pair in _players)
                 {
-                    snapshotMessage.PlayerSSs.Add(pair.Value.GetSnapshotSync(_frameId));
+                    snapshotMessage.PlayerSSs.Add(pair.Value.GetSnapshotSync());
                 }
 
                 ClientMessage snapMessage = new ClientMessage

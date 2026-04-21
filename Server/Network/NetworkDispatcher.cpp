@@ -110,6 +110,9 @@ void NetworkDispatcher::handleUdpMessage(const QHostAddress& address, const quin
         case ClientMessage::kHeartBeat:
             emit handleUdpHeartBeat(clientId,clientMessage.heartbeat());
             break;
+        case ClientMessage::kGameSnapshotMessage:
+            emit handleUdpGameSnapshot(clientId,clientMessage.gamesnapshotmessage());
+            break;
         default:
             Log_Error()<<"[handleUdpMessage]未知类型:"<<clientMessage.content_case();
             break;

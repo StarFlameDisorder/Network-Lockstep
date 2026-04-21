@@ -46,7 +46,13 @@ void RoomManager::handleLobbySync(quint64 clientId, const LobbyMessage::LobbySyn
 void RoomManager::joinRoom(QString name, quint64 clientId)
 {
     quint64 playerId=containPlayer(name);
-    if (playerId!=0)Log_Warning()<<"出现同名：断线重连/玩家重名";
+    bool samePlayer=false;
+
+    if (playerId!=0)
+    {
+        Log_Warning()<<"出现同名：断线重连/玩家重名";
+        samePlayer=true;
+    }
     else
     {
         playerId=m_nextPlayerId;
@@ -66,31 +72,74 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
     using namespace SyncMessage;
     using namespace LobbyMessage;
 
-    ServerMessage sendMessage;
-    auto *lobbyMes=sendMessage.mutable_lobbysync();
-    auto *playerJoin=lobbyMes->mutable_joinroom();
-    for (auto i:m_players)
     {
-        playerJoin->add_players(i.name.toStdString());
-    }
+        ServerMessage sendMessage;
+        auto *lobbyMes=sendMessage.mutable_lobbysync();
+        auto *playerJoin=lobbyMes->mutable_joinroom();
+        for (auto i:m_players)
+        {
+            playerJoin->add_players(i.name.toStdString());
+        }
 
-    if (m_players.contains(1))playerJoin->set_owner(m_players[1].name.toStdString());
+        if (m_players.contains(1))playerJoin->set_owner(m_players[1].name.toStdString());
 
-    QByteArray data;
-    data.resize(sendMessage.ByteSizeLong());
-    bool success = sendMessage.SerializeToArray(data.data(), data.size());
-    if (!success) {
-        Log_Error()<<"[joinRoom]无法生成ServerMessage.";
-        return;
-    }
+        QByteArray data;
+        data.resize(sendMessage.ByteSizeLong());
+        bool success = sendMessage.SerializeToArray(data.data(), data.size());
+        if (!success) {
+            Log_Error()<<"[joinRoom]无法生成ServerMessage.";
+            return;
+        }
 
-    for (auto &i:m_players)
-    {
-        emit sendTcpMessage(i.id,data);
+        for (auto &i:m_players)
+        {
+            emit sendTcpMessage(i.id,data);
+        }
     }
 
     Log_Info()<<"[joinRoom]玩家加入:"<<name<<"客户端Id:"<<clientId<<"玩家id:"<<playerId<<"总数："<<m_players.size();
-    //if (m_players.size()>0)startRoom();
+
+    //断线重连
+    if (samePlayer)
+    {
+        {
+            QByteArray data;
+            data.resize(m_gameSnapshot.ByteSizeLong());
+            bool success = m_gameSnapshot.SerializeToArray(data.data(), data.size());
+            if (!success) {
+                Log_Error()<<"Failed to serialize ServerMessage.";
+                return;
+            }
+            emit sendUdpMessage(clientId,data);
+            Log_Info()<<"[断线重连]补发快照 包含玩家数:"<<m_gameSnapshot.playersss_size();
+        }
+
+        {
+            QString log("补发帧:");
+            using namespace GameMessage;
+
+            ServerMessage sendMessage;
+            GameSyncMessage* newGameSyncMessage= sendMessage.mutable_gamesyncmessage();
+            for (auto &p:m_players)
+            {
+                for (quint64 i=p.preSnapshotId+1;p.frames.contains(i);i++)
+                {
+                    newGameSyncMessage->add_players()->CopyFrom(p.frames[i]);
+                    log.append(" "+p.name+"-"+QString::number(i));
+                }
+            }
+            QByteArray data;
+            data.resize(sendMessage.ByteSizeLong());
+            bool success = sendMessage.SerializeToArray(data.data(), data.size());
+            if (!success) {
+                Log_Error()<<"Failed to serialize ServerMessage.";
+                return;
+            }
+            emit sendUdpMessage(clientId,data);
+
+            Log_Info()<<log;
+        }
+    }
 }
 
 void RoomManager::leaveRoom(QString name,quint64 clientId)
@@ -148,9 +197,42 @@ void RoomManager::receiveGameSync(quint64 clientId,const GameMessage::GameSyncMe
     {
         queue<PlayerSync> &queue=m_players[playerId].receiveMessages;
         PlayerSync p;
-        p.CopyFrom(message.players(0));
+        p.CopyFrom(message.players(0));//因为只有一个玩家的操作输入
         queue.push(p);
+        PlayerSync snapFrame;
+        snapFrame.CopyFrom(message.players(0));
+        m_players[playerId].frames.insert(snapFrame.frameid(),snapFrame);//TODO:帧的处理未完成 分发、删除
     }
+}
+
+void RoomManager::receiveSnapshot(quint64 clientId, const GameMessage::GameSnapshotMessage& message)
+{
+    Log_Info()<<"[receiveSnapshot]接收消息 clientId:"<<clientId<<"玩家人数"<<message.playersss_size();
+
+    m_gameSnapshot=message;
+    for (auto &s:m_gameSnapshot.playersss())
+    {
+        quint64 playerId=containPlayer(QString::fromStdString(s.name()));
+        if (playerId!=0)
+        {
+            Player &p=m_players[playerId];
+            quint64 oldFrameId=p.preSnapshotId;
+            quint64 newFrameId=s.frameid();
+
+            p.preSnapshotId=s.frameid();
+
+            while (!p.currentFrameIds.empty())
+            {
+                quint64 frameId=p.currentFrameIds.front();
+                if (!p.frames.contains(frameId)||frameId>newFrameId)break;
+                p.frames.remove(p.currentFrameIds.front());
+                p.currentFrameIds.pop();
+            }
+            Log_Info()<<"玩家"<<p.name<<"剩余"<<p.frames.size()<<"帧";
+            if (!p.currentFrameIds.empty())Log_Info()<<"剩余帧数"<<p.currentFrameIds.size()<<"最旧id"<<p.currentFrameIds.front();
+        }else continue;
+    }
+
 }
 
 void RoomManager::receiveHeartBeat(quint64 clientId, const GameMessage::HeartBeat& message)
@@ -162,7 +244,7 @@ void RoomManager::receiveHeartBeat(quint64 clientId, const GameMessage::HeartBea
 }
 
 //断线判断逻辑：tcp断开连接/心跳超时
-void RoomManager::receiveClientDisconnection(quint64 clientId)
+void RoomManager::receiveClientDisconnection(quint64 clientId)//TODO:玩家断线时，清除多余的记录的帧？
 {
     auto &p=m_players[m_playerId[clientId]];
     if (p.online==true)
@@ -208,6 +290,9 @@ void RoomManager::broadcastGameSync()
 
             newGameSyncMessage->add_players()->CopyFrom(sync);
             queue.pop();
+
+            p.frames.insert(sync.frameid(),sync);//已发送的帧缓存 便于断线重连
+            p.currentFrameIds.push(sync.frameid());
         }
     }
 

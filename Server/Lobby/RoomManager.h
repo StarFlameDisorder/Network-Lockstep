@@ -24,6 +24,7 @@ struct Player{
     quint64 clientId;//客户端id
     QString name;//名称
     quint64 activeTime;//上次心跳时间
+    quint64 lastFrameId;
     std::queue<GameMessage::PlayerSync> receiveMessages;//收到的帧同步消息
     bool online;
 
@@ -59,6 +60,7 @@ private:
     QTimer m_timer;//定时发送
     quint64 m_nextPlayerId=1;//从1开始
     quint64 m_sendIndex=0;
+    bool isRunning=false;
 
     //TODO:帧的处理未完成 分发、删除 帧应该是已经发送过的 现在把未发送的也塞里面了
     GameMessage::GameSnapshotMessage m_gameSnapshot;//最新快照

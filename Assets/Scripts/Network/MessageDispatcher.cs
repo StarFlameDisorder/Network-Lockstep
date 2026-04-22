@@ -34,7 +34,7 @@ namespace Network
             }
             else
             {
-                Debug.Log("MessageDispatcher:无相关注册信号处理器:"+signal);
+                Debug.LogError("MessageDispatcher:无相关注册信号处理器:"+signal);
             }
         }
         
@@ -53,8 +53,11 @@ namespace Network
                 case ServerMessage.ContentOneofCase.LobbySync:
                     HandleLobbyMessage(message.LobbySync);
                     break;
+                case ServerMessage.ContentOneofCase.GameSnapshotMessage:
+                    TriggerHandler(Signals.GameSnapShot,message.GameSnapshotMessage);
+                    break;
                 default:
-                    Debug.Log("HandleMessage:未知类型"+message.ContentCase);
+                    Debug.LogError("HandleMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
                     break;
             }
 
@@ -71,7 +74,7 @@ namespace Network
                     //NetworkManager.Instance.SetClientId(message.HandShakeMessage.ClientId);
                     break;
                 default:
-                    Debug.Log("HandleConnectMessage:未知类型"+message.ContentCase);
+                    Debug.LogError("HandleConnectMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
                     break;
             }
             //Action<string> printMessage = Console.WriteLine;
@@ -96,7 +99,7 @@ namespace Network
                     Debug.Log("HandleLobbyMessage-EndRoom");
                     break;
                 default:
-                    Debug.Log("HandleLobbyMessage:未知类型"+message.ContentCase);
+                    Debug.LogError("HandleLobbyMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
                     break;
             }
         }

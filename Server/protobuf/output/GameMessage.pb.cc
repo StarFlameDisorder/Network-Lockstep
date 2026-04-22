@@ -41,7 +41,7 @@ PROTOBUF_CONSTEXPR GameSnapshotMessage::GameSnapshotMessage(
     /*decltype(_impl_.playersss_)*/{}
   , /*decltype(_impl_.objectsss_)*/{}
   , /*decltype(_impl_.frameid_)*/uint64_t{0u}
-  , /*decltype(_impl_.time_)*/uint64_t{0u}
+  , /*decltype(_impl_.lastframeid_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct GameSnapshotMessageDefaultTypeInternal {
   PROTOBUF_CONSTEXPR GameSnapshotMessageDefaultTypeInternal()
@@ -135,7 +135,7 @@ const uint32_t TableStruct_GameMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.frameid_),
-  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.time_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.lastframeid_),
   PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.playersss_),
   PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.objectsss_),
   ~0u,  // no _has_bits_
@@ -198,28 +198,28 @@ const char descriptor_table_protodef_GameMessage_2eproto[] PROTOBUF_SECTION_VARI
   "\n\021GameMessage.proto\022\013GameMessage\032\017UnityM"
   "ath.proto\"Z\n\017GameSyncMessage\022\017\n\007frameId\030"
   "\001 \001(\004\022\014\n\004time\030\002 \001(\004\022(\n\007players\030\003 \003(\0132\027.G"
-  "ameMessage.PlayerSync\"\234\001\n\023GameSnapshotMe"
-  "ssage\022\017\n\007frameId\030\001 \001(\004\022\014\n\004time\030\002 \001(\004\0222\n\t"
-  "playerSSs\030\003 \003(\0132\037.GameMessage.PlayerSnap"
-  "shotSync\0222\n\tobjectSSs\030\004 \003(\0132\037.GameMessag"
-  "e.ObjectSnapshotSync\"a\n\nPlayerSync\022\017\n\007fr"
-  "ameId\030\001 \001(\004\022\014\n\004time\030\002 \001(\004\022\014\n\004name\030\003 \001(\t\022"
-  "&\n\tinputMove\030\004 \001(\0132\023.UnityMath.Vector3D\""
-  "|\n\022PlayerSnapshotSync\022\014\n\004name\030\001 \001(\t\022\017\n\007f"
-  "rameId\030\002 \001(\004\022 \n\003pos\030\003 \001(\0132\023.UnityMath.Ve"
-  "ctor3D\022%\n\010velocity\030\004 \001(\0132\023.UnityMath.Vec"
-  "tor3D\"o\n\022ObjectSnapshotSync\022\020\n\010objectId\030"
-  "\001 \001(\004\022 \n\003pos\030\002 \001(\0132\023.UnityMath.Vector3D\022"
-  "%\n\010velocity\030\003 \001(\0132\023.UnityMath.Vector3D\"\'"
-  "\n\tHeartBeat\022\014\n\004name\030\001 \001(\t\022\014\n\004time\030\002 \001(\004b"
-  "\006proto3"
+  "ameMessage.PlayerSync\"\243\001\n\023GameSnapshotMe"
+  "ssage\022\017\n\007frameId\030\001 \001(\004\022\023\n\013lastFrameId\030\002 "
+  "\001(\004\0222\n\tplayerSSs\030\003 \003(\0132\037.GameMessage.Pla"
+  "yerSnapshotSync\0222\n\tobjectSSs\030\004 \003(\0132\037.Gam"
+  "eMessage.ObjectSnapshotSync\"a\n\nPlayerSyn"
+  "c\022\017\n\007frameId\030\001 \001(\004\022\014\n\004time\030\002 \001(\004\022\014\n\004name"
+  "\030\003 \001(\t\022&\n\tinputMove\030\004 \001(\0132\023.UnityMath.Ve"
+  "ctor3D\"|\n\022PlayerSnapshotSync\022\014\n\004name\030\001 \001"
+  "(\t\022\017\n\007frameId\030\002 \001(\004\022 \n\003pos\030\003 \001(\0132\023.Unity"
+  "Math.Vector3D\022%\n\010velocity\030\004 \001(\0132\023.UnityM"
+  "ath.Vector3D\"o\n\022ObjectSnapshotSync\022\020\n\010ob"
+  "jectId\030\001 \001(\004\022 \n\003pos\030\002 \001(\0132\023.UnityMath.Ve"
+  "ctor3D\022%\n\010velocity\030\003 \001(\0132\023.UnityMath.Vec"
+  "tor3D\"\'\n\tHeartBeat\022\014\n\004name\030\001 \001(\t\022\014\n\004time"
+  "\030\002 \001(\004b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_GameMessage_2eproto_deps[1] = {
   &::descriptor_table_UnityMath_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_GameMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_GameMessage_2eproto = {
-    false, false, 687, descriptor_table_protodef_GameMessage_2eproto,
+    false, false, 694, descriptor_table_protodef_GameMessage_2eproto,
     "GameMessage.proto",
     &descriptor_table_GameMessage_2eproto_once, descriptor_table_GameMessage_2eproto_deps, 1, 6,
     schemas, file_default_instances, TableStruct_GameMessage_2eproto::offsets,
@@ -498,13 +498,13 @@ GameSnapshotMessage::GameSnapshotMessage(const GameSnapshotMessage& from)
       decltype(_impl_.playersss_){from._impl_.playersss_}
     , decltype(_impl_.objectsss_){from._impl_.objectsss_}
     , decltype(_impl_.frameid_){}
-    , decltype(_impl_.time_){}
+    , decltype(_impl_.lastframeid_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.frameid_, &from._impl_.frameid_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.time_) -
-    reinterpret_cast<char*>(&_impl_.frameid_)) + sizeof(_impl_.time_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.lastframeid_) -
+    reinterpret_cast<char*>(&_impl_.frameid_)) + sizeof(_impl_.lastframeid_));
   // @@protoc_insertion_point(copy_constructor:GameMessage.GameSnapshotMessage)
 }
 
@@ -516,7 +516,7 @@ inline void GameSnapshotMessage::SharedCtor(
       decltype(_impl_.playersss_){arena}
     , decltype(_impl_.objectsss_){arena}
     , decltype(_impl_.frameid_){uint64_t{0u}}
-    , decltype(_impl_.time_){uint64_t{0u}}
+    , decltype(_impl_.lastframeid_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -549,8 +549,8 @@ void GameSnapshotMessage::Clear() {
   _impl_.playersss_.Clear();
   _impl_.objectsss_.Clear();
   ::memset(&_impl_.frameid_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.time_) -
-      reinterpret_cast<char*>(&_impl_.frameid_)) + sizeof(_impl_.time_));
+      reinterpret_cast<char*>(&_impl_.lastframeid_) -
+      reinterpret_cast<char*>(&_impl_.frameid_)) + sizeof(_impl_.lastframeid_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -568,10 +568,10 @@ const char* GameSnapshotMessage::_InternalParse(const char* ptr, ::_pbi::ParseCo
         } else
           goto handle_unusual;
         continue;
-      // uint64 time = 2;
+      // uint64 lastFrameId = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          _impl_.time_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.lastframeid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -637,10 +637,10 @@ uint8_t* GameSnapshotMessage::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_frameid(), target);
   }
 
-  // uint64 time = 2;
-  if (this->_internal_time() != 0) {
+  // uint64 lastFrameId = 2;
+  if (this->_internal_lastframeid() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_time(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_lastframeid(), target);
   }
 
   // repeated .GameMessage.PlayerSnapshotSync playerSSs = 3;
@@ -694,9 +694,9 @@ size_t GameSnapshotMessage::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_frameid());
   }
 
-  // uint64 time = 2;
-  if (this->_internal_time() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_time());
+  // uint64 lastFrameId = 2;
+  if (this->_internal_lastframeid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_lastframeid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -722,8 +722,8 @@ void GameSnapshotMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, co
   if (from._internal_frameid() != 0) {
     _this->_internal_set_frameid(from._internal_frameid());
   }
-  if (from._internal_time() != 0) {
-    _this->_internal_set_time(from._internal_time());
+  if (from._internal_lastframeid() != 0) {
+    _this->_internal_set_lastframeid(from._internal_lastframeid());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -745,8 +745,8 @@ void GameSnapshotMessage::InternalSwap(GameSnapshotMessage* other) {
   _impl_.playersss_.InternalSwap(&other->_impl_.playersss_);
   _impl_.objectsss_.InternalSwap(&other->_impl_.objectsss_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(GameSnapshotMessage, _impl_.time_)
-      + sizeof(GameSnapshotMessage::_impl_.time_)
+      PROTOBUF_FIELD_OFFSET(GameSnapshotMessage, _impl_.lastframeid_)
+      + sizeof(GameSnapshotMessage::_impl_.lastframeid_)
       - PROTOBUF_FIELD_OFFSET(GameSnapshotMessage, _impl_.frameid_)>(
           reinterpret_cast<char*>(&_impl_.frameid_),
           reinterpret_cast<char*>(&other->_impl_.frameid_));

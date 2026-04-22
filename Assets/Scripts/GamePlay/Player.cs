@@ -76,7 +76,7 @@ namespace GamePlay
         
         #region 快照
         
-        public void ApplySnapShot()
+        private void ApplySnapShot()//TODO:位置无法应用
         {
             if (_playerSnapshotSync != null)
             {
@@ -84,6 +84,7 @@ namespace GamePlay
                 _position = FixedPointVector3.FromRawValue(v3.X, v3.Y, v3.Z);
                 _preSnapshotFrameId = _playerSnapshotSync.FrameId;
                 _gameObject.transform.position=_position.ToVector3();
+                _preFrameId=_playerSnapshotSync.FrameId;
             }
             else
             {
@@ -93,7 +94,9 @@ namespace GamePlay
         
         public void SetSnapshotSync(PlayerSnapshotSync sync)
         {
+            Debug.Log($"{_name}SetSnapshotSync");
             _playerSnapshotSync = sync;
+            ApplySnapShot();
         }
 
         public PlayerSnapshotSync GetSnapshotSync()

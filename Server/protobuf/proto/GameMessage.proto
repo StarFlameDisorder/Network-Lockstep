@@ -12,7 +12,7 @@ message GameSyncMessage{
 
 message GameSnapshotMessage{
     uint64 frameId=1;
-    uint64 time=2;
+    uint64 lastFrameId=2;
     repeated PlayerSnapshotSync playerSSs=3;
     repeated ObjectSnapshotSync objectSSs=4;
 }

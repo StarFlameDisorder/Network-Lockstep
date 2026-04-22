@@ -27,7 +27,7 @@ namespace GamePlay//TODO: UDP重传风暴
 
         private static int _gameFrameRate = 30;
         private static FixedPoint _gameFrameSpacing = FixedPoint.FromFloat(1f / _gameFrameRate);
-        private static int _snapshotSpacing = 5;
+        private static int _snapshotSpacing = 1;
         
         [SerializeField]private PlayerController _controller;
         private UInt64 _playerId;
@@ -39,6 +39,7 @@ namespace GamePlay//TODO: UDP重传风暴
             Instance = this;
             Application.targetFrameRate = 60;
             Screen.SetResolution(1920, 1080, false);
+            Application.runInBackground = true;//TODO:不知道能否保证后台运行正常
         }
 
         private void Start()
@@ -47,6 +48,7 @@ namespace GamePlay//TODO: UDP重传风暴
             NetworkManager.Instance.RegisterHandler<PlayerJoinRoomResponse>(Signals.LobbyJoinRoom,JoinRoom);//加入房间消息
             NetworkManager.Instance.RegisterHandler<PlayerLeaveRoomResponse>(Signals.LobbyLeaveRoom,LeaveRoom);//离开房间
             NetworkManager.Instance.RegisterHandler<PlayerStartRoomResponse>(Signals.LobbyStartRoom,StartRoom);//开始游戏
+            NetworkManager.Instance.RegisterHandler<GameSnapshotMessage>(Signals.GameSnapShot,ReceiveSnapshotMessage);//断线重连 收到快照
             
             RegisterTimerEvent(UpdateGame);
             _heartBeatHandle.OnTimeTriggerEvent += HeartBeat;
@@ -70,7 +72,7 @@ namespace GamePlay//TODO: UDP重传风暴
         
         private void JoinRoom(PlayerJoinRoomResponse response)
         {
-            Debug.Log("收到PlayerJoinRoomResponse");
+            Debug.Log($"收到PlayerJoinRoomResponse 房主{response.Owner}");
             
             foreach (var otherPlayer in response.Players)
             {
@@ -105,6 +107,25 @@ namespace GamePlay//TODO: UDP重传风暴
             Debug.Log("收到PlayerStartRoomResponse");
             
             StartGame();
+            
+            if (_name==_ownerName)
+            {
+                UInt64 clientId = NetworkManager.Instance.GetClientId();
+                GameSnapshotMessage snapshotMessage = new GameSnapshotMessage();
+                snapshotMessage.FrameId = _frameId-1;//应该是上一帧 因为这一帧还没执行  TODO:确认是否frameId正确
+                foreach (var pair in _players)
+                {
+                    snapshotMessage.PlayerSSs.Add(pair.Value.GetSnapshotSync());
+                }
+
+                ClientMessage snapMessage = new ClientMessage
+                {
+                    ClientId = clientId,
+                    GameSnapshotMessage = snapshotMessage
+                };
+                NetworkManager.Instance.UdpSendMessage(snapMessage.ToByteArray());
+                
+            }
         }
         #endregion
         
@@ -271,6 +292,21 @@ namespace GamePlay//TODO: UDP重传风暴
                     _players[player.Name].AddSyncMessage(player);
                 }
             }
+        }
+
+        void ReceiveSnapshotMessage(GameSnapshotMessage message)
+        {
+            _frameId = message.LastFrameId+1;
+            foreach (var playerSS in message.PlayerSSs)
+            {
+                if (_players.ContainsKey(playerSS.Name))
+                {
+                    _players[playerSS.Name].SetSnapshotSync(playerSS);
+                    //if (playerSS.Name == _name) _frameId = playerSS.FrameId+1;
+                }
+            }
+            Debug.Log("断线重连-开始游戏");
+            StartGame();
         }
         #endregion
         

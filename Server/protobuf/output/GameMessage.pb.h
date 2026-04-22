@@ -380,7 +380,7 @@ class GameSnapshotMessage final :
     kPlayerSSsFieldNumber = 3,
     kObjectSSsFieldNumber = 4,
     kFrameIdFieldNumber = 1,
-    kTimeFieldNumber = 2,
+    kLastFrameIdFieldNumber = 2,
   };
   // repeated .GameMessage.PlayerSnapshotSync playerSSs = 3;
   int playersss_size() const;
@@ -427,13 +427,13 @@ class GameSnapshotMessage final :
   void _internal_set_frameid(uint64_t value);
   public:
 
-  // uint64 time = 2;
-  void clear_time();
-  uint64_t time() const;
-  void set_time(uint64_t value);
+  // uint64 lastFrameId = 2;
+  void clear_lastframeid();
+  uint64_t lastframeid() const;
+  void set_lastframeid(uint64_t value);
   private:
-  uint64_t _internal_time() const;
-  void _internal_set_time(uint64_t value);
+  uint64_t _internal_lastframeid() const;
+  void _internal_set_lastframeid(uint64_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:GameMessage.GameSnapshotMessage)
@@ -447,7 +447,7 @@ class GameSnapshotMessage final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSnapshotSync > playersss_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::ObjectSnapshotSync > objectsss_;
     uint64_t frameid_;
-    uint64_t time_;
+    uint64_t lastframeid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1319,24 +1319,24 @@ inline void GameSnapshotMessage::set_frameid(uint64_t value) {
   // @@protoc_insertion_point(field_set:GameMessage.GameSnapshotMessage.frameId)
 }
 
-// uint64 time = 2;
-inline void GameSnapshotMessage::clear_time() {
-  _impl_.time_ = uint64_t{0u};
+// uint64 lastFrameId = 2;
+inline void GameSnapshotMessage::clear_lastframeid() {
+  _impl_.lastframeid_ = uint64_t{0u};
 }
-inline uint64_t GameSnapshotMessage::_internal_time() const {
-  return _impl_.time_;
+inline uint64_t GameSnapshotMessage::_internal_lastframeid() const {
+  return _impl_.lastframeid_;
 }
-inline uint64_t GameSnapshotMessage::time() const {
-  // @@protoc_insertion_point(field_get:GameMessage.GameSnapshotMessage.time)
-  return _internal_time();
+inline uint64_t GameSnapshotMessage::lastframeid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.GameSnapshotMessage.lastFrameId)
+  return _internal_lastframeid();
 }
-inline void GameSnapshotMessage::_internal_set_time(uint64_t value) {
+inline void GameSnapshotMessage::_internal_set_lastframeid(uint64_t value) {
   
-  _impl_.time_ = value;
+  _impl_.lastframeid_ = value;
 }
-inline void GameSnapshotMessage::set_time(uint64_t value) {
-  _internal_set_time(value);
-  // @@protoc_insertion_point(field_set:GameMessage.GameSnapshotMessage.time)
+inline void GameSnapshotMessage::set_lastframeid(uint64_t value) {
+  _internal_set_lastframeid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.GameSnapshotMessage.lastFrameId)
 }
 
 // repeated .GameMessage.PlayerSnapshotSync playerSSs = 3;

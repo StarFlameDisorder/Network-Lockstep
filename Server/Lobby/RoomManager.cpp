@@ -93,41 +93,21 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
 
         for (auto &i:m_players)
         {
-            emit sendTcpMessage(i.id,data);
+            emit sendTcpMessage(i.clientId,data);
         }
     }
 
     Log_Info()<<"[joinRoom]玩家加入:"<<name<<"客户端Id:"<<clientId<<"玩家id:"<<playerId<<"总数："<<m_players.size();
 
     //断线重连
-    if (samePlayer)
+    if (samePlayer&&isRunning)
     {
         {
-            QByteArray data;
-            data.resize(m_gameSnapshot.ByteSizeLong());
-            bool success = m_gameSnapshot.SerializeToArray(data.data(), data.size());
-            if (!success) {
-                Log_Error()<<"Failed to serialize ServerMessage.";
-                return;
-            }
-            emit sendUdpMessage(clientId,data);
-            Log_Info()<<"[断线重连]补发快照 包含玩家数:"<<m_gameSnapshot.playersss_size();
-        }
-
-        {
-            QString log("补发帧:");
-            using namespace GameMessage;
-
             ServerMessage sendMessage;
-            GameSyncMessage* newGameSyncMessage= sendMessage.mutable_gamesyncmessage();
-            for (auto &p:m_players)
-            {
-                for (quint64 i=p.preSnapshotId+1;p.frames.contains(i);i++)
-                {
-                    newGameSyncMessage->add_players()->CopyFrom(p.frames[i]);
-                    log.append(" "+p.name+"-"+QString::number(i));
-                }
-            }
+            auto *snapMess=sendMessage.mutable_gamesnapshotmessage();
+            snapMess->CopyFrom(m_gameSnapshot);
+            snapMess->set_lastframeid(m_players[playerId].lastFrameId);
+
             QByteArray data;
             data.resize(sendMessage.ByteSizeLong());
             bool success = sendMessage.SerializeToArray(data.data(), data.size());
@@ -136,9 +116,86 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
                 return;
             }
             emit sendUdpMessage(clientId,data);
-
-            Log_Info()<<log;
+            Log_Info()<<"[断线重连]补发快照 包含玩家数:"<<m_gameSnapshot.playersss_size();
         }
+
+        // {
+        //     QString log("补发帧:");
+        //     using namespace GameMessage;
+        //
+        //     ServerMessage sendMessage;
+        //     GameSyncMessage* newGameSyncMessage= sendMessage.mutable_gamesyncmessage();
+        //     for (auto &p:m_players)
+        //     {
+        //         for (quint64 i=p.preSnapshotId+1;p.frames.contains(i);i++)
+        //         {
+        //             newGameSyncMessage->add_players()->CopyFrom(p.frames[i]);
+        //             log.append(" "+p.name+"-"+QString::number(i));
+        //         }
+        //     }
+        //     QByteArray data;
+        //     data.resize(sendMessage.ByteSizeLong());
+        //     bool success = sendMessage.SerializeToArray(data.data(), data.size());
+        //     if (!success) {
+        //         Log_Error()<<"Failed to serialize ServerMessage.";
+        //         return;
+        //     }
+        //     emit sendUdpMessage(clientId,data);
+        //
+        //     Log_Info()<<log;
+        // }
+
+        {
+            //TODO:UDP重构 支持分包
+            QString log("补发帧:");
+            const int MAX_FRAMES_PER_PACKET = 10;  // 每包最多10帧
+            QVector<ServerMessage> packets;
+            ServerMessage currentPacket;
+            int frameCount = 0;
+
+            for (auto &p : m_players) {
+                for (quint64 i = p.preSnapshotId + 1; p.frames.contains(i); i++) {
+                    currentPacket.mutable_gamesyncmessage()->add_players()->CopyFrom(p.frames[i]);
+                    log.append(" "+p.name+"-"+QString::number(i));
+                    frameCount++;
+                    if (frameCount >= MAX_FRAMES_PER_PACKET) {
+                        packets.append(currentPacket);
+                        currentPacket.Clear();
+                        frameCount = 0;
+                    }
+                }
+            }
+            if (frameCount > 0) packets.append(currentPacket);
+
+            // 发送每个分包
+            for (auto &pkt : packets) {
+                QByteArray data;
+                data.resize(pkt.ByteSizeLong());
+                pkt.SerializeToArray(data.data(), data.size());
+                emit sendUdpMessage(clientId, data);
+            }
+            Log_Info()<<log<<"总包数："<<packets.size();
+        }
+
+        // {
+        //     using namespace SyncMessage;
+        //     using namespace LobbyMessage;
+        //     ServerMessage sendMessage;
+        //     auto *lobbyMes=sendMessage.mutable_lobbysync();
+        //     auto *startMes=lobbyMes->mutable_startroom();
+        //
+        //     if (m_players.contains(1))startMes->set_name(m_players[1].name.toStdString());
+        //     else startMes->set_name(name.toStdString());
+        //
+        //     QByteArray data;
+        //     data.resize(sendMessage.ByteSizeLong());
+        //     bool success = sendMessage.SerializeToArray(data.data(), data.size());
+        //     if (!success) {
+        //         Log_Error()<<"[startRoom]无法生成ServerMessage.";
+        //         return;
+        //     }
+        //     emit sendTcpMessage(clientId,data);
+        // }
     }
 }
 
@@ -159,6 +216,7 @@ void RoomManager::leaveRoom(QString name,quint64 clientId)
 
 void RoomManager::startRoom(QString name)
 {
+    isRunning=true;
     Log_Info()<<"[startRoom]开始"<<name;
     m_timer.start(((float)1000)/GameFrameRate);
 
@@ -167,7 +225,9 @@ void RoomManager::startRoom(QString name)
     ServerMessage sendMessage;
     auto *lobbyMes=sendMessage.mutable_lobbysync();
     auto *startMes=lobbyMes->mutable_startroom();
-    startMes->set_name(name.toStdString());
+
+    if (m_players.contains(1))startMes->set_name(m_players[1].name.toStdString());
+    else startMes->set_name(name.toStdString());
 
     QByteArray data;
     data.resize(sendMessage.ByteSizeLong());
@@ -186,6 +246,7 @@ void RoomManager::startRoom(QString name)
 void RoomManager::endRoom()
 {
     Log_Info()<<"[endRoom]结束";
+    isRunning=false;
 }
 
 void RoomManager::receiveGameSync(quint64 clientId,const GameMessage::GameSyncMessage& message)
@@ -199,6 +260,7 @@ void RoomManager::receiveGameSync(quint64 clientId,const GameMessage::GameSyncMe
         PlayerSync p;
         p.CopyFrom(message.players(0));//因为只有一个玩家的操作输入
         queue.push(p);
+        m_players[playerId].lastFrameId=p.frameid();
         PlayerSync snapFrame;
         snapFrame.CopyFrom(message.players(0));
         m_players[playerId].frames.insert(snapFrame.frameid(),snapFrame);//TODO:帧的处理未完成 分发、删除
@@ -207,7 +269,7 @@ void RoomManager::receiveGameSync(quint64 clientId,const GameMessage::GameSyncMe
 
 void RoomManager::receiveSnapshot(quint64 clientId, const GameMessage::GameSnapshotMessage& message)
 {
-    Log_Info()<<"[receiveSnapshot]接收消息 clientId:"<<clientId<<"玩家人数"<<message.playersss_size();
+    Log_Info()<<"[receiveSnapshot]接收消息 clientId:"<<clientId<<"玩家人数"<<message.playersss_size()<<"结束帧"<<message.frameid();
 
     m_gameSnapshot=message;
     for (auto &s:m_gameSnapshot.playersss())
@@ -221,15 +283,24 @@ void RoomManager::receiveSnapshot(quint64 clientId, const GameMessage::GameSnaps
 
             p.preSnapshotId=s.frameid();
 
+            QString log1("移除");
             while (!p.currentFrameIds.empty())
             {
                 quint64 frameId=p.currentFrameIds.front();
-                if (!p.frames.contains(frameId)||frameId>newFrameId)break;
+                if (!p.frames.contains(frameId)||frameId>newFrameId)break;//TODO:断线重连后旧数据无法清除
                 p.frames.remove(p.currentFrameIds.front());
                 p.currentFrameIds.pop();
+                log1+=" "+QString::number(frameId);
             }
-            Log_Info()<<"玩家"<<p.name<<"剩余"<<p.frames.size()<<"帧";
+            Log_Info()<<"玩家"<<p.name<<"剩余"<<p.frames.size()<<"帧"<<log1;
             if (!p.currentFrameIds.empty())Log_Info()<<"剩余帧数"<<p.currentFrameIds.size()<<"最旧id"<<p.currentFrameIds.front();
+            QString log("剩余帧:");
+            for (auto &i:p.frames.keys())
+            {
+                log+=" "+QString::number(i);
+            }
+            Log_Info()<<"玩家"<<p.name<<log;
+
         }else continue;
     }
 

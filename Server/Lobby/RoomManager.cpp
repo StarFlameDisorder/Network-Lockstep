@@ -107,7 +107,14 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
             auto *snapMess=sendMessage.mutable_gamesnapshotmessage();
             auto *snapshot=snapMess->mutable_snapshot();
             snapshot->CopyFrom(m_gameSnapshot);
-            snapshot->set_lastframeid(m_players[playerId].lastFrameId);
+
+
+            // snapshot->set_lastframeid(m_players[playerId].lastFrameId);
+            for (int i=0;i!=snapshot->playersss_size();i++)
+            {
+                auto *p=snapshot->mutable_playersss(i);
+                p->set_lastframeid(m_players[containPlayer(QString::fromStdString(p->name()))].lastFrameId);
+            }
 
             QByteArray data;
             data.resize(sendMessage.ByteSizeLong());

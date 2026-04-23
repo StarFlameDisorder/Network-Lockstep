@@ -19,7 +19,7 @@ namespace GamePlay
         string _name;
         private FixedPoint _gameFrameSpace;
         private FixedPoint _speed;
-        UInt64 _preSnapshotFrameId;//上次应用的快照帧id
+        UInt64 _preSnapshotFrameId;//上次应用的快照的帧id
         UInt64 _preFrameId;//上次执行的帧序号
 
         public Player(String name,GameObject o,FixedPoint gameFrameSpace,FixedPoint speed)
@@ -92,6 +92,7 @@ namespace GamePlay
                 _preSnapshotFrameId = _playerSnapshotSync.FrameId;
                 _gameObject.transform.position=_position.ToVector3();
                 _preFrameId=_playerSnapshotSync.FrameId;
+                Debug.Log($"{_name}恢复快照时最新执行到{_preFrameId}");
             }
             else
             {
@@ -108,6 +109,7 @@ namespace GamePlay
 
         public PlayerSnapshotSync GetSnapshotSync()
         {
+            Debug.Log($"{_name}记录快照时最新执行到{_preFrameId}");
             return new PlayerSnapshotSync
             {
                 Name = _name,

@@ -19,7 +19,6 @@ message GameSnapshotMessage{
 
 message GameSnapshot{
     uint64 frameId=1;
-    uint64 lastFrameId=2;
     repeated PlayerSnapshotSync playerSSs=3;
     repeated ObjectSnapshotSync objectSSs=4;
 }
@@ -40,7 +39,8 @@ message PlayerSync
 message PlayerSnapshotSync
 {
     string name=1;
-    uint64 frameId=2;
+    uint64 frameId=2;//第几帧的快照
+    uint64 lastFrameId=5;//最新的帧序号
 
     UnityMath.Vector3D pos = 3;
     UnityMath.Vector3D velocity= 4;

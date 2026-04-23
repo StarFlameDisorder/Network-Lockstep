@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityMath;
 using Google.Protobuf;
 using SyncMessage;
+using Unity.VisualScripting;
 
 namespace GamePlay//TODO: UDP重传风暴
 {
@@ -295,13 +296,13 @@ namespace GamePlay//TODO: UDP重传风暴
             if (message.ContentCase == GameSnapshotMessage.ContentOneofCase.Snapshot)
             {
                 GameSnapshot snapshot = message.Snapshot;
-                _frameId = snapshot.LastFrameId+1;
+                // _frameId = snapshot.LastFrameId+1;
                 foreach (var playerSS in snapshot.PlayerSSs)
                 {
-                    if (_players.ContainsKey(playerSS.Name))
-                    {
-                        _players[playerSS.Name].SetSnapshotSync(playerSS);
-                    }
+                    if (!_players.ContainsKey(playerSS.Name))AddPlayer(playerSS.Name);
+                    
+                    if (playerSS.Name == _name) _frameId = playerSS.LastFrameId + 1;
+                    _players[playerSS.Name].SetSnapshotSync(playerSS);
                 }
                 //TODO:物体位置同步
                 Debug.Log("断线重连-开始游戏");
@@ -311,10 +312,10 @@ namespace GamePlay//TODO: UDP重传风暴
                 GameFrame frames = message.Frames;
                 foreach (var player in frames.Players)
                 {
-                    if(_players.ContainsKey(player.Name))
-                    {
-                        _players[player.Name].AddSyncMessage(player);
-                    }
+                    if (!_players.ContainsKey(player.Name))AddPlayer(player.Name);
+                    
+                    _players[player.Name].AddSyncMessage(player);
+                    
                 }
             }
             else

@@ -24,13 +24,13 @@ struct Player{
     quint64 clientId;//客户端id
     QString name;//名称
     quint64 activeTime;//上次心跳时间
-    quint64 lastFrameId;
+    quint64 lastFrameId;//最新收到的帧id
     std::queue<GameMessage::PlayerSync> receiveMessages;//收到的帧同步消息
     bool online;
 
     QHash<quint64,GameMessage::PlayerSync> frames;//历史帧记录 帧序号 帧
     std::queue<quint64> currentFrameIds;//TODO:改为Qqueue
-    quint64 preSnapshotId=0;
+    quint64 preSnapshotId=0;//上次快照中的帧id
 };
 
 class RoomManager:public QObject

@@ -29,30 +29,30 @@ namespace GameMessage {
             "aW1lGAIgASgEEigKB3BsYXllcnMYAyADKAsyFy5HYW1lTWVzc2FnZS5QbGF5",
             "ZXJTeW5jInkKE0dhbWVTbmFwc2hvdE1lc3NhZ2USLQoIc25hcHNob3QYAyAB",
             "KAsyGS5HYW1lTWVzc2FnZS5HYW1lU25hcHNob3RIABIoCgZmcmFtZXMYBCAB",
-            "KAsyFi5HYW1lTWVzc2FnZS5HYW1lRnJhbWVIAEIJCgdjb250ZW50IpwBCgxH",
-            "YW1lU25hcHNob3QSDwoHZnJhbWVJZBgBIAEoBBITCgtsYXN0RnJhbWVJZBgC",
-            "IAEoBBIyCglwbGF5ZXJTU3MYAyADKAsyHy5HYW1lTWVzc2FnZS5QbGF5ZXJT",
-            "bmFwc2hvdFN5bmMSMgoJb2JqZWN0U1NzGAQgAygLMh8uR2FtZU1lc3NhZ2Uu",
-            "T2JqZWN0U25hcHNob3RTeW5jIkYKCUdhbWVGcmFtZRIPCgdmcmFtZUlkGAEg",
-            "ASgEEigKB3BsYXllcnMYAiADKAsyFy5HYW1lTWVzc2FnZS5QbGF5ZXJTeW5j",
-            "ImEKClBsYXllclN5bmMSDwoHZnJhbWVJZBgBIAEoBBIMCgR0aW1lGAIgASgE",
-            "EgwKBG5hbWUYAyABKAkSJgoJaW5wdXRNb3ZlGAQgASgLMhMuVW5pdHlNYXRo",
-            "LlZlY3RvcjNEInwKElBsYXllclNuYXBzaG90U3luYxIMCgRuYW1lGAEgASgJ",
-            "Eg8KB2ZyYW1lSWQYAiABKAQSIAoDcG9zGAMgASgLMhMuVW5pdHlNYXRoLlZl",
-            "Y3RvcjNEEiUKCHZlbG9jaXR5GAQgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNE",
-            "Im8KEk9iamVjdFNuYXBzaG90U3luYxIQCghvYmplY3RJZBgBIAEoBBIgCgNw",
-            "b3MYAiABKAsyEy5Vbml0eU1hdGguVmVjdG9yM0QSJQoIdmVsb2NpdHkYAyAB",
-            "KAsyEy5Vbml0eU1hdGguVmVjdG9yM0QiJwoJSGVhcnRCZWF0EgwKBG5hbWUY",
-            "ASABKAkSDAoEdGltZRgCIAEoBGIGcHJvdG8z"));
+            "KAsyFi5HYW1lTWVzc2FnZS5HYW1lRnJhbWVIAEIJCgdjb250ZW50IocBCgxH",
+            "YW1lU25hcHNob3QSDwoHZnJhbWVJZBgBIAEoBBIyCglwbGF5ZXJTU3MYAyAD",
+            "KAsyHy5HYW1lTWVzc2FnZS5QbGF5ZXJTbmFwc2hvdFN5bmMSMgoJb2JqZWN0",
+            "U1NzGAQgAygLMh8uR2FtZU1lc3NhZ2UuT2JqZWN0U25hcHNob3RTeW5jIkYK",
+            "CUdhbWVGcmFtZRIPCgdmcmFtZUlkGAEgASgEEigKB3BsYXllcnMYAiADKAsy",
+            "Fy5HYW1lTWVzc2FnZS5QbGF5ZXJTeW5jImEKClBsYXllclN5bmMSDwoHZnJh",
+            "bWVJZBgBIAEoBBIMCgR0aW1lGAIgASgEEgwKBG5hbWUYAyABKAkSJgoJaW5w",
+            "dXRNb3ZlGAQgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEIpEBChJQbGF5ZXJT",
+            "bmFwc2hvdFN5bmMSDAoEbmFtZRgBIAEoCRIPCgdmcmFtZUlkGAIgASgEEhMK",
+            "C2xhc3RGcmFtZUlkGAUgASgEEiAKA3BvcxgDIAEoCzITLlVuaXR5TWF0aC5W",
+            "ZWN0b3IzRBIlCgh2ZWxvY2l0eRgEIAEoCzITLlVuaXR5TWF0aC5WZWN0b3Iz",
+            "RCJvChJPYmplY3RTbmFwc2hvdFN5bmMSEAoIb2JqZWN0SWQYASABKAQSIAoD",
+            "cG9zGAIgASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEEiUKCHZlbG9jaXR5GAMg",
+            "ASgLMhMuVW5pdHlNYXRoLlZlY3RvcjNEIicKCUhlYXJ0QmVhdBIMCgRuYW1l",
+            "GAEgASgJEgwKBHRpbWUYAiABKARiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::UnityMath.UnityMathReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSyncMessage), global::GameMessage.GameSyncMessage.Parser, new[]{ "FrameId", "Time", "Players" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSnapshotMessage), global::GameMessage.GameSnapshotMessage.Parser, new[]{ "Snapshot", "Frames" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSnapshot), global::GameMessage.GameSnapshot.Parser, new[]{ "FrameId", "LastFrameId", "PlayerSSs", "ObjectSSs" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameSnapshot), global::GameMessage.GameSnapshot.Parser, new[]{ "FrameId", "PlayerSSs", "ObjectSSs" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.GameFrame), global::GameMessage.GameFrame.Parser, new[]{ "FrameId", "Players" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSync), global::GameMessage.PlayerSync.Parser, new[]{ "FrameId", "Time", "Name", "InputMove" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSnapshotSync), global::GameMessage.PlayerSnapshotSync.Parser, new[]{ "Name", "FrameId", "Pos", "Velocity" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.PlayerSnapshotSync), global::GameMessage.PlayerSnapshotSync.Parser, new[]{ "Name", "FrameId", "LastFrameId", "Pos", "Velocity" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.ObjectSnapshotSync), global::GameMessage.ObjectSnapshotSync.Parser, new[]{ "ObjectId", "Pos", "Velocity" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::GameMessage.HeartBeat), global::GameMessage.HeartBeat.Parser, new[]{ "Name", "Time" }, null, null, null, null)
           }));
@@ -633,7 +633,6 @@ namespace GameMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public GameSnapshot(GameSnapshot other) : this() {
       frameId_ = other.frameId_;
-      lastFrameId_ = other.lastFrameId_;
       playerSSs_ = other.playerSSs_.Clone();
       objectSSs_ = other.objectSSs_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -654,18 +653,6 @@ namespace GameMessage {
       get { return frameId_; }
       set {
         frameId_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "lastFrameId" field.</summary>
-    public const int LastFrameIdFieldNumber = 2;
-    private ulong lastFrameId_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong LastFrameId {
-      get { return lastFrameId_; }
-      set {
-        lastFrameId_ = value;
       }
     }
 
@@ -707,7 +694,6 @@ namespace GameMessage {
         return true;
       }
       if (FrameId != other.FrameId) return false;
-      if (LastFrameId != other.LastFrameId) return false;
       if(!playerSSs_.Equals(other.playerSSs_)) return false;
       if(!objectSSs_.Equals(other.objectSSs_)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -718,7 +704,6 @@ namespace GameMessage {
     public override int GetHashCode() {
       int hash = 1;
       if (FrameId != 0UL) hash ^= FrameId.GetHashCode();
-      if (LastFrameId != 0UL) hash ^= LastFrameId.GetHashCode();
       hash ^= playerSSs_.GetHashCode();
       hash ^= objectSSs_.GetHashCode();
       if (_unknownFields != null) {
@@ -743,10 +728,6 @@ namespace GameMessage {
         output.WriteRawTag(8);
         output.WriteUInt64(FrameId);
       }
-      if (LastFrameId != 0UL) {
-        output.WriteRawTag(16);
-        output.WriteUInt64(LastFrameId);
-      }
       playerSSs_.WriteTo(output, _repeated_playerSSs_codec);
       objectSSs_.WriteTo(output, _repeated_objectSSs_codec);
       if (_unknownFields != null) {
@@ -763,10 +744,6 @@ namespace GameMessage {
         output.WriteRawTag(8);
         output.WriteUInt64(FrameId);
       }
-      if (LastFrameId != 0UL) {
-        output.WriteRawTag(16);
-        output.WriteUInt64(LastFrameId);
-      }
       playerSSs_.WriteTo(ref output, _repeated_playerSSs_codec);
       objectSSs_.WriteTo(ref output, _repeated_objectSSs_codec);
       if (_unknownFields != null) {
@@ -781,9 +758,6 @@ namespace GameMessage {
       int size = 0;
       if (FrameId != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(FrameId);
-      }
-      if (LastFrameId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(LastFrameId);
       }
       size += playerSSs_.CalculateSize(_repeated_playerSSs_codec);
       size += objectSSs_.CalculateSize(_repeated_objectSSs_codec);
@@ -801,9 +775,6 @@ namespace GameMessage {
       }
       if (other.FrameId != 0UL) {
         FrameId = other.FrameId;
-      }
-      if (other.LastFrameId != 0UL) {
-        LastFrameId = other.LastFrameId;
       }
       playerSSs_.Add(other.playerSSs_);
       objectSSs_.Add(other.objectSSs_);
@@ -824,10 +795,6 @@ namespace GameMessage {
             break;
           case 8: {
             FrameId = input.ReadUInt64();
-            break;
-          }
-          case 16: {
-            LastFrameId = input.ReadUInt64();
             break;
           }
           case 26: {
@@ -855,10 +822,6 @@ namespace GameMessage {
             break;
           case 8: {
             FrameId = input.ReadUInt64();
-            break;
-          }
-          case 16: {
-            LastFrameId = input.ReadUInt64();
             break;
           }
           case 26: {
@@ -1439,6 +1402,7 @@ namespace GameMessage {
     public PlayerSnapshotSync(PlayerSnapshotSync other) : this() {
       name_ = other.name_;
       frameId_ = other.frameId_;
+      lastFrameId_ = other.lastFrameId_;
       pos_ = other.pos_ != null ? other.pos_.Clone() : null;
       velocity_ = other.velocity_ != null ? other.velocity_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -1471,6 +1435,18 @@ namespace GameMessage {
       get { return frameId_; }
       set {
         frameId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "lastFrameId" field.</summary>
+    public const int LastFrameIdFieldNumber = 5;
+    private ulong lastFrameId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong LastFrameId {
+      get { return lastFrameId_; }
+      set {
+        lastFrameId_ = value;
       }
     }
 
@@ -1515,6 +1491,7 @@ namespace GameMessage {
       }
       if (Name != other.Name) return false;
       if (FrameId != other.FrameId) return false;
+      if (LastFrameId != other.LastFrameId) return false;
       if (!object.Equals(Pos, other.Pos)) return false;
       if (!object.Equals(Velocity, other.Velocity)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -1526,6 +1503,7 @@ namespace GameMessage {
       int hash = 1;
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (FrameId != 0UL) hash ^= FrameId.GetHashCode();
+      if (LastFrameId != 0UL) hash ^= LastFrameId.GetHashCode();
       if (pos_ != null) hash ^= Pos.GetHashCode();
       if (velocity_ != null) hash ^= Velocity.GetHashCode();
       if (_unknownFields != null) {
@@ -1562,6 +1540,10 @@ namespace GameMessage {
         output.WriteRawTag(34);
         output.WriteMessage(Velocity);
       }
+      if (LastFrameId != 0UL) {
+        output.WriteRawTag(40);
+        output.WriteUInt64(LastFrameId);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1588,6 +1570,10 @@ namespace GameMessage {
         output.WriteRawTag(34);
         output.WriteMessage(Velocity);
       }
+      if (LastFrameId != 0UL) {
+        output.WriteRawTag(40);
+        output.WriteUInt64(LastFrameId);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1603,6 +1589,9 @@ namespace GameMessage {
       }
       if (FrameId != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(FrameId);
+      }
+      if (LastFrameId != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(LastFrameId);
       }
       if (pos_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Pos);
@@ -1627,6 +1616,9 @@ namespace GameMessage {
       }
       if (other.FrameId != 0UL) {
         FrameId = other.FrameId;
+      }
+      if (other.LastFrameId != 0UL) {
+        LastFrameId = other.LastFrameId;
       }
       if (other.pos_ != null) {
         if (pos_ == null) {
@@ -1677,6 +1669,10 @@ namespace GameMessage {
             input.ReadMessage(Velocity);
             break;
           }
+          case 40: {
+            LastFrameId = input.ReadUInt64();
+            break;
+          }
         }
       }
     #endif
@@ -1712,6 +1708,10 @@ namespace GameMessage {
               Velocity = new global::UnityMath.Vector3D();
             }
             input.ReadMessage(Velocity);
+            break;
+          }
+          case 40: {
+            LastFrameId = input.ReadUInt64();
             break;
           }
         }

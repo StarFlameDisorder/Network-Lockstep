@@ -55,7 +55,6 @@ PROTOBUF_CONSTEXPR GameSnapshot::GameSnapshot(
     /*decltype(_impl_.playersss_)*/{}
   , /*decltype(_impl_.objectsss_)*/{}
   , /*decltype(_impl_.frameid_)*/uint64_t{0u}
-  , /*decltype(_impl_.lastframeid_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct GameSnapshotDefaultTypeInternal {
   PROTOBUF_CONSTEXPR GameSnapshotDefaultTypeInternal()
@@ -102,6 +101,7 @@ PROTOBUF_CONSTEXPR PlayerSnapshotSync::PlayerSnapshotSync(
   , /*decltype(_impl_.pos_)*/nullptr
   , /*decltype(_impl_.velocity_)*/nullptr
   , /*decltype(_impl_.frameid_)*/uint64_t{0u}
+  , /*decltype(_impl_.lastframeid_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct PlayerSnapshotSyncDefaultTypeInternal {
   PROTOBUF_CONSTEXPR PlayerSnapshotSyncDefaultTypeInternal()
@@ -172,7 +172,6 @@ const uint32_t TableStruct_GameMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshot, _impl_.frameid_),
-  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshot, _impl_.lastframeid_),
   PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshot, _impl_.playersss_),
   PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshot, _impl_.objectsss_),
   ~0u,  // no _has_bits_
@@ -201,6 +200,7 @@ const uint32_t TableStruct_GameMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSnapshotSync, _impl_.name_),
   PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSnapshotSync, _impl_.frameid_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSnapshotSync, _impl_.lastframeid_),
   PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSnapshotSync, _impl_.pos_),
   PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSnapshotSync, _impl_.velocity_),
   ~0u,  // no _has_bits_
@@ -225,9 +225,9 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 0, -1, -1, sizeof(::GameMessage::GameSyncMessage)},
   { 9, -1, -1, sizeof(::GameMessage::GameSnapshotMessage)},
   { 18, -1, -1, sizeof(::GameMessage::GameSnapshot)},
-  { 28, -1, -1, sizeof(::GameMessage::GameFrame)},
-  { 36, -1, -1, sizeof(::GameMessage::PlayerSync)},
-  { 46, -1, -1, sizeof(::GameMessage::PlayerSnapshotSync)},
+  { 27, -1, -1, sizeof(::GameMessage::GameFrame)},
+  { 35, -1, -1, sizeof(::GameMessage::PlayerSync)},
+  { 45, -1, -1, sizeof(::GameMessage::PlayerSnapshotSync)},
   { 56, -1, -1, sizeof(::GameMessage::ObjectSnapshotSync)},
   { 65, -1, -1, sizeof(::GameMessage::HeartBeat)},
 };
@@ -250,30 +250,30 @@ const char descriptor_table_protodef_GameMessage_2eproto[] PROTOBUF_SECTION_VARI
   "ameMessage.PlayerSync\"y\n\023GameSnapshotMes"
   "sage\022-\n\010snapshot\030\003 \001(\0132\031.GameMessage.Gam"
   "eSnapshotH\000\022(\n\006frames\030\004 \001(\0132\026.GameMessag"
-  "e.GameFrameH\000B\t\n\007content\"\234\001\n\014GameSnapsho"
-  "t\022\017\n\007frameId\030\001 \001(\004\022\023\n\013lastFrameId\030\002 \001(\004\022"
-  "2\n\tplayerSSs\030\003 \003(\0132\037.GameMessage.PlayerS"
-  "napshotSync\0222\n\tobjectSSs\030\004 \003(\0132\037.GameMes"
-  "sage.ObjectSnapshotSync\"F\n\tGameFrame\022\017\n\007"
-  "frameId\030\001 \001(\004\022(\n\007players\030\002 \003(\0132\027.GameMes"
-  "sage.PlayerSync\"a\n\nPlayerSync\022\017\n\007frameId"
-  "\030\001 \001(\004\022\014\n\004time\030\002 \001(\004\022\014\n\004name\030\003 \001(\t\022&\n\tin"
-  "putMove\030\004 \001(\0132\023.UnityMath.Vector3D\"|\n\022Pl"
-  "ayerSnapshotSync\022\014\n\004name\030\001 \001(\t\022\017\n\007frameI"
-  "d\030\002 \001(\004\022 \n\003pos\030\003 \001(\0132\023.UnityMath.Vector3"
-  "D\022%\n\010velocity\030\004 \001(\0132\023.UnityMath.Vector3D"
-  "\"o\n\022ObjectSnapshotSync\022\020\n\010objectId\030\001 \001(\004"
-  "\022 \n\003pos\030\002 \001(\0132\023.UnityMath.Vector3D\022%\n\010ve"
-  "locity\030\003 \001(\0132\023.UnityMath.Vector3D\"\'\n\tHea"
-  "rtBeat\022\014\n\004name\030\001 \001(\t\022\014\n\004time\030\002 \001(\004b\006prot"
-  "o3"
+  "e.GameFrameH\000B\t\n\007content\"\207\001\n\014GameSnapsho"
+  "t\022\017\n\007frameId\030\001 \001(\004\0222\n\tplayerSSs\030\003 \003(\0132\037."
+  "GameMessage.PlayerSnapshotSync\0222\n\tobject"
+  "SSs\030\004 \003(\0132\037.GameMessage.ObjectSnapshotSy"
+  "nc\"F\n\tGameFrame\022\017\n\007frameId\030\001 \001(\004\022(\n\007play"
+  "ers\030\002 \003(\0132\027.GameMessage.PlayerSync\"a\n\nPl"
+  "ayerSync\022\017\n\007frameId\030\001 \001(\004\022\014\n\004time\030\002 \001(\004\022"
+  "\014\n\004name\030\003 \001(\t\022&\n\tinputMove\030\004 \001(\0132\023.Unity"
+  "Math.Vector3D\"\221\001\n\022PlayerSnapshotSync\022\014\n\004"
+  "name\030\001 \001(\t\022\017\n\007frameId\030\002 \001(\004\022\023\n\013lastFrame"
+  "Id\030\005 \001(\004\022 \n\003pos\030\003 \001(\0132\023.UnityMath.Vector"
+  "3D\022%\n\010velocity\030\004 \001(\0132\023.UnityMath.Vector3"
+  "D\"o\n\022ObjectSnapshotSync\022\020\n\010objectId\030\001 \001("
+  "\004\022 \n\003pos\030\002 \001(\0132\023.UnityMath.Vector3D\022%\n\010v"
+  "elocity\030\003 \001(\0132\023.UnityMath.Vector3D\"\'\n\tHe"
+  "artBeat\022\014\n\004name\030\001 \001(\t\022\014\n\004time\030\002 \001(\004b\006pro"
+  "to3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_GameMessage_2eproto_deps[1] = {
   &::descriptor_table_UnityMath_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_GameMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_GameMessage_2eproto = {
-    false, false, 882, descriptor_table_protodef_GameMessage_2eproto,
+    false, false, 883, descriptor_table_protodef_GameMessage_2eproto,
     "GameMessage.proto",
     &descriptor_table_GameMessage_2eproto_once, descriptor_table_GameMessage_2eproto_deps, 1, 8,
     schemas, file_default_instances, TableStruct_GameMessage_2eproto::offsets,
@@ -857,13 +857,10 @@ GameSnapshot::GameSnapshot(const GameSnapshot& from)
       decltype(_impl_.playersss_){from._impl_.playersss_}
     , decltype(_impl_.objectsss_){from._impl_.objectsss_}
     , decltype(_impl_.frameid_){}
-    , decltype(_impl_.lastframeid_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.frameid_, &from._impl_.frameid_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.lastframeid_) -
-    reinterpret_cast<char*>(&_impl_.frameid_)) + sizeof(_impl_.lastframeid_));
+  _this->_impl_.frameid_ = from._impl_.frameid_;
   // @@protoc_insertion_point(copy_constructor:GameMessage.GameSnapshot)
 }
 
@@ -875,7 +872,6 @@ inline void GameSnapshot::SharedCtor(
       decltype(_impl_.playersss_){arena}
     , decltype(_impl_.objectsss_){arena}
     , decltype(_impl_.frameid_){uint64_t{0u}}
-    , decltype(_impl_.lastframeid_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -907,9 +903,7 @@ void GameSnapshot::Clear() {
 
   _impl_.playersss_.Clear();
   _impl_.objectsss_.Clear();
-  ::memset(&_impl_.frameid_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.lastframeid_) -
-      reinterpret_cast<char*>(&_impl_.frameid_)) + sizeof(_impl_.lastframeid_));
+  _impl_.frameid_ = uint64_t{0u};
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -923,14 +917,6 @@ const char* GameSnapshot::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _impl_.frameid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // uint64 lastFrameId = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          _impl_.lastframeid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -996,12 +982,6 @@ uint8_t* GameSnapshot::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_frameid(), target);
   }
 
-  // uint64 lastFrameId = 2;
-  if (this->_internal_lastframeid() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_lastframeid(), target);
-  }
-
   // repeated .GameMessage.PlayerSnapshotSync playerSSs = 3;
   for (unsigned i = 0,
       n = static_cast<unsigned>(this->_internal_playersss_size()); i < n; i++) {
@@ -1053,11 +1033,6 @@ size_t GameSnapshot::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_frameid());
   }
 
-  // uint64 lastFrameId = 2;
-  if (this->_internal_lastframeid() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_lastframeid());
-  }
-
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1081,9 +1056,6 @@ void GameSnapshot::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   if (from._internal_frameid() != 0) {
     _this->_internal_set_frameid(from._internal_frameid());
   }
-  if (from._internal_lastframeid() != 0) {
-    _this->_internal_set_lastframeid(from._internal_lastframeid());
-  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1103,12 +1075,7 @@ void GameSnapshot::InternalSwap(GameSnapshot* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.playersss_.InternalSwap(&other->_impl_.playersss_);
   _impl_.objectsss_.InternalSwap(&other->_impl_.objectsss_);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(GameSnapshot, _impl_.lastframeid_)
-      + sizeof(GameSnapshot::_impl_.lastframeid_)
-      - PROTOBUF_FIELD_OFFSET(GameSnapshot, _impl_.frameid_)>(
-          reinterpret_cast<char*>(&_impl_.frameid_),
-          reinterpret_cast<char*>(&other->_impl_.frameid_));
+  swap(_impl_.frameid_, other->_impl_.frameid_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata GameSnapshot::GetMetadata() const {
@@ -1681,6 +1648,7 @@ PlayerSnapshotSync::PlayerSnapshotSync(const PlayerSnapshotSync& from)
     , decltype(_impl_.pos_){nullptr}
     , decltype(_impl_.velocity_){nullptr}
     , decltype(_impl_.frameid_){}
+    , decltype(_impl_.lastframeid_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -1698,7 +1666,9 @@ PlayerSnapshotSync::PlayerSnapshotSync(const PlayerSnapshotSync& from)
   if (from._internal_has_velocity()) {
     _this->_impl_.velocity_ = new ::UnityMath::Vector3D(*from._impl_.velocity_);
   }
-  _this->_impl_.frameid_ = from._impl_.frameid_;
+  ::memcpy(&_impl_.frameid_, &from._impl_.frameid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.lastframeid_) -
+    reinterpret_cast<char*>(&_impl_.frameid_)) + sizeof(_impl_.lastframeid_));
   // @@protoc_insertion_point(copy_constructor:GameMessage.PlayerSnapshotSync)
 }
 
@@ -1711,6 +1681,7 @@ inline void PlayerSnapshotSync::SharedCtor(
     , decltype(_impl_.pos_){nullptr}
     , decltype(_impl_.velocity_){nullptr}
     , decltype(_impl_.frameid_){uint64_t{0u}}
+    , decltype(_impl_.lastframeid_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.name_.InitDefault();
@@ -1754,7 +1725,9 @@ void PlayerSnapshotSync::Clear() {
     delete _impl_.velocity_;
   }
   _impl_.velocity_ = nullptr;
-  _impl_.frameid_ = uint64_t{0u};
+  ::memset(&_impl_.frameid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.lastframeid_) -
+      reinterpret_cast<char*>(&_impl_.frameid_)) + sizeof(_impl_.lastframeid_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1794,6 +1767,14 @@ const char* PlayerSnapshotSync::_InternalParse(const char* ptr, ::_pbi::ParseCon
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_velocity(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 lastFrameId = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _impl_.lastframeid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1857,6 +1838,12 @@ uint8_t* PlayerSnapshotSync::_InternalSerialize(
         _Internal::velocity(this).GetCachedSize(), target, stream);
   }
 
+  // uint64 lastFrameId = 5;
+  if (this->_internal_lastframeid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(5, this->_internal_lastframeid(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1899,6 +1886,11 @@ size_t PlayerSnapshotSync::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_frameid());
   }
 
+  // uint64 lastFrameId = 5;
+  if (this->_internal_lastframeid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_lastframeid());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1931,6 +1923,9 @@ void PlayerSnapshotSync::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   if (from._internal_frameid() != 0) {
     _this->_internal_set_frameid(from._internal_frameid());
   }
+  if (from._internal_lastframeid() != 0) {
+    _this->_internal_set_lastframeid(from._internal_lastframeid());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1955,8 +1950,8 @@ void PlayerSnapshotSync::InternalSwap(PlayerSnapshotSync* other) {
       &other->_impl_.name_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(PlayerSnapshotSync, _impl_.frameid_)
-      + sizeof(PlayerSnapshotSync::_impl_.frameid_)
+      PROTOBUF_FIELD_OFFSET(PlayerSnapshotSync, _impl_.lastframeid_)
+      + sizeof(PlayerSnapshotSync::_impl_.lastframeid_)
       - PROTOBUF_FIELD_OFFSET(PlayerSnapshotSync, _impl_.pos_)>(
           reinterpret_cast<char*>(&_impl_.pos_),
           reinterpret_cast<char*>(&other->_impl_.pos_));

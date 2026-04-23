@@ -584,7 +584,6 @@ class GameSnapshot final :
     kPlayerSSsFieldNumber = 3,
     kObjectSSsFieldNumber = 4,
     kFrameIdFieldNumber = 1,
-    kLastFrameIdFieldNumber = 2,
   };
   // repeated .GameMessage.PlayerSnapshotSync playerSSs = 3;
   int playersss_size() const;
@@ -631,15 +630,6 @@ class GameSnapshot final :
   void _internal_set_frameid(uint64_t value);
   public:
 
-  // uint64 lastFrameId = 2;
-  void clear_lastframeid();
-  uint64_t lastframeid() const;
-  void set_lastframeid(uint64_t value);
-  private:
-  uint64_t _internal_lastframeid() const;
-  void _internal_set_lastframeid(uint64_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:GameMessage.GameSnapshot)
  private:
   class _Internal;
@@ -651,7 +641,6 @@ class GameSnapshot final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::PlayerSnapshotSync > playersss_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::GameMessage::ObjectSnapshotSync > objectsss_;
     uint64_t frameid_;
-    uint64_t lastframeid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1147,6 +1136,7 @@ class PlayerSnapshotSync final :
     kPosFieldNumber = 3,
     kVelocityFieldNumber = 4,
     kFrameIdFieldNumber = 2,
+    kLastFrameIdFieldNumber = 5,
   };
   // string name = 1;
   void clear_name();
@@ -1207,6 +1197,15 @@ class PlayerSnapshotSync final :
   void _internal_set_frameid(uint64_t value);
   public:
 
+  // uint64 lastFrameId = 5;
+  void clear_lastframeid();
+  uint64_t lastframeid() const;
+  void set_lastframeid(uint64_t value);
+  private:
+  uint64_t _internal_lastframeid() const;
+  void _internal_set_lastframeid(uint64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:GameMessage.PlayerSnapshotSync)
  private:
   class _Internal;
@@ -1219,6 +1218,7 @@ class PlayerSnapshotSync final :
     ::UnityMath::Vector3D* pos_;
     ::UnityMath::Vector3D* velocity_;
     uint64_t frameid_;
+    uint64_t lastframeid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1852,26 +1852,6 @@ inline void GameSnapshot::set_frameid(uint64_t value) {
   // @@protoc_insertion_point(field_set:GameMessage.GameSnapshot.frameId)
 }
 
-// uint64 lastFrameId = 2;
-inline void GameSnapshot::clear_lastframeid() {
-  _impl_.lastframeid_ = uint64_t{0u};
-}
-inline uint64_t GameSnapshot::_internal_lastframeid() const {
-  return _impl_.lastframeid_;
-}
-inline uint64_t GameSnapshot::lastframeid() const {
-  // @@protoc_insertion_point(field_get:GameMessage.GameSnapshot.lastFrameId)
-  return _internal_lastframeid();
-}
-inline void GameSnapshot::_internal_set_lastframeid(uint64_t value) {
-  
-  _impl_.lastframeid_ = value;
-}
-inline void GameSnapshot::set_lastframeid(uint64_t value) {
-  _internal_set_lastframeid(value);
-  // @@protoc_insertion_point(field_set:GameMessage.GameSnapshot.lastFrameId)
-}
-
 // repeated .GameMessage.PlayerSnapshotSync playerSSs = 3;
 inline int GameSnapshot::_internal_playersss_size() const {
   return _impl_.playersss_.size();
@@ -2267,6 +2247,26 @@ inline void PlayerSnapshotSync::_internal_set_frameid(uint64_t value) {
 inline void PlayerSnapshotSync::set_frameid(uint64_t value) {
   _internal_set_frameid(value);
   // @@protoc_insertion_point(field_set:GameMessage.PlayerSnapshotSync.frameId)
+}
+
+// uint64 lastFrameId = 5;
+inline void PlayerSnapshotSync::clear_lastframeid() {
+  _impl_.lastframeid_ = uint64_t{0u};
+}
+inline uint64_t PlayerSnapshotSync::_internal_lastframeid() const {
+  return _impl_.lastframeid_;
+}
+inline uint64_t PlayerSnapshotSync::lastframeid() const {
+  // @@protoc_insertion_point(field_get:GameMessage.PlayerSnapshotSync.lastFrameId)
+  return _internal_lastframeid();
+}
+inline void PlayerSnapshotSync::_internal_set_lastframeid(uint64_t value) {
+  
+  _impl_.lastframeid_ = value;
+}
+inline void PlayerSnapshotSync::set_lastframeid(uint64_t value) {
+  _internal_set_lastframeid(value);
+  // @@protoc_insertion_point(field_set:GameMessage.PlayerSnapshotSync.lastFrameId)
 }
 
 // .UnityMath.Vector3D pos = 3;

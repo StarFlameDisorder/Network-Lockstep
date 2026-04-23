@@ -12,7 +12,9 @@ namespace GamePlay
     {
         GameObject _gameObject;
         FixedPointVector3 _position;
-        Queue<PlayerSync> _playerSyncMessgae = new();
+        //Queue<PlayerSync> _playerSyncMessgae = new();
+        Dictionary<UInt64,PlayerSync> _playerSyncMessgae = new();
+        
         PlayerSnapshotSync _playerSnapshotSync;
         string _name;
         private FixedPoint _gameFrameSpace;
@@ -49,16 +51,20 @@ namespace GamePlay
                 
                 Debug.Log($"{_name}追帧{times-1}");
             }
+            
             for(int i=0;i<times;i++)
             {
                 if (_playerSyncMessgae.Count == 0) return;
-                PlayerSync sync = _playerSyncMessgae.Dequeue();
-
-                if (_preFrameId + 1 != sync.FrameId)
+                if (!_playerSyncMessgae.ContainsKey(_preFrameId + 1))
                 {
-                    Debug.LogError($"{_name}: 帧id错误 旧{_preFrameId} 新{sync.FrameId}");
+                    Debug.LogWarning($"{_name}:无第{_preFrameId+1}帧");
+                    return;
                 }
-
+                
+                PlayerSync sync = _playerSyncMessgae[_preFrameId+1];
+                _playerSyncMessgae.Remove(_preFrameId + 1);
+                
+                Debug.Log($"{_name}执行第{sync.FrameId}帧");
                 _preFrameId = sync.FrameId;
                 var v = sync.InputMove;
                 FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X, v.Y, v.Z);
@@ -69,7 +75,8 @@ namespace GamePlay
         
         public void AddSyncMessage(PlayerSync sync)//应用快照时注意存在有的有的玩家没记录位置
         {
-            _playerSyncMessgae.Enqueue(sync);
+            //_playerSyncMessgae.Enqueue(sync);
+            _playerSyncMessgae.Add(sync.FrameId,sync);
         }
         
         #endregion

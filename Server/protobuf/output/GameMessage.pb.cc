@@ -38,11 +38,9 @@ struct GameSyncMessageDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GameSyncMessageDefaultTypeInternal _GameSyncMessage_default_instance_;
 PROTOBUF_CONSTEXPR GameSnapshotMessage::GameSnapshotMessage(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.playersss_)*/{}
-  , /*decltype(_impl_.objectsss_)*/{}
-  , /*decltype(_impl_.frameid_)*/uint64_t{0u}
-  , /*decltype(_impl_.lastframeid_)*/uint64_t{0u}
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+    /*decltype(_impl_.content_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct GameSnapshotMessageDefaultTypeInternal {
   PROTOBUF_CONSTEXPR GameSnapshotMessageDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -52,6 +50,36 @@ struct GameSnapshotMessageDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GameSnapshotMessageDefaultTypeInternal _GameSnapshotMessage_default_instance_;
+PROTOBUF_CONSTEXPR GameSnapshot::GameSnapshot(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.playersss_)*/{}
+  , /*decltype(_impl_.objectsss_)*/{}
+  , /*decltype(_impl_.frameid_)*/uint64_t{0u}
+  , /*decltype(_impl_.lastframeid_)*/uint64_t{0u}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct GameSnapshotDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GameSnapshotDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GameSnapshotDefaultTypeInternal() {}
+  union {
+    GameSnapshot _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GameSnapshotDefaultTypeInternal _GameSnapshot_default_instance_;
+PROTOBUF_CONSTEXPR GameFrame::GameFrame(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.players_)*/{}
+  , /*decltype(_impl_.frameid_)*/uint64_t{0u}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct GameFrameDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GameFrameDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GameFrameDefaultTypeInternal() {}
+  union {
+    GameFrame _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GameFrameDefaultTypeInternal _GameFrame_default_instance_;
 PROTOBUF_CONSTEXPR PlayerSync::PlayerSync(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
@@ -114,7 +142,7 @@ struct HeartBeatDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HeartBeatDefaultTypeInternal _HeartBeat_default_instance_;
 }  // namespace GameMessage
-static ::_pb::Metadata file_level_metadata_GameMessage_2eproto[6];
+static ::_pb::Metadata file_level_metadata_GameMessage_2eproto[8];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_GameMessage_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_GameMessage_2eproto = nullptr;
 
@@ -131,13 +159,30 @@ const uint32_t TableStruct_GameMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _internal_metadata_),
   ~0u,  // no _extensions_
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_._oneof_case_[0]),
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ::_pbi::kInvalidFieldOffsetTag,
+  ::_pbi::kInvalidFieldOffsetTag,
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.content_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshot, _internal_metadata_),
+  ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.frameid_),
-  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.lastframeid_),
-  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.playersss_),
-  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshotMessage, _impl_.objectsss_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshot, _impl_.frameid_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshot, _impl_.lastframeid_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshot, _impl_.playersss_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameSnapshot, _impl_.objectsss_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameFrame, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameFrame, _impl_.frameid_),
+  PROTOBUF_FIELD_OFFSET(::GameMessage::GameFrame, _impl_.players_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::GameMessage::PlayerSync, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -179,15 +224,19 @@ const uint32_t TableStruct_GameMessage_2eproto::offsets[] PROTOBUF_SECTION_VARIA
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::GameMessage::GameSyncMessage)},
   { 9, -1, -1, sizeof(::GameMessage::GameSnapshotMessage)},
-  { 19, -1, -1, sizeof(::GameMessage::PlayerSync)},
-  { 29, -1, -1, sizeof(::GameMessage::PlayerSnapshotSync)},
-  { 39, -1, -1, sizeof(::GameMessage::ObjectSnapshotSync)},
-  { 48, -1, -1, sizeof(::GameMessage::HeartBeat)},
+  { 18, -1, -1, sizeof(::GameMessage::GameSnapshot)},
+  { 28, -1, -1, sizeof(::GameMessage::GameFrame)},
+  { 36, -1, -1, sizeof(::GameMessage::PlayerSync)},
+  { 46, -1, -1, sizeof(::GameMessage::PlayerSnapshotSync)},
+  { 56, -1, -1, sizeof(::GameMessage::ObjectSnapshotSync)},
+  { 65, -1, -1, sizeof(::GameMessage::HeartBeat)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
   &::GameMessage::_GameSyncMessage_default_instance_._instance,
   &::GameMessage::_GameSnapshotMessage_default_instance_._instance,
+  &::GameMessage::_GameSnapshot_default_instance_._instance,
+  &::GameMessage::_GameFrame_default_instance_._instance,
   &::GameMessage::_PlayerSync_default_instance_._instance,
   &::GameMessage::_PlayerSnapshotSync_default_instance_._instance,
   &::GameMessage::_ObjectSnapshotSync_default_instance_._instance,
@@ -198,30 +247,35 @@ const char descriptor_table_protodef_GameMessage_2eproto[] PROTOBUF_SECTION_VARI
   "\n\021GameMessage.proto\022\013GameMessage\032\017UnityM"
   "ath.proto\"Z\n\017GameSyncMessage\022\017\n\007frameId\030"
   "\001 \001(\004\022\014\n\004time\030\002 \001(\004\022(\n\007players\030\003 \003(\0132\027.G"
-  "ameMessage.PlayerSync\"\243\001\n\023GameSnapshotMe"
-  "ssage\022\017\n\007frameId\030\001 \001(\004\022\023\n\013lastFrameId\030\002 "
-  "\001(\004\0222\n\tplayerSSs\030\003 \003(\0132\037.GameMessage.Pla"
-  "yerSnapshotSync\0222\n\tobjectSSs\030\004 \003(\0132\037.Gam"
-  "eMessage.ObjectSnapshotSync\"a\n\nPlayerSyn"
-  "c\022\017\n\007frameId\030\001 \001(\004\022\014\n\004time\030\002 \001(\004\022\014\n\004name"
-  "\030\003 \001(\t\022&\n\tinputMove\030\004 \001(\0132\023.UnityMath.Ve"
-  "ctor3D\"|\n\022PlayerSnapshotSync\022\014\n\004name\030\001 \001"
-  "(\t\022\017\n\007frameId\030\002 \001(\004\022 \n\003pos\030\003 \001(\0132\023.Unity"
-  "Math.Vector3D\022%\n\010velocity\030\004 \001(\0132\023.UnityM"
-  "ath.Vector3D\"o\n\022ObjectSnapshotSync\022\020\n\010ob"
-  "jectId\030\001 \001(\004\022 \n\003pos\030\002 \001(\0132\023.UnityMath.Ve"
-  "ctor3D\022%\n\010velocity\030\003 \001(\0132\023.UnityMath.Vec"
-  "tor3D\"\'\n\tHeartBeat\022\014\n\004name\030\001 \001(\t\022\014\n\004time"
-  "\030\002 \001(\004b\006proto3"
+  "ameMessage.PlayerSync\"y\n\023GameSnapshotMes"
+  "sage\022-\n\010snapshot\030\003 \001(\0132\031.GameMessage.Gam"
+  "eSnapshotH\000\022(\n\006frames\030\004 \001(\0132\026.GameMessag"
+  "e.GameFrameH\000B\t\n\007content\"\234\001\n\014GameSnapsho"
+  "t\022\017\n\007frameId\030\001 \001(\004\022\023\n\013lastFrameId\030\002 \001(\004\022"
+  "2\n\tplayerSSs\030\003 \003(\0132\037.GameMessage.PlayerS"
+  "napshotSync\0222\n\tobjectSSs\030\004 \003(\0132\037.GameMes"
+  "sage.ObjectSnapshotSync\"F\n\tGameFrame\022\017\n\007"
+  "frameId\030\001 \001(\004\022(\n\007players\030\002 \003(\0132\027.GameMes"
+  "sage.PlayerSync\"a\n\nPlayerSync\022\017\n\007frameId"
+  "\030\001 \001(\004\022\014\n\004time\030\002 \001(\004\022\014\n\004name\030\003 \001(\t\022&\n\tin"
+  "putMove\030\004 \001(\0132\023.UnityMath.Vector3D\"|\n\022Pl"
+  "ayerSnapshotSync\022\014\n\004name\030\001 \001(\t\022\017\n\007frameI"
+  "d\030\002 \001(\004\022 \n\003pos\030\003 \001(\0132\023.UnityMath.Vector3"
+  "D\022%\n\010velocity\030\004 \001(\0132\023.UnityMath.Vector3D"
+  "\"o\n\022ObjectSnapshotSync\022\020\n\010objectId\030\001 \001(\004"
+  "\022 \n\003pos\030\002 \001(\0132\023.UnityMath.Vector3D\022%\n\010ve"
+  "locity\030\003 \001(\0132\023.UnityMath.Vector3D\"\'\n\tHea"
+  "rtBeat\022\014\n\004name\030\001 \001(\t\022\014\n\004time\030\002 \001(\004b\006prot"
+  "o3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_GameMessage_2eproto_deps[1] = {
   &::descriptor_table_UnityMath_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_GameMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_GameMessage_2eproto = {
-    false, false, 694, descriptor_table_protodef_GameMessage_2eproto,
+    false, false, 882, descriptor_table_protodef_GameMessage_2eproto,
     "GameMessage.proto",
-    &descriptor_table_GameMessage_2eproto_once, descriptor_table_GameMessage_2eproto_deps, 1, 6,
+    &descriptor_table_GameMessage_2eproto_once, descriptor_table_GameMessage_2eproto_deps, 1, 8,
     schemas, file_default_instances, TableStruct_GameMessage_2eproto::offsets,
     file_level_metadata_GameMessage_2eproto, file_level_enum_descriptors_GameMessage_2eproto,
     file_level_service_descriptors_GameMessage_2eproto,
@@ -483,8 +537,48 @@ void GameSyncMessage::InternalSwap(GameSyncMessage* other) {
 
 class GameSnapshotMessage::_Internal {
  public:
+  static const ::GameMessage::GameSnapshot& snapshot(const GameSnapshotMessage* msg);
+  static const ::GameMessage::GameFrame& frames(const GameSnapshotMessage* msg);
 };
 
+const ::GameMessage::GameSnapshot&
+GameSnapshotMessage::_Internal::snapshot(const GameSnapshotMessage* msg) {
+  return *msg->_impl_.content_.snapshot_;
+}
+const ::GameMessage::GameFrame&
+GameSnapshotMessage::_Internal::frames(const GameSnapshotMessage* msg) {
+  return *msg->_impl_.content_.frames_;
+}
+void GameSnapshotMessage::set_allocated_snapshot(::GameMessage::GameSnapshot* snapshot) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_content();
+  if (snapshot) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(snapshot);
+    if (message_arena != submessage_arena) {
+      snapshot = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, snapshot, submessage_arena);
+    }
+    set_has_snapshot();
+    _impl_.content_.snapshot_ = snapshot;
+  }
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.GameSnapshotMessage.snapshot)
+}
+void GameSnapshotMessage::set_allocated_frames(::GameMessage::GameFrame* frames) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_content();
+  if (frames) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(frames);
+    if (message_arena != submessage_arena) {
+      frames = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, frames, submessage_arena);
+    }
+    set_has_frames();
+    _impl_.content_.frames_ = frames;
+  }
+  // @@protoc_insertion_point(field_set_allocated:GameMessage.GameSnapshotMessage.frames)
+}
 GameSnapshotMessage::GameSnapshotMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -495,16 +589,27 @@ GameSnapshotMessage::GameSnapshotMessage(const GameSnapshotMessage& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   GameSnapshotMessage* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.playersss_){from._impl_.playersss_}
-    , decltype(_impl_.objectsss_){from._impl_.objectsss_}
-    , decltype(_impl_.frameid_){}
-    , decltype(_impl_.lastframeid_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
+      decltype(_impl_.content_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , /*decltype(_impl_._oneof_case_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.frameid_, &from._impl_.frameid_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.lastframeid_) -
-    reinterpret_cast<char*>(&_impl_.frameid_)) + sizeof(_impl_.lastframeid_));
+  clear_has_content();
+  switch (from.content_case()) {
+    case kSnapshot: {
+      _this->_internal_mutable_snapshot()->::GameMessage::GameSnapshot::MergeFrom(
+          from._internal_snapshot());
+      break;
+    }
+    case kFrames: {
+      _this->_internal_mutable_frames()->::GameMessage::GameFrame::MergeFrom(
+          from._internal_frames());
+      break;
+    }
+    case CONTENT_NOT_SET: {
+      break;
+    }
+  }
   // @@protoc_insertion_point(copy_constructor:GameMessage.GameSnapshotMessage)
 }
 
@@ -513,12 +618,11 @@ inline void GameSnapshotMessage::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.playersss_){arena}
-    , decltype(_impl_.objectsss_){arena}
-    , decltype(_impl_.frameid_){uint64_t{0u}}
-    , decltype(_impl_.lastframeid_){uint64_t{0u}}
+      decltype(_impl_.content_){}
     , /*decltype(_impl_._cached_size_)*/{}
+    , /*decltype(_impl_._oneof_case_)*/{}
   };
+  clear_has_content();
 }
 
 GameSnapshotMessage::~GameSnapshotMessage() {
@@ -532,16 +636,271 @@ GameSnapshotMessage::~GameSnapshotMessage() {
 
 inline void GameSnapshotMessage::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.playersss_.~RepeatedPtrField();
-  _impl_.objectsss_.~RepeatedPtrField();
+  if (has_content()) {
+    clear_content();
+  }
 }
 
 void GameSnapshotMessage::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
+void GameSnapshotMessage::clear_content() {
+// @@protoc_insertion_point(one_of_clear_start:GameMessage.GameSnapshotMessage)
+  switch (content_case()) {
+    case kSnapshot: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.content_.snapshot_;
+      }
+      break;
+    }
+    case kFrames: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.content_.frames_;
+      }
+      break;
+    }
+    case CONTENT_NOT_SET: {
+      break;
+    }
+  }
+  _impl_._oneof_case_[0] = CONTENT_NOT_SET;
+}
+
+
 void GameSnapshotMessage::Clear() {
 // @@protoc_insertion_point(message_clear_start:GameMessage.GameSnapshotMessage)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  clear_content();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* GameSnapshotMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .GameMessage.GameSnapshot snapshot = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_snapshot(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .GameMessage.GameFrame frames = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          ptr = ctx->ParseMessage(_internal_mutable_frames(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* GameSnapshotMessage::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:GameMessage.GameSnapshotMessage)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .GameMessage.GameSnapshot snapshot = 3;
+  if (_internal_has_snapshot()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, _Internal::snapshot(this),
+        _Internal::snapshot(this).GetCachedSize(), target, stream);
+  }
+
+  // .GameMessage.GameFrame frames = 4;
+  if (_internal_has_frames()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(4, _Internal::frames(this),
+        _Internal::frames(this).GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:GameMessage.GameSnapshotMessage)
+  return target;
+}
+
+size_t GameSnapshotMessage::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GameMessage.GameSnapshotMessage)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  switch (content_case()) {
+    // .GameMessage.GameSnapshot snapshot = 3;
+    case kSnapshot: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.content_.snapshot_);
+      break;
+    }
+    // .GameMessage.GameFrame frames = 4;
+    case kFrames: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.content_.frames_);
+      break;
+    }
+    case CONTENT_NOT_SET: {
+      break;
+    }
+  }
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GameSnapshotMessage::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    GameSnapshotMessage::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GameSnapshotMessage::GetClassData() const { return &_class_data_; }
+
+
+void GameSnapshotMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<GameSnapshotMessage*>(&to_msg);
+  auto& from = static_cast<const GameSnapshotMessage&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:GameMessage.GameSnapshotMessage)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  switch (from.content_case()) {
+    case kSnapshot: {
+      _this->_internal_mutable_snapshot()->::GameMessage::GameSnapshot::MergeFrom(
+          from._internal_snapshot());
+      break;
+    }
+    case kFrames: {
+      _this->_internal_mutable_frames()->::GameMessage::GameFrame::MergeFrom(
+          from._internal_frames());
+      break;
+    }
+    case CONTENT_NOT_SET: {
+      break;
+    }
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GameSnapshotMessage::CopyFrom(const GameSnapshotMessage& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GameMessage.GameSnapshotMessage)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GameSnapshotMessage::IsInitialized() const {
+  return true;
+}
+
+void GameSnapshotMessage::InternalSwap(GameSnapshotMessage* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_.content_, other->_impl_.content_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GameSnapshotMessage::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
+      file_level_metadata_GameMessage_2eproto[1]);
+}
+
+// ===================================================================
+
+class GameSnapshot::_Internal {
+ public:
+};
+
+GameSnapshot::GameSnapshot(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:GameMessage.GameSnapshot)
+}
+GameSnapshot::GameSnapshot(const GameSnapshot& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  GameSnapshot* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.playersss_){from._impl_.playersss_}
+    , decltype(_impl_.objectsss_){from._impl_.objectsss_}
+    , decltype(_impl_.frameid_){}
+    , decltype(_impl_.lastframeid_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&_impl_.frameid_, &from._impl_.frameid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.lastframeid_) -
+    reinterpret_cast<char*>(&_impl_.frameid_)) + sizeof(_impl_.lastframeid_));
+  // @@protoc_insertion_point(copy_constructor:GameMessage.GameSnapshot)
+}
+
+inline void GameSnapshot::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.playersss_){arena}
+    , decltype(_impl_.objectsss_){arena}
+    , decltype(_impl_.frameid_){uint64_t{0u}}
+    , decltype(_impl_.lastframeid_){uint64_t{0u}}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+GameSnapshot::~GameSnapshot() {
+  // @@protoc_insertion_point(destructor:GameMessage.GameSnapshot)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void GameSnapshot::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.playersss_.~RepeatedPtrField();
+  _impl_.objectsss_.~RepeatedPtrField();
+}
+
+void GameSnapshot::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void GameSnapshot::Clear() {
+// @@protoc_insertion_point(message_clear_start:GameMessage.GameSnapshot)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -554,7 +913,7 @@ void GameSnapshotMessage::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* GameSnapshotMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* GameSnapshot::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -625,9 +984,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* GameSnapshotMessage::_InternalSerialize(
+uint8_t* GameSnapshot::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:GameMessage.GameSnapshotMessage)
+  // @@protoc_insertion_point(serialize_to_array_start:GameMessage.GameSnapshot)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -663,12 +1022,12 @@ uint8_t* GameSnapshotMessage::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:GameMessage.GameSnapshotMessage)
+  // @@protoc_insertion_point(serialize_to_array_end:GameMessage.GameSnapshot)
   return target;
 }
 
-size_t GameSnapshotMessage::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:GameMessage.GameSnapshotMessage)
+size_t GameSnapshot::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GameMessage.GameSnapshot)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -702,17 +1061,17 @@ size_t GameSnapshotMessage::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GameSnapshotMessage::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GameSnapshot::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    GameSnapshotMessage::MergeImpl
+    GameSnapshot::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GameSnapshotMessage::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GameSnapshot::GetClassData() const { return &_class_data_; }
 
 
-void GameSnapshotMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<GameSnapshotMessage*>(&to_msg);
-  auto& from = static_cast<const GameSnapshotMessage&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:GameMessage.GameSnapshotMessage)
+void GameSnapshot::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<GameSnapshot*>(&to_msg);
+  auto& from = static_cast<const GameSnapshot&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:GameMessage.GameSnapshot)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -728,34 +1087,246 @@ void GameSnapshotMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, co
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void GameSnapshotMessage::CopyFrom(const GameSnapshotMessage& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:GameMessage.GameSnapshotMessage)
+void GameSnapshot::CopyFrom(const GameSnapshot& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GameMessage.GameSnapshot)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool GameSnapshotMessage::IsInitialized() const {
+bool GameSnapshot::IsInitialized() const {
   return true;
 }
 
-void GameSnapshotMessage::InternalSwap(GameSnapshotMessage* other) {
+void GameSnapshot::InternalSwap(GameSnapshot* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.playersss_.InternalSwap(&other->_impl_.playersss_);
   _impl_.objectsss_.InternalSwap(&other->_impl_.objectsss_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(GameSnapshotMessage, _impl_.lastframeid_)
-      + sizeof(GameSnapshotMessage::_impl_.lastframeid_)
-      - PROTOBUF_FIELD_OFFSET(GameSnapshotMessage, _impl_.frameid_)>(
+      PROTOBUF_FIELD_OFFSET(GameSnapshot, _impl_.lastframeid_)
+      + sizeof(GameSnapshot::_impl_.lastframeid_)
+      - PROTOBUF_FIELD_OFFSET(GameSnapshot, _impl_.frameid_)>(
           reinterpret_cast<char*>(&_impl_.frameid_),
           reinterpret_cast<char*>(&other->_impl_.frameid_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata GameSnapshotMessage::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata GameSnapshot::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
-      file_level_metadata_GameMessage_2eproto[1]);
+      file_level_metadata_GameMessage_2eproto[2]);
+}
+
+// ===================================================================
+
+class GameFrame::_Internal {
+ public:
+};
+
+GameFrame::GameFrame(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:GameMessage.GameFrame)
+}
+GameFrame::GameFrame(const GameFrame& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  GameFrame* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.players_){from._impl_.players_}
+    , decltype(_impl_.frameid_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.frameid_ = from._impl_.frameid_;
+  // @@protoc_insertion_point(copy_constructor:GameMessage.GameFrame)
+}
+
+inline void GameFrame::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.players_){arena}
+    , decltype(_impl_.frameid_){uint64_t{0u}}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+GameFrame::~GameFrame() {
+  // @@protoc_insertion_point(destructor:GameMessage.GameFrame)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void GameFrame::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.players_.~RepeatedPtrField();
+}
+
+void GameFrame::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void GameFrame::Clear() {
+// @@protoc_insertion_point(message_clear_start:GameMessage.GameFrame)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.players_.Clear();
+  _impl_.frameid_ = uint64_t{0u};
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* GameFrame::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 frameId = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.frameid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .GameMessage.PlayerSync players = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_players(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* GameFrame::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:GameMessage.GameFrame)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 frameId = 1;
+  if (this->_internal_frameid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_frameid(), target);
+  }
+
+  // repeated .GameMessage.PlayerSync players = 2;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_players_size()); i < n; i++) {
+    const auto& repfield = this->_internal_players(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:GameMessage.GameFrame)
+  return target;
+}
+
+size_t GameFrame::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:GameMessage.GameFrame)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .GameMessage.PlayerSync players = 2;
+  total_size += 1UL * this->_internal_players_size();
+  for (const auto& msg : this->_impl_.players_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // uint64 frameId = 1;
+  if (this->_internal_frameid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_frameid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GameFrame::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    GameFrame::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GameFrame::GetClassData() const { return &_class_data_; }
+
+
+void GameFrame::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<GameFrame*>(&to_msg);
+  auto& from = static_cast<const GameFrame&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:GameMessage.GameFrame)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  _this->_impl_.players_.MergeFrom(from._impl_.players_);
+  if (from._internal_frameid() != 0) {
+    _this->_internal_set_frameid(from._internal_frameid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GameFrame::CopyFrom(const GameFrame& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:GameMessage.GameFrame)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GameFrame::IsInitialized() const {
+  return true;
+}
+
+void GameFrame::InternalSwap(GameFrame* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.players_.InternalSwap(&other->_impl_.players_);
+  swap(_impl_.frameid_, other->_impl_.frameid_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GameFrame::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
+      file_level_metadata_GameMessage_2eproto[3]);
 }
 
 // ===================================================================
@@ -1065,7 +1636,7 @@ void PlayerSync::InternalSwap(PlayerSync* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata PlayerSync::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
-      file_level_metadata_GameMessage_2eproto[2]);
+      file_level_metadata_GameMessage_2eproto[4]);
 }
 
 // ===================================================================
@@ -1394,7 +1965,7 @@ void PlayerSnapshotSync::InternalSwap(PlayerSnapshotSync* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata PlayerSnapshotSync::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
-      file_level_metadata_GameMessage_2eproto[3]);
+      file_level_metadata_GameMessage_2eproto[5]);
 }
 
 // ===================================================================
@@ -1671,7 +2242,7 @@ void ObjectSnapshotSync::InternalSwap(ObjectSnapshotSync* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ObjectSnapshotSync::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
-      file_level_metadata_GameMessage_2eproto[4]);
+      file_level_metadata_GameMessage_2eproto[6]);
 }
 
 // ===================================================================
@@ -1901,7 +2472,7 @@ void HeartBeat::InternalSwap(HeartBeat* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata HeartBeat::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_GameMessage_2eproto_getter, &descriptor_table_GameMessage_2eproto_once,
-      file_level_metadata_GameMessage_2eproto[5]);
+      file_level_metadata_GameMessage_2eproto[7]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -1914,6 +2485,14 @@ Arena::CreateMaybeMessage< ::GameMessage::GameSyncMessage >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::GameMessage::GameSnapshotMessage*
 Arena::CreateMaybeMessage< ::GameMessage::GameSnapshotMessage >(Arena* arena) {
   return Arena::CreateMessageInternal< ::GameMessage::GameSnapshotMessage >(arena);
+}
+template<> PROTOBUF_NOINLINE ::GameMessage::GameSnapshot*
+Arena::CreateMaybeMessage< ::GameMessage::GameSnapshot >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::GameMessage::GameSnapshot >(arena);
+}
+template<> PROTOBUF_NOINLINE ::GameMessage::GameFrame*
+Arena::CreateMaybeMessage< ::GameMessage::GameFrame >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::GameMessage::GameFrame >(arena);
 }
 template<> PROTOBUF_NOINLINE ::GameMessage::PlayerSync*
 Arena::CreateMaybeMessage< ::GameMessage::PlayerSync >(Arena* arena) {

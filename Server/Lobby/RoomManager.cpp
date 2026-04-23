@@ -105,8 +105,9 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
         {
             ServerMessage sendMessage;
             auto *snapMess=sendMessage.mutable_gamesnapshotmessage();
-            snapMess->CopyFrom(m_gameSnapshot);
-            snapMess->set_lastframeid(m_players[playerId].lastFrameId);
+            auto *snapshot=snapMess->mutable_snapshot();
+            snapshot->CopyFrom(m_gameSnapshot);
+            snapshot->set_lastframeid(m_players[playerId].lastFrameId);
 
             QByteArray data;
             data.resize(sendMessage.ByteSizeLong());
@@ -116,51 +117,32 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
                 return;
             }
             emit sendUdpMessage(clientId,data);
-            Log_Info()<<"[断线重连]补发快照 包含玩家数:"<<m_gameSnapshot.playersss_size();
+            Log_Info()<<"[断线重连]补发快照 包含玩家数:"<<snapshot->playersss_size();
         }
 
-        // {
-        //     QString log("补发帧:");
-        //     using namespace GameMessage;
-        //
-        //     ServerMessage sendMessage;
-        //     GameSyncMessage* newGameSyncMessage= sendMessage.mutable_gamesyncmessage();
-        //     for (auto &p:m_players)
-        //     {
-        //         for (quint64 i=p.preSnapshotId+1;p.frames.contains(i);i++)
-        //         {
-        //             newGameSyncMessage->add_players()->CopyFrom(p.frames[i]);
-        //             log.append(" "+p.name+"-"+QString::number(i));
-        //         }
-        //     }
-        //     QByteArray data;
-        //     data.resize(sendMessage.ByteSizeLong());
-        //     bool success = sendMessage.SerializeToArray(data.data(), data.size());
-        //     if (!success) {
-        //         Log_Error()<<"Failed to serialize ServerMessage.";
-        //         return;
-        //     }
-        //     emit sendUdpMessage(clientId,data);
-        //
-        //     Log_Info()<<log;
-        // }
-
         {
+            using namespace GameMessage;
+
             //TODO:UDP重构 支持分包
             QString log("补发帧:");
             const int MAX_FRAMES_PER_PACKET = 10;  // 每包最多10帧
             QVector<ServerMessage> packets;
-            ServerMessage currentPacket;
             int frameCount = 0;
+
+            ServerMessage currentPacket;
+            auto *snapshotMessage=currentPacket.mutable_gamesnapshotmessage();
+            auto *frames=snapshotMessage->mutable_frames();
+            frames->set_frameid(m_gameSnapshot.frameid());
 
             for (auto &p : m_players) {
                 for (quint64 i = p.preSnapshotId + 1; p.frames.contains(i); i++) {
-                    currentPacket.mutable_gamesyncmessage()->add_players()->CopyFrom(p.frames[i]);
+                    frames->add_players()->CopyFrom(p.frames[i]);
                     log.append(" "+p.name+"-"+QString::number(i));
                     frameCount++;
                     if (frameCount >= MAX_FRAMES_PER_PACKET) {
+                        log.append(" "+p.name+"-总共"+QString::number(frames->players_size()));
                         packets.append(currentPacket);
-                        currentPacket.Clear();
+                        frames->clear_players();
                         frameCount = 0;
                     }
                 }
@@ -177,26 +159,8 @@ void RoomManager::joinRoom(QString name, quint64 clientId)
             Log_Info()<<log<<"总包数："<<packets.size();
         }
 
-        // {
-        //     using namespace SyncMessage;
-        //     using namespace LobbyMessage;
-        //     ServerMessage sendMessage;
-        //     auto *lobbyMes=sendMessage.mutable_lobbysync();
-        //     auto *startMes=lobbyMes->mutable_startroom();
-        //
-        //     if (m_players.contains(1))startMes->set_name(m_players[1].name.toStdString());
-        //     else startMes->set_name(name.toStdString());
-        //
-        //     QByteArray data;
-        //     data.resize(sendMessage.ByteSizeLong());
-        //     bool success = sendMessage.SerializeToArray(data.data(), data.size());
-        //     if (!success) {
-        //         Log_Error()<<"[startRoom]无法生成ServerMessage.";
-        //         return;
-        //     }
-        //     emit sendTcpMessage(clientId,data);
-        // }
     }
+
 }
 
 void RoomManager::leaveRoom(QString name,quint64 clientId)
@@ -263,16 +227,21 @@ void RoomManager::receiveGameSync(quint64 clientId,const GameMessage::GameSyncMe
         m_players[playerId].lastFrameId=p.frameid();
         PlayerSync snapFrame;
         snapFrame.CopyFrom(message.players(0));
-        m_players[playerId].frames.insert(snapFrame.frameid(),snapFrame);//TODO:帧的处理未完成 分发、删除
+        m_players[playerId].frames.insert(snapFrame.frameid(),snapFrame);
     }
 }
 
 void RoomManager::receiveSnapshot(quint64 clientId, const GameMessage::GameSnapshotMessage& message)
 {
-    Log_Info()<<"[receiveSnapshot]接收消息 clientId:"<<clientId<<"玩家人数"<<message.playersss_size()<<"结束帧"<<message.frameid();
+    using namespace GameMessage;
+    if (message.content_case()!=GameSnapshotMessage::kSnapshot)Log_Error()<<"[receiveSnapshot]接收消息 clientId:"<<clientId<<"快照错误类型";
 
-    m_gameSnapshot=message;
-    for (auto &s:m_gameSnapshot.playersss())
+    const GameSnapshot &snapshot=message.snapshot();
+
+    Log_Info()<<"[receiveSnapshot]接收消息 clientId:"<<clientId<<"玩家人数"<<snapshot.playersss_size()<<"结束帧"<<snapshot.frameid();
+
+    m_gameSnapshot=message.snapshot();
+    for (auto &s:snapshot.playersss())
     {
         quint64 playerId=containPlayer(QString::fromStdString(s.name()));
         if (playerId!=0)
@@ -287,7 +256,7 @@ void RoomManager::receiveSnapshot(quint64 clientId, const GameMessage::GameSnaps
             while (!p.currentFrameIds.empty())
             {
                 quint64 frameId=p.currentFrameIds.front();
-                if (!p.frames.contains(frameId)||frameId>newFrameId)break;//TODO:断线重连后旧数据无法清除
+                if (!p.frames.contains(frameId)||frameId>newFrameId)break;
                 p.frames.remove(p.currentFrameIds.front());
                 p.currentFrameIds.pop();
                 log1+=" "+QString::number(frameId);

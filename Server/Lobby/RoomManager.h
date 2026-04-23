@@ -63,7 +63,7 @@ private:
     bool isRunning=false;
 
     //TODO:帧的处理未完成 分发、删除 帧应该是已经发送过的 现在把未发送的也塞里面了
-    GameMessage::GameSnapshotMessage m_gameSnapshot;//最新快照
+    GameMessage::GameSnapshot m_gameSnapshot;//最新快照
 
 signals:
     void sendTcpMessage(quint64 clientId,const QByteArray &message);

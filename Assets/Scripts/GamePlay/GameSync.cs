@@ -110,21 +110,7 @@ namespace GamePlay//TODO: UDP重传风暴
             
             if (_name==_ownerName)
             {
-                UInt64 clientId = NetworkManager.Instance.GetClientId();
-                GameSnapshotMessage snapshotMessage = new GameSnapshotMessage();
-                snapshotMessage.FrameId = _frameId-1;//应该是上一帧 因为这一帧还没执行  TODO:确认是否frameId正确
-                foreach (var pair in _players)
-                {
-                    snapshotMessage.PlayerSSs.Add(pair.Value.GetSnapshotSync());
-                }
-
-                ClientMessage snapMessage = new ClientMessage
-                {
-                    ClientId = clientId,
-                    GameSnapshotMessage = snapshotMessage
-                };
-                NetworkManager.Instance.UdpSendMessage(snapMessage.ToByteArray());
-                
+                SyncSnapshot(_frameId-1,NetworkManager.Instance.GetClientId());
             }
         }
         #endregion
@@ -172,24 +158,34 @@ namespace GamePlay//TODO: UDP重传风暴
 
             if (_name==_ownerName&&_frameId % (UInt64)(_gameFrameRate * _snapshotSpacing) == 0)
             {
-                GameSnapshotMessage snapshotMessage = new GameSnapshotMessage();
-                snapshotMessage.FrameId = _frameId-1;//应该是上一帧 因为这一帧还没执行  TODO:确认是否frameId正确
-                foreach (var pair in _players)
-                {
-                    snapshotMessage.PlayerSSs.Add(pair.Value.GetSnapshotSync());
-                }
-
-                ClientMessage snapMessage = new ClientMessage
-                {
-                    ClientId = clientId,
-                    GameSnapshotMessage = snapshotMessage
-                };
-                NetworkManager.Instance.UdpSendMessage(snapMessage.ToByteArray());
-                
+                SyncSnapshot(_frameId-1,clientId);
             }
             
             _frameId++;
         }
+
+        private void SyncSnapshot(UInt64 frameId,UInt64 clientId)
+        {
+            GameSnapshot snapshot = new GameSnapshot();
+            foreach (var pair in _players)
+            {
+                snapshot.PlayerSSs.Add(pair.Value.GetSnapshotSync());
+            }
+
+            snapshot.FrameId = frameId;//TODO:确认是否frameId正确
+
+            ClientMessage snapMessage = new ClientMessage
+            {
+                ClientId = clientId,
+                GameSnapshotMessage = new GameSnapshotMessage
+                {
+                   
+                    Snapshot = snapshot
+                }
+            };
+            NetworkManager.Instance.UdpSendMessage(snapMessage.ToByteArray());
+        }
+        
         
         private TimerHandle _heartBeatHandle = new TimerHandle(1);
         void HeartBeat()
@@ -296,17 +292,35 @@ namespace GamePlay//TODO: UDP重传风暴
 
         void ReceiveSnapshotMessage(GameSnapshotMessage message)
         {
-            _frameId = message.LastFrameId+1;
-            foreach (var playerSS in message.PlayerSSs)
+            if (message.ContentCase == GameSnapshotMessage.ContentOneofCase.Snapshot)
             {
-                if (_players.ContainsKey(playerSS.Name))
+                GameSnapshot snapshot = message.Snapshot;
+                _frameId = snapshot.LastFrameId+1;
+                foreach (var playerSS in snapshot.PlayerSSs)
                 {
-                    _players[playerSS.Name].SetSnapshotSync(playerSS);
-                    //if (playerSS.Name == _name) _frameId = playerSS.FrameId+1;
+                    if (_players.ContainsKey(playerSS.Name))
+                    {
+                        _players[playerSS.Name].SetSnapshotSync(playerSS);
+                    }
+                }
+                //TODO:物体位置同步
+                Debug.Log("断线重连-开始游戏");
+                StartGame();
+            }else if (message.ContentCase == GameSnapshotMessage.ContentOneofCase.Frames)
+            {
+                GameFrame frames = message.Frames;
+                foreach (var player in frames.Players)
+                {
+                    if(_players.ContainsKey(player.Name))
+                    {
+                        _players[player.Name].AddSyncMessage(player);
+                    }
                 }
             }
-            Debug.Log("断线重连-开始游戏");
-            StartGame();
+            else
+            {
+                Debug.LogError("HandleMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
+            }
         }
         #endregion
         

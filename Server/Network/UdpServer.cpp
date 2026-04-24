@@ -49,14 +49,14 @@ void UdpServer::receiveSocketMessage()
 
         QString header=QString::fromUtf8(message.mid(0,3));
         qint64 index=qFromBigEndian<qint64>(reinterpret_cast<const char*>(message.mid(3,8).constData()));
-        Log_Debug() <<"接受-序号:"<<index<<"-Socket长度:"<<length<<"-总字节:" << message.toHex();
+        Log_Debug() <<getPeerAddressInfo(addr,port)<<"-"<<"接受-序号:"<<index<<"-Socket长度:"<<length<<"-总字节:" << message.toHex();
 
         UdpEndPoint udpEndPoint(addr,port);
         if (header=="SEQ")
         {
             int dataLength=qFromBigEndian<int>(reinterpret_cast<const char*>(message.mid(11,4).constData()));
             QByteArray array=message.mid(15,dataLength);
-            Log_Debug() <<"接受-长度:"<<length<< "原始有效字节(十六进制):" << array.toHex();//有效载荷长度
+            Log_Debug() <<getPeerAddressInfo(addr,port)<<"-"<<"接受-长度:"<<length<< "原始有效字节(十六进制):" << array.toHex();//有效载荷长度
             sendACKMessage(addr,port,index);
 
             //重复判断 排序
@@ -65,8 +65,8 @@ void UdpServer::receiveSocketMessage()
             if (index>=invokeIndex)
             {
                 if (!receiveBuf.contains(index))receiveBuf.insert(index,std::move(array));
-                else Log_Warning()<<"重复包" << index;
-            }else Log_Warning()<<"接收到旧包" << index;
+                else Log_Warning()<<getPeerAddressInfo(addr,port)<<"-"<<"重复包" << index<<"最新已接收包"<<invokeIndex;
+            }else Log_Warning()<<getPeerAddressInfo(addr,port)<<"-"<<"接收到旧包" << index<<"最新已接收包"<<invokeIndex;
 
             while (receiveBuf.contains(invokeIndex))
             {
@@ -76,7 +76,7 @@ void UdpServer::receiveSocketMessage()
             }
             while (receiveBuf.count()>600)
             {
-                Log_Warning()<<"UDP缓冲区包过多"<<receiveBuf.count();
+                Log_Warning()<<getPeerAddressInfo(addr,port)<<"-"<<"UDP缓冲区包过多"<<receiveBuf.count();
                 receiveBuf.remove(invokeIndex);
                 invokeIndex++;
             }
@@ -85,9 +85,22 @@ void UdpServer::receiveSocketMessage()
         {
             if (header=="ACK")
             {
-                Log_Debug()<<"接收-ACK序号"<<index;
-                m_pendingPackets[udpEndPoint][index].isAck=true;
-            }else Log_Error()<<"接收未知类型"+header;
+                if (m_pendingPackets[udpEndPoint].contains(index))
+                {
+                    if (!m_pendingPackets[udpEndPoint][index].isAck)
+                    {
+                        Log_Debug()<<getPeerAddressInfo(addr,port)<<"-"<<"接收-ACK序号"<<index;
+                        m_pendingPackets[udpEndPoint][index].isAck=true;
+                    }
+                    else
+                    {
+                        Log_Warning()<<getPeerAddressInfo(addr,port)<<"-"<<"接收-已确认ACK序号"<<index;
+                    }
+                }else
+                {
+                    Log_Warning()<<getPeerAddressInfo(addr,port)<<"-"<<"接收-已舍弃ACK序号"<<index;
+                }
+            }else Log_Error()<<getPeerAddressInfo(addr,port)<<"-"<<"接收未知类型"+header;
         }
     }
 }
@@ -187,14 +200,14 @@ void UdpServer::checkAndResend()//发送消息后会检查旧数据是否发送
 
             if (packet.times>3)
             {
-                Log_Warning()<<"[checkAndResend]重传3次失败，序号:"<<index;
+                Log_Warning()<<getPeerAddressInfo(udpEndPoint)<<"-"<<"[checkAndResend]重传3次失败，序号:"<<index;
                 // NACK
                 it=pair.erase(it);
             }else
             {
                 packet.previousTime=time;
                 m_socket->writeDatagram(packet.sendData,udpEndPoint.address,udpEndPoint.port);
-                Log_Warning()<<"[checkAndResend]重传,延迟"<<DELAY*(1<<(packet.times))<<"序号:"<<index;
+                Log_Warning()<<getPeerAddressInfo(udpEndPoint)<<"-"<<"[checkAndResend]重传,延迟"<<DELAY*(1<<(packet.times))<<"序号:"<<index;
                 packet.times++;
                 ++it;
             }

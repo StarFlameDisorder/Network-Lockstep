@@ -268,7 +268,7 @@ void RoomManager::receiveSnapshot(quint64 clientId, const GameMessage::GameSnaps
                 p.currentFrameIds.pop();
                 log1+=" "+QString::number(frameId);
             }
-            Log_Info()<<"玩家"<<p.name<<"剩余"<<p.frames.size()<<"帧"<<log1;
+            Log_Debug()<<"玩家"<<p.name<<"剩余"<<p.frames.size()<<"帧"<<log1;
             if (!p.currentFrameIds.empty())Log_Info()<<"剩余帧数"<<p.currentFrameIds.size()<<"最旧id"<<p.currentFrameIds.front();
             QString log("剩余帧:");
             for (auto &i:p.frames.keys())
@@ -332,8 +332,8 @@ void RoomManager::broadcastGameSync()
         {
             PlayerSync sync=queue.front();
 
-            pack.append(" "+sync.name()+"-");
-            pack.append(QString::number(sync.frameid()));
+            pack.append(" "+sync.name()+"："+std::to_string(sync.inputmove().x())+","+std::to_string(sync.inputmove().y())+","+std::to_string(sync.inputmove().z()));
+            //pack.append(QString::number(sync.frameid()));
 
             newGameSyncMessage->add_players()->CopyFrom(sync);
             queue.pop();
@@ -343,7 +343,7 @@ void RoomManager::broadcastGameSync()
         }
     }
 
-    if (pack.size()>0)Log_Debug()<<pack;
+    if (pack.size()>0)Log_Info()<<pack;
 
     QByteArray data;
     data.resize(sendMessage.ByteSizeLong());

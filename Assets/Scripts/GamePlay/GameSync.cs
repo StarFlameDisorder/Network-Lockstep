@@ -28,7 +28,7 @@ namespace GamePlay//TODO: UDP重传风暴
 
         private static int _gameFrameRate = 30;
         private static FixedPoint _gameFrameSpacing = FixedPoint.FromFloat(1f / _gameFrameRate);
-        private static int _snapshotSpacing = 1;
+        private static int _snapshotSpacing = 10;
         
         [SerializeField]private PlayerController _controller;
         private UInt64 _playerId;
@@ -301,7 +301,11 @@ namespace GamePlay//TODO: UDP重传风暴
                 {
                     if (!_players.ContainsKey(playerSS.Name))AddPlayer(playerSS.Name);
                     
-                    if (playerSS.Name == _name) _frameId = playerSS.LastFrameId + 1;
+                    if (playerSS.Name == _name)
+                    {
+                        _frameId = playerSS.LastFrameId + 1;
+                        Debug.Log($"{playerSS.Name}输入设置帧{_frameId}");
+                    }
                     _players[playerSS.Name].SetSnapshotSync(playerSS);
                 }
                 //TODO:物体位置同步

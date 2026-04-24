@@ -49,6 +49,7 @@ namespace Network
                 _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 _socketUdp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 _socketUdp.Connect(_ipEndPoint);
+                Debug.Log($"本机UDP端点：{_socketUdp.LocalEndPoint}");
                 _timerHandle.StartTimer();
             }
             catch (SocketException e)
@@ -56,14 +57,12 @@ namespace Network
                 Debug.LogError(e);
                 throw;
             }
-
+            
             _cancelTokenSource = new CancellationTokenSource();
             ReceiveAsync(message =>
             {
-                // Debug.Log("Udp:收到消息");
                 NetworkManager.Instance.HandleMessage(message);
-                // Debug.Log(Encoding.UTF8.GetString(message));
-                //MessagePanel.Instance?.AddMessage("Udp:收到消息");
+
             },_cancelTokenSource.Token);
         }
 

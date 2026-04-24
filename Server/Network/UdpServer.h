@@ -59,13 +59,13 @@ private:
     void checkAndResend();
 
     QUdpSocket *m_socket;
-    //QSet<UdpEndPoint> m_udpEndPoints;
+
+
     QHash<UdpEndPoint,qint64> m_udpIndex;//帧序号
     QHash<UdpEndPoint,QHash<qint64,PendingPacket>> m_pendingPackets;//发送缓存
-    //QHash<UdpEndPoint,QQueue<qint64>> m_sendQueue;//重传队列
-
     QHash<UdpEndPoint,QHash<qint64,QByteArray>> m_receiveBuf;//接收缓存
     QHash<UdpEndPoint,qint64> m_invokeIndex;//下一个应传出的序号
+
     QTimer m_timer;
 
 signals:

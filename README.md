@@ -1,6 +1,6 @@
 # Factory
 
-一个基于 **Unity (URP)** + **C++/Qt** 自研服务端的多人实时帧同步网络对战游戏项目。
+一个基于 **Unity (URP)** 的多人实时帧同步网络对战游戏项目。
 
 ## 项目定位
 
@@ -13,8 +13,8 @@
 | 引擎 | Unity (URP) |
 | 输入 | Unity Input System |
 | 序列化 | Google Protobuf |
-| 客户端网络 | .NET TCP/UDP Socket |
-| 服务端 | C++ / Qt |
+| 客户端网络 | .NET TCP/UDP Socket（传输层抽象，可切换 KCP） |
+| 服务端 | Unity C# SubSystemBase（原 C++/Qt 服务端已迁移至此） |
 | 确定性数学 | 自实现 FixedPoint 定点数库 |
 
 ## 核心架构
@@ -24,6 +24,7 @@
 - **快照机制**：支持断线重连，重连后可恢复完整游戏状态
 - **心跳检测**：监测玩家在线状态
 - **大厅/房间系统**：支持创建/加入/离开房间，2 人 / 4 人匹配模式
+- **服务端嵌入式**：C++/Qt 服务端已重构为 Unity C# SubSystemBase，支持开发模式单进程运行
 
 ## 项目文档
 
@@ -36,9 +37,11 @@
 ## 项目结构
 
 - `Docs/` — 项目文档（重构方案、问题追踪、TODO 等）
-- `Server/` — C++/Qt 服务端源码
+- `Server/` — （已废弃）C++/Qt 服务端源码，确认迁移完整后删除
+- `Assets/Scripts/Core/` — 游戏核心（GameCore、GameConstants）
+- `Assets/Scripts/Framework/` — 框架基础设施（SubSystemBase、Global、DataProxySystem）
+- `Assets/Scripts/Network/` — 网络层（待重构为 INetworkTransport 体系）
 - `Assets/Scripts/GamePlay/` — 核心游戏逻辑（帧同步、玩家实体、输入处理）
-- `Assets/Scripts/Network/` — 网络层（TCP/UDP 通信、消息分发）
 - `Assets/Scripts/UI/` — UI 面板（大厅、连接、状态等）
 - `Assets/Protobuf/` — Protobuf 自动生成的 C# 消息类
 - `Assets/Prefab/` — 预制体

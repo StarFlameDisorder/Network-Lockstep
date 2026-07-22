@@ -22,6 +22,12 @@ namespace Network.Server
 
         #region 配置属性
 
+        /// <summary>服务器是否正在运行</summary>
+        public bool IsRunning => _isRunning;
+        /// <summary>网络分发器（调试用）</summary>
+        public ServerNetworkDispatcher Dispatcher => _dispatcher;
+        /// <summary>房间管理器（调试用）</summary>
+        public RoomManager Room => _roomManager;
         public int TcpPort => _config?.TcpPort ?? 1975;
         public int UdpPort => _config?.UdpPort ?? 1975;
         public int GameFrameRate => _config?.GameFrameRate ?? 30;
@@ -59,11 +65,8 @@ namespace Network.Server
             _roomManager.OnSendUdp += SendUdpToClient;
             _roomManager.OnRemoveClient += RemoveClient;
 
-            // 自动启动
-            if (_config.RunServerAutomatically)
-            {
-                StartServer();
-            }
+            // 面板控制启动，不再自动启动（避免与调试面板冲突）
+            // if (_config.RunServerAutomatically) { StartServer(); }
         }
 
         #region 启动/停止

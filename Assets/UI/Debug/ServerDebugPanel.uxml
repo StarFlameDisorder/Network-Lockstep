@@ -1,0 +1,54 @@
+<!--
+服务端调试面板 UXML
+功能：启动/停止服务器、查看客户端/玩家列表、广播消息、查看日志
+命名约定：name 属性须与 ServerDebugPanel.cs 中的 Q<> 查找一致
+-->
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Style src="project://database/Assets/UI/Debug/DebugPanel.uss" />
+    <!-- 根容器：focusable 确保面板可获得焦点以响应输入 -->
+    <ui:VisualElement class="debug-panel panel-right" focusable="true" picking-mode="Position">
+
+        <!-- ═══ 标题 ═══ -->
+        <ui:Label text="🔧 服务端" class="panel-title" />
+
+        <!-- ═══ 服务器控制区 ═══ -->
+        <ui:Label text="服务器" class="section-title" />
+
+        <ui:VisualElement class="button-row">
+            <ui:Button name="btn-start" text="启动" class="btn-primary" />
+            <ui:Button name="btn-stop" text="停止" class="btn-danger" />
+        </ui:VisualElement>
+
+        <ui:Label name="label-server-status" text="○ 已停止" class="status-off" />
+        <ui:Label name="label-port-info" text="TCP:-  UDP:-" />
+        <ui:Label name="label-framerate" text="帧率: -FPS" />
+
+        <!-- ═══ 客户端列表 ═══ -->
+        <ui:Label text="客户端列表" class="section-title" />
+        <ui:ScrollView name="area-clients" class="log-area" />
+
+        <!-- ═══ 房间玩家 ═══ -->
+        <ui:Label text="房间玩家" class="section-title" />
+        <ui:ScrollView name="area-players" class="log-area" />
+
+        <!-- ═══ 消息发送区 ═══ -->
+        <ui:Label text="发送消息(广播)" class="section-title" />
+        <ui:VisualElement class="input-row">
+            <ui:TextField name="field-message" value="" />
+        </ui:VisualElement>
+        <ui:VisualElement class="button-row">
+            <ui:Button name="btn-sendtcp" text="TCP广播" class="btn-normal" />
+            <ui:Button name="btn-sendudp" text="UDP广播" class="btn-normal" />
+        </ui:VisualElement>
+
+        <!-- ═══ 日志区 ═══ -->
+        <ui:Label text="消息" class="section-title" />
+        <ui:ScrollView name="area-messages" class="log-area" />
+
+        <ui:Toggle name="toggle-verbose" text="详细日志 ☐ 显示(可能影响帧率)" value="false" />
+        <ui:ScrollView name="area-verbose" class="log-area" />
+
+        <ui:Button name="btn-clear-log" text="清空日志" class="btn-normal" />
+
+    </ui:VisualElement>
+</ui:UXML>

@@ -56,7 +56,7 @@ namespace Network.Server
         {
             _socket = new UdpClient(_port);
             _isRunning = true;
-            Debug.Log($"[UdpServer] 启动 UDP 服务器，端口：{_port}");
+            Debug.Log($"[Server][UdpServer] 启动 UDP 服务器，端口：{_port}");
 
             // 启动重传定时器
             _resendTimer = new Timer(_resendIntervalMs);
@@ -82,7 +82,7 @@ namespace Network.Server
                 }
                 catch (Exception ex) when (_isRunning)
                 {
-                    Debug.LogError($"[UdpServer] 接收异常：{ex}");
+                    Debug.LogError($"[Server][UdpServer] 接收异常：{ex}");
                 }
             }
         }
@@ -119,7 +119,7 @@ namespace Network.Server
                     }
                     else
                     {
-                        Debug.LogWarning($"[UdpServer] 收到旧包 {GetEndpointInfo(remoteEp)} index={index} invokeIndex={_invokeIndex[remoteEp]}");
+                        Debug.LogWarning($"[Server][UdpServer] 收到旧包 {GetEndpointInfo(remoteEp)} index={index} invokeIndex={_invokeIndex[remoteEp]}");
                     }
 
                     // 按序投递
@@ -136,7 +136,7 @@ namespace Network.Server
                         long firstKey = _invokeIndex[remoteEp];
                         buf.Remove(firstKey);
                         _invokeIndex[remoteEp]++;
-                        Debug.LogWarning($"[UdpServer] UDP 缓冲区过载 {GetEndpointInfo(remoteEp)} 跳过 index={firstKey}");
+                        Debug.LogWarning($"[Server][UdpServer] UDP 缓冲区过载 {GetEndpointInfo(remoteEp)} 跳过 index={firstKey}");
                     }
                 }
                 else if (header == "ACK")
@@ -191,7 +191,7 @@ namespace Network.Server
                 try { _socket.Send(sendBuf, sendBuf.Length, remoteEp); }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[UdpServer] 发送失败：{ex.Message}");
+                    Debug.LogError($"[Server][UdpServer] 发送失败：{ex.Message}");
                     return;
                 }
 
@@ -230,7 +230,7 @@ namespace Network.Server
 
                         if (pkt.Times >= MAX_RETRIES)
                         {
-                            Debug.LogWarning($"[UdpServer] 重传 {MAX_RETRIES} 次失败 {GetEndpointInfo(ep)} index={idx}");
+                            Debug.LogWarning($"[Server][UdpServer] 重传 {MAX_RETRIES} 次失败 {GetEndpointInfo(ep)} index={idx}");
                             toRemove.Add((ep, idx));
                         }
                         else
@@ -239,7 +239,7 @@ namespace Network.Server
                             pkt.PreviousTime = now;
                             try { _socket.Send(pkt.SendData, pkt.SendData.Length, ep); }
                             catch { toRemove.Add((ep, idx)); }
-                            Debug.LogWarning($"[UdpServer] 重传 {GetEndpointInfo(ep)} index={idx} 第{pkt.Times}次");
+                            Debug.LogWarning($"[Server][UdpServer] 重传 {GetEndpointInfo(ep)} index={idx} 第{pkt.Times}次");
                         }
                     }
                 }
@@ -256,7 +256,7 @@ namespace Network.Server
         {
             lock (_lock)
             {
-                Debug.Log($"[UdpServer] 断开 {GetEndpointInfo(remoteEp)}");
+                Debug.Log($"[Server][UdpServer] 断开 {GetEndpointInfo(remoteEp)}");
                 _udpIndex.Remove(remoteEp);
                 _pendingPackets.Remove(remoteEp);
                 _receiveBuf.Remove(remoteEp);
@@ -290,7 +290,7 @@ namespace Network.Server
                 _invokeIndex.Clear();
             }
 
-            Debug.Log("[UdpServer] UDP 服务器已停止");
+            Debug.Log("[Server][UdpServer] UDP 服务器已停止");
         }
 
         public void Dispose()

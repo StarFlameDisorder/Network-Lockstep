@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using ConnectMessage;
@@ -12,13 +13,21 @@ using UnityEngine;
 namespace Network.Server
 {
     /// <summary>
-    /// 客户端连接信息：TCP 连接 + UDP 端点 + clientId
+    /// 客户端连接信息（供调试面板读取）：TCP 连接 + UDP 端点 + clientId
     /// </summary>
-    internal class ClientState
+    public class ClientState
     {
         public ulong ClientId;
         public TcpClient TcpSocket;
         public IPEndPoint UdpEndPoint;
+        /// <summary>TCP 端点字符串（调试用）</summary>
+        public string TcpEndpoint => TcpSocket?.Client?.RemoteEndPoint?.ToString() ?? "-";
+        /// <summary>UDP 端点字符串（调试用）</summary>
+        public string UdpEndpoint => UdpEndPoint?.ToString() ?? "-";
+        /// <summary>TCP 是否已绑定</summary>
+        public bool HasTcp => TcpSocket != null;
+        /// <summary>UDP 是否已绑定</summary>
+        public bool HasUdp => UdpEndPoint != null;
     }
 
     /// <summary>
@@ -38,6 +47,19 @@ namespace Network.Server
         private readonly Dictionary<IPEndPoint, ulong> _udpToClientId = new();
         private readonly object _lock = new();
         private ulong _nextClientId = 1;
+
+        // 调试面板查询接口
+        /// <summary>TCP 端口</summary>
+        public int TcpPort => _tcpPort;
+        /// <summary>UDP 端口</summary>
+        public int UdpPort => _udpPort;
+        /// <summary>当前客户端列表快照（只读副本）</summary>
+        public IReadOnlyList<ClientState> Clients
+        {
+            get { lock (_lock) return _clientsById.Values.ToList().AsReadOnly(); }
+        }
+        /// <summary>在线客户端数量</summary>
+        public int ClientCount { get { lock (_lock) return _clientsById.Count; } }
 
         // 事件：向 RoomManager 转发消息
         public event Action<ulong, LobbySyncRequest> OnTcpLobby;
@@ -138,7 +160,7 @@ namespace Network.Server
                 switch (msg.ContentCase)
                 {
                     case ClientMessage.ContentOneofCase.CommonMessage:
-                        Debug.Log($"[Dispatcher] UDP-{clientId}: {msg.CommonMessage}");
+                        Debug.Log($"[Server][Dispatcher] UDP-{clientId}: {msg.CommonMessage}");
                         break;
                     case ClientMessage.ContentOneofCase.GameSyncMessage:
                         OnUdpGameSync?.Invoke(clientId, msg.GameSyncMessage);
@@ -182,7 +204,7 @@ namespace Network.Server
             {
                 if (!_clientsById.TryGetValue(clientId, out var c))
                 {
-                    Debug.LogError($"[Dispatcher] 未找到 clientId={clientId} 发送 TCP 失败");
+                    Debug.LogError($"[Server][Dispatcher] 未找到 clientId={clientId} 发送 TCP 失败");
                     return;
                 }
                 tcp = c.TcpSocket;
@@ -197,7 +219,7 @@ namespace Network.Server
             {
                 if (!_clientsById.TryGetValue(clientId, out var c) || c.UdpEndPoint == null)
                 {
-                    Debug.LogError($"[Dispatcher] 未找到 clientId={clientId} 发送 UDP 失败");
+                    Debug.LogError($"[Server][Dispatcher] 未找到 clientId={clientId} 发送 UDP 失败");
                     return;
                 }
                 ep = c.UdpEndPoint;
@@ -225,7 +247,7 @@ namespace Network.Server
                 }
             }
 
-            Debug.LogError($"[Dispatcher] 未知 TCP 客户端，无法获取 clientId");
+            Debug.LogError($"[Server][Dispatcher] 未知 TCP 客户端，无法获取 clientId");
             clientId = 0;
             return false;
         }
@@ -244,7 +266,7 @@ namespace Network.Server
                 }
             }
 
-            Debug.LogError($"[Dispatcher] 未知 UDP 客户端 {_udpServer.GetEndpointInfo(ep)}，无法获取 clientId");
+            Debug.LogError($"[Server][Dispatcher] 未知 UDP 客户端 {_udpServer.GetEndpointInfo(ep)}，无法获取 clientId");
             clientId = 0;
             return false;
         }
@@ -291,7 +313,7 @@ namespace Network.Server
                     }
 
                     _clientsById.Remove(clientId);
-                    Debug.Log($"[Dispatcher] 移除 clientId={clientId}");
+                    Debug.Log($"[Server][Dispatcher] 移除 clientId={clientId}");
                 }
             }
         }
@@ -302,7 +324,7 @@ namespace Network.Server
         {
             _tcpServer.Stop();
             _udpServer.Stop();
-            Debug.Log("[ServerNetworkDispatcher] 网络分发器已停止");
+            Debug.Log("[Server][ServerNetworkDispatcher] 网络分发器已停止");
         }
 
         public void Dispose()

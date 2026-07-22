@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameMessage;
 using Google.Protobuf;
 using LobbyMessage;
@@ -9,9 +10,9 @@ using UnityEngine;
 namespace Network.Server
 {
     /// <summary>
-    /// 玩家会话数据
+    /// 玩家会话数据（供调试面板读取）
     /// </summary>
-    internal class PlayerSession
+    public class PlayerSession
     {
         public ulong Id;                              // 玩家 ID（服务端内部分配）
         public ulong ClientId;                        // 客户端网络 ID
@@ -19,6 +20,7 @@ namespace Network.Server
         public long ActiveTime;                       // 上次活跃时间（毫秒时间戳）
         public ulong LastFrameId;                     // 最新收到的帧 ID
         public bool Online;                           // 是否在线
+        public float SecondsSinceHeartbeat => (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - ActiveTime) / 1000f;
 
         public Queue<PlayerSync> ReceiveMessages = new();     // 待广播的帧同步消息
         public Dictionary<ulong, PlayerSync> Frames = new();  // 历史帧缓存（帧序号→帧数据）
@@ -45,12 +47,24 @@ namespace Network.Server
         // 帧广播定时器
         private System.Timers.Timer _broadcastTimer;
         private int _gameFrameRate = 30;
-        private float _heartbeatTimeoutMs = 4000f;
+        private readonly float _heartbeatTimeoutMs = 4000f;
 
         // 事件：向外发送消息
         public event Action<ulong, byte[]> OnSendTcp;
         public event Action<ulong, byte[]> OnSendUdp;
         public event Action<ulong> OnRemoveClient;
+
+        // 调试面板查询接口
+        /// <summary>房间是否运行中</summary>
+        public bool IsRunning => _isRunning;
+        /// <summary>当前玩家列表快照（只读副本）</summary>
+        public IReadOnlyList<PlayerSession> Players => _players.Values.ToList().AsReadOnly();
+        /// <summary>游戏帧率</summary>
+        public int GameFrameRate => _gameFrameRate;
+        /// <summary>玩家数量</summary>
+        public int PlayerCount => _players.Count;
+        /// <summary>房主名称（playerId=1 的玩家）</summary>
+        public string OwnerName => _players.TryGetValue(1, out var p) ? p.Name : "";
 
         /// <summary>
         /// 初始化房间管理器
@@ -60,7 +74,6 @@ namespace Network.Server
         public void Initialize(int gameFrameRate = 30, float heartbeatTimeoutSec = 4f)
         {
             _gameFrameRate = gameFrameRate;
-            _heartbeatTimeoutMs = heartbeatTimeoutSec * 1000f;
         }
 
         public void Start()

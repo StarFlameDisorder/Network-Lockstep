@@ -24,6 +24,6 @@ namespace Network.Server
         public int MaxPacketBuffer = 600;       // 最大接收缓冲包数
 
         [Header("运行模式")]
-        public bool RunServerAutomatically = true; // 开发模式下是否自动启动
+        public bool RunServerAutomatically = false; // 是否自动启动（默认 false，由调试面板控制）
     }
 }

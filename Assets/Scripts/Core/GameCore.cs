@@ -1,4 +1,5 @@
 using Framework;
+using Network.Server;
 using UnityEngine;
 
 namespace Core
@@ -12,6 +13,7 @@ namespace Core
         #region 组件
         public SystemManager SystemMgr { get; private set; }
         public DataProxyManager DataProxyMgr { get; private set; }
+        public GameServer GameServer { get; private set; }
         #endregion
 
         #region 属性
@@ -40,6 +42,9 @@ namespace Core
             
             // 框架模块
             DataProxyMgr = SystemMgr.RegisterSystem<DataProxyManager>();
+            
+            // 服务端子系统中立（独立线程运行网络监听）
+            GameServer = SystemMgr.RegisterSystem<GameServer>();
         }
         
         /// <summary>

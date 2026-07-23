@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Framework;
 using Google.Protobuf;
 using SyncMessage;
 using UnityEngine;
@@ -22,8 +23,10 @@ namespace Network.Client
         public bool isAck; //是否确认
     }
     
-    public class UdpSocket
+    public class UdpSocket: IDisposable
     {
+        private GameClient _gameClient;
+        
         private IPEndPoint _ipEndPoint;
         private Socket _socketUdp;
         private UInt64 _clientId = 0;
@@ -39,6 +42,12 @@ namespace Network.Client
         
         public void StartLink(string ip, int port)
         {
+            if (!Global.TryGet(out _gameClient))
+            {
+                Debug.LogError("[Client][TcpSocket]获取GameClient子系统错误");
+                return;
+            }
+            
             try
             {
                 if (IsConnected()) CloseLink();
@@ -58,7 +67,7 @@ namespace Network.Client
             _cancelTokenSource = new CancellationTokenSource();
             ReceiveAsync(message =>
             {
-                NetworkManager.Instance.HandleMessage(message);
+                _gameClient.HandleMessage(message);
 
             },_cancelTokenSource.Token);
         }
@@ -273,8 +282,8 @@ namespace Network.Client
             };
             Send(message.ToByteArray());
         }
-
-        public void Destroy()
+        
+        public void Dispose()
         {
             CloseLink();
         }

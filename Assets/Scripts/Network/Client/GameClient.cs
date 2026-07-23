@@ -1,14 +1,16 @@
 using System;
 using ConnectMessage;
+using Framework;
 using Google.Protobuf;
-using UI;
 using UnityEngine;
 
 namespace Network.Client
 {
-    public class NetworkManager : MonoBehaviour
+    public class GameClient : SubSystemBase
     {
-        public static NetworkManager Instance;
+        public override SubSystemPriority Priority => SubSystemPriority.GameClient;
+        
+        // public static GameClient Instance;
         private TcpSocket _tcpSocket=new TcpSocket();
         private UdpSocket _udpSocket=new UdpSocket();
         private int _index = 0;
@@ -26,16 +28,24 @@ namespace Network.Client
         {
             _messageDispatcher.UnregisterHandler(signal);
         }
-        
-        
-        private void Awake()
+
+        #region 生命周期
+
+        public override void Init()
         {
-            Instance = this;
-            NetworkManager.Instance.RegisterHandler(Signals.ConnectHandShake, (HandShakeResponse msg) =>
+            RegisterHandler(Signals.ConnectHandShake, (HandShakeResponse msg) =>
             {
                 SetClientId(msg.ClientId);
             });
         }
+
+        public override void Destroy()
+        {
+            _tcpSocket.Dispose();
+            _udpSocket.Dispose();
+        }
+
+        #endregion
         
         public void StartLink(string ip, int port)
         {
@@ -54,26 +64,13 @@ namespace Network.Client
             return _tcpSocket != null && _tcpSocket.IsConnected();
         }
 
-        public void TcpSendMessage(byte[] data)
+        public bool TcpSendMessage(byte[] data)
         {
             if(TcpIsConnected())_tcpSocket.Send(data);
+            return TcpIsConnected();
             //else Debug.Log("TcpSendMessage:未建立连接");
         }
         
-        public bool TcpSendMessageBool(byte[] data)
-        {
-            if(TcpIsConnected())
-            {
-                _tcpSocket.Send(data);
-                return true;
-            }
-            else
-            {
-                //Debug.Log("TcpSendMessage:未建立连接");
-                return false;
-            }
-        }
-
         public bool UdpIsConnected()
         {
             return _udpSocket != null && _udpSocket.IsConnected();
@@ -94,7 +91,7 @@ namespace Network.Client
             Debug.Log($"[Client][NetworkManager] SetClientId {clientId}");
             // if (StatusPanel.Instance != null)
             //     StatusPanel.Instance.UpdateClientIdStatus(clientId);
-            this._clientId = clientId;
+            _clientId = clientId;
             _tcpSocket.BindClientId(clientId);
             _udpSocket.BindClientId(clientId);
         }
@@ -103,11 +100,6 @@ namespace Network.Client
         {
             return _clientId;
         }
-
-        private void OnDestroy()
-        {
-            _tcpSocket.Destroy();
-            _udpSocket.Destroy();
-        }
+        
     }
 }

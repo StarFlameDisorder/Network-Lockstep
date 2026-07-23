@@ -1,9 +1,8 @@
-using System;
-using System.Text;
+using UnityEngine;
+using Framework;
 using Google.Protobuf;
 using TMPro;
 using UnityEngine;
-using Network;
 using Network.Client;
 using SyncMessage;
 
@@ -21,9 +20,17 @@ namespace UI
         public TMP_Text udpMessage;
         private int _tcpTimes = 0;
         private int _udpTimes = 0;
+        
+        private GameClient _gameClient;
 
-        void Awake()
+        void Start()
         {
+            if (!Global.TryGet(out _gameClient))
+            {
+                Debug.LogError("[Client][TcpSocket]获取GameClient子系统错误");
+                return;
+            }
+            
             // closeButton.OnClickEvent += () =>
             // {
             //     this.enabled = false;
@@ -32,7 +39,7 @@ namespace UI
             {
                 string ip = inputIP.text;
                 int port = int.Parse(inputPort.text);
-                NetworkManager.Instance.StartLink(ip, port);
+                _gameClient.StartLink(ip, port);
             };
             tcpMessageButton.OnClickEvent += () =>
             {
@@ -50,10 +57,10 @@ namespace UI
             
             ClientMessage message = new ClientMessage
             {
-                ClientId = NetworkManager.Instance.GetClientId(),
+                ClientId = _gameClient.GetClientId(),
                 CommonMessage = "Tcp-消息"+_tcpTimes
             };
-            NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
+            _gameClient.TcpSendMessage(message.ToByteArray());
             
             _tcpTimes++;
         }
@@ -64,10 +71,10 @@ namespace UI
             
             ClientMessage message = new ClientMessage
             {
-                ClientId = NetworkManager.Instance.GetClientId(),
+                ClientId = _gameClient.GetClientId(),
                 CommonMessage = "Udp-消息"+_udpTimes
             };
-            NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
+            _gameClient.TcpSendMessage(message.ToByteArray());
             
             _udpTimes++;
         }

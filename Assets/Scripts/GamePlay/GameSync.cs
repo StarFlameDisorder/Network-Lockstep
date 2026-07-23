@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Framework;
 using GameMessage;
 using LobbyMessage;
 using Network;
@@ -23,6 +24,7 @@ namespace GamePlay//TODO: UDP重传风暴
     public class GameSync:MonoBehaviour
     {
         public static GameSync Instance;
+        private GameClient _gameClient;
 
         public const int BufferSize = 3;
         public const int MaxCatchupTime = 5;
@@ -39,6 +41,7 @@ namespace GamePlay//TODO: UDP重传风暴
         private void Awake()
         {
             Instance = this;
+            
             Application.targetFrameRate = 60;
             Screen.SetResolution(1920, 1080, false);
             Application.runInBackground = true;//TODO:不知道能否保证后台运行正常
@@ -46,11 +49,17 @@ namespace GamePlay//TODO: UDP重传风暴
 
         private void Start()
         {
-            NetworkManager.Instance.RegisterHandler<GameSyncMessage>(Signals.GameSync,ReceiveMessage);//服务器消息接收
-            NetworkManager.Instance.RegisterHandler<PlayerJoinRoomResponse>(Signals.LobbyJoinRoom,JoinRoom);//加入房间消息
-            NetworkManager.Instance.RegisterHandler<PlayerLeaveRoomResponse>(Signals.LobbyLeaveRoom,LeaveRoom);//离开房间
-            NetworkManager.Instance.RegisterHandler<PlayerStartRoomResponse>(Signals.LobbyStartRoom,StartRoom);//开始游戏
-            NetworkManager.Instance.RegisterHandler<GameSnapshotMessage>(Signals.GameSnapShot,ReceiveSnapshotMessage);//断线重连 收到快照
+            if (!Global.TryGet(out _gameClient))
+            {
+                Debug.LogError("[Client][TcpSocket]获取GameClient子系统错误");
+                return;
+            }
+            
+            _gameClient.RegisterHandler<GameSyncMessage>(Signals.GameSync,ReceiveMessage);//服务器消息接收
+            _gameClient.RegisterHandler<PlayerJoinRoomResponse>(Signals.LobbyJoinRoom,JoinRoom);//加入房间消息
+            _gameClient.RegisterHandler<PlayerLeaveRoomResponse>(Signals.LobbyLeaveRoom,LeaveRoom);//离开房间
+            _gameClient.RegisterHandler<PlayerStartRoomResponse>(Signals.LobbyStartRoom,StartRoom);//开始游戏
+            _gameClient.RegisterHandler<GameSnapshotMessage>(Signals.GameSnapShot,ReceiveSnapshotMessage);//断线重连 收到快照
             
             RegisterTimerEvent(UpdateGame);
             _heartBeatHandle.OnTimeTriggerEvent += HeartBeat;
@@ -112,7 +121,7 @@ namespace GamePlay//TODO: UDP重传风暴
             
             if (_name==_ownerName)
             {
-                SyncSnapshot(_frameId-1,NetworkManager.Instance.GetClientId());
+                SyncSnapshot(_frameId-1,_gameClient.GetClientId());
             }
         }
         #endregion
@@ -129,7 +138,7 @@ namespace GamePlay//TODO: UDP重传风暴
         public void SyncPlayerAction()
         {
             FixedPointVector3 _inputV3 = FixedPointVector3.FromFloat(_input.x,0,_input.y);
-            UInt64 clientId = NetworkManager.Instance.GetClientId();
+            UInt64 clientId = _gameClient.GetClientId();
             GameSyncMessage gameSyncMessage = new GameSyncMessage
             {
                 FrameId = _frameId,
@@ -155,7 +164,7 @@ namespace GamePlay//TODO: UDP重传风暴
                 GameSyncMessage = gameSyncMessage
             };
             
-            NetworkManager.Instance.UdpSendMessage(message.ToByteArray());
+            _gameClient.UdpSendMessage(message.ToByteArray());
             PlayerAction(gameSyncMessage);
 
             if (_name==_ownerName&&_frameId % (UInt64)(_gameFrameRate * _snapshotSpacing) == 0)
@@ -185,14 +194,14 @@ namespace GamePlay//TODO: UDP重传风暴
                     Snapshot = snapshot
                 }
             };
-            NetworkManager.Instance.UdpSendMessage(snapMessage.ToByteArray());
+            _gameClient.UdpSendMessage(snapMessage.ToByteArray());
         }
         
         
         private TimerHandle _heartBeatHandle = new TimerHandle(1);
         void HeartBeat()
         {
-            UInt64 clientId = NetworkManager.Instance.GetClientId();
+            UInt64 clientId = _gameClient.GetClientId();
             ClientMessage message = new ClientMessage
             {
                 ClientId = clientId,
@@ -202,7 +211,7 @@ namespace GamePlay//TODO: UDP重传风暴
                 }
                 
             };
-            NetworkManager.Instance.UdpSendMessage(message.ToByteArray());
+            _gameClient.UdpSendMessage(message.ToByteArray());
         }
         
         #endregion

@@ -1,17 +1,15 @@
-using System.Collections.Generic;
-using System.Text;
+using System;
 using Framework;
 using GamePlay;
 using Google.Protobuf;
 using LobbyMessage;
-using Network;
 using Network.Client;
 using Network.Server;
 using SyncMessage;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UI.Debug
+namespace UI.View
 {
     /// <summary>
     /// 客户端调试面板：连接服务器、加入房间、发送消息、查看日志
@@ -131,6 +129,17 @@ namespace UI.Debug
             // 订阅 NetworkManager 状态事件（用于自动记录日志）
             // 注意：NetworkManager 还是旧单体，暂不做侵入修改，面板自己查询状态
         }
+    
+        private GameClient _gameClient;
+        
+        private void Start()
+        {
+            if (!Global.TryGet(out _gameClient))
+            {
+                Debug.LogError("[Client][TcpSocket]获取GameClient子系统错误");
+                return;
+            }
+        }
 
         private void Update()
         {
@@ -149,7 +158,7 @@ namespace UI.Debug
         {
             if (_labelStatus == null) return;
 
-            var nm = NetworkManager.Instance;
+            var nm = _gameClient;
             bool tcpOk = nm != null && nm.TcpIsConnected();
 
             if (tcpOk)
@@ -247,20 +256,20 @@ namespace UI.Debug
             int tcpPort = int.TryParse(_fieldTcpPort?.value, out var tp) ? tp : 1975;
             int udpPort = int.TryParse(_fieldUdpPort?.value, out var up) ? up : 1975;
 
-            NetworkManager.Instance.StartLink(ip, tcpPort);
+            _gameClient.StartLink(ip, tcpPort);
             DebugLogger.ClientLog("[SYS]", $"连接服务器 {ip}:{tcpPort}(TCP) {udpPort}(UDP)");
         }
 
         private void OnDisconnect()
         {
-            NetworkManager.Instance.StopLink();
+            _gameClient.StopLink();
             DebugLogger.ClientLog("[SYS]", "断开连接");
         }
 
         private void OnJoinRoom()
         {
             string name = _fieldName?.value ?? "Player";
-            var nm = NetworkManager.Instance;
+            var nm = _gameClient;
 
             if (!nm.TcpIsConnected())
             {
@@ -289,7 +298,7 @@ namespace UI.Debug
         private void OnLeaveRoom()
         {
             string name = _fieldName?.value ?? "Player";
-            var nm = NetworkManager.Instance;
+            var nm = _gameClient;
 
             var msg = new ClientMessage
             {
@@ -306,7 +315,7 @@ namespace UI.Debug
         private void OnStartRoom()
         {
             string name = _fieldName?.value ?? "Player";
-            var nm = NetworkManager.Instance;
+            var nm = _gameClient;
 
             var msg = new ClientMessage
             {
@@ -322,7 +331,7 @@ namespace UI.Debug
 
         private void OnSendTcp()
         {
-            var nm = NetworkManager.Instance;
+            var nm = _gameClient;
             if (!nm.TcpIsConnected()) return;
 
             string text = _fieldMessage?.value ?? "";
@@ -338,7 +347,7 @@ namespace UI.Debug
 
         private void OnSendUdp()
         {
-            var nm = NetworkManager.Instance;
+            var nm = _gameClient;
             if (!nm.UdpIsConnected()) return;
 
             string text = _fieldMessage?.value ?? "";

@@ -733,7 +733,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 832575519}
-  - {fileID: 1619377348}
   - {fileID: 186377365}
   - {fileID: 1740683152}
   m_Father: {fileID: 0}
@@ -800,7 +799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 863a05eaa08d4469acd173aadbf81e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.MessagePanel
-  subMessagePanel: {fileID: 5493696066890403642, guid: d805c3b53ce95a245a597a9e5ac254e5, type: 3}
+  _subMessagePanel: {fileID: 0}
   _infoText: {fileID: 1043208389}
 --- !u!114 &151691336
 MonoBehaviour:
@@ -7501,50 +7500,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1614630567}
   m_CullTransparentMesh: 1
---- !u!1 &1619377346
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1619377348}
-  - component: {fileID: 1619377349}
-  m_Layer: 0
-  m_Name: Network
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1619377348
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1619377346}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.59656, y: 0, z: -10.86742}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 144768597}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1619377349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1619377346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d2454ba075747e47821eb46dd974681, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Network.NetworkManager
 --- !u!1001 &1670933635
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using Framework;
 using Google.Protobuf;
 using SyncMessage;
-using UI;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Network.Client
 {
-    public class TcpSocket
+    public class TcpSocket : IDisposable
     {
+        private GameClient _gameClient;
+        
         private IPEndPoint _ipEndPoint;
-        // [SerializeField] private string _ip="127.0.0.1";
-        // [SerializeField]private int _port=1975;
         private UInt64  _clientId=0; 
         
         private List<byte> _tcpMessageBuffer=new List<byte>();
@@ -23,6 +23,12 @@ namespace Network.Client
         
         public void StartLink(string ip, int port)
         {
+            if (!Global.TryGet(out _gameClient))
+            {
+                Debug.LogError("[Client][TcpSocket]获取GameClient子系统错误");
+                return;
+            }
+            
             try
             {
                 if(IsConnected())CloseLink();
@@ -40,7 +46,7 @@ namespace Network.Client
             ReceiveAsync((message) =>
             {
                 // Debug.Log("Tcp:收到消息");
-                NetworkManager.Instance.HandleMessage(message);
+                _gameClient.HandleMessage(message);
             });
         }
 
@@ -102,11 +108,6 @@ namespace Network.Client
             }
         }
 
-        public void Destroy()
-        {
-            _socketTcp?.Close();
-        }
-
         public bool IsConnected()
         {
             return _socketTcp!=null && _socketTcp.Connected;
@@ -122,6 +123,11 @@ namespace Network.Client
                 CommonMessage = "TCP-这是客户端，建立连接"
             };
             Send(message.ToByteArray());
+        }
+
+        public void Dispose()
+        {
+            _socketTcp?.Close();
         }
     }
 }

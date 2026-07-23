@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
 using Framework;
-using GameMessage;
 using Google.Protobuf;
-using LobbyMessage;
-using Network;
 using Network.Server;
 using SyncMessage;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UI.Debug
+namespace UI.View
 {
     /// <summary>
     /// 服务端调试面板：启动/停止服务器、查看客户端/玩家、广播消息、查看日志

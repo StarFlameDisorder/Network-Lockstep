@@ -3,7 +3,7 @@ using System.Collections;
 using GamePlay;
 using UnityEngine;
 
-namespace Network
+namespace Network.Client
 {
     
     public class TimerHandle

@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using Google.Protobuf;
+using SyncMessage;
 using UI;
 using UnityEngine;
 using UnityEngine.Events;
-using SyncMessage;
-using ConnectMessage;
 
-namespace Network
+namespace Network.Client
 {
     public class TcpSocket
     {
@@ -43,7 +41,6 @@ namespace Network
             {
                 // Debug.Log("Tcp:收到消息");
                 NetworkManager.Instance.HandleMessage(message);
-                MessagePanel.Instance?.AddMessage("Tcp:收到消息");
             });
         }
 

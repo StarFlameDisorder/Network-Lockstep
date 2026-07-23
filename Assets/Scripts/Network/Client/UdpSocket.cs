@@ -6,15 +6,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using UI;
+using Google.Protobuf;
+using SyncMessage;
 using UnityEngine;
 using UnityEngine.Events;
-using SyncMessage;
-using ConnectMessage;
-using Google.Protobuf;
 
-
-namespace Network
+namespace Network.Client
 {
     class PendingPacket //避免直接拷贝 类当结构体用
     {

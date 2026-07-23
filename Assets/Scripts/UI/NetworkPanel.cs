@@ -4,6 +4,7 @@ using Google.Protobuf;
 using TMPro;
 using UnityEngine;
 using Network;
+using Network.Client;
 using SyncMessage;
 
 namespace UI

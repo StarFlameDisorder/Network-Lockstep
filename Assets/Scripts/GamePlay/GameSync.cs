@@ -7,6 +7,7 @@ using UI;
 using UnityEngine;
 using UnityMath;
 using Google.Protobuf;
+using Network.Client;
 using SyncMessage;
 using Unity.VisualScripting;
 
@@ -229,14 +230,14 @@ namespace GamePlay//TODO: UDP重传风暴
                 //操作显示
                 if (pair.Key == _name)
                 {
-                    StatusPanel.Instance.UpdateLocalStatus(player.GetFrameCount());
-                    StatusPanel.Instance.UpdateLocalPos(player.GetPosition().ToVector3());
+                    // StatusPanel.Instance.UpdateLocalStatus(player.GetFrameCount());
+                    // StatusPanel.Instance.UpdateLocalPos(player.GetPosition().ToVector3());
                 }
                 else
                 {
                     if (_otherName == "") _otherName = pair.Key;//测试用，查找另一个玩家
-                    StatusPanel.Instance.UpdateExternalStatus(player.GetFrameCount());
-                    StatusPanel.Instance.UpdateExternalPos(player.GetPosition().ToVector3());
+                    // StatusPanel.Instance.UpdateExternalStatus(player.GetFrameCount());
+                    // StatusPanel.Instance.UpdateExternalPos(player.GetPosition().ToVector3());
                 }
             }
             /*

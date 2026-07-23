@@ -26,15 +26,17 @@ namespace Network.Server
     /// </summary>
     public class UdpServer : IDisposable
     {
+        #region 属性
+
         private UdpClient _socket;
         private readonly int _port;
         private bool _isRunning;
 
         // 客户端端点标识
-        private readonly Dictionary<IPEndPoint, long> _udpIndex = new();           // 发送序号
+        private readonly Dictionary<IPEndPoint, long> _udpIndex = new();                     // 发送序号
         private readonly Dictionary<IPEndPoint, Dictionary<long, PendingPacket>> _pendingPackets = new(); // 发送缓存
-        private readonly Dictionary<IPEndPoint, SortedDictionary<long, byte[]>> _receiveBuf = new();      // 接收缓存（排序）
-        private readonly Dictionary<IPEndPoint, long> _invokeIndex = new();        // 下一个应投递的序号
+        private readonly Dictionary<IPEndPoint, SortedDictionary<long, byte[]>> _receiveBuf = new();     // 接收缓存（排序）
+        private readonly Dictionary<IPEndPoint, long> _invokeIndex = new();                  // 下一个应投递的序号
         private readonly object _lock = new();
 
         private System.Timers.Timer _resendTimer;
@@ -44,6 +46,10 @@ namespace Network.Server
         private readonly int _maxPacketBuffer;
 
         public event Action<IPEndPoint, byte[]> OnMessageReceived;
+
+        #endregion
+
+        #region 生命周期
 
         public UdpServer(int port = 1975, float resendIntervalSec = 0.5f, int maxPacketBuffer = 600)
         {
@@ -66,6 +72,36 @@ namespace Network.Server
 
             ReceiveLoop();
         }
+
+        public void Stop()
+        {
+            _isRunning = false;
+            _resendTimer?.Stop();
+            _resendTimer?.Dispose();
+            _resendTimer = null;
+
+            try { _socket?.Close(); }
+            catch { /* ignore */ }
+
+            lock (_lock)
+            {
+                _udpIndex.Clear();
+                _pendingPackets.Clear();
+                _receiveBuf.Clear();
+                _invokeIndex.Clear();
+            }
+
+            Debug.Log("[Server][UdpServer] UDP 服务器已停止");
+        }
+
+        public void Dispose()
+        {
+            Stop();
+        }
+
+        #endregion
+
+        #region 消息收发
 
         private async void ReceiveLoop()
         {
@@ -252,6 +288,10 @@ namespace Network.Server
             }
         }
 
+        #endregion
+
+        #region 客户端管理
+
         public void CleanClient(IPEndPoint remoteEp)
         {
             lock (_lock)
@@ -272,30 +312,6 @@ namespace Network.Server
             return $"{addr}:{ep.Port}";
         }
 
-        public void Stop()
-        {
-            _isRunning = false;
-            _resendTimer?.Stop();
-            _resendTimer?.Dispose();
-            _resendTimer = null;
-
-            try { _socket?.Close(); }
-            catch { /* ignore */ }
-
-            lock (_lock)
-            {
-                _udpIndex.Clear();
-                _pendingPackets.Clear();
-                _receiveBuf.Clear();
-                _invokeIndex.Clear();
-            }
-
-            Debug.Log("[Server][UdpServer] UDP 服务器已停止");
-        }
-
-        public void Dispose()
-        {
-            Stop();
-        }
+        #endregion
     }
 }

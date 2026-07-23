@@ -11,8 +11,10 @@ namespace Network.Server
     /// TCP 服务器：监听端口，管理客户端连接，处理分包/黏包
     /// 移植自 C++/Qt TcpServer
     /// </summary>
-    public class TcpServer : IDisposable
+    public class TcpServer : IDisposable//C# 中用于释放非托管资源,需要显式释放的资源
     {
+        #region 属性
+        
         private TcpListener _listener;
         private readonly int _port;
         private readonly Dictionary<TcpClient, List<byte>> _messageBuffers = new();
@@ -28,15 +30,46 @@ namespace Network.Server
             _port = port;
         }
 
+        #endregion
+
+        #region 生命周期
+        
         public void Start()
         {
             _listener = new TcpListener(IPAddress.Any, _port);
             _listener.Start();
             _isRunning = true;
-            Debug.Log($"[Server][TcpServer] 启动 TCP 服务器，端口：{_port}");
+            Debug.Log($"[TcpServer] 启动 TCP 服务器，端口：{_port}");
             BeginAccept();
         }
+        
+        public void Stop()
+        {
+            _isRunning = false;
 
+            lock (_lock)
+            {
+                foreach (var tcp in _messageBuffers.Keys)
+                {
+                    try { tcp.Close(); } catch { /* ignore */ }
+                }
+                _messageBuffers.Clear();
+            }
+
+            try { _listener?.Stop(); }
+            catch { /* ignore */ }
+
+            Debug.Log("[TcpServer] TCP 服务器已停止");
+        }
+
+        public void Dispose()
+        {
+            Stop();
+        }
+        
+        #endregion
+
+        #region 连接管理
         private async void BeginAccept()
         {
             while (_isRunning)
@@ -48,7 +81,7 @@ namespace Network.Server
                     {
                         _messageBuffers[client] = new List<byte>();
                     }
-                    Debug.Log($"[Server][TcpServer] 新连接：{GetClientInfo(client)}");
+                    Debug.Log($"[TcpServer] 新连接：{GetClientInfo(client)}");
                     OnClientConnected?.Invoke(client);
                     _ = ReceiveLoop(client);
                 }
@@ -63,11 +96,33 @@ namespace Network.Server
                 catch (Exception ex)
                 {
                     if (_isRunning)
-                        Debug.LogError($"[Server][TcpServer] Accept 异常：{ex}");
+                        Debug.LogError($"[TcpServer] Accept 异常：{ex}");
                 }
             }
         }
+        
+        public void DisconnectClient(TcpClient client)
+        {
+            OnDisconnected(client);
+        }
 
+        private void OnDisconnected(TcpClient client)
+        {
+            lock (_lock)
+            {
+                _messageBuffers.Remove(client);
+            }
+
+            try { client?.Close(); }
+            catch { /* ignore */ }
+
+            Debug.Log($"[TcpServer] 断开连接：{GetClientInfo(client)}");
+            OnClientDisconnected?.Invoke(client);
+        }
+        
+        #endregion
+
+        #region 消息收发
         private async System.Threading.Tasks.Task ReceiveLoop(TcpClient client)
         {
             NetworkStream stream = client.GetStream();
@@ -90,7 +145,7 @@ namespace Network.Server
                             int msgLen = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buffer.ToArray(), 0));
                             if (msgLen <= 0 || msgLen > 1024)
                             {
-                                Debug.LogError($"[Server][TcpServer] 无效消息长度：{msgLen}，断开客户端");
+                                Debug.LogError($"[TcpServer] 无效消息长度：{msgLen}，断开客户端");
                                 break;
                             }
 
@@ -124,7 +179,8 @@ namespace Network.Server
                 byte[] sendBuf = new byte[head.Length + data.Length];
                 Buffer.BlockCopy(head, 0, sendBuf, 0, head.Length);
                 Buffer.BlockCopy(data, 0, sendBuf, head.Length, data.Length);
-
+                
+                
                 lock (client)
                 {
                     client.GetStream().Write(sendBuf, 0, sendBuf.Length);
@@ -132,58 +188,16 @@ namespace Network.Server
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[Server][TcpServer] 发送失败：{ex.Message}");
+                Debug.LogError($"[TcpServer] 发送失败：{ex.Message}");
             }
         }
-
-        public void DisconnectClient(TcpClient client)
-        {
-            OnDisconnected(client);
-        }
-
-        private void OnDisconnected(TcpClient client)
-        {
-            lock (_lock)
-            {
-                _messageBuffers.Remove(client);
-            }
-
-            try { client?.Close(); }
-            catch { /* ignore */ }
-
-            Debug.Log($"[Server][TcpServer] 断开连接：{GetClientInfo(client)}");
-            OnClientDisconnected?.Invoke(client);
-        }
+        #endregion
 
         public string GetClientInfo(TcpClient client)
         {
             if (client?.Client?.RemoteEndPoint is IPEndPoint ep)
                 return $"{ep.Address}:{ep.Port}";
             return "unknown";
-        }
-
-        public void Stop()
-        {
-            _isRunning = false;
-
-            lock (_lock)
-            {
-                foreach (var tcp in _messageBuffers.Keys)
-                {
-                    try { tcp.Close(); } catch { /* ignore */ }
-                }
-                _messageBuffers.Clear();
-            }
-
-            try { _listener?.Stop(); }
-            catch { /* ignore */ }
-
-            Debug.Log("[Server][TcpServer] TCP 服务器已停止");
-        }
-
-        public void Dispose()
-        {
-            Stop();
         }
     }
 }

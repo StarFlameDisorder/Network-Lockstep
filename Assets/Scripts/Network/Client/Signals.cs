@@ -1,4 +1,4 @@
-namespace Network
+namespace Network.Client
 {
 
     public enum Signals

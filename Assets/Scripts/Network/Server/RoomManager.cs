@@ -34,6 +34,8 @@ namespace Network.Server
     /// </summary>
     public class RoomManager
     {
+        #region 属性
+
         // 玩家管理
         private readonly Dictionary<ulong, ulong> _playerByClient = new();  // clientId → playerId
         private readonly Dictionary<ulong, PlayerSession> _players = new(); // playerId → PlayerSession
@@ -54,7 +56,6 @@ namespace Network.Server
         public event Action<ulong, byte[]> OnSendUdp;
         public event Action<ulong> OnRemoveClient;
 
-        // 调试面板查询接口
         /// <summary>房间是否运行中</summary>
         public bool IsRunning => _isRunning;
         /// <summary>当前玩家列表快照（只读副本）</summary>
@@ -65,6 +66,10 @@ namespace Network.Server
         public int PlayerCount => _players.Count;
         /// <summary>房主名称（playerId=1 的玩家）</summary>
         public string OwnerName => _players.TryGetValue(1, out var p) ? p.Name : "";
+
+        #endregion
+
+        #region 生命周期
 
         /// <summary>
         /// 初始化房间管理器
@@ -90,6 +95,8 @@ namespace Network.Server
             _broadcastTimer?.Dispose();
             _broadcastTimer = null;
         }
+
+        #endregion
 
         #region 大厅操作
 

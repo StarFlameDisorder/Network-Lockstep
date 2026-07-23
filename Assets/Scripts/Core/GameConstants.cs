@@ -5,6 +5,6 @@ namespace Core
     /// </summary>
     public class GameConstants
     {
-        
+        public const bool VERBOSE_INFO=true;
     }
 }

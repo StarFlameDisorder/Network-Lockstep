@@ -22,8 +22,5 @@ namespace Network.Server
         [Header("UDP")]
         public float KeepAliveInterval = 0.5f;  // UDP 重传定时器间隔
         public int MaxPacketBuffer = 600;       // 最大接收缓冲包数
-
-        [Header("运行模式")]
-        public bool RunServerAutomatically = false; // 是否自动启动（默认 false，由调试面板控制）
     }
 }

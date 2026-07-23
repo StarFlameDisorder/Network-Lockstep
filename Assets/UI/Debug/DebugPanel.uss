@@ -105,8 +105,7 @@ IntegerField {
     min-height: 20px;
     margin: 2px;
     color: rgb(0, 0, 0);
-    -unity-text-color: rgb(220, 220, 240);
-    aspect-ratio: auto;
+    /*aspect-ratio: auto;*/
 }
 
 TextField:focus,
@@ -115,7 +114,6 @@ IntegerField:focus {
     border-width: 1px;
     border-color: rgb(100, 160, 255);
     color: white;
-    -unity-text-color: white;
 }
 
 Label {
@@ -141,7 +139,8 @@ Label {
 }
 
 Toggle {
-    font-size: 10px;
+    min-height: 20px;
+    font-size: 15px;
     color: rgb(150, 150, 150);
     margin-top: 2px;
 }

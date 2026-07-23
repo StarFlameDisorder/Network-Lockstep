@@ -36,6 +36,8 @@ namespace Network.Server
     /// </summary>
     public class ServerNetworkDispatcher : IDisposable
     {
+        #region 属性
+
         private readonly TcpServer _tcpServer;
         private readonly UdpServer _udpServer;
         private readonly int _tcpPort;
@@ -48,7 +50,6 @@ namespace Network.Server
         private readonly object _lock = new();
         private ulong _nextClientId = 1;
 
-        // 调试面板查询接口
         /// <summary>TCP 端口</summary>
         public int TcpPort => _tcpPort;
         /// <summary>UDP 端口</summary>
@@ -67,6 +68,10 @@ namespace Network.Server
         public event Action<ulong, GameSnapshotMessage> OnUdpGameSnapshot;
         public event Action<ulong, HeartBeat> OnUdpHeartBeat;
         public event Action<ulong> OnClientDisconnectRequest;
+
+        #endregion
+
+        #region 生命周期
 
         public ServerNetworkDispatcher(int tcpPort = 1975, int udpPort = 1975)
         {
@@ -88,6 +93,22 @@ namespace Network.Server
             _udpServer.Start();
             Debug.Log("[Server][ServerNetworkDispatcher] 网络分发器已启动");
         }
+
+        public void Stop()
+        {
+            _tcpServer.Stop();
+            _udpServer.Stop();
+            Debug.Log("[Server][ServerNetworkDispatcher] 网络分发器已停止");
+        }
+
+        public void Dispose()
+        {
+            Stop();
+        }
+
+        #endregion
+
+        #region 消息处理
 
         private void HandleTcpConnected(TcpClient tcp)
         {
@@ -194,6 +215,8 @@ namespace Network.Server
                 }
             }
         }
+
+        #endregion
 
         #region 发送方法
 
@@ -319,17 +342,5 @@ namespace Network.Server
         }
 
         #endregion
-
-        public void Stop()
-        {
-            _tcpServer.Stop();
-            _udpServer.Stop();
-            Debug.Log("[Server][ServerNetworkDispatcher] 网络分发器已停止");
-        }
-
-        public void Dispose()
-        {
-            Stop();
-        }
     }
 }

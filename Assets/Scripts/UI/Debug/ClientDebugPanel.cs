@@ -5,6 +5,7 @@ using GamePlay;
 using Google.Protobuf;
 using LobbyMessage;
 using Network;
+using Network.Client;
 using Network.Server;
 using SyncMessage;
 using UnityEngine;
@@ -107,6 +108,7 @@ namespace UI.Debug
             _areaVerbose = root.Q<ScrollView>("area-verbose");
             _btnClearLog = root.Q<Button>("btn-clear-log");
             _toggleVerbose = root.Q<Toggle>("toggle-verbose");
+            _toggleVerbose.value = Core.GameConstants.VERBOSE_INFO;
 
             // ─── 绑定按钮事件 ───
             if (_btnConnect != null) _btnConnect.clicked += OnConnect;

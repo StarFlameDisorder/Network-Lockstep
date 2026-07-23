@@ -9,7 +9,7 @@
     <ui:VisualElement class="debug-panel panel-left" focusable="true" picking-mode="Position">
 
         <!-- ═══ 标题 ═══ -->
-        <ui:Label text="📡 客户端" class="panel-title" />
+        <ui:Label text="客户端" class="panel-title" />
 
         <!-- ═══ 连接区 ═══ -->
         <ui:Label text="连接" class="section-title" />
@@ -75,7 +75,7 @@
         <ui:ScrollView name="area-messages" class="log-area" />
 
         <!-- 详细日志开关 + 区域 -->
-        <ui:Toggle name="toggle-verbose" text="详细日志 ☐ 显示(可能影响帧率)" value="false" />
+        <ui:Toggle name="toggle-verbose" text="详细日志" value="false" />
         <ui:ScrollView name="area-verbose" class="log-area" />
 
         <ui:Button name="btn-clear-log" text="清空日志" class="btn-normal" />

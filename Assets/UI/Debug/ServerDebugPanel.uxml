@@ -9,7 +9,7 @@
     <ui:VisualElement class="debug-panel panel-right" focusable="true" picking-mode="Position">
 
         <!-- ═══ 标题 ═══ -->
-        <ui:Label text="🔧 服务端" class="panel-title" />
+        <ui:Label text="服务端" class="panel-title" />
 
         <!-- ═══ 服务器控制区 ═══ -->
         <ui:Label text="服务器" class="section-title" />
@@ -45,7 +45,7 @@
         <ui:Label text="消息" class="section-title" />
         <ui:ScrollView name="area-messages" class="log-area" />
 
-        <ui:Toggle name="toggle-verbose" text="详细日志 ☐ 显示(可能影响帧率)" value="false" />
+        <ui:Toggle name="toggle-verbose" text="详细日志" value="false" />
         <ui:ScrollView name="area-verbose" class="log-area" />
 
         <ui:Button name="btn-clear-log" text="清空日志" class="btn-normal" />

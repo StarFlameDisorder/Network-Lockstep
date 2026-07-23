@@ -1,13 +1,10 @@
 using System;
-using System.Text;
 using ConnectMessage;
-using GamePlay;
 using Google.Protobuf;
-using TMPro;
 using UI;
 using UnityEngine;
 
-namespace Network
+namespace Network.Client
 {
     public class NetworkManager : MonoBehaviour
     {
@@ -94,8 +91,9 @@ namespace Network
 
         public void SetClientId(UInt64 clientId)
         {
-            Debug.Log($"SetClientId {clientId}");
-            StatusPanel.Instance.UpdateClientIdStatus(clientId);
+            Debug.Log($"[Client] NetworkManager.SetClientId {clientId}");
+            // if (StatusPanel.Instance != null)
+            //     StatusPanel.Instance.UpdateClientIdStatus(clientId);
             this.clientId = clientId;
             _tcpSocket.BindClientId(clientId);
             _udpSocket.BindClientId(clientId);

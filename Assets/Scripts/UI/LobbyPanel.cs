@@ -3,6 +3,7 @@ using GamePlay;
 using Google.Protobuf;
 using LobbyMessage;
 using Network;
+using Network.Client;
 using SyncMessage;
 using TMPro;
 using UnityEngine;

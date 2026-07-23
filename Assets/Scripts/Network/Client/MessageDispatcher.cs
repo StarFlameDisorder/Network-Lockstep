@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ConnectMessage;
 using Google.Protobuf;
 using LobbyMessage;
@@ -8,7 +7,7 @@ using SyncMessage;
 using UI;
 using UnityEngine;
 
-namespace Network
+namespace Network.Client
 {
     
     public class MessageDispatcher

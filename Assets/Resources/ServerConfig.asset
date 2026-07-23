@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Network.Server.ServerConfig
   TcpPort: 1975
   UdpPort: 1975
-  GameFrameRate: 30
-  SnapshotSpacing: 10
+  GameFrameRate: 10
+  SnapshotSpacing: 20
   HeartbeatTimeoutSec: 4
   KeepAliveInterval: 0.5
   MaxPacketBuffer: 600
-  RunServerAutomatically: 1

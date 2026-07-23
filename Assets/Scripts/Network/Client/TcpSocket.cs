@@ -26,14 +26,14 @@ namespace Network.Client
             try
             {
                 if(IsConnected())CloseLink();
-                Debug.Log("初始化TCP客户端"+ip+":"+port);
+                Debug.Log($"[Client][TcpSocket] 初始化TCP客户端{ip}:{port}");
                 _socketTcp=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 _socketTcp.Connect(_ipEndPoint);//这里是客户端，使用connect  服务器处应使用bind
             }
             catch (SocketException e)
             {
-                Debug.LogError(e);
+                Debug.LogError("[Client][TcpSocket] "+e);
                 throw;
             }
             
@@ -98,7 +98,7 @@ namespace Network.Client
             }
             catch (Exception e)
             {
-                Debug.LogError("消息接收错误"+e);
+                Debug.LogError("[Client][TcpSocket] 消息接收错误"+e);
             }
         }
 
@@ -115,7 +115,7 @@ namespace Network.Client
         public void BindClientId(UInt64 clientId)
         {
             _clientId=clientId;
-            Debug.Log("Tcp:服务器分配id:"+clientId);
+            Debug.Log("[Client][TcpSocket] Tcp:服务器分配id:"+clientId);
             ClientMessage message = new ClientMessage
             {
                 ClientId = clientId,

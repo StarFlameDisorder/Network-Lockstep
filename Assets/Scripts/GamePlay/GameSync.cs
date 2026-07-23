@@ -74,7 +74,7 @@ namespace GamePlay//TODO: UDP重传风暴
         
         private void JoinRoom(PlayerJoinRoomResponse response)
         {
-            Debug.Log($"收到PlayerJoinRoomResponse 房主{response.Owner}");
+            Debug.Log($"[Client][GameSync] 收到PlayerJoinRoomResponse 房主{response.Owner}");
             
             foreach (var otherPlayer in response.Players)
             {
@@ -90,7 +90,7 @@ namespace GamePlay//TODO: UDP重传风暴
         {
             if(!_players.ContainsKey(playerName))
             {
-                Debug.Log("添加玩家");
+                Debug.Log("[Client][GameSync] 添加玩家");
                 GameObject o = Instantiate(_playerPrefab);
                 _players.Add(playerName, new Player(playerName,o,_gameFrameSpacing,_speed));
                 
@@ -99,14 +99,14 @@ namespace GamePlay//TODO: UDP重传风暴
 
         private void LeaveRoom(PlayerLeaveRoomResponse response)
         {
-            Debug.Log("收到PlayerLeaveRoomResponse");
+            Debug.Log("[Client][GameSync] 收到PlayerLeaveRoomResponse");
 
             _players.Remove(response.Name);
         }
 
         private void StartRoom(PlayerStartRoomResponse response)
         {
-            Debug.Log("收到PlayerStartRoomResponse");
+            Debug.Log("[Client][GameSync] 收到PlayerStartRoomResponse");
             
             StartGame();
             
@@ -269,7 +269,7 @@ namespace GamePlay//TODO: UDP重传风暴
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"记录FixedUpdate状态失败: {e.Message}");
+                Debug.LogError($"[Client][GameSync] 记录FixedUpdate状态失败: {e.Message}");
             }*/
         }
         #endregion
@@ -305,12 +305,12 @@ namespace GamePlay//TODO: UDP重传风暴
                     if (playerSS.Name == _name)
                     {
                         _frameId = playerSS.LastFrameId + 1;
-                        Debug.Log($"{playerSS.Name}输入设置帧{_frameId}");
+                        Debug.Log($"[Client][GameSync] {playerSS.Name}输入设置帧{_frameId}");
                     }
                     _players[playerSS.Name].SetSnapshotSync(playerSS);
                 }
                 //TODO:物体位置同步
-                Debug.Log("断线重连-开始游戏");
+                Debug.Log("[Client][GameSync] 断线重连-开始游戏");
                 StartGame();
             }else if (message.ContentCase == GameSnapshotMessage.ContentOneofCase.Frames)
             {
@@ -325,7 +325,7 @@ namespace GamePlay//TODO: UDP重传风暴
             }
             else
             {
-                Debug.LogError("HandleMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
+                Debug.LogError("[Client][GameSync] HandleMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
             }
         }
         #endregion

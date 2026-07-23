@@ -6,17 +6,17 @@ namespace UI
 {
     public class ControlButton:MonoBehaviour
     {
-        [SerializeField]private GameObject targetObject;
-        [SerializeField]private string showName;
-        [SerializeField]private TMP_Text text;
-        [SerializeField] private Vector3 tranformation;
+        [SerializeField] private GameObject _targetObject;
+        [SerializeField] private string _showName;
+        [SerializeField] private TMP_Text _text;
+        [SerializeField] private Vector3 _transformation;
         private RectTransform _targetTransform;
         private bool _isActive=true;
 
         private void Awake()
         {
-            text.text = showName+":开";
-            _targetTransform = targetObject.GetComponent<RectTransform>();
+            _text.text = _showName+":开";
+            _targetTransform = _targetObject.GetComponent<RectTransform>();
         }
 
         public void OnClick()
@@ -28,14 +28,14 @@ namespace UI
         {
             if (_isActive)
             {
-                _targetTransform.localPosition+=tranformation;
-                text.text = showName+":关";
+                _targetTransform.localPosition+=_transformation;
+                _text.text = _showName+":关";
                 _isActive = false;
             }
             else
             {
-                _targetTransform.localPosition-=tranformation;
-                text.text = showName+":开";
+                _targetTransform.localPosition-=_transformation;
+                _text.text = _showName+":开";
                 _isActive = true;
             }
             

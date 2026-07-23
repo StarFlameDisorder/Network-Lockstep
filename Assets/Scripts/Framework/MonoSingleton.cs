@@ -9,7 +9,7 @@ namespace Framework
         /// <summary>
         /// 每个泛型对象都拥有一个独立的锁
         /// </summary>
-        private static readonly object Lock = new();
+        private static readonly object _lock = new();
         
         /// <summary>
         /// 每个泛型类型独立拥有，防止意外退出时调用
@@ -26,7 +26,7 @@ namespace Framework
                     return null;
                 }
 
-                lock (Lock)
+                lock (_lock)
                 {
                     if (!_instance)
                     {

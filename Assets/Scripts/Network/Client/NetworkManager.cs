@@ -12,7 +12,7 @@ namespace Network.Client
         private TcpSocket _tcpSocket=new TcpSocket();
         private UdpSocket _udpSocket=new UdpSocket();
         private int _index = 0;
-        private UInt64 clientId = 0;
+        private UInt64 _clientId = 0;
         private string _ip;
         private int _port;
         private MessageDispatcher _messageDispatcher=new();
@@ -91,17 +91,17 @@ namespace Network.Client
 
         public void SetClientId(UInt64 clientId)
         {
-            Debug.Log($"[Client] NetworkManager.SetClientId {clientId}");
+            Debug.Log($"[Client][NetworkManager] SetClientId {clientId}");
             // if (StatusPanel.Instance != null)
             //     StatusPanel.Instance.UpdateClientIdStatus(clientId);
-            this.clientId = clientId;
+            this._clientId = clientId;
             _tcpSocket.BindClientId(clientId);
             _udpSocket.BindClientId(clientId);
         }
 
         public UInt64 GetClientId()
         {
-            return clientId;
+            return _clientId;
         }
 
         private void OnDestroy()

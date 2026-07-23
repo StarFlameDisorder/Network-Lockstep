@@ -42,16 +42,16 @@ namespace Network.Client
             try
             {
                 if (IsConnected()) CloseLink();
-                Debug.Log("初始化UDP客户端" + ip + ":" + port);
+                Debug.Log("[Client][UdpSocket] 初始化UDP客户端" + ip + ":" + port);
                 _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 _socketUdp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 _socketUdp.Connect(_ipEndPoint);
-                Debug.Log($"本机UDP端点：{_socketUdp.LocalEndPoint}");
+                Debug.Log($"[Client][UdpSocket] 本机UDP端点：{_socketUdp.LocalEndPoint}");
                 _timerHandle.StartTimer();
             }
             catch (SocketException e)
             {
-                Debug.LogError(e);
+                Debug.LogError("[Client][UdpSocket] "+e);
                 throw;
             }
             
@@ -105,7 +105,7 @@ namespace Network.Client
                         
                         if (packet.times > 3) //超过次数的报错
                         {
-                            Debug.LogWarning("重传3次失败，序号:" + index);
+                            Debug.LogWarning("[Client][UdpSocket] 重传3次失败，序号:" + index);
                             remove.Add(pair.Key);
                         }
                         else
@@ -114,7 +114,7 @@ namespace Network.Client
                             packet.times++;
                             packet.previousTime = time;
                             _socketUdp.Send(packet.sendBuf);
-                            Debug.LogWarning("重传，序号:" + index);
+                            Debug.LogWarning("[Client][UdpSocket] 重传，序号:" + index);
                         }
                     }
                 }
@@ -135,7 +135,7 @@ namespace Network.Client
                 int length = buf.Length;
                 byte[] indexBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(_index));
                 byte[] lengthBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(length));
-                if (length > 548) Debug.LogWarning("UDP包过长，可能出现分包！");
+                if (length > 548) Debug.LogWarning("[Client][UdpSocket] UDP包过长，可能出现分包！");
 
                 byte[] sendBuf = new byte[buf.Length + indexBytes.Length + lengthBytes.Length + headerBuf.Length];
 
@@ -152,8 +152,8 @@ namespace Network.Client
                 Buffer.BlockCopy(buf, 0, sendBuf, offset, buf.Length); //数据
 
 #if Log_Debug
-                Debug.Log($"发送-长度:{length}-原始有效字节(十六进制): {BitConverter.ToString(buf, 0, length)}"); //有效载荷长度
-                Debug.Log($"发送-序号{_index}-Socket长度:{sendBuf.Length}-总字节:{BitConverter.ToString(sendBuf, 0, sendBuf.Length)}");
+                Debug.Log($"[Client][UdpSocket] 发送-长度:{length}-原始有效字节(十六进制): {BitConverter.ToString(buf, 0, length)}");
+                Debug.Log($"[Client][UdpSocket] 发送-序号{_index}-Socket长度:{sendBuf.Length}-总字节:{BitConverter.ToString(sendBuf, 0, sendBuf.Length)}");
 #endif
 
                 _socketUdp.Send(sendBuf);
@@ -186,9 +186,8 @@ namespace Network.Client
             Buffer.BlockCopy(indexBytes, 0, sendBuf, offset, indexBytes.Length); //序号
 
 #if Log_Debug
-            Debug.Log(
-                $"发送-序号{index}-Socket长度:{sendBuf.Length}-总字节:{BitConverter.ToString(sendBuf, 0, sendBuf.Length)}");
-            Debug.Log("发送ACK-序号" + index);
+            Debug.Log($"[Client][UdpSocket] 发送-序号{index}-Socket长度:{sendBuf.Length}-总字节:{BitConverter.ToString(sendBuf, 0, sendBuf.Length)}");
+            Debug.Log("[Client][UdpSocket] 发送ACK-序号" + index);
 #endif
 
             _socketUdp?.Send(sendBuf);
@@ -210,7 +209,7 @@ namespace Network.Client
 
 #if Log_Debug
                 Debug.Log(
-                    $"接收-序号{_index}-Socket长度:{originalLength}-总字节:{BitConverter.ToString(buf, 0, originalLength)}");
+                    $"[Client][UdpSocket] 接收-序号{_index}-Socket长度:{originalLength}-总字节:{BitConverter.ToString(buf, 0, originalLength)}");
 #endif
                 if (t == "SEQ")
                 {
@@ -219,16 +218,16 @@ namespace Network.Client
                     Array.Copy(buf, 15, actualData, 0, length);
 
 #if Log_Debug
-                    Debug.Log($"接收-长度{length}-原始有效字节(十六进制): {BitConverter.ToString(actualData, 0, length)}");
+                    Debug.Log($"[Client][UdpSocket] 接收-长度{length}-原始有效字节(十六进制): {BitConverter.ToString(actualData, 0, length)}");
 #endif
                     SendAck(index);
                     
                     //重复判断 排序
                     if (index >= _invokeIndex)
                     {
-                        if (!_receiveBuf.TryAdd(index, actualData)) Debug.LogWarning("重复包" + index);
+                        if (!_receiveBuf.TryAdd(index, actualData)) Debug.LogWarning("[Client][UdpSocket] 重复包" + index);
                     }
-                    else Debug.LogWarning("接收到旧包"+index);
+                    else Debug.LogWarning("[Client][UdpSocket] 接收到旧包"+index);
                     
                     while (_receiveBuf.TryGetValue(_invokeIndex, out byte[] data))
                     {
@@ -238,7 +237,7 @@ namespace Network.Client
                     }
                     while(_receiveBuf.Count>600)
                     {
-                        Debug.LogWarning("UDP缓冲区包过多" + _receiveBuf.Count+"跳过"+_invokeIndex);
+                        Debug.LogWarning("[Client][UdpSocket] UDP缓冲区包过多" + _receiveBuf.Count+"跳过"+_invokeIndex);
                         _receiveBuf.Remove(_invokeIndex);
                         _invokeIndex++;
                     };
@@ -248,12 +247,12 @@ namespace Network.Client
                     if (t == "ACK")
                     {
                         if(_pendingPackets.ContainsKey(index))_pendingPackets[index].isAck = true;
-                        else Debug.Log($"接收-接收到旧ACK序号{index}");
+                        else Debug.Log($"[Client][UdpSocket] 接收-接收到旧ACK序号{index}");
 #if Log_Debug
-                        Debug.Log($"接收-ACK序号{index}");
+                        Debug.Log($"[Client][UdpSocket] 接收-ACK序号{index}");
 #endif
                     }
-                    else Debug.LogWarning("接收未知类型:" + t);
+                    else Debug.LogWarning("[Client][UdpSocket] 接收未知类型:" + t);
                 }
             }
         }
@@ -266,7 +265,7 @@ namespace Network.Client
         public void BindClientId(UInt64 clientId)
         {
             _clientId = clientId;
-            Debug.Log("Udp:服务器分配id:" + clientId);
+            Debug.Log("[Client][UdpSocket] Udp:服务器分配id:" + clientId);
             ClientMessage message = new ClientMessage
             {
                 ClientId = _clientId,

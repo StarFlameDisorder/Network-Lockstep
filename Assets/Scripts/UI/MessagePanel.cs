@@ -7,7 +7,7 @@ namespace UI
     public class MessagePanel:MonoBehaviour
     {
         public static MessagePanel Instance;
-        [SerializeField] private GameObject subMessagePanel;
+        [SerializeField] private GameObject _subMessagePanel;
         [SerializeField] private TMP_Text _infoText;
         
         void Awake()
@@ -18,7 +18,7 @@ namespace UI
 
         public void AddMessage(string msg)
         {
-            GameObject go = Instantiate(subMessagePanel,transform);
+            GameObject go = Instantiate(_subMessagePanel,transform);
             go.GetComponent<SubMessagePanel>().setText("["+DateTime.Now.ToString("HH:mm:ss")+"]"+msg);
         }
 

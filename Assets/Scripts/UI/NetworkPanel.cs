@@ -19,8 +19,8 @@ namespace UI
         public ButtonClick udpMessageButton;
         public TMP_Text tcpMessage;
         public TMP_Text udpMessage;
-        private int tcpTimes = 0;
-        private int udpTimes = 0;
+        private int _tcpTimes = 0;
+        private int _udpTimes = 0;
 
         void Awake()
         {
@@ -46,30 +46,30 @@ namespace UI
 
         private void TcpSendTest()
         {
-            tcpMessage.text = tcpTimes.ToString();
+            tcpMessage.text = _tcpTimes.ToString();
             
             ClientMessage message = new ClientMessage
             {
                 ClientId = NetworkManager.Instance.GetClientId(),
-                CommonMessage = "Tcp-消息"+tcpTimes
+                CommonMessage = "Tcp-消息"+_tcpTimes
             };
             NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
             
-            tcpTimes++;
+            _tcpTimes++;
         }
 
         private void UdpSendTest()
         {
-            udpMessage.text = udpTimes.ToString();
+            udpMessage.text = _udpTimes.ToString();
             
             ClientMessage message = new ClientMessage
             {
                 ClientId = NetworkManager.Instance.GetClientId(),
-                CommonMessage = "Udp-消息"+udpTimes
+                CommonMessage = "Udp-消息"+_udpTimes
             };
             NetworkManager.Instance.TcpSendMessage(message.ToByteArray());
             
-            udpTimes++;
+            _udpTimes++;
         }
     }
 }

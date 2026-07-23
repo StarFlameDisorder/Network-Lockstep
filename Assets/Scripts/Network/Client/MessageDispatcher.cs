@@ -17,7 +17,7 @@ namespace Network.Client
         public void RegisterHandler<T>(Signals signal, Action<T> handler)where T:IMessage//,new()
         {
             _handlers[signal] = msg => { handler((T)msg); };
-            Debug.Log("MessageDispatcher:注册信号处理器"+signal);
+            Debug.Log("[Client][MessageDispatcher]注册信号处理器"+signal);
         }
 
         public void UnregisterHandler(Signals signal)
@@ -33,13 +33,13 @@ namespace Network.Client
             }
             else
             {
-                Debug.LogError("MessageDispatcher:无相关注册信号处理器:"+signal);
+                Debug.LogError("[Client][MessageDispatcher]无相关注册信号处理器:"+signal);
             }
         }
         
         public void HandleMessage(byte[] data)
         {
-            //Debug.Log("HandleMessage");
+            //Debug.Log([Client][MessageDispatcher] HandleMessage");
             ServerMessage message = ServerMessage.Parser.ParseFrom(data);
             switch (message.ContentCase)
             {
@@ -56,7 +56,7 @@ namespace Network.Client
                     TriggerHandler(Signals.GameSnapShot,message.GameSnapshotMessage);
                     break;
                 default:
-                    Debug.LogError("HandleMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
+                    Debug.LogError($"[Client][MessageDispatcher] HandleMessage:未知类型+{message.ContentCase+BitConverter.ToString(message.ToByteArray())}");
                     break;
             }
 
@@ -67,13 +67,13 @@ namespace Network.Client
             switch (message.ContentCase)
             {
                 case ServerConnectMessage.ContentOneofCase.HandShakeMessage:
-                    Debug.Log("Tcp-" + message.HandShakeMessage.Content);
+                    Debug.Log("[Client][MessageDispatcher] Tcp-" + message.HandShakeMessage.Content);
                     MessagePanel.Instance?.AddMessage(message.HandShakeMessage.Content);
                     TriggerHandler(Signals.ConnectHandShake,message.HandShakeMessage);
                     //NetworkManager.Instance.SetClientId(message.HandShakeMessage.ClientId);
                     break;
                 default:
-                    Debug.LogError("HandleConnectMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
+                    Debug.LogError("[Client][MessageDispatcher] HandleConnectMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
                     break;
             }
             //Action<string> printMessage = Console.WriteLine;
@@ -84,21 +84,21 @@ namespace Network.Client
             switch (message.ContentCase)
             {
                 case LobbySyncResponse.ContentOneofCase.JoinRoom:
-                    Debug.Log("HandleLobbyMessage-JoinRoom");
+                    Debug.Log("[Client][MessageDispatcher] HandleLobbyMessage-JoinRoom");
                     TriggerHandler(Signals.LobbyJoinRoom,message.JoinRoom);
                     break;
                 case LobbySyncResponse.ContentOneofCase.LeaveRoom:
-                    Debug.Log("HandleLobbyMessage-LeaveRoom");
+                    Debug.Log("[Client][MessageDispatcher] HandleLobbyMessage-LeaveRoom");
                     break;
                 case LobbySyncResponse.ContentOneofCase.StartRoom:
-                    Debug.Log("HandleLobbyMessage-StartRoom");
+                    Debug.Log("[Client][MessageDispatcher] HandleLobbyMessage-StartRoom");
                     TriggerHandler(Signals.LobbyStartRoom,message.StartRoom);
                     break;
                 case LobbySyncResponse.ContentOneofCase.EndRoom:
-                    Debug.Log("HandleLobbyMessage-EndRoom");
+                    Debug.Log("[Client][MessageDispatcher] HandleLobbyMessage-EndRoom");
                     break;
                 default:
-                    Debug.LogError("HandleLobbyMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
+                    Debug.LogError("[Client][MessageDispatcher] HandleLobbyMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));
                     break;
             }
         }

@@ -239,14 +239,14 @@ namespace Network.Server
         {
             if (message.ContentCase != GameSnapshotMessage.ContentOneofCase.Snapshot)
             {
-                Debug.LogError($"[RoomManager] 快照错误类型 clientId={clientId}");
+                Debug.LogError($"[Server][RoomManager] 快照错误类型 clientId={clientId}");
                 return;
             }
 
             var snapshot = message.Snapshot;
             _gameSnapshot = snapshot;
 
-            Debug.Log($"[RoomManager] 收到快照 clientId={clientId} 玩家数={snapshot.PlayerSSs.Count} 帧={snapshot.FrameId}");
+            Debug.Log($"[Server][RoomManager] 收到快照 clientId={clientId} 玩家数={snapshot.PlayerSSs.Count} 帧={snapshot.FrameId}");
 
             foreach (var ss in snapshot.PlayerSSs)
             {
@@ -285,7 +285,7 @@ namespace Network.Server
             if (player.Online)
             {
                 player.Online = false;
-                Debug.Log($"[RoomManager] {player.Name} TCP 断开，标记离线");
+                Debug.Log($"[Server][RoomManager] {player.Name} TCP 断开，标记离线");
                 OnRemoveClient?.Invoke(clientId);
             }
         }

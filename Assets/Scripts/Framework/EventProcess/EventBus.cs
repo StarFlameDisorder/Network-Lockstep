@@ -13,10 +13,10 @@ namespace EventProcess
     
     public static class EventBus
     {
-        private static readonly EventHub hub = new EventHub();
+        private static readonly EventHub _hub = new EventHub();
 
         public static SType Get<SType>() where SType : IEvent, new() {
-            return hub.Get<SType>();
+            return _hub.Get<SType>();
         }
     }
 
@@ -109,7 +109,7 @@ namespace EventProcess
     /// </summary>
     public abstract class AEvent : ABaseEvent
     {
-        private Action callback;
+        private Action _callback;
 
         /// <summary>
         /// 事件加监听
@@ -121,22 +121,22 @@ namespace EventProcess
                     inherit: false).Length == 0,
                 "Adding anonymous delegates as Signal callbacks is not supported (you wouldn't be able to unregister them later).");
 #endif
-            callback += handler;
+            _callback += handler;
         }
 
         /// <summary>
         /// 事件的移除监听
         /// </summary>
         public void RemoveListener(Action handler) {
-            callback -= handler;
+            _callback -= handler;
         }
 
         /// <summary>
         /// 广播事件
         /// </summary>
         public void Dispatch() {
-            if (callback != null) {
-                callback();
+            if (_callback != null) {
+                _callback();
             }
         }
     }
@@ -181,7 +181,7 @@ namespace EventProcess
     /// </summary>
     public abstract class AEvent<T, U> : ABaseEvent
     {
-        private Action<T, U> callback;
+        private Action<T, U> _callback;
         
         public void AddListener(Action<T, U> handler) {
 #if UNITY_EDITOR
@@ -190,16 +190,16 @@ namespace EventProcess
                     inherit: false).Length == 0,
                 "Adding anonymous delegates as Signal callbacks is not supported (you wouldn't be able to unregister them later).");
 #endif
-            callback += handler;
+            _callback += handler;
         }
         
         public void RemoveListener(Action<T, U> handler) {
-            callback -= handler;
+            _callback -= handler;
         }
         
         public void Dispatch(T arg1, U arg2) {
-            if (callback != null) {
-                callback(arg1, arg2);
+            if (_callback != null) {
+                _callback(arg1, arg2);
             }
         }
     }
@@ -209,7 +209,7 @@ namespace EventProcess
     /// </summary>
     public abstract class AEvent<T, U, V> : ABaseEvent
     {
-        private Action<T, U, V> callback;
+        private Action<T, U, V> _callback;
         
         public void AddListener(Action<T, U, V> handler) {
 #if UNITY_EDITOR
@@ -218,16 +218,16 @@ namespace EventProcess
                     inherit: false).Length == 0,
                 "Adding anonymous delegates as Signal callbacks is not supported (you wouldn't be able to unregister them later).");
 #endif
-            callback += handler;
+            _callback += handler;
         }
         
         public void RemoveListener(Action<T, U, V> handler) {
-            callback -= handler;
+            _callback -= handler;
         }
         
         public void Dispatch(T arg1, U arg2, V arg3) {
-            if (callback != null) {
-                callback(arg1, arg2, arg3);
+            if (_callback != null) {
+                _callback(arg1, arg2, arg3);
             }
         }
     }

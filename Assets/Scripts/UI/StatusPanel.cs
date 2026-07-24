@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace UI
 {
+    /// <summary>
+    /// 弃用
+    /// </summary>
     public class StatusPanel:MonoBehaviour
     {
         public static StatusPanel Instance;

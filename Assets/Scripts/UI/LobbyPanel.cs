@@ -11,6 +11,10 @@ using UnityEngine;
 
 namespace UI
 {
+    
+    /// <summary>
+    /// 弃用
+    /// </summary>
     public class LobbyPanel:MonoBehaviour
     {
         public static LobbyPanel Instance;
@@ -27,11 +31,18 @@ namespace UI
             _startGame.OnClickEvent += StartGame;
         }
 
+        GameSync _gameSync;
         private void Start()
         {
             if (!Global.TryGet(out _gameClient))
             {
                 Debug.LogError("[Client][TcpSocket]获取GameClient子系统错误");
+                return;
+            }
+            
+            if (!Global.TryGet(out _gameSync))
+            {
+                Debug.LogError("[Client][PlayerController]获取GameSync子系统错误");
                 return;
             }
         }
@@ -52,7 +63,7 @@ namespace UI
                 }
             };
             _gameClient.TcpSendMessage(message.ToByteArray());
-            GameSync.Instance.SetName(_nameInputField.text);
+            _gameSync.SetName(_nameInputField.text);
         }
 
         private void StartGame()

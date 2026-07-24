@@ -8,6 +8,9 @@ using SyncMessage;
 
 namespace UI
 {
+    /// <summary>
+    /// 弃用
+    /// </summary>
     public class NetworkPanel:MonoBehaviour
     {
         //public ButtonClick closeButton;

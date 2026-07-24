@@ -1,4 +1,5 @@
 using Framework;
+using GamePlay;
 using Network.Client;
 using Network.Server;
 using UnityEngine;
@@ -16,18 +17,22 @@ namespace Core
         public DataProxyManager DataProxyMgr { get; private set; }
         public GameServer GameServer { get; private set; }
         public GameClient GameClient { get; private set; }
+        public GameSync GameSync { get; private set; }
         #endregion
 
         #region 属性
 
         public bool IsPaused;
+        
+        [SerializeField] private GameObject _playerPrefab;
 
         #endregion
         
         private void InitializeGameCore()
         {
             Application.targetFrameRate = 60;
-            Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
+            Screen.SetResolution(1920, 1080,FullScreenMode.Windowed);
+            Application.runInBackground = true;
             
             InitSubSystems();
             InitDataProxy();
@@ -48,6 +53,11 @@ namespace Core
             // 服务端子系统中立（独立线程运行网络监听）
             GameServer = SystemMgr.RegisterSystem<GameServer>();
             GameClient = SystemMgr.RegisterSystem<GameClient>();
+            
+            // 帧同步主控
+            GameSync = SystemMgr.RegisterSystem<GameSync>();
+            GameSync.InjectPrefab(_playerPrefab);
+            GameSync.PostInit();
         }
         
         /// <summary>

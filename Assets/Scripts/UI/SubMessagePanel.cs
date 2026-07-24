@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 namespace UI
 {
+    /// <summary>
+    /// 弃用
+    /// </summary>
     public class SubMessagePanel:MonoBehaviour
     {
         [SerializeField]private TMP_Text _text;

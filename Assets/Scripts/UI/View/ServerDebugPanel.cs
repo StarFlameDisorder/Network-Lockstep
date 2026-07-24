@@ -154,8 +154,6 @@ namespace UI.View
             }
 
             var clients = server.Dispatcher.Clients;
-            // 简单对比数量：如果数量没变则跳过重建（减少 GC）
-            if (_areaClients.childCount == clients.Count + 1) return; // +1 for header
 
             _areaClients.Clear();
 
@@ -193,7 +191,6 @@ namespace UI.View
             }
 
             var players = server.Room.Players;
-            if (_areaPlayers.childCount == players.Count + 1) return; // +1 for header
 
             _areaPlayers.Clear();
 

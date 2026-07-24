@@ -8,8 +8,9 @@ namespace Framework
         SystemManager = int.MinValue,
         GameServer = -200000,
         GameClient = -190000,
-        TimerManager = -120,
+        // TimerManager = -120,
         DataProxyManager = -100,
+        GamePlay = -90,
 
     }
 }

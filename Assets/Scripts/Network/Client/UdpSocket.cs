@@ -122,8 +122,8 @@ namespace Network.Client
                             //重传 重新排队
                             packet.times++;
                             packet.previousTime = time;
-                            _socketUdp.Send(packet.sendBuf);
-                            Debug.LogWarning("[Client][UdpSocket] 重传，序号:" + index);
+                            // _socketUdp.Send(packet.sendBuf);
+                            // Debug.LogWarning("[Client][UdpSocket] 重传，序号:" + index);
                         }
                     }
                 }

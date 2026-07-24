@@ -131,12 +131,19 @@ namespace UI.View
         }
     
         private GameClient _gameClient;
+        GameSync _gameSync;
         
         private void Start()
         {
             if (!Global.TryGet(out _gameClient))
             {
                 Debug.LogError("[Client][TcpSocket]获取GameClient子系统错误");
+                return;
+            }
+            
+            if (!Global.TryGet(out _gameSync))
+            {
+                Debug.LogError("[Client][PlayerController]获取GameSync子系统错误");
                 return;
             }
         }
@@ -158,6 +165,8 @@ namespace UI.View
         {
             if (_labelStatus == null) return;
 
+            if (_gameClient == null)
+                Global.TryGet(out _gameClient);
             var nm = _gameClient;
             bool tcpOk = nm != null && nm.TcpIsConnected();
 
@@ -180,11 +189,9 @@ namespace UI.View
 
         private void RefreshRoomInfo()
         {
-            var gs = GameSync.Instance;
-            if (gs == null) return;
-
+            
             if (_labelRoom != null)
-                _labelRoom.text = $"状态: {gs.GetStatus()}";
+                _labelRoom.text = $"状态: {_gameSync.GetStatus()}";
 
             // 玩家列表从 GameSync 获取（它维护了 _players 字典，但是 private）
             // 暂通过 StatusPanel 间接读取，后续解耦后直接查 GameSync

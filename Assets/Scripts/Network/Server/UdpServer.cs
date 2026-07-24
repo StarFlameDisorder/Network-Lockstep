@@ -273,9 +273,9 @@ namespace Network.Server
                         {
                             pkt.Times++;
                             pkt.PreviousTime = now;
-                            try { _socket.Send(pkt.SendData, pkt.SendData.Length, ep); }
-                            catch { toRemove.Add((ep, idx)); }
-                            Debug.LogWarning($"[Server][UdpServer] 重传 {GetEndpointInfo(ep)} index={idx} 第{pkt.Times}次");
+                            // try { _socket.Send(pkt.SendData, pkt.SendData.Length, ep); }
+                            // catch { toRemove.Add((ep, idx)); }
+                            // Debug.LogWarning($"[Server][UdpServer] 重传 {GetEndpointInfo(ep)} index={idx} 第{pkt.Times}次");
                         }
                     }
                 }

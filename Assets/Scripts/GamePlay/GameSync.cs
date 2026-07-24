@@ -40,6 +40,17 @@ namespace GamePlay
         
         /// <summary>玩家预制体（由 GameCore 注入）</summary>
         private GameObject _playerPrefab;
+
+        #region 调试属性（供 UI 面板读取）
+
+        /// <summary>服务端最新帧号</summary>
+        public ulong LatestServerFrameId => _latestServerFrameId;
+        /// <summary>本地发送序号</summary>
+        public ulong SendSeq => _sendSeq;
+        /// <summary>玩家列表（只读）</summary>
+        public IReadOnlyDictionary<string, PlayerEntity> Players => _players;
+
+        #endregion
         
         // Update 累加器（替代协程 TimerHandle）
         private float _gameTickAccum;
@@ -105,13 +116,13 @@ namespace GamePlay
         #region 房间操作
         
         private string _name = "";
-        private string _otherName = "";
         private string _ownerName = "";
+        private HashSet<string> _pendingPlayerNames = new();  // 大厅阶段收集的玩家名，游戏开始时统一创建实体
 
         public void SetName(string playerName)
         {
             _name = playerName;
-            AddPlayer(playerName);
+            _pendingPlayerNames.Add(playerName);
         }
         
         private Dictionary<string, PlayerEntity> _players = new();
@@ -120,14 +131,23 @@ namespace GamePlay
         {
             Debug.Log($"[Client][GameSync] 收到PlayerJoinRoomResponse 房主{response.Owner}");
             
-            foreach (var otherPlayer in response.Players)
+            foreach (var playerName in response.Players)
             {
-                if (otherPlayer != _name && !_players.ContainsKey(otherPlayer))
-                {
-                    AddPlayer(otherPlayer);
-                }
+                _pendingPlayerNames.Add(playerName);
             }
             _ownerName = response.Owner;
+        }
+
+        /// <summary>
+        /// 从待创建列表中批量创建玩家实体（游戏开始时调用）
+        /// </summary>
+        private void CreateAllPlayerEntities()
+        {
+            foreach (var playerName in _pendingPlayerNames)
+            {
+                AddPlayer(playerName);
+            }
+            _pendingPlayerNames.Clear();
         }
 
         private void AddPlayer(string playerName)
@@ -157,17 +177,20 @@ namespace GamePlay
         {
             Debug.Log("[Client][GameSync] 收到PlayerStartRoomResponse");
             
+            // 游戏开始：统一创建所有玩家实体
+            CreateAllPlayerEntities();
             StartGame();
             
             if (_name == _ownerName)
             {
-                SyncSnapshot(_frameId - 1, _gameClient.GetClientId());
+                SyncSnapshot(0, _gameClient.GetClientId());
             }
         }
         #endregion
         
         #region 玩家输入操作处理及心跳
-        private UInt64 _frameId = 1;
+        private UInt64 _sendSeq = 1;                   // 本地发送序号（仅用于跟踪，非帧权威）
+        private UInt64 _latestServerFrameId;           // 服务端广播的最新帧号
         private Vector2 _pendingInput;
         
         
@@ -180,22 +203,22 @@ namespace GamePlay
         }
 
         /// <summary>
-        /// 每帧调用：发送本帧输入到服务器，本地应用，创建 GameFrame 推动所有玩家
+        /// 每帧调用：发送本帧输入到服务器（FrameId由服务端统一分配）。
+        /// 不在本地预写入——严格 Lockstep 下等服务端广播后才执行。
         /// </summary>
         public void SyncPlayerAction()
         {
             UInt64 clientId = _gameClient.GetClientId();
             
-            // 消费本帧所有待发送输入
             GameSyncMessage gameSyncMessage = new GameSyncMessage
             {
-                FrameId = _frameId
+                FrameId = _sendSeq // 本地发送序号，服务端会覆盖为统一帧号
             };
 
             FixedPointVector3 dir = FixedPointVector3.FromFloat(_pendingInput.x, 0, _pendingInput.y);
             var sync = new PlayerSync
             {
-                FrameId = _frameId,
+                FrameId = _sendSeq,
                 Name = _name,
                 InputMove = new Vector3D
                 {
@@ -206,29 +229,22 @@ namespace GamePlay
             };
             gameSyncMessage.Players.Add(sync);
             
-            // 本地立即应用
-            if (_players.TryGetValue(_name, out var player))
-                player.AddSyncMessage(sync);
-            
-            
-            // 发送到服务器
-            if (gameSyncMessage.Players.Count > 0)
+            // 发送到服务器（不本地预写，等待服务端广播统一帧号后再执行）
+            ClientMessage message = new ClientMessage
             {
-                ClientMessage message = new ClientMessage
-                {
-                    ClientId = clientId,
-                    GameSyncMessage = gameSyncMessage
-                };
-                _gameClient.UdpSendMessage(message.ToByteArray());
+                ClientId = clientId,
+                GameSyncMessage = gameSyncMessage
+            };
+            _gameClient.UdpSendMessage(message.ToByteArray());
+            
+            // 房主定时发送快照（使用服务端帧号判断时机）
+            if (_name == _ownerName && _latestServerFrameId % (UInt64)(_gameFrameRate * _snapshotSpacing) == 0
+                && _latestServerFrameId > 0)
+            {
+                SyncSnapshot(_latestServerFrameId, clientId);
             }
             
-            // 房主定时发送快照
-            if (_name == _ownerName && _frameId % (UInt64)(_gameFrameRate * _snapshotSpacing) == 0)
-            {
-                SyncSnapshot(_frameId - 1, clientId);
-            }
-            
-            _frameId++;
+            _sendSeq++;
         }
 
         private void SyncSnapshot(UInt64 frameId, UInt64 clientId)
@@ -278,7 +294,7 @@ namespace GamePlay
             SyncPlayerAction();
             
             // 2. 推动所有玩家从缓冲区逐帧消费（远程输入由 ReceiveMessage 预先写入）
-            var frame = new GameFrame(_frameId, _players);
+            var frame = new GameFrame(_latestServerFrameId, _players);
             frame.PushFrames();
         }
         #endregion
@@ -287,13 +303,18 @@ namespace GamePlay
         
         void ReceiveMessage(GameSyncMessage message)
         {
-            foreach (var player in message.Players)
+            foreach (var playerSync in message.Players)
             {
-                if (player.Name != _name && _players.ContainsKey(player.Name))
+                // 所有玩家（含本地）统一由服务端帧号写入缓冲区
+                if (_players.ContainsKey(playerSync.Name))
                 {
-                    _players[player.Name].AddSyncMessage(player);
+                    _players[playerSync.Name].AddSyncMessage(playerSync);
                 }
             }
+            
+            // 记录服务端最新帧号
+            if (message.Players.Count > 0)
+                _latestServerFrameId = message.FrameId;
         }
 
         void ReceiveSnapshotMessage(GameSnapshotMessage message)
@@ -301,14 +322,23 @@ namespace GamePlay
             if (message.ContentCase == GameSnapshotMessage.ContentOneofCase.Snapshot)
             {
                 GameSnapshot snapshot = message.Snapshot;
+                
+                // 断线重连：清空本地所有内容，从快照全量重建
+                foreach (var playerEntity in _players)
+                {
+                    playerEntity.Value.Destroy();
+                }
+                _players.Clear();
+                
                 foreach (var playerSS in snapshot.PlayerSSs)
                 {
-                    if (!_players.ContainsKey(playerSS.Name)) AddPlayer(playerSS.Name);
+                    AddPlayer(playerSS.Name);
                     
                     if (playerSS.Name == _name)
                     {
-                        _frameId = playerSS.LastFrameId + 1;
-                        Debug.Log($"[Client][GameSync] {playerSS.Name}输入设置帧{_frameId}");
+                        _latestServerFrameId = playerSS.LastFrameId;
+                        _sendSeq = playerSS.LastFrameId + 1;
+                        Debug.Log($"[Client][GameSync] {playerSS.Name} 快照恢复 帧={playerSS.LastFrameId}");
                     }
                     _players[playerSS.Name].SetSnapshotSync(playerSS);
                 }

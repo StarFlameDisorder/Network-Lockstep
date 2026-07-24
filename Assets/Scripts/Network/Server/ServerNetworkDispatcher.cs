@@ -21,7 +21,14 @@ namespace Network.Server
         public TcpClient TcpSocket;
         public IPEndPoint UdpEndPoint;
         /// <summary>TCP 端点字符串（调试用）</summary>
-        public string TcpEndpoint => TcpSocket?.Client?.RemoteEndPoint?.ToString() ?? "-";
+        public string TcpEndpoint
+        {
+            get
+            {
+                try { return TcpSocket?.Client?.RemoteEndPoint?.ToString() ?? "-"; }
+                catch (ObjectDisposedException) { return "-"; }
+            }
+        }
         /// <summary>UDP 端点字符串（调试用）</summary>
         public string UdpEndpoint => UdpEndPoint?.ToString() ?? "-";
         /// <summary>TCP 是否已绑定</summary>

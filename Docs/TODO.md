@@ -1,10 +1,49 @@
 # 问题备忘录
 
-未开始时完全没UDP心跳(不影响就是了)
-联调验证基本正常，但是快照恢复断线重连后帧号有问题，导致只恢复了快照
+> 更新于 2026-07-24
+
+## 已确认问题（2026-07-24 分析）
+
+### 🔴 P0 帧号分配：每个客户端独立自增，非标准 Lockstep
+
+**现象**：`GameSync._frameId` 在 [GameSync.cs#L231](Assets/Scripts/GamePlay/GameSync.cs#L231) 每帧本地自增，服务端 [RoomManager.cs](Assets/Scripts/Network/Server/RoomManager.cs) 透传不做统一分配。
+
+**后果**：两客户端帧号线性增长但互不重合；没有"所有人都完成了第N帧"的概念；服务端 BroadcastGameSync() 只是从队列中 dump，各玩家帧号可能不同步。
+
+**方案**：服务端统一分配帧号。每帧等待所有在线玩家提交输入 → 分配全局帧号 → 广播完整帧数据。客户端 `_frameId` 改为仅跟踪本地已发输入序列号，执行以服务端帧号为准。
+
+### 🔴 P0 断线重连：状态清理不完整
+
+**现象**：[GameSync.ReceiveSnapshotMessage](Assets/Scripts/GamePlay/GameSync.cs#L299) 未清空 `_players` 字典，仅 `ContainsKey` 判断是否新增。
+**后果**：断线前残留的 PlayerEntity 未清理；若快照中少了玩家则旧实体仍存活。
+
+**方案**：重连时清空 `_players`，从快照全量重建。
+
+### 🟡 P1 快照由房主客户端发送
+
+**现象**：[GameSync.SyncPlayerAction](Assets/Scripts/GamePlay/GameSync.cs#L226) 仅房主发快照。
+**后果**：房主断线后快照停止生成。
+
+**方案**：快照由服务端持有和发送（服务端已有 `_gameSnapshot`）。
+
+### 🟡 P1 状态指示不更新
+
+**现象**：服务器关了客户端仍显示"已连接"。断线检测仅依赖服务端心跳超时，客户端无主动检测。
+
+### 🟡 P2 GameFrame 职责不清晰
+
+[GameFrame](Assets/Scripts/GamePlay/GameFrame.cs) 名为帧数据但含 PushFrames() 处理逻辑。
+
+### 🟡 P3 无世界一致性校验
+
+没有哈希校验机制，出现不一致时无感知。
+
 ## 调试UI
-显示本地帧号、各玩家位置及当前世界哈希值
-状态指示应随时更新(比如连接状态，服务器关了还显示已连接)
+- [x] 显示服务端帧号、本地发送序号 ✅ 2026-07-24
+- [x] 显示各玩家位置、缓冲区帧数、上次执行帧号 ✅ 2026-07-24
+- [x] 面板显隐切换按钮 ✅ 2026-07-24
+- [ ] 状态指示应随时更新(比如连接状态，服务器关了还显示已连接)
+- [ ] 世界哈希值显示
 
 # TODO
 
@@ -12,15 +51,18 @@
 
 ## 当前状态
 
-阶段一已完成（架构改造全部完成，包括 GameSync SubSystemBase 化）。
+阶段一已完成，阶段二（严格帧同步）正在进行。
 
 | 步骤 | 描述 | 状态 |
 |---|---|---|
 | 阶段一 | 架构改造（Quantum 借鉴 + GameSync子系统化） | ✅ 已完成（2026-07-24） |
-| 阶段二 | 修复快照帧号 Bug 🔴 | ⏳ 待验证 |
-| 阶段三 | KCP 替换手写可靠UDP层 | ❌ 未开始 |
-| 阶段四 | 客户端网络层重构 (INetworkTransport + MessageBus) | ❌ 未开始 |
-| 阶段五 | 适配与集成（替换旧 Instance 调用） | ❌ 未开始 |
+| 阶段二 | 严格帧同步：服务端统一帧号 + Lockstep | ✅ 已完成（2026-07-24） |
+| 阶段三 | 修复断线重连 + 快照由服务端持有 | ❌ 未开始 |
+| 阶段四 | KCP 替换手写可靠UDP层 | ❌ 未开始 |
+| 阶段五 | 客户端网络层重构 (INetworkTransport + MessageBus) | ❌ 未开始 |
+| 阶段六 | 适配与集成（替换旧 Instance 调用等） | ❌ 未开始 |
+
+> 2026-07-24 附：房间逻辑已修复（玩家实体延迟到 StartRoom 创建）、调试UI已增强（帧信息+玩家状态+面板折叠）
 
 ---
 
@@ -65,5 +107,44 @@
 | | LobbyPanel.cs（无需改）| |
 
 > **场景注意事项**：原 GameSync 作为 MonoBehaviour 挂在场景 GameObject 上，现已改为 SubSystemBase（由 GameCore 通过 SystemMgr 创建）。需要在场景中移除旧的 GameSync 组件，并在 GameCore 的 Inspector 中拖入 Player 预制体。
+
+---
+
+## 阶段二：严格帧同步 🔧 进行中
+
+### 目标
+
+将当前"客户端各自分配帧号 + 服务端透传"改为标准 Lockstep：**服务端统一分配帧号，等所有在线玩家提交输入后广播完整帧**。
+
+### 改动点
+
+#### 2.1 服务端 RoomManager
+
+- [x] 新增 `_serverFrameId` 全局帧计数器
+- [x] `PlayerSession.ReceiveMessages` → `InputQueue`（每帧消费一个）
+- [x] `ReceiveGameSync()` 改为入队到 `InputQueue`，不直接广播
+- [x] `BroadcastGameSync()` 改为：检查所有在线玩家是否都已提交 → 是则 `_serverFrameId++`，统一设置 `PlayerSync.FrameId` 和 `GameSyncMessage.FrameId`，广播，各消费一个
+
+#### 2.2 客户端 GameSync
+
+- [x] `_frameId` → `_sendSeq`（本地发送序号）+ `_latestServerFrameId`（服务端权威帧号）
+- [x] `SyncPlayerAction()` 移除本地预写入，只发送到服务器
+- [x] `ReceiveMessage()` 统一处理所有玩家（含本地），按服务端帧号写入
+- [x] `ReceiveSnapshotMessage()` 清空 `_players` 后全量重建
+- [x] `UpdateGame()` 中 GameFrame.FrameId 使用 `_latestServerFrameId`
+
+#### 2.3 GameFrame / PlayerEntity
+
+- [x] PlayerEntity 帧消费逻辑不变（已验证）
+- [x] GameFrame.PushFrames() 保持不变（已验证）
+
+### 文件变更
+
+| 修改 | 说明 |
+|---|---|
+| RoomManager.cs | 服务端帧号统一分配 + 等待所有玩家输入 |
+| GameSync.cs | 客户端适配服务端帧号，不再本地自增 |
+| PlayerEntity.cs | 无改动（帧消费逻辑不变） |
+| GameFrame.cs | 无改动 |
 
 ---

@@ -18,14 +18,14 @@ namespace Network.Server
         public ulong ClientId;                        // 客户端网络 ID
         public string Name;                           // 玩家名称
         public long ActiveTime;                       // 上次活跃时间（毫秒时间戳）
-        public ulong LastFrameId;                     // 最新收到的帧 ID
+        public ulong LastFrameId;                     // 最新收到的客户端发送序号
         public bool Online;                           // 是否在线
         public float SecondsSinceHeartbeat => (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - ActiveTime) / 1000f;
 
-        public Queue<PlayerSync> ReceiveMessages = new();     // 待广播的帧同步消息
-        public Dictionary<ulong, PlayerSync> Frames = new();  // 历史帧缓存（帧序号→帧数据）
+        public Queue<PlayerSync> InputQueue = new();           // 待广播的帧输入队列（每帧消费一个）
+        public Dictionary<ulong, PlayerSync> Frames = new();  // 历史帧缓存（服务端帧号→帧数据）
         public Queue<ulong> CurrentFrameIds = new();           // 当前已发送帧序号队列
-        public ulong PreSnapshotId;                             // 上次快照中的帧 ID
+        public ulong PreSnapshotId;                             // 上次快照中的帧 ID（服务端帧号）
     }
 
     /// <summary>
@@ -45,6 +45,7 @@ namespace Network.Server
         // 游戏状态
         private GameSnapshot _gameSnapshot;
         private bool _isRunning;
+        private ulong _serverFrameId;                     // 服务端全局帧号（统一分配）
 
         // 帧广播定时器
         private System.Timers.Timer _broadcastTimer;
@@ -227,11 +228,10 @@ namespace Network.Server
             if (message.Players.Count > 0)
             {
                 var sync = message.Players[0]; // 每个客户端只发送自己的操作
-                player.ReceiveMessages.Enqueue(sync);
-                player.LastFrameId = sync.FrameId;
+                player.LastFrameId = sync.FrameId; // 记录客户端发送序号（调试用）
 
-                // 缓存到历史帧
-                player.Frames[sync.FrameId] = sync;
+                // 入队等待下一帧广播统一分配服务端帧号
+                player.InputQueue.Enqueue(sync);
             }
         }
 
@@ -308,36 +308,48 @@ namespace Network.Server
                 }
             }
 
-            // 收集所有待广播帧
-            string log = $"{_sendIndex}:";
+            // 严格帧同步：等待所有在线玩家至少有一个输入才广播
+            var onlinePlayers = _players.Values.Where(p => p.Online).ToList();
+            if (onlinePlayers.Count == 0) return;
+
+            bool allReady = onlinePlayers.All(p => p.InputQueue.Count > 0);
+            if (!allReady)
+            {
+                // 未全部就绪，等待下一轮
+                return;
+            }
+
+            _serverFrameId++;
+
+            string log = $"{_sendIndex}(帧{_serverFrameId}):";
             _sendIndex++;
 
             var syncMessage = new ServerMessage();
-            var gameSync = new GameSyncMessage();
+            var gameSync = new GameSyncMessage
+            {
+                FrameId = _serverFrameId // 消息级帧号，客户端用于同步
+            };
             syncMessage.GameSyncMessage = gameSync;
 
-            foreach (var player in _players.Values)
+            foreach (var player in onlinePlayers)
             {
-                while (player.ReceiveMessages.TryDequeue(out var sync))
-                {
-                    log += $" {sync.Name}:{sync.InputMove.X},{sync.InputMove.Y},{sync.InputMove.Z}";
-                    gameSync.Players.Add(sync);
+                var sync = player.InputQueue.Dequeue();
+                sync.FrameId = _serverFrameId; // 服务端统一分配帧号
 
-                    // 缓存已发送帧
-                    player.Frames[sync.FrameId] = sync;
-                    player.CurrentFrameIds.Enqueue(sync.FrameId);
-                }
+                log += $" {sync.Name}:{sync.InputMove.X},{sync.InputMove.Y},{sync.InputMove.Z}";
+                gameSync.Players.Add(sync);
+
+                // 缓存历史帧（服务端帧号为Key，用于断线重连补发）
+                player.Frames[_serverFrameId] = sync;
+                player.CurrentFrameIds.Enqueue(_serverFrameId);
             }
 
-            if (gameSync.Players.Count > 0)
+            // Debug.Log($"[Server][RoomManager] {log}");
+
+            byte[] data = syncMessage.ToByteArray();
+            foreach (var player in onlinePlayers)
             {
-                Debug.Log($"[Server][RoomManager] {log}");
-                byte[] data = syncMessage.ToByteArray();
-                foreach (var player in _players.Values)
-                {
-                    if (player.Online)
-                        OnSendUdp?.Invoke(player.ClientId, data);
-                }
+                OnSendUdp?.Invoke(player.ClientId, data);
             }
         }
 

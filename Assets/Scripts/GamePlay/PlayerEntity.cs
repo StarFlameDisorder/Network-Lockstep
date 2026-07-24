@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using GameMessage;
 using Network;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityMath;
+using Object = UnityEngine.Object;
 
 namespace GamePlay
 {
@@ -13,6 +15,8 @@ namespace GamePlay
     /// </summary>
     public class PlayerEntity
     {
+        PlayerView _view;
+        
         FixedPointVector3 _position;
         SortedDictionary<UInt64, PlayerSync> _pendingFrames = new();
         
@@ -37,6 +41,17 @@ namespace GamePlay
             _position = startPos;
         }
 
+        public void SetView(PlayerView view)
+        {
+            _view = view;
+        }
+
+        public void Destroy()
+        {
+            Object.Destroy(_view);
+            _view = null;
+        }
+
         #region 帧同步
         
         /// <summary>
@@ -57,7 +72,7 @@ namespace GamePlay
             FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X, v.Y, v.Z);
             _position += (_speed * _gameFrameSpace * realV);
             // Debug.Log("[Debug][PlayerEntity]Position: " + _position.ToVector3());
-            Debug.Log($"[Client][PlayerEntity] {_name}执行第{sync.FrameId}帧");
+            // Debug.Log($"[Client][PlayerEntity] {_name}执行第{sync.FrameId}帧");
             return true;
         }
         
@@ -81,6 +96,9 @@ namespace GamePlay
                 _position = FixedPointVector3.FromRawValue(v3.X, v3.Y, v3.Z);
                 _preSnapshotFrameId = _playerSnapshotSync.LastFrameId;
                 _preFrameId = _playerSnapshotSync.LastFrameId;
+                // 清除旧帧缓冲区，以快照帧号为起点重新开始
+                _pendingFrames.Clear();
+                
                 Debug.Log($"[Client][PlayerEntity] {_name}恢复快照时最新执行到{_preFrameId}");
             }
             else

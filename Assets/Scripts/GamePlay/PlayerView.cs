@@ -13,6 +13,7 @@ namespace GamePlay
         {
             _entity = entity;
             transform.position = entity.Position.ToVector3();
+            _entity.SetView(this);
         }
 
         private void Update()

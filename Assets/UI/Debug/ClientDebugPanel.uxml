@@ -1,84 +1,89 @@
 <!--
 客户端调试面板 UXML
-功能：连接服务器、加入房间、发送消息、查看日志
+功能：连接服务器、加入房间、发送消息、查看日志、游戏状态
 命名约定：name 属性须与 ClientDebugPanel.cs 中的 Q<> 查找一致
 -->
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <ui:Style src="project://database/Assets/UI/Debug/DebugPanel.uss" />
-    <!-- 根容器：应用调试面板样式类，focusable 确保面板可获得焦点以响应输入 -->
-    <ui:VisualElement class="debug-panel panel-left" focusable="true" picking-mode="Position">
+    <ui:VisualElement class="debug-panel panel-left" name="panel-root" focusable="true" picking-mode="Position">
 
-        <!-- ═══ 标题 ═══ -->
-        <ui:Label text="客户端" class="panel-title" />
-
-        <!-- ═══ 连接区 ═══ -->
-        <ui:Label text="连接" class="section-title" />
-
-        <!-- IP 输入行 -->
-        <ui:VisualElement class="input-row">
-            <ui:Label text="IP:" />
-            <ui:TextField name="field-ip" value="127.0.0.1" />
+        <!-- ═══ 标题 + 显隐切换 ═══ -->
+        <ui:VisualElement class="panel-header-row">
+            <ui:Label text="客户端" class="panel-title" style="flex-grow:1" />
+            <ui:Button name="btn-toggle-panel" text="▼" class="btn-small" />
         </ui:VisualElement>
 
-        <!-- TCP/UDP 端口输入行 -->
-        <ui:VisualElement class="input-row">
-            <ui:Label text="TCP:" />
-            <ui:TextField name="field-tcpport" value="1975" />
+        <!-- ═══ 可折叠内容区 ═══ -->
+        <ui:VisualElement name="panel-content">
+
+            <!-- ═══ 连接区 ═══ -->
+            <ui:Label text="连接" class="section-title" />
+
+            <ui:VisualElement class="input-row">
+                <ui:Label text="IP:" />
+                <ui:TextField name="field-ip" value="127.0.0.1" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="input-row">
+                <ui:Label text="TCP:" />
+                <ui:TextField name="field-tcpport" value="1975" />
+            </ui:VisualElement>
+            <ui:VisualElement class="input-row">
+                <ui:Label text="UDP:" />
+                <ui:TextField name="field-udpport" value="1975" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="button-row">
+                <ui:Button name="btn-connect" text="连接" class="btn-primary" />
+                <ui:Button name="btn-disconnect" text="断开" class="btn-danger" />
+            </ui:VisualElement>
+
+            <ui:Label name="label-status" text="○ 未连接" class="status-off" />
+            <ui:Label name="label-clientid" text="clientId: -" />
+
+            <!-- ═══ 大厅区 ═══ -->
+            <ui:Label text="大厅" class="section-title" />
+
+            <ui:VisualElement class="input-row">
+                <ui:Label text="玩家:" />
+                <ui:TextField name="field-name" value="Player1" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="button-row">
+                <ui:Button name="btn-join" text="加入" class="btn-normal" />
+                <ui:Button name="btn-leave" text="离开" class="btn-normal" />
+                <ui:Button name="btn-start" text="开始" class="btn-primary" />
+            </ui:VisualElement>
+
+            <ui:Label name="label-room" text="房间: -" />
+            <ui:Label name="label-players" text="玩家: -" />
+
+            <!-- ═══ 游戏状态区 ═══ -->
+            <ui:Label text="游戏状态" class="section-title" />
+
+            <ui:Label name="label-frame-info" text="帧号(服务端/-): 0/0" class="label-mono" />
+            <ui:Label name="label-players-info" text="-- 等待游戏开始 --" class="log-area" style="padding: 4px; min-height: 40px; -unity-text-align: upper-left;" />
+
+            <!-- ═══ 消息发送区 ═══ -->
+            <ui:Label text="发送消息" class="section-title" />
+            <ui:VisualElement class="input-row">
+                <ui:TextField name="field-message" value="" />
+            </ui:VisualElement>
+            <ui:VisualElement class="button-row">
+                <ui:Button name="btn-sendtcp" text="TCP发送" class="btn-normal" />
+                <ui:Button name="btn-sendudp" text="UDP发送" class="btn-normal" />
+            </ui:VisualElement>
+
+            <!-- ═══ 消息日志区 ═══ -->
+            <ui:Label text="消息" class="section-title" />
+            <ui:ScrollView name="area-messages" class="log-area" />
+
+            <ui:Toggle name="toggle-verbose" text="详细日志" value="false" />
+            <ui:ScrollView name="area-verbose" class="log-area" />
+
+            <ui:Button name="btn-clear-log" text="清空日志" class="btn-normal" />
+
         </ui:VisualElement>
-        <ui:VisualElement class="input-row">
-            <ui:Label text="UDP:" />
-            <ui:TextField name="field-udpport" value="1975" />
-        </ui:VisualElement>
-
-        <!-- 连接/断开按钮行 -->
-        <ui:VisualElement class="button-row">
-            <ui:Button name="btn-connect" text="连接" class="btn-primary" />
-            <ui:Button name="btn-disconnect" text="断开" class="btn-danger" />
-        </ui:VisualElement>
-
-        <!-- 状态显示 -->
-        <ui:Label name="label-status" text="○ 未连接" class="status-off" />
-        <ui:Label name="label-clientid" text="clientId: -" />
-
-        <!-- ═══ 大厅区 ═══ -->
-        <ui:Label text="大厅" class="section-title" />
-
-        <!-- 玩家名输入 -->
-        <ui:VisualElement class="input-row">
-            <ui:Label text="玩家:" />
-            <ui:TextField name="field-name" value="Player1" />
-        </ui:VisualElement>
-
-        <!-- 房间操作按钮 -->
-        <ui:VisualElement class="button-row">
-            <ui:Button name="btn-join" text="加入" class="btn-normal" />
-            <ui:Button name="btn-leave" text="离开" class="btn-normal" />
-            <ui:Button name="btn-start" text="开始" class="btn-primary" />
-        </ui:VisualElement>
-
-        <!-- 房间状态 -->
-        <ui:Label name="label-room" text="房间: -" />
-        <ui:Label name="label-players" text="玩家: -" />
-
-        <!-- ═══ 消息发送区 ═══ -->
-        <ui:Label text="发送消息" class="section-title" />
-        <ui:VisualElement class="input-row">
-            <ui:TextField name="field-message" value="" />
-        </ui:VisualElement>
-        <ui:VisualElement class="button-row">
-            <ui:Button name="btn-sendtcp" text="TCP发送" class="btn-normal" />
-            <ui:Button name="btn-sendudp" text="UDP发送" class="btn-normal" />
-        </ui:VisualElement>
-
-        <!-- ═══ 消息日志区 ═══ -->
-        <ui:Label text="消息" class="section-title" />
-        <ui:ScrollView name="area-messages" class="log-area" />
-
-        <!-- 详细日志开关 + 区域 -->
-        <ui:Toggle name="toggle-verbose" text="详细日志" value="false" />
-        <ui:ScrollView name="area-verbose" class="log-area" />
-
-        <ui:Button name="btn-clear-log" text="清空日志" class="btn-normal" />
 
     </ui:VisualElement>
 </ui:UXML>

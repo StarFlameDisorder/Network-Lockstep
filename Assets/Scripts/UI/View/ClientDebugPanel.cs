@@ -1,4 +1,4 @@
-using System;
+using System.Text;
 using Framework;
 using GamePlay;
 using Google.Protobuf;
@@ -12,24 +12,16 @@ using UnityEngine.UIElements;
 namespace UI.View
 {
     /// <summary>
-    /// 客户端调试面板：连接服务器、加入房间、发送消息、查看日志
-    /// 
-    /// 使用方式：
-    /// 1. 将此脚本挂载到一个有 UIDocument 组件的 GameObject 上
-    /// 2. UIDocument 的 Source Asset 指向 ClientDebugPanel.uxml
-    /// 3. 通过 UXML 元素的 name 属性绑定控件
-    /// 
-    /// UXML 元素命名约定（在 .uxml 中设置 name 属性）：
-    ///   btn-connect, btn-disconnect, btn-join, btn-leave, btn-start
-    ///   field-ip, field-tcpport, field-udpport, field-name, field-message
-    ///   label-status, label-room, label-players, label-clientid
-    ///   area-messages, area-verbose
-    ///   btn-sendtcp, btn-sendudp, btn-clear-log
-    ///   toggle-verbose
+    /// 客户端调试面板：连接服务器、加入房间、发送消息、查看日志、游戏状态
     /// </summary>
     public class ClientDebugPanel : MonoBehaviour
     {
-        #region UIDocument 引用（在运行时从 UXML 中查找）
+        #region UIDocument 引用（运行时从 UXML 查找）
+
+        // ─── 面板控制 ───
+        private Button _btnTogglePanel;
+        private VisualElement _panelContent;
+        private bool _panelVisible = true;
 
         // ─── 连接区 ───
         private TextField _fieldIp;
@@ -48,38 +40,42 @@ namespace UI.View
         private Label _labelRoom;
         private Label _labelPlayers;
 
+        // ─── 游戏状态区 ───
+        private Label _labelFrameInfo;
+        private Label _labelPlayersInfo;
+
         // ─── 消息发送区 ───
         private TextField _fieldMessage;
         private Button _btnSendTcp;
         private Button _btnSendUdp;
 
         // ─── 日志区 ───
-        private ScrollView _areaMessages;     // 普通消息列表
-        private ScrollView _areaVerbose;      // 详细日志列表
+        private ScrollView _areaMessages;
+        private ScrollView _areaVerbose;
         private Button _btnClearLog;
-        private Toggle _toggleVerbose;        // 是否显示详细日志
+        private Toggle _toggleVerbose;
 
         #endregion
 
-        /// <summary>UI 刷新间隔（秒）</summary>
-        private const float REFRESH_INTERVAL = 0.5f;
+        private const float REFRESH_INTERVAL = 0.3f;
         private float _refreshTimer;
 
         private void OnEnable()
         {
-            // 获取 UIDocument 组件并绑定 UI 元素
             var uiDoc = GetComponent<UIDocument>();
             if (uiDoc == null)
             {
-                UnityEngine.Debug.LogError("[ClientDebugPanel] 未找到 UIDocument 组件！");
+                Debug.LogError("[ClientDebugPanel] 未找到 UIDocument 组件！");
                 return;
             }
 
             var root = uiDoc.rootVisualElement;
 
-            // ─── 按名称查找控件（名称须与 UXML 中的 name 属性一致）───
+            // ─── 面板控制 ───
+            _btnTogglePanel = root.Q<Button>("btn-toggle-panel");
+            _panelContent = root.Q<VisualElement>("panel-content");
 
-            // 连接区
+            // ─── 连接区 ───
             _fieldIp = root.Q<TextField>("field-ip");
             _fieldTcpPort = root.Q<TextField>("field-tcpport");
             _fieldUdpPort = root.Q<TextField>("field-udpport");
@@ -88,7 +84,7 @@ namespace UI.View
             _labelStatus = root.Q<Label>("label-status");
             _labelClientId = root.Q<Label>("label-clientid");
 
-            // 大厅区
+            // ─── 大厅区 ───
             _fieldName = root.Q<TextField>("field-name");
             _btnJoinRoom = root.Q<Button>("btn-join");
             _btnLeaveRoom = root.Q<Button>("btn-leave");
@@ -96,19 +92,24 @@ namespace UI.View
             _labelRoom = root.Q<Label>("label-room");
             _labelPlayers = root.Q<Label>("label-players");
 
-            // 消息区
+            // ─── 游戏状态区 ───
+            _labelFrameInfo = root.Q<Label>("label-frame-info");
+            _labelPlayersInfo = root.Q<Label>("label-players-info");
+
+            // ─── 消息区 ───
             _fieldMessage = root.Q<TextField>("field-message");
             _btnSendTcp = root.Q<Button>("btn-sendtcp");
             _btnSendUdp = root.Q<Button>("btn-sendudp");
 
-            // 日志区
+            // ─── 日志区 ───
             _areaMessages = root.Q<ScrollView>("area-messages");
             _areaVerbose = root.Q<ScrollView>("area-verbose");
             _btnClearLog = root.Q<Button>("btn-clear-log");
             _toggleVerbose = root.Q<Toggle>("toggle-verbose");
             _toggleVerbose.value = Core.GameConstants.VERBOSE_INFO;
 
-            // ─── 绑定按钮事件 ───
+            // ─── 事件绑定 ───
+            if (_btnTogglePanel != null) _btnTogglePanel.clicked += TogglePanel;
             if (_btnConnect != null) _btnConnect.clicked += OnConnect;
             if (_btnDisconnect != null) _btnDisconnect.clicked += OnDisconnect;
             if (_btnJoinRoom != null) _btnJoinRoom.clicked += OnJoinRoom;
@@ -118,32 +119,27 @@ namespace UI.View
             if (_btnSendUdp != null) _btnSendUdp.clicked += OnSendUdp;
             if (_btnClearLog != null) _btnClearLog.clicked += () => DebugLogger.ClearAll();
 
-            // 默认值
+            // ─── 默认值 ───
             if (_fieldIp != null) _fieldIp.value = "127.0.0.1";
             if (_fieldTcpPort != null) _fieldTcpPort.value = "1975";
             if (_fieldUdpPort != null) _fieldUdpPort.value = "1975";
 
-            // 详细日志默认隐藏
             if (_areaVerbose != null) _areaVerbose.style.display = DisplayStyle.None;
-
-            // 订阅 NetworkManager 状态事件（用于自动记录日志）
-            // 注意：NetworkManager 还是旧单体，暂不做侵入修改，面板自己查询状态
         }
-    
+
         private GameClient _gameClient;
-        GameSync _gameSync;
-        
+        private GameSync _gameSync;
+
         private void Start()
         {
             if (!Global.TryGet(out _gameClient))
             {
-                Debug.LogError("[Client][TcpSocket]获取GameClient子系统错误");
+                Debug.LogError("[Client][ClientDebugPanel] 获取GameClient子系统错误");
                 return;
             }
-            
             if (!Global.TryGet(out _gameSync))
             {
-                Debug.LogError("[Client][PlayerController]获取GameSync子系统错误");
+                Debug.LogError("[Client][ClientDebugPanel] 获取GameSync子系统错误");
                 return;
             }
         }
@@ -156,8 +152,22 @@ namespace UI.View
 
             RefreshStatus();
             RefreshRoomInfo();
+            RefreshGameInfo();
             RefreshLogs();
         }
+
+        #region 面板显隐
+
+        private void TogglePanel()
+        {
+            _panelVisible = !_panelVisible;
+            if (_panelContent != null)
+                _panelContent.style.display = _panelVisible ? DisplayStyle.Flex : DisplayStyle.None;
+            if (_btnTogglePanel != null)
+                _btnTogglePanel.text = _panelVisible ? "▼" : "▶";
+        }
+
+        #endregion
 
         #region 状态刷新
 
@@ -167,8 +177,8 @@ namespace UI.View
 
             if (_gameClient == null)
                 Global.TryGet(out _gameClient);
-            var nm = _gameClient;
-            bool tcpOk = nm != null && nm.TcpIsConnected();
+
+            bool tcpOk = _gameClient != null && _gameClient.TcpIsConnected();
 
             if (tcpOk)
             {
@@ -181,32 +191,68 @@ namespace UI.View
                 _labelStatus.style.color = Color.gray;
             }
 
-            if (_labelClientId != null && nm != null)
+            if (_labelClientId != null && _gameClient != null)
             {
-                _labelClientId.text = $"clientId: {nm.GetClientId()}";
+                _labelClientId.text = $"clientId: {_gameClient.GetClientId()}";
             }
         }
 
         private void RefreshRoomInfo()
         {
-            
             if (_labelRoom != null)
                 _labelRoom.text = $"状态: {_gameSync.GetStatus()}";
 
-            // 玩家列表从 GameSync 获取（它维护了 _players 字典，但是 private）
-            // 暂通过 StatusPanel 间接读取，后续解耦后直接查 GameSync
+            // 大厅阶段显示待加入的玩家名
+            if (_labelPlayers != null)
+            {
+                var players = _gameSync.Players;
+                if (players.Count > 0)
+                {
+                    _labelPlayers.text = $"玩家({players.Count}): {string.Join(", ", players.Keys)}";
+                }
+                else
+                {
+                    _labelPlayers.text = "玩家: -";
+                }
+            }
         }
 
-        /// <summary>
-        /// 消费 DebugLogger 中的客户端日志，渲染到 UI
-        /// 消息始终显示，详细日志由 toggle 控制
-        /// </summary>
+        private void RefreshGameInfo()
+        {
+            if (_labelFrameInfo == null || _labelPlayersInfo == null) return;
+
+            // 帧号信息
+            _labelFrameInfo.text = $"帧号(服/发): {_gameSync.LatestServerFrameId}/{_gameSync.SendSeq}";
+
+            // 玩家详细信息
+            var players = _gameSync.Players;
+            if (players.Count == 0)
+            {
+                var status = _gameSync.GetStatus();
+                _labelPlayersInfo.text = status == GameStatus.Started
+                    ? "-- 无玩家数据 --"
+                    : "-- 等待游戏开始 --";
+                return;
+            }
+
+            var sb = new StringBuilder();
+            foreach (var kv in players)
+            {
+                var entity = kv.Value;
+                var pos = entity.Position;
+                int bufferCount = entity.FrameCount;
+                ulong lastFrame = entity.LastExecutedFrameId;
+
+                sb.AppendLine($"{kv.Key}: 帧{lastFrame} 缓冲{bufferCount} ({pos.ToVector3():F1})");
+            }
+            _labelPlayersInfo.text = sb.ToString().TrimEnd();
+        }
+
         private void RefreshLogs()
         {
             var entries = DebugLogger.ConsumeClientLogs();
             if (entries.Count == 0) return;
 
-            // 控制详细日志区域显隐
             if (_areaVerbose != null && _toggleVerbose != null)
             {
                 _areaVerbose.style.display = _toggleVerbose.value ? DisplayStyle.Flex : DisplayStyle.None;
@@ -216,7 +262,6 @@ namespace UI.View
             {
                 if (entry.IsVerbose)
                 {
-                    // 详细日志 → 添加到 area-verbose
                     if (_toggleVerbose != null && _toggleVerbose.value && _areaVerbose != null)
                     {
                         AppendLogLine(_areaVerbose, entry);
@@ -224,7 +269,6 @@ namespace UI.View
                 }
                 else
                 {
-                    // 普通消息 → 添加到 area-messages
                     if (_areaMessages != null)
                     {
                         AppendLogLine(_areaMessages, entry);
@@ -233,7 +277,6 @@ namespace UI.View
             }
         }
 
-        /// <summary>向 ScrollView 追加一行日志</summary>
         private void AppendLogLine(ScrollView area, DebugLogger.LogEntry entry)
         {
             var line = new Label
@@ -243,13 +286,11 @@ namespace UI.View
             };
             area.Add(line);
 
-            // 限制最大行数，避免 UI 元素过多
             while (area.childCount > 50)
             {
                 area.RemoveAt(0);
             }
 
-            // 自动滚动到底部
             area.schedule.Execute(() => area.ScrollTo(line));
         }
 
@@ -284,7 +325,6 @@ namespace UI.View
                 return;
             }
 
-            // 发送加入房间请求（复用现有协议）
             var msg = new ClientMessage
             {
                 ClientId = nm.GetClientId(),
@@ -295,7 +335,6 @@ namespace UI.View
             };
             nm.TcpSendMessage(msg.ToByteArray());
 
-            // 通知 GameSync 设置本地玩家名
             if (GameSync.Instance != null)
                 GameSync.Instance.SetName(name);
 

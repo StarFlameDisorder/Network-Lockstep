@@ -23,6 +23,7 @@ namespace Network.Server
         public float SecondsSinceHeartbeat => (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - ActiveTime) / 1000f;
 
         public Queue<PlayerSync> InputQueue = new();           // 待广播的帧输入队列（每帧消费一个）
+        public int InputQueueCount => InputQueue.Count;
         public Dictionary<ulong, PlayerSync> Frames = new();  // 历史帧缓存（服务端帧号→帧数据）
         public Queue<ulong> CurrentFrameIds = new();           // 当前已发送帧序号队列
         public ulong PreSnapshotId;                             // 上次快照中的帧 ID（服务端帧号）
@@ -59,6 +60,8 @@ namespace Network.Server
 
         /// <summary>房间是否运行中</summary>
         public bool IsRunning => _isRunning;
+        /// <summary>服务端全局帧号</summary>
+        public ulong ServerFrameId => _serverFrameId;
         /// <summary>当前玩家列表快照（只读副本）</summary>
         public IReadOnlyList<PlayerSession> Players => _players.Values.ToList().AsReadOnly();
         /// <summary>游戏帧率</summary>

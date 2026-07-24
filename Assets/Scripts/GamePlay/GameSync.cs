@@ -49,6 +49,29 @@ namespace GamePlay
         public ulong SendSeq => _sendSeq;
         /// <summary>玩家列表（只读）</summary>
         public IReadOnlyDictionary<string, PlayerEntity> Players => _players;
+        /// <summary>大厅阶段待加入的玩家名（游戏开始前显示用）</summary>
+        public IReadOnlyCollection<string> PendingPlayerNames => _pendingPlayerNames;
+        /// <summary>房主名</summary>
+        public string OwnerName => _ownerName;
+        /// <summary>世界哈希值（所有玩家位置XOR，用于一致性校验。静止时不变）</summary>
+        public string WorldHash => ComputeWorldHash();
+
+        /// <summary>
+        /// 计算世界哈希：对所有玩家的位置原始值做XOR
+        /// </summary>
+        private string ComputeWorldHash()
+        {
+            if (_players.Count == 0) return "00000000";
+            int hash = 0;
+            foreach (var kv in _players)
+            {
+                var pos = kv.Value.Position;
+                hash ^= pos.GetRawX();
+                hash ^= pos.GetRawY();
+                hash ^= pos.GetRawZ();
+            }
+            return hash.ToString("X8");
+        }
 
         #endregion
         

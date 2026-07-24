@@ -12,13 +12,14 @@ using UnityEngine.UIElements;
 namespace UI.View
 {
     /// <summary>
-    /// 客户端调试面板：连接服务器、加入房间、发送消息、查看日志、游戏状态
+    /// 客户端调试面板：连接服务器、加入房间、查看游戏状态、发送消息、查看日志
     /// </summary>
     public class ClientDebugPanel : MonoBehaviour
     {
-        #region UIDocument 引用（运行时从 UXML 查找）
+        #region UIDocument 引用
 
         // ─── 面板控制 ───
+        private VisualElement _panelRoot;
         private Button _btnTogglePanel;
         private VisualElement _panelContent;
         private bool _panelVisible = true;
@@ -31,6 +32,7 @@ namespace UI.View
         private Button _btnDisconnect;
         private Label _labelStatus;
         private Label _labelClientId;
+        private Label _labelUdpStatus;
 
         // ─── 大厅区 ───
         private TextField _fieldName;
@@ -42,6 +44,7 @@ namespace UI.View
 
         // ─── 游戏状态区 ───
         private Label _labelFrameInfo;
+        private Label _labelWorldHash;
         private Label _labelPlayersInfo;
 
         // ─── 消息发送区 ───
@@ -65,13 +68,14 @@ namespace UI.View
             var uiDoc = GetComponent<UIDocument>();
             if (uiDoc == null)
             {
-                Debug.LogError("[ClientDebugPanel] 未找到 UIDocument 组件！");
+                Debug.LogError("[Client][ClientDebugPanel] 未找到 UIDocument 组件！");
                 return;
             }
 
             var root = uiDoc.rootVisualElement;
 
             // ─── 面板控制 ───
+            _panelRoot = root.Q<VisualElement>("panel-root");
             _btnTogglePanel = root.Q<Button>("btn-toggle-panel");
             _panelContent = root.Q<VisualElement>("panel-content");
 
@@ -83,6 +87,7 @@ namespace UI.View
             _btnDisconnect = root.Q<Button>("btn-disconnect");
             _labelStatus = root.Q<Label>("label-status");
             _labelClientId = root.Q<Label>("label-clientid");
+            _labelUdpStatus = root.Q<Label>("label-udp-status");
 
             // ─── 大厅区 ───
             _fieldName = root.Q<TextField>("field-name");
@@ -94,6 +99,7 @@ namespace UI.View
 
             // ─── 游戏状态区 ───
             _labelFrameInfo = root.Q<Label>("label-frame-info");
+            _labelWorldHash = root.Q<Label>("label-world-hash");
             _labelPlayersInfo = root.Q<Label>("label-players-info");
 
             // ─── 消息区 ───
@@ -125,6 +131,9 @@ namespace UI.View
             if (_fieldUdpPort != null) _fieldUdpPort.value = "1975";
 
             if (_areaVerbose != null) _areaVerbose.style.display = DisplayStyle.None;
+            // 详细日志相关默认折叠
+            if (_toggleVerbose != null) _toggleVerbose.style.display = DisplayStyle.None;
+            if (_btnClearLog != null) _btnClearLog.style.display = DisplayStyle.None;
         }
 
         private GameClient _gameClient;
@@ -165,6 +174,22 @@ namespace UI.View
                 _panelContent.style.display = _panelVisible ? DisplayStyle.Flex : DisplayStyle.None;
             if (_btnTogglePanel != null)
                 _btnTogglePanel.text = _panelVisible ? "▼" : "▶";
+
+            // 折叠时缩小面板尺寸为仅标题栏
+            if (_panelRoot != null)
+            {
+                if (_panelVisible)
+                {
+                    _panelRoot.style.bottom = 0;
+                    _panelRoot.style.height = StyleKeyword.Auto;
+                }
+                else
+                {
+                    _panelRoot.style.bottom = StyleKeyword.Auto;
+                    _panelRoot.style.height = 32;
+                    _panelRoot.style.overflow = Overflow.Hidden;
+                }
+            }
         }
 
         #endregion
@@ -179,16 +204,18 @@ namespace UI.View
                 Global.TryGet(out _gameClient);
 
             bool tcpOk = _gameClient != null && _gameClient.TcpIsConnected();
+            bool udpOk = _gameClient != null && _gameClient.UdpIsConnected();
 
-            if (tcpOk)
+            if (_labelStatus != null)
             {
-                _labelStatus.text = "● 已连接";
-                _labelStatus.style.color = Color.green;
+                _labelStatus.text = tcpOk ? "●" : "○";
+                _labelStatus.style.color = tcpOk ? Color.green : Color.gray;
             }
-            else
+
+            if (_labelUdpStatus != null)
             {
-                _labelStatus.text = "○ 未连接";
-                _labelStatus.style.color = Color.gray;
+                _labelUdpStatus.text = udpOk ? "●" : "○";
+                _labelUdpStatus.style.color = udpOk ? Color.green : Color.gray;
             }
 
             if (_labelClientId != null && _gameClient != null)
@@ -200,9 +227,8 @@ namespace UI.View
         private void RefreshRoomInfo()
         {
             if (_labelRoom != null)
-                _labelRoom.text = $"状态: {_gameSync.GetStatus()}";
+                _labelRoom.text = $"状态: {_gameSync.GetStatus()}  房主: {_gameSync.OwnerName}";
 
-            // 大厅阶段显示待加入的玩家名
             if (_labelPlayers != null)
             {
                 var players = _gameSync.Players;
@@ -212,7 +238,11 @@ namespace UI.View
                 }
                 else
                 {
-                    _labelPlayers.text = "玩家: -";
+                    var pending = _gameSync.PendingPlayerNames;
+                    if (pending.Count > 0)
+                        _labelPlayers.text = $"待加入({pending.Count}): {string.Join(", ", pending)}";
+                    else
+                        _labelPlayers.text = "玩家: -";
                 }
             }
         }
@@ -221,8 +251,10 @@ namespace UI.View
         {
             if (_labelFrameInfo == null || _labelPlayersInfo == null) return;
 
-            // 帧号信息
-            _labelFrameInfo.text = $"帧号(服/发): {_gameSync.LatestServerFrameId}/{_gameSync.SendSeq}";
+            // 帧号 + 哈希（同一行）
+            _labelFrameInfo.text = $"帧(服/发): {_gameSync.LatestServerFrameId}/{_gameSync.SendSeq}";
+            if (_labelWorldHash != null)
+                _labelWorldHash.text = $"哈希: {_gameSync.WorldHash}";
 
             // 玩家详细信息
             var players = _gameSync.Players;
@@ -243,7 +275,15 @@ namespace UI.View
                 int bufferCount = entity.FrameCount;
                 ulong lastFrame = entity.LastExecutedFrameId;
 
-                sb.AppendLine($"{kv.Key}: 帧{lastFrame} 缓冲{bufferCount} ({pos.ToVector3():F1})");
+                // 缓冲区着色标识：绿色正常，黄色追帧中，红色空（卡住）
+                string bufColor = bufferCount switch
+                {
+                    <= 2 => "■",      // 正常
+                    <= 5 => "▲",      // 追帧中
+                    _ => "!"          // 积压严重
+                };
+
+                sb.AppendLine($"{kv.Key}: 帧{lastFrame} {bufColor}缓冲{bufferCount} ({pos.ToVector3():F1})");
             }
             _labelPlayersInfo.text = sb.ToString().TrimEnd();
         }
@@ -263,16 +303,12 @@ namespace UI.View
                 if (entry.IsVerbose)
                 {
                     if (_toggleVerbose != null && _toggleVerbose.value && _areaVerbose != null)
-                    {
                         AppendLogLine(_areaVerbose, entry);
-                    }
                 }
                 else
                 {
                     if (_areaMessages != null)
-                    {
                         AppendLogLine(_areaMessages, entry);
-                    }
                 }
             }
         }
@@ -287,9 +323,7 @@ namespace UI.View
             area.Add(line);
 
             while (area.childCount > 50)
-            {
                 area.RemoveAt(0);
-            }
 
             area.schedule.Execute(() => area.ScrollTo(line));
         }

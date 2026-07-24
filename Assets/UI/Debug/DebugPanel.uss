@@ -9,7 +9,7 @@
     top: 0;
     bottom: 0;
     width: 46%;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .panel-left {
@@ -172,6 +172,25 @@ Toggle {
     font-size: 18px;
     color: rgb(140, 220, 140);
     -unity-font-style: bold;
+}
+
+.split-row {
+    flex-direction: row;
+    margin-top: 2px;
+}
+
+.split-left {
+    flex-grow: 1;
+    margin-right: 3px;
+    min-height: 60px;
+    max-height: 100px;
+}
+
+.split-right {
+    flex-grow: 1;
+    margin-left: 3px;
+    min-height: 60px;
+    max-height: 100px;
 }
 
 .input-row {

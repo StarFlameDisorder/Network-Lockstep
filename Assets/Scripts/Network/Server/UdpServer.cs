@@ -39,7 +39,7 @@ namespace Network.Server
         private readonly Dictionary<IPEndPoint, long> _invokeIndex = new();                  // 下一个应投递的序号
         private readonly object _lock = new();
 
-        private System.Timers.Timer _resendTimer;
+        private Timer _resendTimer;
         private readonly float _resendIntervalMs;
         private const int MAX_RETRIES = 3;
         private const int BASE_DELAY_MS = 1000;

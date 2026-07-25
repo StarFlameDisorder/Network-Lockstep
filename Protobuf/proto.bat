@@ -1,0 +1,2 @@
+protoc -I=../Assets/Protobuf/proto --cpp_out=../Server/protobuf/output ../Assets/Protobuf/proto/*.proto
+protoc -I=../Assets/Protobuf/proto --csharp_out=../Assets/Protobuf/output ../Assets/Protobuf/proto/*.proto

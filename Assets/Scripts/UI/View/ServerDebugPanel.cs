@@ -196,11 +196,13 @@ namespace UI.View
 
             foreach (var c in clients)
             {
-                string tcpMark = c.HasTcp ? "TCP✔" : "TCP✘";
-                string udpMark = c.HasUdp ? "UDP✔" : "UDP✘";
+                string tcpInfo = c.TcpEndpoint;
+                string udpInfo = c.UdpEndpoint;
+                string tcpMark = tcpInfo=="-" ? "TCP✘" : "TCP✔";
+                string udpMark = udpInfo=="-" ? "UDP✘" : "UDP✔";
                 _areaClients.Add(new Label
                 {
-                    text = $"#{c.ClientId}  {tcpMark}  {udpMark}",
+                    text = $"#{c.ClientId}  {tcpMark}({tcpInfo})  {udpMark}({udpInfo})",
                     style = { fontSize = 11, whiteSpace = WhiteSpace.Normal }
                 });
             }

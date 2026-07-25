@@ -117,6 +117,7 @@ namespace Network.Server
 
         #region 消息处理
 
+        #region TCP
         private void HandleTcpConnected(TcpClient tcp)
         {
             ulong clientId;
@@ -147,6 +148,21 @@ namespace Network.Server
             _tcpServer.Send(tcp, message.ToByteArray());
             Debug.Log($"[Server][Dispatcher] 分配 clientId={clientId} -> {_tcpServer.GetClientInfo(tcp)}");
         }
+        
+        private void HandleTcpDisconnected(TcpClient tcp)
+        {
+            lock (_lock)
+            {
+                if (_tcpToClientId.TryGetValue(tcp, out ulong clientId))
+                {
+                    _tcpToClientId.Remove(tcp);
+                    if (_clientsById.TryGetValue(clientId, out var c))
+                        c.TcpSocket = null;
+                    Debug.Log($"[Server][Dispatcher] TCP 断开 clientId={clientId}");
+                    OnClientDisconnectRequest?.Invoke(clientId);
+                }
+            }
+        }
 
         private void HandleTcpMessage(TcpClient tcp, byte[] data)
         {
@@ -175,7 +191,11 @@ namespace Network.Server
                 Debug.LogError($"[Server][Dispatcher] TCP 解析消息失败：{ex.Message}");
             }
         }
+        
+        #endregion
 
+        #region UDP
+        
         private void HandleUdpMessage(IPEndPoint ep, byte[] data)
         {
             try
@@ -209,19 +229,8 @@ namespace Network.Server
                 Debug.LogError($"[Server][Dispatcher] UDP 解析消息失败：{ex.Message}");
             }
         }
-
-        private void HandleTcpDisconnected(TcpClient tcp)
-        {
-            lock (_lock)
-            {
-                if (_tcpToClientId.TryGetValue(tcp, out ulong clientId))
-                {
-                    _tcpToClientId.Remove(tcp);
-                    Debug.Log($"[Server][Dispatcher] TCP 断开 clientId={clientId}");
-                    OnClientDisconnectRequest?.Invoke(clientId);
-                }
-            }
-        }
+        
+        #endregion
 
         #endregion
 

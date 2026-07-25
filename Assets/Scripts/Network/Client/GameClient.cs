@@ -49,6 +49,8 @@ namespace Network.Client
         
         public void StartLink(string ip, int port)
         {
+            _ip = ip;
+            _port = port;
             _tcpSocket.StartLink(ip, port);
             _udpSocket.StartLink(ip, port);
         }

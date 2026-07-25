@@ -1429,6 +1429,9 @@ namespace GameMessage {
     /// <summary>Field number for the "frameId" field.</summary>
     public const int FrameIdFieldNumber = 2;
     private ulong frameId_;
+    /// <summary>
+    ///第几帧的快照
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public ulong FrameId {
@@ -1441,6 +1444,9 @@ namespace GameMessage {
     /// <summary>Field number for the "lastFrameId" field.</summary>
     public const int LastFrameIdFieldNumber = 5;
     private ulong lastFrameId_;
+    /// <summary>
+    ///最新的帧序号
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public ulong LastFrameId {

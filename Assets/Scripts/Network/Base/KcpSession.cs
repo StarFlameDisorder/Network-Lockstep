@@ -13,6 +13,7 @@ namespace Network.Base
 {
     /// <summary>
     /// 单个客户端信息和KCP
+    /// 库为KumoKyaku/kcp
     /// </summary>
     public class KcpSession:IKcpCallback,IDisposable
     {

@@ -42,7 +42,7 @@ namespace DevelopDebug
         {
             string s= Encoding.UTF8.GetString(data);
             Debug.Log($"[Client]conv:{conv} data:{s}");
-            _kcpClient1.Send(Encoding.UTF8.GetBytes(s+"c2"));
+            _kcpClient2.Send(Encoding.UTF8.GetBytes(s+"c2"));
         }
 
         void ServerReceiveMessage(uint conv, byte[] data)

@@ -1,4 +1,5 @@
 using Framework;
+using Framework.TimerSystem;
 using GamePlay;
 using Network.Client;
 using Network.Server;
@@ -15,6 +16,7 @@ namespace Core
         #region 组件
         public SystemManager SystemMgr { get; private set; }
         public DataProxyManager DataProxyMgr { get; private set; }
+        public TimerManager TimerMgr { get; private set; }
         public GameServer GameServer { get; private set; }
         public GameClient GameClient { get; private set; }
         public GameSync GameSync { get; private set; }
@@ -49,6 +51,7 @@ namespace Core
             
             // 框架模块
             DataProxyMgr = SystemMgr.RegisterSystem<DataProxyManager>();
+            TimerMgr = SystemMgr.RegisterSystem<TimerManager>();
             
             // 服务端子系统中立（独立线程运行网络监听）
             GameServer = SystemMgr.RegisterSystem<GameServer>();

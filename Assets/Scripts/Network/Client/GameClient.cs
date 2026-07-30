@@ -12,7 +12,7 @@ namespace Network.Client
         
         // public static GameClient Instance;
         private TcpSocket _tcpSocket=new TcpSocket();
-        private UdpSocket _udpSocket=new UdpSocket();
+        private KcpClient _kcpClient=new KcpClient();
         private int _index = 0;
         private uint _clientId = 0;
         private string _ip;
@@ -42,7 +42,7 @@ namespace Network.Client
         public override void Destroy()
         {
             _tcpSocket.Dispose();
-            _udpSocket.Dispose();
+            _kcpClient.Dispose();
         }
 
         #endregion
@@ -52,13 +52,13 @@ namespace Network.Client
             _ip = ip;
             _port = port;
             _tcpSocket.StartLink(ip, port);
-            _udpSocket.StartLink(ip, port);
+            // KCP 需要 clientId（conv），在 SetClientId 中延迟启动
         }
 
         public void StopLink()
         {
             if(TcpIsConnected())_tcpSocket.CloseLink();
-            if(UdpIsConnected())_udpSocket.CloseLink();
+            if(KcpIsConnected())_kcpClient.StopLink();
         }
         
         public bool TcpIsConnected()
@@ -73,14 +73,14 @@ namespace Network.Client
             //else Debug.Log("TcpSendMessage:未建立连接");
         }
         
-        public bool UdpIsConnected()
+        public bool KcpIsConnected()
         {
-            return _udpSocket != null && _udpSocket.IsConnected();
+            return _kcpClient != null && _kcpClient.IsConnected;
         }
 
-        public void UdpSendMessage(byte[] data)
+        public void KcpSendMessage(byte[] data)
         {
-            if(UdpIsConnected())_udpSocket.Send(data);
+            if(KcpIsConnected())_kcpClient.Send(data);
         }
 
         public void HandleMessage(byte[] data)
@@ -95,7 +95,10 @@ namespace Network.Client
             //     StatusPanel.Instance.UpdateClientIdStatus(clientId);
             _clientId = clientId;
             _tcpSocket.BindClientId(clientId);
-            _udpSocket.BindClientId(clientId);
+            
+            // KCP 延迟启动：拿到 clientId 作为 conv 后才建立 KCP 连接
+            _kcpClient.OnMessageReceived += (conv, data) => HandleMessage(data);
+            _kcpClient.StartLink(_ip, _port, clientId);
         }
 
         public uint GetClientId()

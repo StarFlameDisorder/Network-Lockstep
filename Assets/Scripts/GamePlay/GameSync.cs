@@ -258,9 +258,7 @@ namespace GamePlay
                 ClientId = clientId,
                 GameSyncMessage = gameSyncMessage
             };
-            _gameClient.UdpSendMessage(message.ToByteArray());
-            
-            // 房主定时发送快照（使用服务端帧号判断时机）
+            _gameClient.KcpSendMessage(message.ToByteArray());
             if (_name == _ownerName && _latestServerFrameId % (UInt64)(_gameFrameRate * _snapshotSpacing) == 0
                 && _latestServerFrameId > 0)
             {
@@ -288,7 +286,7 @@ namespace GamePlay
                     Snapshot = snapshot
                 }
             };
-            _gameClient.UdpSendMessage(snapMessage.ToByteArray());
+            _gameClient.KcpSendMessage(snapMessage.ToByteArray());
         }
         
         void HeartBeat()
@@ -302,7 +300,7 @@ namespace GamePlay
                     Name = _name
                 }
             };
-            _gameClient.UdpSendMessage(message.ToByteArray());
+            _gameClient.KcpSendMessage(message.ToByteArray());
         }
         
         #endregion

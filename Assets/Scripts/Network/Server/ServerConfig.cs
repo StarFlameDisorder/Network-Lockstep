@@ -10,7 +10,7 @@ namespace Network.Server
     {
         [Header("网络端口")]
         public int TcpPort = 1975;
-        public int UdpPort = 1975;
+        public int KcpPort = 1975;
 
         [Header("帧同步")]
         public int GameFrameRate = 30;
@@ -19,8 +19,8 @@ namespace Network.Server
         [Header("心跳")]
         public float HeartbeatTimeoutSec = 4f;
 
-        [Header("UDP")]
-        public float KeepAliveInterval = 0.5f;  // UDP 重传定时器间隔
-        public int MaxPacketBuffer = 600;       // 最大接收缓冲包数
+        [Header("KCP")] // 原 UDP 已替换为 KCP，以下字段暂保留兼容
+        public float KeepAliveInterval = 0.5f;
+        public int MaxPacketBuffer = 600;
     }
 }

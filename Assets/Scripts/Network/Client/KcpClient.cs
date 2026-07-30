@@ -17,6 +17,9 @@ namespace Network.Client
         private bool _isRunning=false;
         private KcpSession _kcpSession;
         
+        /// <summary>KCP 是否正在运行</summary>
+        public bool IsConnected => _isRunning;
+        
         public event Action<uint,byte[]> OnMessageReceived;
 
         #endregion

@@ -143,6 +143,30 @@ namespace Network.Server
             return $"{endPoint.Address}:{endPoint.Port}";
         }
         
+        /// <summary>获取客户端的 IPEndPoint</summary>
+        public IPEndPoint GetEndpoint(uint conv)
+        {
+            if (_convToKcp.TryGetValue(conv, out var session))
+                return session.endPoint;
+            return null;
+        }
+        
+        /// <summary>检查是否存在指定 conv 的客户端</summary>
+        public bool HasClient(uint conv)
+        {
+            return _convToKcp != null && _convToKcp.ContainsKey(conv);
+        }
+
+        /// <summary>移除并断开指定客户端</summary>
+        public void RemoveClient(uint conv)
+        {
+            if (_convToKcp.TryGetValue(conv, out var session))
+            {
+                session.Dispose();
+                _convToKcp.Remove(conv);
+            }
+        }
+        
         #endregion
     }
 }

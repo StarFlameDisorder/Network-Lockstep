@@ -13,13 +13,12 @@ using UnityEngine;
 namespace Network.Server
 {
     /// <summary>
-    /// 客户端连接信息（供调试面板读取）：TCP 连接 + UDP 端点 + clientId
+    /// 客户端连接信息（供调试面板读取）：TCP 连接 + KCP 端点 + clientId
     /// </summary>
     public class ClientState
     {
         public uint ClientId;
         public TcpClient TcpSocket;
-        public IPEndPoint UdpEndPoint;
         /// <summary>TCP 端点字符串（调试用）</summary>
         public string TcpEndpoint
         {
@@ -29,12 +28,12 @@ namespace Network.Server
                 catch (ObjectDisposedException) { return "-"; }
             }
         }
-        /// <summary>UDP 端点字符串（调试用）</summary>
-        public string UdpEndpoint => UdpEndPoint?.ToString() ?? "-";
         /// <summary>TCP 是否已绑定</summary>
         public bool HasTcp => TcpSocket != null;
-        /// <summary>UDP 是否已绑定</summary>
-        public bool HasUdp => UdpEndPoint != null;
+        /// <summary>KCP 是否已绑定（由 Dispatcher 维护）</summary>
+        public bool HasKcp { get; internal set; }
+        /// <summary>KCP 端点字符串（由 Dispatcher 维护）</summary>
+        public string KcpEndpoint { get; internal set; } = "-";
     }
 
     /// <summary>
@@ -46,21 +45,20 @@ namespace Network.Server
         #region 属性
 
         private readonly TcpServer _tcpServer;
-        private readonly UdpServer _udpServer;
+        private readonly KcpServer _kcpServer;
         private readonly int _tcpPort;
-        private readonly int _udpPort;
+        private readonly int _kcpPort;
 
         // 客户端管理
         private readonly Dictionary<uint, ClientState> _clientsById = new();
         private readonly Dictionary<TcpClient, uint> _tcpToClientId = new();
-        private readonly Dictionary<IPEndPoint, uint> _udpToClientId = new();
         private readonly object _lock = new();
         private uint _nextClientId = 1;
 
         /// <summary>TCP 端口</summary>
         public int TcpPort => _tcpPort;
-        /// <summary>UDP 端口</summary>
-        public int UdpPort => _udpPort;
+        /// <summary>KCP 端口</summary>
+        public int KcpPort => _kcpPort;
         /// <summary>当前客户端列表快照（只读副本）</summary>
         public IReadOnlyList<ClientState> Clients
         {
@@ -71,40 +69,40 @@ namespace Network.Server
 
         // 事件：向 RoomManager 转发消息
         public event Action<uint, LobbySyncRequest> OnTcpLobby;
-        public event Action<uint, GameSyncMessage> OnUdpGameSync;
-        public event Action<uint, GameSnapshotMessage> OnUdpGameSnapshot;
-        public event Action<uint, HeartBeat> OnUdpHeartBeat;
+        public event Action<uint, GameSyncMessage> OnKcpGameSync;
+        public event Action<uint, GameSnapshotMessage> OnKcpGameSnapshot;
+        public event Action<uint, HeartBeat> OnKcpHeartBeat;
         public event Action<uint> OnClientDisconnectRequest;
 
         #endregion
 
         #region 生命周期
 
-        public ServerNetworkDispatcher(int tcpPort = 1975, int udpPort = 1975)
+        public ServerNetworkDispatcher(int tcpPort = 1975, int kcpPort = 1975)
         {
             _tcpPort = tcpPort;
-            _udpPort = udpPort;
+            _kcpPort = kcpPort;
 
             _tcpServer = new TcpServer(tcpPort);
-            _udpServer = new UdpServer(udpPort);
+            _kcpServer = new KcpServer(kcpPort);
 
             _tcpServer.OnClientConnected += HandleTcpConnected;
             _tcpServer.OnMessageReceived += HandleTcpMessage;
             _tcpServer.OnClientDisconnected += HandleTcpDisconnected;
-            _udpServer.OnMessageReceived += HandleUdpMessage;
+            _kcpServer.OnMessageReceived += HandleKcpMessage;
         }
 
         public void Start()
         {
             _tcpServer.Start();
-            _udpServer.Start();
+            _kcpServer.Start();
             Debug.Log("[Server][ServerNetworkDispatcher] 网络分发器已启动");
         }
 
         public void Stop()
         {
             _tcpServer.Stop();
-            _udpServer.Stop();
+            _kcpServer.Stop();
             Debug.Log("[Server][ServerNetworkDispatcher] 网络分发器已停止");
         }
 
@@ -194,39 +192,57 @@ namespace Network.Server
         
         #endregion
 
-        #region UDP
+        #region KCP
         
-        private void HandleUdpMessage(IPEndPoint ep, byte[] data)
+        /// <summary>
+        /// KCP 消息处理：conv 即为 clientId，无需 IPEndPoint 映射
+        /// </summary>
+        private void HandleKcpMessage(uint conv, byte[] data)
         {
             try
             {
                 ClientMessage msg = ClientMessage.Parser.ParseFrom(data);
-                if (!TryGetClientId(ep, out uint clientId, msg.ClientId)) return;
-
-                BindUdp(clientId, ep);
+                uint clientId = conv; // KCP conv 即为 clientId
+                
+                // 验证 clientId 是否存在
+                lock (_lock)
+                {
+                    if (!_clientsById.ContainsKey(clientId))
+                    {
+                        Debug.LogWarning($"[Server][Dispatcher] KCP 收到未知 clientId={clientId} 的消息");
+                        return;
+                    }
+                    
+                    // 首次收到该客户端的 KCP 消息时标记为已绑定
+                    if (!_clientsById[clientId].HasKcp)
+                    {
+                        _clientsById[clientId].HasKcp = true;
+                        _clientsById[clientId].KcpEndpoint = _kcpServer.GetClientInfo(clientId);
+                    }
+                }
 
                 switch (msg.ContentCase)
                 {
                     case ClientMessage.ContentOneofCase.CommonMessage:
-                        Debug.Log($"[Server][Dispatcher] UDP-{clientId}: {msg.CommonMessage}");
+                        Debug.Log($"[Server][Dispatcher] KCP-{clientId}: {msg.CommonMessage}");
                         break;
                     case ClientMessage.ContentOneofCase.GameSyncMessage:
-                        OnUdpGameSync?.Invoke(clientId, msg.GameSyncMessage);
+                        OnKcpGameSync?.Invoke(clientId, msg.GameSyncMessage);
                         break;
                     case ClientMessage.ContentOneofCase.HeartBeat:
-                        OnUdpHeartBeat?.Invoke(clientId, msg.HeartBeat);
+                        OnKcpHeartBeat?.Invoke(clientId, msg.HeartBeat);
                         break;
                     case ClientMessage.ContentOneofCase.GameSnapshotMessage:
-                        OnUdpGameSnapshot?.Invoke(clientId, msg.GameSnapshotMessage);
+                        OnKcpGameSnapshot?.Invoke(clientId, msg.GameSnapshotMessage);
                         break;
                     default:
-                        Debug.LogWarning($"[Server][Dispatcher] UDP 未知消息类型 clientId={clientId}: {msg.ContentCase}");
+                        Debug.LogWarning($"[Server][Dispatcher] KCP 未知消息类型 clientId={clientId}: {msg.ContentCase}");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[Server][Dispatcher] UDP 解析消息失败：{ex.Message}");
+                Debug.LogError($"[Server][Dispatcher] KCP 解析消息失败：{ex.Message}");
             }
         }
         
@@ -251,19 +267,9 @@ namespace Network.Server
             _tcpServer.Send(tcp, data);
         }
 
-        public void SendUdp(uint clientId, byte[] data)
+        public void SendKcp(uint clientId, byte[] data)
         {
-            IPEndPoint ep;
-            lock (_lock)
-            {
-                if (!_clientsById.TryGetValue(clientId, out var c) || c.UdpEndPoint == null)
-                {
-                    Debug.LogError($"[Server][Dispatcher] 未找到 clientId={clientId} 发送 UDP 失败");
-                    return;
-                }
-                ep = c.UdpEndPoint;
-            }
-            _udpServer.Send(ep, data);
+            _kcpServer.Send(clientId, data);
         }
 
         #endregion
@@ -291,25 +297,6 @@ namespace Network.Server
             return false;
         }
 
-        private bool TryGetClientId(IPEndPoint ep, out uint clientId, uint msgClientId)
-        {
-            lock (_lock)
-            {
-                if (_udpToClientId.TryGetValue(ep, out clientId))
-                    return true;
-
-                if (_clientsById.TryGetValue(msgClientId, out var c))
-                {
-                    clientId = msgClientId;
-                    return true;
-                }
-            }
-
-            Debug.LogError($"[Server][Dispatcher] 未知 UDP 客户端 {_udpServer.GetEndpointInfo(ep)}，无法获取 clientId");
-            clientId = 0;
-            return false;
-        }
-
         private void BindTcp(uint clientId, TcpClient tcp)
         {
             lock (_lock)
@@ -318,18 +305,6 @@ namespace Network.Server
                 {
                     c.TcpSocket = tcp;
                     _tcpToClientId[tcp] = clientId;
-                }
-            }
-        }
-
-        private void BindUdp(uint clientId, IPEndPoint ep)
-        {
-            lock (_lock)
-            {
-                if (_clientsById.TryGetValue(clientId, out var c) && c.UdpEndPoint == null)
-                {
-                    c.UdpEndPoint = ep;
-                    _udpToClientId[ep] = clientId;
                 }
             }
         }
@@ -345,11 +320,9 @@ namespace Network.Server
                         _tcpToClientId.Remove(c.TcpSocket);
                         _tcpServer.DisconnectClient(c.TcpSocket);
                     }
-                    if (c.UdpEndPoint != null)
-                    {
-                        _udpToClientId.Remove(c.UdpEndPoint);
-                        _udpServer.CleanClient(c.UdpEndPoint);
-                    }
+                    
+                    _kcpServer.RemoveClient(clientId);
+                    c.HasKcp = false;
 
                     _clientsById.Remove(clientId);
                     Debug.Log($"[Server][Dispatcher] 移除 clientId={clientId}");

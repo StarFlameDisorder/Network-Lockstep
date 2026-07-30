@@ -29,7 +29,7 @@ namespace Network.Server
         /// <summary>房间管理器（调试用）</summary>
         public RoomManager Room => _roomManager;
         public int TcpPort => _config?.TcpPort ?? 1975;
-        public int UdpPort => _config?.UdpPort ?? 1975;
+        public int KcpPort => _config?.KcpPort ?? 1975;
         public int GameFrameRate => _config?.GameFrameRate ?? 30;
 
         #endregion
@@ -44,10 +44,10 @@ namespace Network.Server
                 _config = ScriptableObject.CreateInstance<ServerConfig>();
             }
 
-            Debug.Log($"[Server][GameServer] 初始化 TCP={_config.TcpPort} UDP={_config.UdpPort} 帧率={_config.GameFrameRate}");
+            Debug.Log($"[Server][GameServer] 初始化 TCP={_config.TcpPort} KCP={_config.KcpPort} 帧率={_config.GameFrameRate}");
 
             // 创建网络分发器
-            _dispatcher = new ServerNetworkDispatcher(_config.TcpPort, _config.UdpPort);
+            _dispatcher = new ServerNetworkDispatcher(_config.TcpPort, _config.KcpPort);
 
             // 创建房间管理器
             _roomManager = new RoomManager();
@@ -55,14 +55,14 @@ namespace Network.Server
 
             // 连接事件管线：NetworkDispatcher → RoomManager
             _dispatcher.OnTcpLobby += HandleTcpLobby;
-            _dispatcher.OnUdpGameSync += HandleUdpGameSync;
-            _dispatcher.OnUdpGameSnapshot += HandleUdpGameSnapshot;
-            _dispatcher.OnUdpHeartBeat += HandleUdpHeartBeat;
+            _dispatcher.OnKcpGameSync += HandleKcpGameSync;
+            _dispatcher.OnKcpGameSnapshot += HandleKcpGameSnapshot;
+            _dispatcher.OnKcpHeartBeat += HandleKcpHeartBeat;
             _dispatcher.OnClientDisconnectRequest += HandleClientDisconnect;
 
             // RoomManager → NetworkDispatcher（发送消息）
             _roomManager.OnSendTcp += SendTcpToClient;
-            _roomManager.OnSendUdp += SendUdpToClient;
+            _roomManager.OnSendKcp += SendKcpToClient;
             _roomManager.OnRemoveClient += RemoveClient;
 
             // 面板控制启动，不再自动启动（避免与调试面板冲突）
@@ -100,17 +100,17 @@ namespace Network.Server
             _roomManager.HandleLobbySync(clientId, message);
         }
 
-        private void HandleUdpGameSync(uint clientId, GameSyncMessage message)
+        private void HandleKcpGameSync(uint clientId, GameSyncMessage message)
         {
             _roomManager.ReceiveGameSync(clientId, message);
         }
 
-        private void HandleUdpGameSnapshot(uint clientId, GameSnapshotMessage message)
+        private void HandleKcpGameSnapshot(uint clientId, GameSnapshotMessage message)
         {
             _roomManager.ReceiveSnapshot(clientId, message);
         }
 
-        private void HandleUdpHeartBeat(uint clientId, HeartBeat message)
+        private void HandleKcpHeartBeat(uint clientId, HeartBeat message)
         {
             _roomManager.ReceiveHeartBeat(clientId, message);
         }
@@ -125,9 +125,9 @@ namespace Network.Server
             _dispatcher.SendTcp(clientId, data);
         }
 
-        private void SendUdpToClient(uint clientId, byte[] data)
+        private void SendKcpToClient(uint clientId, byte[] data)
         {
-            _dispatcher.SendUdp(clientId, data);
+            _dispatcher.SendKcp(clientId, data);
         }
 
         private void RemoveClient(uint clientId)

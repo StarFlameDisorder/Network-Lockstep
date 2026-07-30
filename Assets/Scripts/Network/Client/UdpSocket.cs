@@ -1,3 +1,6 @@
+// [废弃] UDP 可靠传输已替换为 KCP（KcpClient）
+// 保留文件仅供参考，待确认无引用后删除
+
 // #define Log_Debug
 
 using System;

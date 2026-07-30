@@ -204,7 +204,7 @@ namespace UI.View
                 Global.TryGet(out _gameClient);
 
             bool tcpOk = _gameClient != null && _gameClient.TcpIsConnected();
-            bool udpOk = _gameClient != null && _gameClient.UdpIsConnected();
+            bool kcpOk = _gameClient != null && _gameClient.KcpIsConnected();
 
             if (_labelStatus != null)
             {
@@ -214,8 +214,8 @@ namespace UI.View
 
             if (_labelUdpStatus != null)
             {
-                _labelUdpStatus.text = udpOk ? "●" : "○";
-                _labelUdpStatus.style.color = udpOk ? Color.green : Color.gray;
+                _labelUdpStatus.text = kcpOk ? "●" : "○";
+                _labelUdpStatus.style.color = kcpOk ? Color.green : Color.gray;
             }
 
             if (_labelClientId != null && _gameClient != null)
@@ -428,7 +428,7 @@ namespace UI.View
         private void OnSendUdp()
         {
             var nm = _gameClient;
-            if (!nm.UdpIsConnected()) return;
+            if (!nm.KcpIsConnected()) return;
 
             string text = _fieldMessage?.value ?? "";
             var msg = new ClientMessage
@@ -436,8 +436,8 @@ namespace UI.View
                 ClientId = nm.GetClientId(),
                 CommonMessage = text
             };
-            nm.UdpSendMessage(msg.ToByteArray());
-            DebugLogger.ClientLog("[UDP]", $"发送: {text}", "→");
+            nm.KcpSendMessage(msg.ToByteArray());
+            DebugLogger.ClientLog("[KCP]", $"发送: {text}", "→");
             if (_fieldMessage != null) _fieldMessage.value = "";
         }
 

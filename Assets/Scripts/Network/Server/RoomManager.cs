@@ -55,7 +55,7 @@ namespace Network.Server
 
         // 事件：向外发送消息
         public event Action<uint, byte[]> OnSendTcp;
-        public event Action<uint, byte[]> OnSendUdp;
+        public event Action<uint, byte[]> OnSendKcp;
         public event Action<uint> OnRemoveClient;
 
         /// <summary>房间是否运行中</summary>
@@ -352,7 +352,7 @@ namespace Network.Server
             byte[] data = syncMessage.ToByteArray();
             foreach (var player in onlinePlayers)
             {
-                OnSendUdp?.Invoke(player.ClientId, data);
+                OnSendKcp?.Invoke(player.ClientId, data);
             }
         }
 
@@ -392,7 +392,7 @@ namespace Network.Server
                 snapMsg.GameSnapshotMessage.Snapshot.PlayerSSs.Add(ps);
             }
 
-            OnSendUdp?.Invoke(clientId, snapMsg.ToByteArray());
+            OnSendKcp?.Invoke(clientId, snapMsg.ToByteArray());
 
             // 2. 补发历史帧（分包）
             const int MAX_FRAMES_PER_PACKET = 10;
@@ -415,7 +415,7 @@ namespace Network.Server
 
                     if (frameCount >= MAX_FRAMES_PER_PACKET)
                     {
-                        OnSendUdp?.Invoke(clientId, framesMsg.ToByteArray());
+                        OnSendKcp?.Invoke(clientId, framesMsg.ToByteArray());
                         framesMsg.GameSnapshotMessage.Frames.Players.Clear();
                         frameCount = 0;
                     }
@@ -423,7 +423,7 @@ namespace Network.Server
             }
 
             if (frameCount > 0)
-                OnSendUdp?.Invoke(clientId, framesMsg.ToByteArray());
+                OnSendKcp?.Invoke(clientId, framesMsg.ToByteArray());
         }
 
         private uint GetPlayerIdByName(string name)

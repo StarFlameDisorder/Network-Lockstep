@@ -172,7 +172,7 @@ namespace UI.View
 
             if (_labelPortInfo != null && server != null)
             {
-                _labelPortInfo.text = $"TCP:{server.TcpPort}  UDP:{server.UdpPort}  帧率:{server.GameFrameRate}FPS";
+                _labelPortInfo.text = $"TCP:{server.TcpPort}  KCP:{server.KcpPort}  帧率:{server.GameFrameRate}FPS";
             }
 
             if (_btnStart != null) _btnStart.SetEnabled(!running);
@@ -197,12 +197,12 @@ namespace UI.View
             foreach (var c in clients)
             {
                 string tcpInfo = c.TcpEndpoint;
-                string udpInfo = c.UdpEndpoint;
+                string kcpInfo = c.KcpEndpoint;
                 string tcpMark = tcpInfo=="-" ? "TCP✘" : "TCP✔";
-                string udpMark = udpInfo=="-" ? "UDP✘" : "UDP✔";
+                string kcpMark = kcpInfo=="-" ? "KCP✘" : "KCP✔";
                 _areaClients.Add(new Label
                 {
-                    text = $"#{c.ClientId}  {tcpMark}({tcpInfo})  {udpMark}({udpInfo})",
+                    text = $"#{c.ClientId}  {tcpMark}({tcpInfo})  {kcpMark}({kcpInfo})",
                     style = { fontSize = 11, whiteSpace = WhiteSpace.Normal }
                 });
             }
@@ -329,8 +329,8 @@ namespace UI.View
             {
                 if (_fieldTcpPort != null && int.TryParse(_fieldTcpPort.value, out int tcp))
                     config.TcpPort = tcp;
-                if (_fieldUdpPort != null && int.TryParse(_fieldUdpPort.value, out int udp))
-                    config.UdpPort = udp;
+                if (_fieldUdpPort != null && int.TryParse(_fieldUdpPort.value, out int kcp))
+                    config.KcpPort = kcp;
                 if (_fieldFrameRate != null && int.TryParse(_fieldFrameRate.value, out int fps))
                     config.GameFrameRate = fps;
             }
@@ -371,11 +371,11 @@ namespace UI.View
             string text = _fieldMessage?.value ?? "";
             foreach (var c in server.Dispatcher.Clients)
             {
-                if (!c.HasUdp) continue;
+                if (!c.HasKcp) continue;
                 var msg = new ServerMessage { CommonMessage = text };
-                server.Dispatcher.SendUdp(c.ClientId, msg.ToByteArray());
+                server.Dispatcher.SendKcp(c.ClientId, msg.ToByteArray());
             }
-            DebugLogger.ServerLog("[UDP]", $"广播: {text}", "→");
+            DebugLogger.ServerLog("[KCP]", $"广播: {text}", "→");
             if (_fieldMessage != null) _fieldMessage.value = "";
         }
 

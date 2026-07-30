@@ -29,7 +29,7 @@ namespace Network.Client
         
         private IPEndPoint _ipEndPoint;
         private Socket _socketUdp;
-        private UInt64 _clientId = 0;
+        private uint _clientId = 0;
         private Int64 _index = 0;
 
         public UdpSocket()
@@ -271,7 +271,7 @@ namespace Network.Client
             return _socketUdp != null && _socketUdp.Connected;
         }
 
-        public void BindClientId(UInt64 clientId)
+        public void BindClientId(uint clientId)
         {
             _clientId = clientId;
             Debug.Log("[Client][UdpSocket] Udp:服务器分配id:" + clientId);

@@ -14,7 +14,7 @@ namespace Network.Client
         private TcpSocket _tcpSocket=new TcpSocket();
         private UdpSocket _udpSocket=new UdpSocket();
         private int _index = 0;
-        private UInt64 _clientId = 0;
+        private uint _clientId = 0;
         private string _ip;
         private int _port;
         private MessageDispatcher _messageDispatcher=new();
@@ -88,7 +88,7 @@ namespace Network.Client
             _messageDispatcher.HandleMessage(data);
         }
 
-        public void SetClientId(UInt64 clientId)
+        public void SetClientId(uint clientId)
         {
             Debug.Log($"[Client][NetworkManager] SetClientId {clientId}");
             // if (StatusPanel.Instance != null)
@@ -98,7 +98,7 @@ namespace Network.Client
             _udpSocket.BindClientId(clientId);
         }
 
-        public UInt64 GetClientId()
+        public uint GetClientId()
         {
             return _clientId;
         }

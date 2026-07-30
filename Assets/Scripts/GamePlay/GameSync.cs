@@ -231,7 +231,7 @@ namespace GamePlay
         /// </summary>
         public void SyncPlayerAction()
         {
-            UInt64 clientId = _gameClient.GetClientId();
+            uint clientId = _gameClient.GetClientId();
             
             GameSyncMessage gameSyncMessage = new GameSyncMessage
             {
@@ -270,7 +270,7 @@ namespace GamePlay
             _sendSeq++;
         }
 
-        private void SyncSnapshot(UInt64 frameId, UInt64 clientId)
+        private void SyncSnapshot(UInt64 frameId, uint clientId)
         {
             GameSnapshot snapshot = new GameSnapshot();
             foreach (var pair in _players)
@@ -293,7 +293,7 @@ namespace GamePlay
         
         void HeartBeat()
         {
-            UInt64 clientId = _gameClient.GetClientId();
+            uint clientId = _gameClient.GetClientId();
             ClientMessage message = new ClientMessage
             {
                 ClientId = clientId,

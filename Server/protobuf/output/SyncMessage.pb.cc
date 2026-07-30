@@ -37,7 +37,7 @@ struct ServerMessageDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMessageDefaultTypeInternal _ServerMessage_default_instance_;
 PROTOBUF_CONSTEXPR ClientMessage::ClientMessage(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.clientid_)*/uint64_t{0u}
+    /*decltype(_impl_.clientid_)*/0u
   , /*decltype(_impl_.content_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
   , /*decltype(_impl_._oneof_case_)*/{}} {}
@@ -104,7 +104,7 @@ const char descriptor_table_protodef_SyncMessage_2eproto[] PROTOBUF_SECTION_VARI
   "obbyMessage.LobbySyncResponseH\000\022\?\n\023gameS"
   "napshotMessage\030\006 \001(\0132 .GameMessage.GameS"
   "napshotMessageH\000B\t\n\007content\"\341\002\n\rClientMe"
-  "ssage\022\020\n\010clientId\030\001 \001(\004\022\027\n\rcommonMessage"
+  "ssage\022\020\n\010clientId\030\001 \001(\r\022\027\n\rcommonMessage"
   "\030\002 \001(\tH\000\022>\n\016connectMessage\030\003 \001(\0132$.Conne"
   "ctMessage.ClientConnectMessageH\000\0227\n\017game"
   "SyncMessage\030\004 \001(\0132\034.GameMessage.GameSync"
@@ -843,7 +843,7 @@ inline void ClientMessage::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.clientid_){uint64_t{0u}}
+      decltype(_impl_.clientid_){0u}
     , decltype(_impl_.content_){}
     , /*decltype(_impl_._cached_size_)*/{}
     , /*decltype(_impl_._oneof_case_)*/{}
@@ -922,7 +922,7 @@ void ClientMessage::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.clientid_ = uint64_t{0u};
+  _impl_.clientid_ = 0u;
   clear_content();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -933,10 +933,10 @@ const char* ClientMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext*
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // uint64 clientId = 1;
+      // uint32 clientId = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.clientid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.clientid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1020,10 +1020,10 @@ uint8_t* ClientMessage::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint64 clientId = 1;
+  // uint32 clientId = 1;
   if (this->_internal_clientid() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_clientid(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(1, this->_internal_clientid(), target);
   }
 
   // string commonMessage = 2;
@@ -1087,9 +1087,9 @@ size_t ClientMessage::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // uint64 clientId = 1;
+  // uint32 clientId = 1;
   if (this->_internal_clientid() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_clientid());
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_clientid());
   }
 
   switch (content_case()) {

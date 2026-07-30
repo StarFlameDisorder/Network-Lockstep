@@ -23,11 +23,11 @@ message ClientConnectMessage{
 
 message HandShakeResponse{
     string content = 1;
-    uint64 clientId = 2;//仅用于tcp回复
+    uint32 clientId = 2;//仅用于tcp回复
 }
 
 message HandShakeRequest{//弃用
     string content = 1;
-    uint64 clientId= 2;//仅用于udp请求
+    uint32 clientId= 2;//仅用于udp请求
 }
 

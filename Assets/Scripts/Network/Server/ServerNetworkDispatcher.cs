@@ -17,7 +17,7 @@ namespace Network.Server
     /// </summary>
     public class ClientState
     {
-        public ulong ClientId;
+        public uint ClientId;
         public TcpClient TcpSocket;
         public IPEndPoint UdpEndPoint;
         /// <summary>TCP 端点字符串（调试用）</summary>
@@ -51,11 +51,11 @@ namespace Network.Server
         private readonly int _udpPort;
 
         // 客户端管理
-        private readonly Dictionary<ulong, ClientState> _clientsById = new();
-        private readonly Dictionary<TcpClient, ulong> _tcpToClientId = new();
-        private readonly Dictionary<IPEndPoint, ulong> _udpToClientId = new();
+        private readonly Dictionary<uint, ClientState> _clientsById = new();
+        private readonly Dictionary<TcpClient, uint> _tcpToClientId = new();
+        private readonly Dictionary<IPEndPoint, uint> _udpToClientId = new();
         private readonly object _lock = new();
-        private ulong _nextClientId = 1;
+        private uint _nextClientId = 1;
 
         /// <summary>TCP 端口</summary>
         public int TcpPort => _tcpPort;
@@ -70,11 +70,11 @@ namespace Network.Server
         public int ClientCount { get { lock (_lock) return _clientsById.Count; } }
 
         // 事件：向 RoomManager 转发消息
-        public event Action<ulong, LobbySyncRequest> OnTcpLobby;
-        public event Action<ulong, GameSyncMessage> OnUdpGameSync;
-        public event Action<ulong, GameSnapshotMessage> OnUdpGameSnapshot;
-        public event Action<ulong, HeartBeat> OnUdpHeartBeat;
-        public event Action<ulong> OnClientDisconnectRequest;
+        public event Action<uint, LobbySyncRequest> OnTcpLobby;
+        public event Action<uint, GameSyncMessage> OnUdpGameSync;
+        public event Action<uint, GameSnapshotMessage> OnUdpGameSnapshot;
+        public event Action<uint, HeartBeat> OnUdpHeartBeat;
+        public event Action<uint> OnClientDisconnectRequest;
 
         #endregion
 
@@ -120,7 +120,7 @@ namespace Network.Server
         #region TCP
         private void HandleTcpConnected(TcpClient tcp)
         {
-            ulong clientId;
+            uint clientId;
             lock (_lock)
             {
                 clientId = _nextClientId++;
@@ -153,7 +153,7 @@ namespace Network.Server
         {
             lock (_lock)
             {
-                if (_tcpToClientId.TryGetValue(tcp, out ulong clientId))
+                if (_tcpToClientId.TryGetValue(tcp, out uint clientId))
                 {
                     _tcpToClientId.Remove(tcp);
                     if (_clientsById.TryGetValue(clientId, out var c))
@@ -169,7 +169,7 @@ namespace Network.Server
             try
             {
                 ClientMessage msg = ClientMessage.Parser.ParseFrom(data);
-                if (!TryGetClientId(tcp, out ulong clientId, msg.ClientId)) return;
+                if (!TryGetClientId(tcp, out uint clientId, msg.ClientId)) return;
 
                 BindTcp(clientId, tcp);
 
@@ -201,7 +201,7 @@ namespace Network.Server
             try
             {
                 ClientMessage msg = ClientMessage.Parser.ParseFrom(data);
-                if (!TryGetClientId(ep, out ulong clientId, msg.ClientId)) return;
+                if (!TryGetClientId(ep, out uint clientId, msg.ClientId)) return;
 
                 BindUdp(clientId, ep);
 
@@ -236,7 +236,7 @@ namespace Network.Server
 
         #region 发送方法
 
-        public void SendTcp(ulong clientId, byte[] data)
+        public void SendTcp(uint clientId, byte[] data)
         {
             TcpClient tcp;
             lock (_lock)
@@ -251,7 +251,7 @@ namespace Network.Server
             _tcpServer.Send(tcp, data);
         }
 
-        public void SendUdp(ulong clientId, byte[] data)
+        public void SendUdp(uint clientId, byte[] data)
         {
             IPEndPoint ep;
             lock (_lock)
@@ -270,7 +270,7 @@ namespace Network.Server
 
         #region 客户端管理
 
-        private bool TryGetClientId(TcpClient tcp, out ulong clientId, ulong msgClientId)
+        private bool TryGetClientId(TcpClient tcp, out uint clientId, uint msgClientId)
         {
             lock (_lock)
             {
@@ -291,7 +291,7 @@ namespace Network.Server
             return false;
         }
 
-        private bool TryGetClientId(IPEndPoint ep, out ulong clientId, ulong msgClientId)
+        private bool TryGetClientId(IPEndPoint ep, out uint clientId, uint msgClientId)
         {
             lock (_lock)
             {
@@ -310,7 +310,7 @@ namespace Network.Server
             return false;
         }
 
-        private void BindTcp(ulong clientId, TcpClient tcp)
+        private void BindTcp(uint clientId, TcpClient tcp)
         {
             lock (_lock)
             {
@@ -322,7 +322,7 @@ namespace Network.Server
             }
         }
 
-        private void BindUdp(ulong clientId, IPEndPoint ep)
+        private void BindUdp(uint clientId, IPEndPoint ep)
         {
             lock (_lock)
             {
@@ -334,7 +334,7 @@ namespace Network.Server
             }
         }
 
-        public void DeleteClient(ulong clientId)
+        public void DeleteClient(uint clientId)
         {
             lock (_lock)
             {

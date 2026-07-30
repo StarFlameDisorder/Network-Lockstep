@@ -464,13 +464,13 @@ class ClientMessage final :
     kHeartBeatFieldNumber = 6,
     kGameSnapshotMessageFieldNumber = 7,
   };
-  // uint64 clientId = 1;
+  // uint32 clientId = 1;
   void clear_clientid();
-  uint64_t clientid() const;
-  void set_clientid(uint64_t value);
+  uint32_t clientid() const;
+  void set_clientid(uint32_t value);
   private:
-  uint64_t _internal_clientid() const;
-  void _internal_set_clientid(uint64_t value);
+  uint32_t _internal_clientid() const;
+  void _internal_set_clientid(uint32_t value);
   public:
 
   // string commonMessage = 2;
@@ -600,7 +600,7 @@ class ClientMessage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    uint64_t clientid_;
+    uint32_t clientid_;
     union ContentUnion {
       constexpr ContentUnion() : _constinit_{} {}
         ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
@@ -983,22 +983,22 @@ inline ServerMessage::ContentCase ServerMessage::content_case() const {
 
 // ClientMessage
 
-// uint64 clientId = 1;
+// uint32 clientId = 1;
 inline void ClientMessage::clear_clientid() {
-  _impl_.clientid_ = uint64_t{0u};
+  _impl_.clientid_ = 0u;
 }
-inline uint64_t ClientMessage::_internal_clientid() const {
+inline uint32_t ClientMessage::_internal_clientid() const {
   return _impl_.clientid_;
 }
-inline uint64_t ClientMessage::clientid() const {
+inline uint32_t ClientMessage::clientid() const {
   // @@protoc_insertion_point(field_get:SyncMessage.ClientMessage.clientId)
   return _internal_clientid();
 }
-inline void ClientMessage::_internal_set_clientid(uint64_t value) {
+inline void ClientMessage::_internal_set_clientid(uint32_t value) {
   
   _impl_.clientid_ = value;
 }
-inline void ClientMessage::set_clientid(uint64_t value) {
+inline void ClientMessage::set_clientid(uint32_t value) {
   _internal_set_clientid(value);
   // @@protoc_insertion_point(field_set:SyncMessage.ClientMessage.clientId)
 }

@@ -95,42 +95,42 @@ namespace Network.Server
 
         #region 事件转发
 
-        private void HandleTcpLobby(ulong clientId, LobbySyncRequest message)
+        private void HandleTcpLobby(uint clientId, LobbySyncRequest message)
         {
             _roomManager.HandleLobbySync(clientId, message);
         }
 
-        private void HandleUdpGameSync(ulong clientId, GameSyncMessage message)
+        private void HandleUdpGameSync(uint clientId, GameSyncMessage message)
         {
             _roomManager.ReceiveGameSync(clientId, message);
         }
 
-        private void HandleUdpGameSnapshot(ulong clientId, GameSnapshotMessage message)
+        private void HandleUdpGameSnapshot(uint clientId, GameSnapshotMessage message)
         {
             _roomManager.ReceiveSnapshot(clientId, message);
         }
 
-        private void HandleUdpHeartBeat(ulong clientId, HeartBeat message)
+        private void HandleUdpHeartBeat(uint clientId, HeartBeat message)
         {
             _roomManager.ReceiveHeartBeat(clientId, message);
         }
 
-        private void HandleClientDisconnect(ulong clientId)
+        private void HandleClientDisconnect(uint clientId)
         {
             _roomManager.HandleClientDisconnection(clientId);
         }
 
-        private void SendTcpToClient(ulong clientId, byte[] data)
+        private void SendTcpToClient(uint clientId, byte[] data)
         {
             _dispatcher.SendTcp(clientId, data);
         }
 
-        private void SendUdpToClient(ulong clientId, byte[] data)
+        private void SendUdpToClient(uint clientId, byte[] data)
         {
             _dispatcher.SendUdp(clientId, data);
         }
 
-        private void RemoveClient(ulong clientId)
+        private void RemoveClient(uint clientId)
         {
             _dispatcher.DeleteClient(clientId);
         }

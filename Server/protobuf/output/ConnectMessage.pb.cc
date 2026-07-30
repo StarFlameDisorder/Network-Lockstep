@@ -52,7 +52,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR HandShakeResponse::HandShakeResponse(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.content_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.clientid_)*/uint64_t{0u}
+  , /*decltype(_impl_.clientid_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct HandShakeResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR HandShakeResponseDefaultTypeInternal()
@@ -66,7 +66,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR HandShakeRequest::HandShakeRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.content_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.clientid_)*/uint64_t{0u}
+  , /*decltype(_impl_.clientid_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct HandShakeRequestDefaultTypeInternal {
   PROTOBUF_CONSTEXPR HandShakeRequestDefaultTypeInternal()
@@ -138,8 +138,8 @@ const char descriptor_table_protodef_ConnectMessage_2eproto[] PROTOBUF_SECTION_V
   "\022<\n\020handShakeMessage\030\002 \001(\0132 .ConnectMess"
   "age.HandShakeRequestH\000B\t\n\007content\"6\n\021Han"
   "dShakeResponse\022\017\n\007content\030\001 \001(\t\022\020\n\010clien"
-  "tId\030\002 \001(\004\"5\n\020HandShakeRequest\022\017\n\007content"
-  "\030\001 \001(\t\022\020\n\010clientId\030\002 \001(\004b\006proto3"
+  "tId\030\002 \001(\r\"5\n\020HandShakeRequest\022\017\n\007content"
+  "\030\001 \001(\t\022\020\n\010clientId\030\002 \001(\rb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_ConnectMessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_ConnectMessage_2eproto = {
@@ -691,7 +691,7 @@ inline void HandShakeResponse::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.content_){}
-    , decltype(_impl_.clientid_){uint64_t{0u}}
+    , decltype(_impl_.clientid_){0u}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.content_.InitDefault();
@@ -725,7 +725,7 @@ void HandShakeResponse::Clear() {
   (void) cached_has_bits;
 
   _impl_.content_.ClearToEmpty();
-  _impl_.clientid_ = uint64_t{0u};
+  _impl_.clientid_ = 0u;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -745,10 +745,10 @@ const char* HandShakeResponse::_InternalParse(const char* ptr, ::_pbi::ParseCont
         } else
           goto handle_unusual;
         continue;
-      // uint64 clientId = 2;
+      // uint32 clientId = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          _impl_.clientid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.clientid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -792,10 +792,10 @@ uint8_t* HandShakeResponse::_InternalSerialize(
         1, this->_internal_content(), target);
   }
 
-  // uint64 clientId = 2;
+  // uint32 clientId = 2;
   if (this->_internal_clientid() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_clientid(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_clientid(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -821,9 +821,9 @@ size_t HandShakeResponse::ByteSizeLong() const {
         this->_internal_content());
   }
 
-  // uint64 clientId = 2;
+  // uint32 clientId = 2;
   if (this->_internal_clientid() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_clientid());
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_clientid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -921,7 +921,7 @@ inline void HandShakeRequest::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.content_){}
-    , decltype(_impl_.clientid_){uint64_t{0u}}
+    , decltype(_impl_.clientid_){0u}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.content_.InitDefault();
@@ -955,7 +955,7 @@ void HandShakeRequest::Clear() {
   (void) cached_has_bits;
 
   _impl_.content_.ClearToEmpty();
-  _impl_.clientid_ = uint64_t{0u};
+  _impl_.clientid_ = 0u;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -975,10 +975,10 @@ const char* HandShakeRequest::_InternalParse(const char* ptr, ::_pbi::ParseConte
         } else
           goto handle_unusual;
         continue;
-      // uint64 clientId = 2;
+      // uint32 clientId = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          _impl_.clientid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.clientid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1022,10 +1022,10 @@ uint8_t* HandShakeRequest::_InternalSerialize(
         1, this->_internal_content(), target);
   }
 
-  // uint64 clientId = 2;
+  // uint32 clientId = 2;
   if (this->_internal_clientid() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_clientid(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_clientid(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1051,9 +1051,9 @@ size_t HandShakeRequest::ByteSizeLong() const {
         this->_internal_content());
   }
 
-  // uint64 clientId = 2;
+  // uint32 clientId = 2;
   if (this->_internal_clientid() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_clientid());
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_clientid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);

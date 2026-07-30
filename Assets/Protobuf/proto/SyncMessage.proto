@@ -17,7 +17,7 @@ message ServerMessage{
 }
 
 message ClientMessage{
-    uint64 clientId = 1;
+    uint32 clientId = 1;
     oneof content{
         string commonMessage = 2;
         ConnectMessage.ClientConnectMessage connectMessage = 3;

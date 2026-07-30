@@ -49,7 +49,7 @@ namespace UI
 
         private void ApplyName()
         {
-            UInt64 clientId = _gameClient.GetClientId();
+            uint clientId = _gameClient.GetClientId();
             ClientMessage message = new ClientMessage
             {
                 ClientId = clientId,
@@ -68,7 +68,7 @@ namespace UI
 
         private void StartGame()
         {
-            UInt64 clientId = _gameClient.GetClientId();
+            uint clientId = _gameClient.GetClientId();
             ClientMessage message = new ClientMessage
             {
                 ClientId = clientId,

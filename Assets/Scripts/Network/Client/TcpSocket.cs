@@ -16,7 +16,7 @@ namespace Network.Client
         private GameClient _gameClient;
         
         private IPEndPoint _ipEndPoint;
-        private UInt64  _clientId=0; 
+        private uint  _clientId=0; 
         
         private List<byte> _tcpMessageBuffer=new List<byte>();
         private Socket _socketTcp;
@@ -113,7 +113,7 @@ namespace Network.Client
             return _socketTcp!=null && _socketTcp.Connected;
         }
         
-        public void BindClientId(UInt64 clientId)
+        public void BindClientId(uint clientId)
         {
             _clientId=clientId;
             Debug.Log("[Client][TcpSocket] Tcp:服务器分配id:"+clientId);

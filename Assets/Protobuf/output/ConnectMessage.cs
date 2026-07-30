@@ -30,8 +30,8 @@ namespace ConnectMessage {
             "dCJfChRDbGllbnRDb25uZWN0TWVzc2FnZRI8ChBoYW5kU2hha2VNZXNzYWdl",
             "GAIgASgLMiAuQ29ubmVjdE1lc3NhZ2UuSGFuZFNoYWtlUmVxdWVzdEgAQgkK",
             "B2NvbnRlbnQiNgoRSGFuZFNoYWtlUmVzcG9uc2USDwoHY29udGVudBgBIAEo",
-            "CRIQCghjbGllbnRJZBgCIAEoBCI1ChBIYW5kU2hha2VSZXF1ZXN0Eg8KB2Nv",
-            "bnRlbnQYASABKAkSEAoIY2xpZW50SWQYAiABKARiBnByb3RvMw=="));
+            "CRIQCghjbGllbnRJZBgCIAEoDSI1ChBIYW5kU2hha2VSZXF1ZXN0Eg8KB2Nv",
+            "bnRlbnQYASABKAkSEAoIY2xpZW50SWQYAiABKA1iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -571,13 +571,13 @@ namespace ConnectMessage {
 
     /// <summary>Field number for the "clientId" field.</summary>
     public const int ClientIdFieldNumber = 2;
-    private ulong clientId_;
+    private uint clientId_;
     /// <summary>
     ///仅用于tcp回复
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong ClientId {
+    public uint ClientId {
       get { return clientId_; }
       set {
         clientId_ = value;
@@ -609,7 +609,7 @@ namespace ConnectMessage {
     public override int GetHashCode() {
       int hash = 1;
       if (Content.Length != 0) hash ^= Content.GetHashCode();
-      if (ClientId != 0UL) hash ^= ClientId.GetHashCode();
+      if (ClientId != 0) hash ^= ClientId.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -632,9 +632,9 @@ namespace ConnectMessage {
         output.WriteRawTag(10);
         output.WriteString(Content);
       }
-      if (ClientId != 0UL) {
+      if (ClientId != 0) {
         output.WriteRawTag(16);
-        output.WriteUInt64(ClientId);
+        output.WriteUInt32(ClientId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -650,9 +650,9 @@ namespace ConnectMessage {
         output.WriteRawTag(10);
         output.WriteString(Content);
       }
-      if (ClientId != 0UL) {
+      if (ClientId != 0) {
         output.WriteRawTag(16);
-        output.WriteUInt64(ClientId);
+        output.WriteUInt32(ClientId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -667,8 +667,8 @@ namespace ConnectMessage {
       if (Content.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Content);
       }
-      if (ClientId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(ClientId);
+      if (ClientId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(ClientId);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -685,7 +685,7 @@ namespace ConnectMessage {
       if (other.Content.Length != 0) {
         Content = other.Content;
       }
-      if (other.ClientId != 0UL) {
+      if (other.ClientId != 0) {
         ClientId = other.ClientId;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -708,7 +708,7 @@ namespace ConnectMessage {
             break;
           }
           case 16: {
-            ClientId = input.ReadUInt64();
+            ClientId = input.ReadUInt32();
             break;
           }
         }
@@ -731,7 +731,7 @@ namespace ConnectMessage {
             break;
           }
           case 16: {
-            ClientId = input.ReadUInt64();
+            ClientId = input.ReadUInt32();
             break;
           }
         }
@@ -803,13 +803,13 @@ namespace ConnectMessage {
 
     /// <summary>Field number for the "clientId" field.</summary>
     public const int ClientIdFieldNumber = 2;
-    private ulong clientId_;
+    private uint clientId_;
     /// <summary>
     ///仅用于udp请求
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ulong ClientId {
+    public uint ClientId {
       get { return clientId_; }
       set {
         clientId_ = value;
@@ -841,7 +841,7 @@ namespace ConnectMessage {
     public override int GetHashCode() {
       int hash = 1;
       if (Content.Length != 0) hash ^= Content.GetHashCode();
-      if (ClientId != 0UL) hash ^= ClientId.GetHashCode();
+      if (ClientId != 0) hash ^= ClientId.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -864,9 +864,9 @@ namespace ConnectMessage {
         output.WriteRawTag(10);
         output.WriteString(Content);
       }
-      if (ClientId != 0UL) {
+      if (ClientId != 0) {
         output.WriteRawTag(16);
-        output.WriteUInt64(ClientId);
+        output.WriteUInt32(ClientId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -882,9 +882,9 @@ namespace ConnectMessage {
         output.WriteRawTag(10);
         output.WriteString(Content);
       }
-      if (ClientId != 0UL) {
+      if (ClientId != 0) {
         output.WriteRawTag(16);
-        output.WriteUInt64(ClientId);
+        output.WriteUInt32(ClientId);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -899,8 +899,8 @@ namespace ConnectMessage {
       if (Content.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Content);
       }
-      if (ClientId != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(ClientId);
+      if (ClientId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(ClientId);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -917,7 +917,7 @@ namespace ConnectMessage {
       if (other.Content.Length != 0) {
         Content = other.Content;
       }
-      if (other.ClientId != 0UL) {
+      if (other.ClientId != 0) {
         ClientId = other.ClientId;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -940,7 +940,7 @@ namespace ConnectMessage {
             break;
           }
           case 16: {
-            ClientId = input.ReadUInt64();
+            ClientId = input.ReadUInt32();
             break;
           }
         }
@@ -963,7 +963,7 @@ namespace ConnectMessage {
             break;
           }
           case 16: {
-            ClientId = input.ReadUInt64();
+            ClientId = input.ReadUInt32();
             break;
           }
         }

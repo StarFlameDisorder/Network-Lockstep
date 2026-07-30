@@ -14,8 +14,8 @@ namespace Network.Server
     /// </summary>
     public class PlayerSession
     {
-        public ulong Id;                              // 玩家 ID（服务端内部分配）
-        public ulong ClientId;                        // 客户端网络 ID
+        public uint Id;                              // 玩家 ID（服务端内部分配）
+        public uint ClientId;                        // 客户端网络 ID
         public string Name;                           // 玩家名称
         public long ActiveTime;                       // 上次活跃时间（毫秒时间戳）
         public ulong LastFrameId;                     // 最新收到的客户端发送序号
@@ -38,15 +38,15 @@ namespace Network.Server
         #region 属性
 
         // 玩家管理
-        private readonly Dictionary<ulong, ulong> _playerByClient = new();  // clientId → playerId
-        private readonly Dictionary<ulong, PlayerSession> _players = new(); // playerId → PlayerSession
-        private ulong _nextPlayerId = 1;
-        private ulong _sendIndex;
+        private readonly Dictionary<uint, uint> _playerByClient = new();  // clientId → playerId
+        private readonly Dictionary<uint, PlayerSession> _players = new(); // playerId → PlayerSession
+        private uint _nextPlayerId = 1;
 
         // 游戏状态
         private GameSnapshot _gameSnapshot;
         private bool _isRunning;
         private ulong _serverFrameId;                     // 服务端全局帧号（统一分配）
+        private ulong _sendIndex;
 
         // 帧广播定时器
         private System.Timers.Timer _broadcastTimer;
@@ -54,9 +54,9 @@ namespace Network.Server
         private readonly float _heartbeatTimeoutMs = 4000f;
 
         // 事件：向外发送消息
-        public event Action<ulong, byte[]> OnSendTcp;
-        public event Action<ulong, byte[]> OnSendUdp;
-        public event Action<ulong> OnRemoveClient;
+        public event Action<uint, byte[]> OnSendTcp;
+        public event Action<uint, byte[]> OnSendUdp;
+        public event Action<uint> OnRemoveClient;
 
         /// <summary>房间是否运行中</summary>
         public bool IsRunning => _isRunning;
@@ -107,7 +107,7 @@ namespace Network.Server
         /// <summary>
         /// 处理大厅同步消息（TCP）：加入/离开/开始/结束房间
         /// </summary>
-        public void HandleLobbySync(ulong clientId, LobbySyncRequest message)
+        public void HandleLobbySync(uint clientId, LobbySyncRequest message)
         {
             switch (message.ContentCase)
             {
@@ -129,9 +129,9 @@ namespace Network.Server
             }
         }
 
-        private void JoinRoom(string name, ulong clientId)
+        private void JoinRoom(string name, uint clientId)
         {
-            ulong playerId = GetPlayerIdByName(name);
+            uint playerId = GetPlayerIdByName(name);
             bool isReconnect = playerId != 0;
 
             if (!isReconnect)
@@ -176,9 +176,9 @@ namespace Network.Server
             }
         }
 
-        private void LeaveRoom(string name, ulong clientId)
+        private void LeaveRoom(string name, uint clientId)
         {
-            if (!_playerByClient.TryGetValue(clientId, out ulong playerId))
+            if (!_playerByClient.TryGetValue(clientId, out uint playerId))
             {
                 Debug.LogError($"[Server][RoomManager] LeaveRoom 找不到 clientId={clientId}");
                 return;
@@ -223,9 +223,9 @@ namespace Network.Server
 
         #region 游戏同步
 
-        public void ReceiveGameSync(ulong clientId, GameSyncMessage message)
+        public void ReceiveGameSync(uint clientId, GameSyncMessage message)
         {
-            if (!_playerByClient.TryGetValue(clientId, out ulong playerId)) return;
+            if (!_playerByClient.TryGetValue(clientId, out uint playerId)) return;
             var player = _players[playerId];
 
             if (message.Players.Count > 0)
@@ -238,7 +238,7 @@ namespace Network.Server
             }
         }
 
-        public void ReceiveSnapshot(ulong clientId, GameSnapshotMessage message)
+        public void ReceiveSnapshot(uint clientId, GameSnapshotMessage message)
         {
             if (message.ContentCase != GameSnapshotMessage.ContentOneofCase.Snapshot)
             {
@@ -253,7 +253,7 @@ namespace Network.Server
 
             foreach (var ss in snapshot.PlayerSSs)
             {
-                ulong playerId = GetPlayerIdByName(ss.Name);
+                uint playerId = GetPlayerIdByName(ss.Name);
                 if (playerId == 0) continue;
 
                 var player = _players[playerId];
@@ -268,9 +268,9 @@ namespace Network.Server
             }
         }
 
-        public void ReceiveHeartBeat(ulong clientId, HeartBeat message)
+        public void ReceiveHeartBeat(uint clientId, HeartBeat message)
         {
-            if (!_playerByClient.TryGetValue(clientId, out ulong playerId)) return;
+            if (!_playerByClient.TryGetValue(clientId, out uint playerId)) return;
             var player = _players[playerId];
             player.ActiveTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             player.Online = true;
@@ -280,9 +280,9 @@ namespace Network.Server
 
         #region 断线处理
 
-        public void HandleClientDisconnection(ulong clientId)
+        public void HandleClientDisconnection(uint clientId)
         {
-            if (!_playerByClient.TryGetValue(clientId, out ulong playerId)) return;
+            if (!_playerByClient.TryGetValue(clientId, out uint playerId)) return;
             var player = _players[playerId];
 
             if (player.Online)
@@ -360,7 +360,7 @@ namespace Network.Server
 
         #region 辅助方法
 
-        private void SendReconnectData(ulong clientId, PlayerSession player)
+        private void SendReconnectData(uint clientId, PlayerSession player)
         {
             // 1. 发送快照
             var snapMsg = new ServerMessage
@@ -385,7 +385,7 @@ namespace Network.Server
                     LastFrameId = 0
                 };
 
-                ulong pid = GetPlayerIdByName(ss.Name);
+                uint pid = GetPlayerIdByName(ss.Name);
                 if (pid != 0 && _players.TryGetValue(pid, out var p))
                     ps.LastFrameId = p.LastFrameId;
 
@@ -426,7 +426,7 @@ namespace Network.Server
                 OnSendUdp?.Invoke(clientId, framesMsg.ToByteArray());
         }
 
-        private ulong GetPlayerIdByName(string name)
+        private uint GetPlayerIdByName(string name)
         {
             foreach (var (id, p) in _players)
             {

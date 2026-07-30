@@ -554,13 +554,13 @@ class HandShakeResponse final :
   std::string* _internal_mutable_content();
   public:
 
-  // uint64 clientId = 2;
+  // uint32 clientId = 2;
   void clear_clientid();
-  uint64_t clientid() const;
-  void set_clientid(uint64_t value);
+  uint32_t clientid() const;
+  void set_clientid(uint32_t value);
   private:
-  uint64_t _internal_clientid() const;
-  void _internal_set_clientid(uint64_t value);
+  uint32_t _internal_clientid() const;
+  void _internal_set_clientid(uint32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:ConnectMessage.HandShakeResponse)
@@ -572,7 +572,7 @@ class HandShakeResponse final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr content_;
-    uint64_t clientid_;
+    uint32_t clientid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -718,13 +718,13 @@ class HandShakeRequest final :
   std::string* _internal_mutable_content();
   public:
 
-  // uint64 clientId = 2;
+  // uint32 clientId = 2;
   void clear_clientid();
-  uint64_t clientid() const;
-  void set_clientid(uint64_t value);
+  uint32_t clientid() const;
+  void set_clientid(uint32_t value);
   private:
-  uint64_t _internal_clientid() const;
-  void _internal_set_clientid(uint64_t value);
+  uint32_t _internal_clientid() const;
+  void _internal_set_clientid(uint32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:ConnectMessage.HandShakeRequest)
@@ -736,7 +736,7 @@ class HandShakeRequest final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr content_;
-    uint64_t clientid_;
+    uint32_t clientid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -977,22 +977,22 @@ inline void HandShakeResponse::set_allocated_content(std::string* content) {
   // @@protoc_insertion_point(field_set_allocated:ConnectMessage.HandShakeResponse.content)
 }
 
-// uint64 clientId = 2;
+// uint32 clientId = 2;
 inline void HandShakeResponse::clear_clientid() {
-  _impl_.clientid_ = uint64_t{0u};
+  _impl_.clientid_ = 0u;
 }
-inline uint64_t HandShakeResponse::_internal_clientid() const {
+inline uint32_t HandShakeResponse::_internal_clientid() const {
   return _impl_.clientid_;
 }
-inline uint64_t HandShakeResponse::clientid() const {
+inline uint32_t HandShakeResponse::clientid() const {
   // @@protoc_insertion_point(field_get:ConnectMessage.HandShakeResponse.clientId)
   return _internal_clientid();
 }
-inline void HandShakeResponse::_internal_set_clientid(uint64_t value) {
+inline void HandShakeResponse::_internal_set_clientid(uint32_t value) {
   
   _impl_.clientid_ = value;
 }
-inline void HandShakeResponse::set_clientid(uint64_t value) {
+inline void HandShakeResponse::set_clientid(uint32_t value) {
   _internal_set_clientid(value);
   // @@protoc_insertion_point(field_set:ConnectMessage.HandShakeResponse.clientId)
 }
@@ -1051,22 +1051,22 @@ inline void HandShakeRequest::set_allocated_content(std::string* content) {
   // @@protoc_insertion_point(field_set_allocated:ConnectMessage.HandShakeRequest.content)
 }
 
-// uint64 clientId = 2;
+// uint32 clientId = 2;
 inline void HandShakeRequest::clear_clientid() {
-  _impl_.clientid_ = uint64_t{0u};
+  _impl_.clientid_ = 0u;
 }
-inline uint64_t HandShakeRequest::_internal_clientid() const {
+inline uint32_t HandShakeRequest::_internal_clientid() const {
   return _impl_.clientid_;
 }
-inline uint64_t HandShakeRequest::clientid() const {
+inline uint32_t HandShakeRequest::clientid() const {
   // @@protoc_insertion_point(field_get:ConnectMessage.HandShakeRequest.clientId)
   return _internal_clientid();
 }
-inline void HandShakeRequest::_internal_set_clientid(uint64_t value) {
+inline void HandShakeRequest::_internal_set_clientid(uint32_t value) {
   
   _impl_.clientid_ = value;
 }
-inline void HandShakeRequest::set_clientid(uint64_t value) {
+inline void HandShakeRequest::set_clientid(uint32_t value) {
   _internal_set_clientid(value);
   // @@protoc_insertion_point(field_set:ConnectMessage.HandShakeRequest.clientId)
 }

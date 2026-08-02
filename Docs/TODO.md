@@ -57,9 +57,10 @@ BV18T7M6HE8
 
 **现象**：服务器关了客户端仍显示"已连接"。断线检测仅依赖服务端心跳超时，客户端无主动检测。
 
-### 🟡 P2 GameFrame 职责不清晰
+### 🟡 P2 GameFrame 职责不清晰  ✅ 已解决（2026-08-03 执行模型重构）
 
 [GameFrame](Assets/Scripts/GamePlay/GameFrame.cs) 名为帧数据但含 PushFrames() 处理逻辑。
+→ 已废弃：框架职责（缓冲/帧号/缺口/追帧）拆入 `FrameBuffer` + `GameSync.ApplyFrames`；实体仅保留 `Simulate(FrameInput)` 纯模拟。
 
 ### 🟡 P3 无世界一致性校验
 
@@ -103,6 +104,7 @@ BV18T7M6HE8
 | 阶段A | 断线重连修复 | ✅ 已完成（2026-08-02），已实测验证：断线停止发送/补发缺口/跳帧容错/防多对象 |
 | 阶段B | 客户端网络层重构（INetworkTransport + MessageBus + NetworkClient） | 🔧 部分完成（消息主线程派发队列已做；INetworkTransport 抽象类未做，按"保持简单"原则暂缓） |
 | 阶段C | GameSync 职责拆分 + 服务端广播改主线程驱动 | ✅ 已完成（2026-08-02）：帧处理逻辑重构（TickGame 职责分离、快照/补发/对齐拆分、命名修正 NotStarted/ApplyAll 等）+ 服务端主线程（阶段A 已做） |
+| 阶段C2 | 执行模型重构（Quantum 风格：实体 Simulate + 框架喂帧） | ✅ 已完成（2026-08-03）：详见下方明细；第二步（proto 命令化）进行中 |
 | 阶段D | UI 修复与清理（旧面板移除、断线状态显示、LeaveRoom/EndRoom 派发） | 🔧 部分完成（断线状态/UDP端口/加入离开消息已做；场景旧面板移除需在 Unity 编辑器手动操作） |
 | 阶段E | C++ Server/ 目录废弃与清理 | ✅ 已完成（2026-08-02）：Server/ 目录已删除（用户确认）；UdpServer/UdpSocket/Player.cs 已标记废弃 |
 
@@ -146,6 +148,18 @@ BV18T7M6HE8
 - 命名修正：`GameStatus.Notstarted`→`NotStarted`、`GameFrame.PushFrames`→`ApplyAll`（帧执行器语义，TODO P2 关闭）、`HeartBeat`→`SendHeartBeat`、PlayerEntity `_preFrameId`→`_lastExecutedFrameId`、`_preSnapshotFrameId`→`_lastAppliedSnapshotFrameId`
 - 逻辑帧间隔 `GAME_TICK_INTERVAL` 从 `_gameFrameRate` 派生（单一来源）
 - 旧 `Player.cs` 标记废弃（已被 PlayerEntity+PlayerView 替代，无引用）
+
+### 阶段C2 执行模型重构已落地明细（2026-08-03）
+
+> 目标（用户提出）：① 操作输入语义化（未来操作不止移动）② GameFrame 职责太乱 ③ 类似 Quantum 的执行模型——实体只处理自己的数据（不关心是哪个帧），框架只负责提供对应帧。已确认：每帧命令列表 + 保留双移动语义（方向向量=键盘调试，MoveTo=未来正式移动）+ 每步同步文档。
+
+- **输入语义化（第一步，行为不变）**：新增 `FrameInput`（一帧输入 = 命令列表，可同时下达多条命令）+ `CommandType`（`MoveDirection`/`MoveTo`，语义区分；MoveTo 为 RTS 正式移动预留）+ `InputCommand`（类型 + 参数字段）
+- **缓冲外置框架层**：新增 `FrameBuffer`（每玩家缓冲：`Push`/`TryPopNextFrame`（含跳帧容错）/`ResetNextFrameId`/`Clear`）；缓冲、帧号、缺口、追帧全部移出实体
+- **实体纯净**：`PlayerEntity` 删掉 `_pendingFrames`/`TryConsumeNextFrame`/`AddSyncMessage`/帧号字段，只留 `Simulate(FrameInput)`（null=缺口/离线→冻结，由实体自行决定）+ 位置/快照状态；快照恢复不再碰帧号
+- **框架调度**：删除 `GameFrame` 类（标记废弃，无引用）；替代为 `GameSync.ApplyFrames`（对每玩家取帧喂实体 + 追帧 + 缺口诊断日志）；追帧 sqrt 改整数开方 `IntSqrt`（修 `Math.Sqrt(double)` 浮点误差 bug，TODO 已知项顺手修）
+- **快照适配**：恢复点 = 各玩家 `FrameBuffer.LastExecutedFrameId`（框架维护）；`GetSnapshotSync(帧号)` 由框架传参，实体不感知执行进度
+- **调试面板**：ClientDebugPanel 帧信息改为从 `GameSync.FrameBuffers` 读取
+- 第二步（proto 命令化）：`ToFrameInput` 过渡映射将替换为 proto Command 直接映射；输入发送端改为语义命令
 
 ### 阶段E 已落地明细（2026-08-02）
 

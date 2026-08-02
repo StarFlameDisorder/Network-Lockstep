@@ -277,8 +277,10 @@ namespace UI.View
             {
                 var entity = kv.Value;
                 var pos = entity.Position;
-                int bufferCount = entity.FrameCount;
-                ulong lastFrame = entity.LastExecutedFrameId;
+                // 帧信息归属框架层缓冲（实体不感知帧号）
+                var buffer = _gameSync.FrameBuffers.TryGetValue(kv.Key, out var b) ? b : null;
+                int bufferCount = buffer?.Count ?? 0;
+                ulong lastFrame = buffer?.LastExecutedFrameId ?? 0;
 
                 // 缓冲区着色标识：绿色正常，黄色追帧中，红色空（卡住）
                 string bufColor = bufferCount switch

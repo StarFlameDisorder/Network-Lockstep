@@ -137,6 +137,7 @@ namespace GamePlay
             EndGame();
             Instance = null;
             _players.Clear();
+            _frameBuffers.Clear();
         }
         
         #region 房间操作
@@ -152,6 +153,10 @@ namespace GamePlay
         }
         
         private Dictionary<string, PlayerEntity> _players = new();
+        /// <summary>每个玩家的帧缓冲（框架层：缓冲/帧号/缺口/追帧），与玩家实体一一对应</summary>
+        private Dictionary<string, FrameBuffer> _frameBuffers = new();
+        /// <summary>帧缓冲只读访问（调试面板用）</summary>
+        public IReadOnlyDictionary<string, FrameBuffer> FrameBuffers => _frameBuffers;
         
         private void JoinRoom(PlayerJoinRoomResponse response)
         {
@@ -196,6 +201,7 @@ namespace GamePlay
                 FixedPointVector3 startPos = FixedPointVector3.FromVector3(o.transform.position);
                 var entity = new PlayerEntity(playerName, startPos, _gameFrameSpacing, _speed);
                 _players.Add(playerName, entity);
+                _frameBuffers.Add(playerName, new FrameBuffer());
                 
                 // 绑定表现层
                 var view = o.GetComponent<PlayerView>();
@@ -211,6 +217,7 @@ namespace GamePlay
             {
                 entity.Destroy();
             }
+            _frameBuffers.Remove(response.Name);
             _pendingPlayerNames.Remove(response.Name);
 
             // 大厅动态显示：其他玩家离开房间
@@ -229,6 +236,7 @@ namespace GamePlay
                 entity.Destroy();
             }
             _players.Clear();
+            _frameBuffers.Clear();
             _pendingPlayerNames.Clear();
             _latestServerFrameId = 0;
             _sendSeq = 1;
@@ -252,7 +260,8 @@ namespace GamePlay
         #endregion
         
         #region 玩家输入操作处理及心跳
-        // 输入命令模式（保持简单：当前输入为单一方向向量，未来可扩展为命令队列）
+        // 输入发送（第二步将改为语义命令：MoveDirection/MoveTo/Attack...，经 proto Command 传输；
+        // 目前过渡期仍为单一方向向量，接收端由 ToFrameInput 转为 FrameInput 命令列表）
         private UInt64 _sendSeq = 1;                   // 本地发送序号（仅用于跟踪，非帧权威）
         private UInt64 _latestServerFrameId;           // 服务端广播的最新帧号（权威）
         private UInt64 _lastSnapshotFrameId;           // 上次上报快照的帧号（避免漏报/重复上报）
@@ -330,7 +339,8 @@ namespace GamePlay
             GameSnapshot snapshot = new GameSnapshot();
             foreach (var pair in _players)
             {
-                snapshot.PlayerSSs.Add(pair.Value.GetSnapshotSync());
+                // 恢复点 = 每个玩家各自执行到的帧号（缓冲进度由框架层维护）
+                snapshot.PlayerSSs.Add(pair.Value.GetSnapshotSync(_frameBuffers[pair.Key].LastExecutedFrameId));
             }
 
             snapshot.FrameId = frameId;
@@ -377,9 +387,67 @@ namespace GamePlay
             // 2. 快照上报（服务端缓存为权威快照，供断线重连/中途加入恢复）
             TryReportSnapshot();
             
-            // 3. 推动所有玩家从缓冲区逐帧消费（远程输入由 ReceiveMessage 预先写入）
-            var frame = new GameFrame(_latestServerFrameId, _players);
-            frame.ApplyAll();
+            // 3. 框架调度：从缓冲取每帧输入喂给实体执行（缺口/离线 = 喂 null，实体冻结）
+            ApplyFrames();
+        }
+
+        /// <summary>
+        /// 框架调度核心：决定"喂哪一帧"——对每个玩家从缓冲取下一帧输入，喂给实体 Simulate。
+        /// 实体不感知帧号/缓冲，只消费输入；缺口/离线时输入为 null，由实体自行冻结。
+        /// 追帧：缓冲超阈值时每帧多消费几帧，快速追平服务端权威帧。
+        /// </summary>
+        private void ApplyFrames()
+        {
+            foreach (var pair in _players)
+            {
+                var entity = pair.Value;
+                var buffer = _frameBuffers[pair.Key];
+
+                int catchupTarget = 1;
+                if (buffer.Count > BufferSize)
+                {
+                    catchupTarget = Math.Min(IntSqrt(buffer.Count), MaxCatchupTime);
+                    Debug.Log($"[Client][GameSync] {entity.Name}追帧{catchupTarget - 1}");
+                }
+
+                for (int i = 0; i < catchupTarget; i++)
+                {
+                    FrameInput input = buffer.TryPopNextFrame();
+                    if (input == null)
+                    {
+                        // 缓冲非空但无可用帧 = 异常缺口（正常等待时缓冲为空不触发），
+                        // 持续卡住时此日志会重复出现，用于定位
+                        if (buffer.Count > 0)
+                            Debug.LogWarning($"[Client][GameSync] {entity.Name} 帧缺口: 需帧{buffer.NextFrameId} 但缓冲最早为{buffer.MinFrameId} (缓冲{buffer.Count}帧)");
+                        break;
+                    }
+                    entity.Simulate(input);
+                }
+            }
+        }
+
+        /// <summary>整数开方（避免 Math.Sqrt(double) 在完全平方数上的浮点误差取小）</summary>
+        private static int IntSqrt(int n)
+        {
+            if (n <= 1) return n;
+            int x = n, y = (x + 1) / 2;
+            while (y < x) { x = y; y = (x + n / x) / 2; }
+            return x;
+        }
+
+        /// <summary>proto PlayerSync → 框架层 FrameInput（第一步过渡：仅映射方向输入；proto 命令化后替换）</summary>
+        private static FrameInput ToFrameInput(PlayerSync sync)
+        {
+            var input = new FrameInput();
+            if (sync.InputMove != null)
+            {
+                input.Commands.Add(new InputCommand
+                {
+                    Type = CommandType.MoveDirection,
+                    MoveDirection = FixedPointVector3.FromRawValue(sync.InputMove.X, sync.InputMove.Y, sync.InputMove.Z)
+                });
+            }
+            return input;
         }
         #endregion
         
@@ -389,10 +457,10 @@ namespace GamePlay
         {
             foreach (var playerSync in message.Players)
             {
-                // 所有玩家（含本地）统一由服务端帧号写入缓冲区
-                if (_players.ContainsKey(playerSync.Name))
+                // 所有玩家（含本地）统一由服务端帧号写入框架层缓冲
+                if (_frameBuffers.TryGetValue(playerSync.Name, out var buffer))
                 {
-                    _players[playerSync.Name].AddSyncMessage(playerSync);
+                    buffer.Push(playerSync.FrameId, ToFrameInput(playerSync));
                 }
             }
             
@@ -436,6 +504,7 @@ namespace GamePlay
                 playerEntity.Value.Destroy();
             }
             _players.Clear();
+            _frameBuffers.Clear();
             _pendingPlayerNames.Clear();
             _sendSeq = 1;
             _lastSnapshotFrameId = snapshot.FrameId;
@@ -451,6 +520,10 @@ namespace GamePlay
                     _sendSeq = playerSS.LastFrameId + 1;
                     Debug.Log($"[Client][GameSync] {playerSS.Name} 快照恢复 帧={playerSS.LastFrameId}");
                 }
+                // 以快照帧号为执行进度起点，从下一帧继续（清空旧缓冲重建）
+                var buffer = _frameBuffers[playerSS.Name];
+                buffer.Clear();
+                buffer.ResetNextFrameId(playerSS.LastFrameId);
                 _players[playerSS.Name].SetSnapshotSync(playerSS);
             }
 
@@ -459,6 +532,7 @@ namespace GamePlay
             {
                 _latestServerFrameId = snapshot.FrameId;
                 AddPlayer(_name);
+                _frameBuffers[_name].ResetNextFrameId(snapshot.FrameId);
                 var self = _players[_name];
                 var selfSync = new PlayerSnapshotSync
                 {
@@ -490,7 +564,7 @@ namespace GamePlay
             foreach (var player in frames.Players)
             {
                 if (!_players.ContainsKey(player.Name)) AddPlayer(player.Name);
-                _players[player.Name].AddSyncMessage(player);
+                _frameBuffers[player.Name].Push(player.FrameId, ToFrameInput(player));
             }
 
             // 补发帧推进权威帧号，并同步发送序号（避免"发"远落后于"服"）

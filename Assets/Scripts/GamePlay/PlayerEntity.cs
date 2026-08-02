@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using GameMessage;
 using Network;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityMath;
 using Object = UnityEngine.Object;
@@ -11,28 +8,21 @@ using Object = UnityEngine.Object;
 namespace GamePlay
 {
     /// <summary>
-    /// 玩家纯逻辑实体（与 Unity GameObject 解耦，可独立测试）
-    /// 持有定点数位置、帧缓冲区和快照数据
+    /// 玩家纯逻辑实体（与 Unity GameObject 解耦，可独立测试）。
+    /// 只处理自己的确定性模拟数据（位置等），不感知帧号/网络/缓冲——
+    /// 缓冲、帧号、缺口/追帧等框架职责由 GameSync + FrameBuffer 承担。
     /// </summary>
     public class PlayerEntity
     {
         PlayerView _view;
         
         FixedPointVector3 _position;
-        SortedDictionary<UInt64, PlayerSync> _pendingFrames = new();
-        
-        PlayerSnapshotSync _playerSnapshotSync;
         string _name;
         private FixedPoint _gameFrameSpace;
         private FixedPoint _speed;
-        UInt64 _lastAppliedSnapshotFrameId;//上次应用的快照的帧id
-        UInt64 _lastExecutedFrameId;//上次执行的帧序号
 
         public FixedPointVector3 Position => _position;
         public string Name => _name;
-        public int FrameCount => _pendingFrames.Count;
-        /// <summary>上次执行的帧序号，GameFrame 用于判断下一帧是否存在</summary>
-        public UInt64 LastExecutedFrameId => _lastExecutedFrameId;
 
         public PlayerEntity(String name, FixedPointVector3 startPos, FixedPoint gameFrameSpace, FixedPoint speed)
         {
@@ -58,102 +48,51 @@ namespace GamePlay
             }
         }
 
-        #region 帧同步
-        
         /// <summary>
-        /// 尝试消费下一帧（_lastExecutedFrameId + 1）。
-        /// 由 GameFrame.ApplyAll 驱动，每次调用只处理一帧。
+        /// 执行本帧输入（确定性模拟）。input 为 null = 缺口/离线 → 冻结（不移动）。
+        /// 实体只消费框架喂给的帧数据，不关心是第几帧。
         /// </summary>
-        /// <returns>true 表示成功消费一帧</returns>
-        public bool TryConsumeNextFrame()
+        public void Simulate(FrameInput input)
         {
-            UInt64 nextFrameId = _lastExecutedFrameId + 1;
-            if (!_pendingFrames.TryGetValue(nextFrameId, out var sync))
+            if (input == null) return;
+
+            foreach (var cmd in input.Commands)
             {
-                // 帧缺口容错：目标帧缺失但缓冲内有更晚的帧（补发时离线/停滞玩家的帧本就不存在），
-                // 跳到最早可用帧继续。缺口期间该玩家保持冻结，符合"离线期不移动"的语义；
-                // 所有客户端收到同一份补发，跳帧一致，不破坏确定性。
-                if (_pendingFrames.Count > 0)
+                switch (cmd.Type)
                 {
-                    UInt64 first = _pendingFrames.Keys.First();
-                    if (first > nextFrameId)
-                    {
-                        Debug.LogWarning($"[Client][PlayerEntity] {_name} 帧缺口跳帧: 缺{nextFrameId} 跳至{first} (跳过{first - nextFrameId}帧)");
-                        _lastExecutedFrameId = first - 1;
-                        return TryConsumeNextFrame();
-                    }
+                    case CommandType.MoveDirection:
+                        _position += (_speed * _gameFrameSpace * cmd.MoveDirection);
+                        break;
+                    case CommandType.MoveTo:
+                        // TODO: 未来实现目标点移动（RTS 正式移动方式，需寻路/到达判定）
+                        break;
                 }
-                return false;
             }
-            
-            _pendingFrames.Remove(nextFrameId);
-            _lastExecutedFrameId = sync.FrameId;
-            
-            var v = sync.InputMove;
-            FixedPointVector3 realV = FixedPointVector3.FromRawValue(v.X, v.Y, v.Z);
-            _position += (_speed * _gameFrameSpace * realV);
             // Debug.Log("[Debug][PlayerEntity]Position: " + _position.ToVector3());
-            // Debug.Log($"[Client][PlayerEntity] {_name}执行第{sync.FrameId}帧");
-            return true;
         }
-        
-        /// <summary>
-        /// 添加一帧的同步数据到缓冲区
-        /// </summary>
-        public void AddSyncMessage(PlayerSync sync)
-        {
-            // 容错：重复帧直接忽略（补发与实时广播在极端时序下可能重叠），
-            // 避免 SortedDictionary.Add 抛异常导致整个补发包中断、产生帧缺口
-            if (!_pendingFrames.ContainsKey(sync.FrameId))
-                _pendingFrames.Add(sync.FrameId, sync);
-        }
-        
-        /// <summary>
-        /// 缓冲区中最早的帧号（用于诊断帧缺口；空缓冲返回 0）
-        /// </summary>
-        public UInt64 FirstPendingFrameId => _pendingFrames.Count > 0 ? _pendingFrames.Keys.First() : 0;
-        
-        #endregion
         
         #region 快照
         
-        private void ApplySnapShot()
-        {
-            if (_playerSnapshotSync != null)
-            {
-                Vector3D v3 = _playerSnapshotSync.Pos;
-                _position = FixedPointVector3.FromRawValue(v3.X, v3.Y, v3.Z);
-                _lastAppliedSnapshotFrameId = _playerSnapshotSync.LastFrameId;
-                _lastExecutedFrameId = _playerSnapshotSync.LastFrameId;
-                // 清除旧帧缓冲区，以快照帧号为起点重新开始
-                _pendingFrames.Clear();
-                
-                Debug.Log($"[Client][PlayerEntity] {_name}恢复快照时最新执行到{_lastExecutedFrameId}");
-            }
-            else
-            {
-                Debug.LogError("[Client][PlayerEntity] No snapshot sync");
-            }
-        }
-        
+        /// <summary>
+        /// 恢复快照位置（断线重连/中途加入）。帧号/缓冲恢复由框架层（GameSync/FrameBuffer）负责
+        /// </summary>
         public void SetSnapshotSync(PlayerSnapshotSync sync)
         {
-            Debug.Log($"[Client][PlayerEntity] {_name}SetSnapshotSync");
-            _playerSnapshotSync = sync;
-            ApplySnapShot();
+            Vector3D v3 = sync.Pos;
+            _position = FixedPointVector3.FromRawValue(v3.X, v3.Y, v3.Z);
+            Debug.Log($"[Client][PlayerEntity] {_name}恢复快照位置");
         }
 
         /// <summary>
-        /// 生成当前玩家的快照数据
+        /// 生成当前玩家的快照数据。帧号由框架层传入（实体不感知执行进度）
         /// </summary>
-        public PlayerSnapshotSync GetSnapshotSync()
+        public PlayerSnapshotSync GetSnapshotSync(UInt64 lastExecutedFrameId)
         {
-            Debug.Log($"[Client][PlayerEntity] {_name}记录快照时最新执行到{_lastExecutedFrameId}");
             return new PlayerSnapshotSync
             {
                 Name = _name,
-                FrameId = _lastExecutedFrameId,
-                LastFrameId = _lastExecutedFrameId,
+                FrameId = lastExecutedFrameId,
+                LastFrameId = lastExecutedFrameId,
                 Pos = new Vector3D
                 {
                     X = _position.GetRawX(),

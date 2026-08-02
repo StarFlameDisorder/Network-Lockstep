@@ -4,10 +4,11 @@ using Framework;
 using GameMessage;
 using LobbyMessage;
 using Network;
+using Network.Client;
+using Network.Server;
 using UnityEngine;
 using UnityMath;
 using Google.Protobuf;
-using Network.Client;
 using SyncMessage;
 
 namespace GamePlay
@@ -106,6 +107,7 @@ namespace GamePlay
             _gameClient.RegisterHandler<PlayerJoinRoomResponse>(Signals.LobbyJoinRoom, JoinRoom);//加入房间消息
             _gameClient.RegisterHandler<PlayerLeaveRoomResponse>(Signals.LobbyLeaveRoom, LeaveRoom);//离开房间
             _gameClient.RegisterHandler<PlayerStartRoomResponse>(Signals.LobbyStartRoom, StartRoom);//开始游戏
+            _gameClient.RegisterHandler<PlayerEndRoomResponse>(Signals.LobbyEndRoom, EndRoomHandler);//结束游戏
             _gameClient.RegisterHandler<GameSnapshotMessage>(Signals.GameSnapShot, ReceiveSnapshotMessage);//断线重连 收到快照
         }
         
@@ -152,13 +154,24 @@ namespace GamePlay
         
         private void JoinRoom(PlayerJoinRoomResponse response)
         {
-            Debug.Log($"[Client][GameSync] 收到PlayerJoinRoomResponse 房主{response.Owner}");
+            Debug.Log($"[Client][GameSync] 收到PlayerJoinRoomResponse 房主{response.Owner} 游戏已开始={response.GameStarted}");
             
             foreach (var playerName in response.Players)
             {
                 _pendingPlayerNames.Add(playerName);
+                if (playerName != _name)
+                {
+                    // 大厅动态显示：其他玩家加入房间
+                    DebugLogger.ClientLog("[TCP]", $"玩家 {playerName} 加入房间", "←");
+                }
             }
             _ownerName = response.Owner;
+
+            // 中途加入：游戏已开始，服务端会补发快照+历史帧，收到快照后自动进入游戏
+            if (response.GameStarted)
+            {
+                Debug.Log("[Client][GameSync] 房间游戏已开始（中途加入），等待快照恢复");
+            }
         }
 
         /// <summary>
@@ -193,7 +206,32 @@ namespace GamePlay
         private void LeaveRoom(PlayerLeaveRoomResponse response)
         {
             Debug.Log("[Client][GameSync] 收到PlayerLeaveRoomResponse");
-            _players.Remove(response.Name);
+            if (_players.Remove(response.Name, out var entity))
+            {
+                entity.Destroy();
+            }
+            _pendingPlayerNames.Remove(response.Name);
+
+            // 大厅动态显示：其他玩家离开房间
+            if (response.Name != _name)
+                DebugLogger.ClientLog("[TCP]", $"玩家 {response.Name} 离开房间", "←");
+        }
+
+        /// <summary>
+        /// 房间结束（服务端广播）：重置游戏状态，清理玩家实体
+        /// </summary>
+        private void EndRoomHandler(PlayerEndRoomResponse response)
+        {
+            Debug.Log("[Client][GameSync] 收到PlayerEndRoomResponse，房间结束，重置状态");
+            foreach (var entity in _players.Values)
+            {
+                entity.Destroy();
+            }
+            _players.Clear();
+            _pendingPlayerNames.Clear();
+            _latestServerFrameId = 0;
+            _sendSeq = 1;
+            EndGame();
         }
 
         private void StartRoom(PlayerStartRoomResponse response)
@@ -207,13 +245,16 @@ namespace GamePlay
             if (_name == _ownerName)
             {
                 SyncSnapshot(0, _gameClient.GetClientId());
+                _lastSnapshotFrameId = 0;
             }
         }
         #endregion
         
         #region 玩家输入操作处理及心跳
+        // 输入命令模式
         private UInt64 _sendSeq = 1;                   // 本地发送序号（仅用于跟踪，非帧权威）
         private UInt64 _latestServerFrameId;           // 服务端广播的最新帧号
+        private UInt64 _lastSnapshotFrameId;           // 上次上报快照的帧号（避免漏报/重复上报）
         private Vector2 _pendingInput;
         
         
@@ -259,10 +300,14 @@ namespace GamePlay
                 GameSyncMessage = gameSyncMessage
             };
             _gameClient.KcpSendMessage(message.ToByteArray());
-            if (_name == _ownerName && _latestServerFrameId % (UInt64)(_gameFrameRate * _snapshotSpacing) == 0
-                && _latestServerFrameId > 0)
+
+            // 快照上报（D1：任意客户端定时上报，服务端缓存为权威快照，供断线重连/中途加入恢复）
+            // 用"超过上次上报帧+间隔"触发而非取模，避免帧号批量到达跳变时漏报
+            ulong snapshotSpacing = (UInt64)(_gameFrameRate * _snapshotSpacing);
+            if (_latestServerFrameId > 0 && _latestServerFrameId >= _lastSnapshotFrameId + snapshotSpacing)
             {
                 SyncSnapshot(_latestServerFrameId, clientId);
+                _lastSnapshotFrameId = _latestServerFrameId;
             }
             
             _sendSeq++;
@@ -344,12 +389,15 @@ namespace GamePlay
             {
                 GameSnapshot snapshot = message.Snapshot;
                 
-                // 断线重连：清空本地所有内容，从快照全量重建
+                // 断线重连/中途加入：清空本地所有内容，从快照全量重建
                 foreach (var playerEntity in _players)
                 {
                     playerEntity.Value.Destroy();
                 }
                 _players.Clear();
+                _pendingPlayerNames.Clear();
+                _sendSeq = 1;
+                _lastSnapshotFrameId = snapshot.FrameId;
                 
                 foreach (var playerSS in snapshot.PlayerSSs)
                 {
@@ -363,7 +411,30 @@ namespace GamePlay
                     }
                     _players[playerSS.Name].SetSnapshotSync(playerSS);
                 }
-                Debug.Log("[Client][GameSync] 断线重连-开始游戏");
+
+                // 中途加入：快照不含自己时，以快照帧号为起点创建自己实体（从出生点开始）
+                if (!_players.ContainsKey(_name))
+                {
+                    _latestServerFrameId = snapshot.FrameId;
+                    AddPlayer(_name);
+                    var self = _players[_name];
+                    var selfSync = new PlayerSnapshotSync
+                    {
+                        Name = _name,
+                        FrameId = snapshot.FrameId,
+                        LastFrameId = snapshot.FrameId,
+                        Pos = new Vector3D
+                        {
+                            X = self.Position.GetRawX(),
+                            Y = self.Position.GetRawY(),
+                            Z = self.Position.GetRawZ()
+                        }
+                    };
+                    self.SetSnapshotSync(selfSync);
+                    Debug.Log($"[Client][GameSync] 中途加入，以快照帧={snapshot.FrameId} 创建自己实体");
+                }
+
+                Debug.Log("[Client][GameSync] 断线重连/中途加入-开始游戏");
                 StartGame();
             }
             else if (message.ContentCase == GameSnapshotMessage.ContentOneofCase.Frames)

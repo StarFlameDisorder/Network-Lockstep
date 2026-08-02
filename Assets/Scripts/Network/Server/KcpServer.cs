@@ -30,6 +30,17 @@ namespace Network.Server
         private readonly int _port;
         private bool _isRunning=false;
         private Dictionary<uint, KcpSession> _convToKcp;
+
+        /// <summary>
+        /// 待发缓存：conv 会话尚未创建（客户端刚重连、首个 KCP 包未到达）时暂存的消息，
+        /// 会话创建后立即补发。解决"重连补发被静默丢弃"问题。
+        /// </summary>
+        private readonly Dictionary<uint, List<byte[]>> _pendingSends = new();
+
+        /// <summary>
+        /// 线程安全锁：ReceiveAsync 在后台线程读写字典，Send/RemoveClient 在主线程调用
+        /// </summary>
+        private readonly object _lock = new();
         
         public event Action<uint,byte[]> OnMessageReceived;
 
@@ -44,7 +55,11 @@ namespace Network.Server
 
         public void Start()
         {
-            _convToKcp = new Dictionary<uint, KcpSession>();
+            lock (_lock)
+            {
+                _convToKcp = new Dictionary<uint, KcpSession>();
+                _pendingSends.Clear();
+            }
             _udpClient = new UdpClient(_port);
             _isRunning = true;
             ReceiveAsync();
@@ -53,12 +68,23 @@ namespace Network.Server
         public void Stop()
         {
             _isRunning = false;
-            foreach (var conv in _convToKcp)
+            List<KcpSession> sessions;
+            lock (_lock)
             {
-                conv.Value.Dispose();
+                sessions = _convToKcp != null
+                    ? new List<KcpSession>(_convToKcp.Values)
+                    : new List<KcpSession>();
+                _pendingSends.Clear();
             }
-            _convToKcp.Clear();
-            _convToKcp = null;
+            foreach (var session in sessions)
+            {
+                session.Dispose();
+            }
+            lock (_lock)
+            {
+                _convToKcp?.Clear();
+                _convToKcp = null;
+            }
             _udpClient.Close();
             _udpClient = null;
         }
@@ -83,24 +109,48 @@ namespace Network.Server
         //UDP接收的消息交给KCP
         private async void ReceiveAsync()
         {
-            try
+            while (_isRunning)
             {
-                while (_isRunning)
+                try
                 {
-                    var res=await _udpClient.ReceiveAsync();
+                    var res = await _udpClient.ReceiveAsync();
                     uint conv = BinaryPrimitives.ReadUInt32LittleEndian(res.Buffer);
-                    if (!_convToKcp.ContainsKey(conv))
+                    KcpSession session;
+                    lock (_lock)
                     {
-                        _convToKcp[conv] = new KcpSession(conv, res.RemoteEndPoint);
-                        _convToKcp[conv].OnUdpReceive += Send;
-                        _convToKcp[conv].OnMessageReceived += Receive;
+                        if (_convToKcp != null && _convToKcp.TryGetValue(conv, out session))
+                        {
+                            // 已有会话，直接输入
+                        }
+                        else
+                        {
+                            // 首次收到该 conv 的包：创建会话并补发待发缓存
+                            session = new KcpSession(conv, res.RemoteEndPoint);
+                            session.OnUdpReceive += Send;
+                            session.OnMessageReceived += Receive;
+                            if (_convToKcp != null)
+                            {
+                                _convToKcp[conv] = session;
+
+                                if (_pendingSends.TryGetValue(conv, out var pending))
+                                {
+                                    foreach (var data in pending)
+                                    {
+                                        session.Send(data);
+                                    }
+                                    _pendingSends.Remove(conv);
+                                }
+                            }
+                        }
                     }
-                    _convToKcp[conv].Input(res.Buffer);
+                    session.Input(res.Buffer);
                 }
-            }
-            catch (Exception e)
-            {
-                if(_isRunning)Debug.LogError("[Server][KcpServer] 消息接收错误"+e);
+                catch (Exception e)
+                {
+                    // 单个客户端断开等瞬时异常不应终止接收循环，否则后续新 conv 无法注册
+                    if (_isRunning)
+                        Debug.LogError("[Server][KcpServer] 消息接收错误" + e);
+                }
             }
         }
 
@@ -111,12 +161,27 @@ namespace Network.Server
         //上层消息传入KCP
         public void Send(uint conv,byte[] datagram)
         {
-            if (!_convToKcp.TryGetValue(conv, out var value))
+            lock (_lock)
             {
-                Debug.LogError($"[Server][KcpServer]发送消息错误，未知conv:{conv}");
-                return;
+                if (_convToKcp != null && _convToKcp.TryGetValue(conv, out var session))
+                {
+                    session.Send(datagram);
+                    return;
+                }
+
+                // 会话尚未创建（客户端刚重连/中途加入，首个KCP包未到达）→ 缓存待发，会话创建后补发
+                if (!_pendingSends.TryGetValue(conv, out var list))
+                {
+                    list = new List<byte[]>();
+                    _pendingSends[conv] = list;
+                    Debug.LogWarning($"[Server][KcpServer] conv={conv} 会话未创建，消息进入待发缓存");
+                }
+
+                // 缓存上限保护：只保留最新，防止"只连TCP不发KCP"的客户端导致内存无限增长
+                const int MAX_PENDING_SENDS = 64;
+                if (list.Count >= MAX_PENDING_SENDS) list.RemoveAt(0);
+                list.Add(datagram);
             }
-            value.Send(datagram);
         }
         
         //KCP消息传给上层
@@ -134,36 +199,49 @@ namespace Network.Server
 
         public string GetClientInfo(uint conv)
         {
-            if (!_convToKcp.TryGetValue(conv, out var value))
+            lock (_lock)
             {
-                return "unknown";
-            }
+                if (_convToKcp == null || !_convToKcp.TryGetValue(conv, out var value))
+                {
+                    return "unknown";
+                }
 
-            IPEndPoint endPoint = value.endPoint;
-            return $"{endPoint.Address}:{endPoint.Port}";
+                IPEndPoint endPoint = value.endPoint;
+                return $"{endPoint.Address}:{endPoint.Port}";
+            }
         }
         
         /// <summary>获取客户端的 IPEndPoint</summary>
         public IPEndPoint GetEndpoint(uint conv)
         {
-            if (_convToKcp.TryGetValue(conv, out var session))
-                return session.endPoint;
-            return null;
+            lock (_lock)
+            {
+                if (_convToKcp != null && _convToKcp.TryGetValue(conv, out var session))
+                    return session.endPoint;
+                return null;
+            }
         }
         
         /// <summary>检查是否存在指定 conv 的客户端</summary>
         public bool HasClient(uint conv)
         {
-            return _convToKcp != null && _convToKcp.ContainsKey(conv);
+            lock (_lock)
+            {
+                return _convToKcp != null && _convToKcp.ContainsKey(conv);
+            }
         }
 
         /// <summary>移除并断开指定客户端</summary>
         public void RemoveClient(uint conv)
         {
-            if (_convToKcp.TryGetValue(conv, out var session))
+            lock (_lock)
             {
-                session.Dispose();
-                _convToKcp.Remove(conv);
+                if (_convToKcp != null && _convToKcp.TryGetValue(conv, out var session))
+                {
+                    session.Dispose();
+                    _convToKcp.Remove(conv);
+                }
+                _pendingSends.Remove(conv);
             }
         }
         

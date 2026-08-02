@@ -26,25 +26,26 @@ namespace SyncMessage {
           string.Concat(
             "ChFTeW5jTWVzc2FnZS5wcm90bxILU3luY01lc3NhZ2UaFENvbm5lY3RNZXNz",
             "YWdlLnByb3RvGhFHYW1lTWVzc2FnZS5wcm90bxoSTG9iYnlNZXNzYWdlLnBy",
-            "b3RvIqMCCg1TZXJ2ZXJNZXNzYWdlEhcKDWNvbW1vbk1lc3NhZ2UYAiABKAlI",
+            "b3RvIrYCCg1TZXJ2ZXJNZXNzYWdlEhcKDWNvbW1vbk1lc3NhZ2UYAiABKAlI",
             "ABI+Cg5jb25uZWN0TWVzc2FnZRgDIAEoCzIkLkNvbm5lY3RNZXNzYWdlLlNl",
             "cnZlckNvbm5lY3RNZXNzYWdlSAASNwoPZ2FtZVN5bmNNZXNzYWdlGAQgASgL",
             "MhwuR2FtZU1lc3NhZ2UuR2FtZVN5bmNNZXNzYWdlSAASNAoJbG9iYnlTeW5j",
             "GAUgASgLMh8uTG9iYnlNZXNzYWdlLkxvYmJ5U3luY1Jlc3BvbnNlSAASPwoT",
             "Z2FtZVNuYXBzaG90TWVzc2FnZRgGIAEoCzIgLkdhbWVNZXNzYWdlLkdhbWVT",
-            "bmFwc2hvdE1lc3NhZ2VIAEIJCgdjb250ZW50IuECCg1DbGllbnRNZXNzYWdl",
-            "EhAKCGNsaWVudElkGAEgASgNEhcKDWNvbW1vbk1lc3NhZ2UYAiABKAlIABI+",
-            "Cg5jb25uZWN0TWVzc2FnZRgDIAEoCzIkLkNvbm5lY3RNZXNzYWdlLkNsaWVu",
-            "dENvbm5lY3RNZXNzYWdlSAASNwoPZ2FtZVN5bmNNZXNzYWdlGAQgASgLMhwu",
-            "R2FtZU1lc3NhZ2UuR2FtZVN5bmNNZXNzYWdlSAASMwoJbG9iYnlTeW5jGAUg",
-            "ASgLMh4uTG9iYnlNZXNzYWdlLkxvYmJ5U3luY1JlcXVlc3RIABIrCgloZWFy",
-            "dEJlYXQYBiABKAsyFi5HYW1lTWVzc2FnZS5IZWFydEJlYXRIABI/ChNnYW1l",
-            "U25hcHNob3RNZXNzYWdlGAcgASgLMiAuR2FtZU1lc3NhZ2UuR2FtZVNuYXBz",
-            "aG90TWVzc2FnZUgAQgkKB2NvbnRlbnRiBnByb3RvMw=="));
+            "bmFwc2hvdE1lc3NhZ2VIABIRCglrZWVwQWxpdmUYByABKAhCCQoHY29udGVu",
+            "dCLhAgoNQ2xpZW50TWVzc2FnZRIQCghjbGllbnRJZBgBIAEoDRIXCg1jb21t",
+            "b25NZXNzYWdlGAIgASgJSAASPgoOY29ubmVjdE1lc3NhZ2UYAyABKAsyJC5D",
+            "b25uZWN0TWVzc2FnZS5DbGllbnRDb25uZWN0TWVzc2FnZUgAEjcKD2dhbWVT",
+            "eW5jTWVzc2FnZRgEIAEoCzIcLkdhbWVNZXNzYWdlLkdhbWVTeW5jTWVzc2Fn",
+            "ZUgAEjMKCWxvYmJ5U3luYxgFIAEoCzIeLkxvYmJ5TWVzc2FnZS5Mb2JieVN5",
+            "bmNSZXF1ZXN0SAASKwoJaGVhcnRCZWF0GAYgASgLMhYuR2FtZU1lc3NhZ2Uu",
+            "SGVhcnRCZWF0SAASPwoTZ2FtZVNuYXBzaG90TWVzc2FnZRgHIAEoCzIgLkdh",
+            "bWVNZXNzYWdlLkdhbWVTbmFwc2hvdE1lc3NhZ2VIAEIJCgdjb250ZW50YgZw",
+            "cm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::ConnectMessage.ConnectMessageReflection.Descriptor, global::GameMessage.GameMessageReflection.Descriptor, global::LobbyMessage.LobbyMessageReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ServerMessage), global::SyncMessage.ServerMessage.Parser, new[]{ "CommonMessage", "ConnectMessage", "GameSyncMessage", "LobbySync", "GameSnapshotMessage" }, new[]{ "Content" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ServerMessage), global::SyncMessage.ServerMessage.Parser, new[]{ "CommonMessage", "ConnectMessage", "GameSyncMessage", "LobbySync", "GameSnapshotMessage", "KeepAlive" }, new[]{ "Content" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ClientMessage), global::SyncMessage.ClientMessage.Parser, new[]{ "ClientId", "CommonMessage", "ConnectMessage", "GameSyncMessage", "LobbySync", "HeartBeat", "GameSnapshotMessage" }, new[]{ "Content" }, null, null, null)
           }));
     }
@@ -86,6 +87,7 @@ namespace SyncMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public ServerMessage(ServerMessage other) : this() {
+      keepAlive_ = other.keepAlive_;
       switch (other.ContentCase) {
         case ContentOneofCase.CommonMessage:
           CommonMessage = other.CommonMessage;
@@ -173,6 +175,21 @@ namespace SyncMessage {
       }
     }
 
+    /// <summary>Field number for the "keepAlive" field.</summary>
+    public const int KeepAliveFieldNumber = 7;
+    private bool keepAlive_;
+    /// <summary>
+    ///服务端保活包（客户端收包超时断线检测用，无实际内容）
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool KeepAlive {
+      get { return keepAlive_; }
+      set {
+        keepAlive_ = value;
+      }
+    }
+
     private object content_;
     /// <summary>Enum of possible cases for the "content" oneof.</summary>
     public enum ContentOneofCase {
@@ -217,6 +234,7 @@ namespace SyncMessage {
       if (!object.Equals(GameSyncMessage, other.GameSyncMessage)) return false;
       if (!object.Equals(LobbySync, other.LobbySync)) return false;
       if (!object.Equals(GameSnapshotMessage, other.GameSnapshotMessage)) return false;
+      if (KeepAlive != other.KeepAlive) return false;
       if (ContentCase != other.ContentCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -230,6 +248,7 @@ namespace SyncMessage {
       if (contentCase_ == ContentOneofCase.GameSyncMessage) hash ^= GameSyncMessage.GetHashCode();
       if (contentCase_ == ContentOneofCase.LobbySync) hash ^= LobbySync.GetHashCode();
       if (contentCase_ == ContentOneofCase.GameSnapshotMessage) hash ^= GameSnapshotMessage.GetHashCode();
+      if (KeepAlive != false) hash ^= KeepAlive.GetHashCode();
       hash ^= (int) contentCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -269,6 +288,10 @@ namespace SyncMessage {
         output.WriteRawTag(50);
         output.WriteMessage(GameSnapshotMessage);
       }
+      if (KeepAlive != false) {
+        output.WriteRawTag(56);
+        output.WriteBool(KeepAlive);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -299,6 +322,10 @@ namespace SyncMessage {
         output.WriteRawTag(50);
         output.WriteMessage(GameSnapshotMessage);
       }
+      if (KeepAlive != false) {
+        output.WriteRawTag(56);
+        output.WriteBool(KeepAlive);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -324,6 +351,9 @@ namespace SyncMessage {
       if (contentCase_ == ContentOneofCase.GameSnapshotMessage) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(GameSnapshotMessage);
       }
+      if (KeepAlive != false) {
+        size += 1 + 1;
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -335,6 +365,9 @@ namespace SyncMessage {
     public void MergeFrom(ServerMessage other) {
       if (other == null) {
         return;
+      }
+      if (other.KeepAlive != false) {
+        KeepAlive = other.KeepAlive;
       }
       switch (other.ContentCase) {
         case ContentOneofCase.CommonMessage:
@@ -421,6 +454,10 @@ namespace SyncMessage {
             GameSnapshotMessage = subBuilder;
             break;
           }
+          case 56: {
+            KeepAlive = input.ReadBool();
+            break;
+          }
         }
       }
     #endif
@@ -474,6 +511,10 @@ namespace SyncMessage {
             }
             input.ReadMessage(subBuilder);
             GameSnapshotMessage = subBuilder;
+            break;
+          }
+          case 56: {
+            KeepAlive = input.ReadBool();
             break;
           }
         }

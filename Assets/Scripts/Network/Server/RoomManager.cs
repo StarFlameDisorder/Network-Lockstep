@@ -24,14 +24,20 @@ namespace Network.Server
 
         public Queue<PlayerSync> InputQueue = new();           // 待广播的帧输入队列（每帧消费一个）
         public int InputQueueCount => InputQueue.Count;
-        public Dictionary<ulong, PlayerSync> Frames = new();  // 历史帧缓存（服务端帧号→帧数据）
+        public Dictionary<ulong, PlayerSync> Frames = new();  // 历史帧缓存（服务端帧号→帧数据，重连补帧用）
         public Queue<ulong> CurrentFrameIds = new();           // 当前已发送帧序号队列
         public ulong PreSnapshotId;                             // 上次快照中的帧 ID（服务端帧号）
+        public bool Joining;                                    // 重连/中途加入恢复中：不参与 Lockstep 帧等待，收到首个输入后置 false
     }
 
     /// <summary>
     /// 房间管理器：房间生命周期 + 玩家会话 + 帧广播 + 心跳检测 + 快照
     /// 移植自 C++/Qt RoomManager
+    /// 
+    /// 线程模型（2026-08-02 重构）：
+    /// - 所有方法均由主线程调用（GameServer.Update → Tick，网络事件经 Dispatcher 主线程派发）
+    /// - 不再使用 System.Timers.Timer 后台线程，消除字典并发竞态
+    /// - 断线重连复用原 PlayerSession（保留 Frames 历史帧缓存），不再重建清空
     /// </summary>
     public class RoomManager
     {
@@ -48,10 +54,13 @@ namespace Network.Server
         private ulong _serverFrameId;                     // 服务端全局帧号（统一分配）
         private ulong _sendIndex;
 
-        // 帧广播定时器
-        private System.Timers.Timer _broadcastTimer;
+        // 主线程驱动累加器（替代 System.Timers.Timer）
+        private float _broadcastAccum;
+        private float _heartbeatAccum;
         private int _gameFrameRate = 30;
-        private readonly float _heartbeatTimeoutMs = 4000f;
+        private float _heartbeatTimeoutMs = 4000f;
+        private const float HEARTBEAT_CHECK_INTERVAL = 1f;   // 心跳超时检测节流
+        private const int MAX_CACHED_FRAMES = 600;           // 每玩家历史帧缓存上限（防止内存无限增长）
 
         // 事件：向外发送消息
         public event Action<uint, byte[]> OnSendTcp;
@@ -83,21 +92,42 @@ namespace Network.Server
         public void Initialize(int gameFrameRate = 30, float heartbeatTimeoutSec = 4f)
         {
             _gameFrameRate = gameFrameRate;
+            _heartbeatTimeoutMs = heartbeatTimeoutSec * 1000f;
         }
 
         public void Start()
         {
-            _broadcastTimer = new System.Timers.Timer(1000.0 / _gameFrameRate);
-            _broadcastTimer.Elapsed += (_, __) => BroadcastGameSync();
-            _broadcastTimer.AutoReset = true;
+            _broadcastAccum = 0;
+            _heartbeatAccum = 0;
         }
 
         public void Stop()
         {
             _isRunning = false;
-            _broadcastTimer?.Stop();
-            _broadcastTimer?.Dispose();
-            _broadcastTimer = null;
+            _broadcastAccum = 0;
+            _heartbeatAccum = 0;
+        }
+
+        /// <summary>
+        /// 主线程逐帧驱动（由 GameServer.Update 调用）：心跳检测 + 帧广播
+        /// </summary>
+        public void Tick(float deltaTime)
+        {
+            // 心跳超时检测（节流 1s，大厅阶段也生效）
+            _heartbeatAccum += deltaTime;
+            if (_heartbeatAccum >= HEARTBEAT_CHECK_INTERVAL)
+            {
+                _heartbeatAccum = 0;
+                CheckHeartbeatTimeout();
+            }
+
+            // 帧广播（按游戏帧率）
+            _broadcastAccum += deltaTime;
+            if (_broadcastAccum >= 1f / _gameFrameRate)
+            {
+                _broadcastAccum -= 1f / _gameFrameRate;
+                BroadcastGameSync();
+            }
         }
 
         #endregion
@@ -133,27 +163,42 @@ namespace Network.Server
         {
             uint playerId = GetPlayerIdByName(name);
             bool isReconnect = playerId != 0;
+            bool isMidGameJoin = !isReconnect && _isRunning;
 
             if (!isReconnect)
             {
                 playerId = _nextPlayerId++;
             }
 
-            var player = new PlayerSession
+            PlayerSession player;
+            if (isReconnect)
             {
-                Id = playerId,
-                ClientId = clientId,
-                Name = name,
-                ActiveTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Online = true
-            };
+                // 断线重连：复用原会话，保留 Frames/PreSnapshotId 历史帧缓存，仅更新网络身份
+                player = _players[playerId];
+                player.ClientId = clientId;
+                player.Online = true;
+                player.InputQueue.Clear(); // 清空断线前的过期输入
+            }
+            else
+            {
+                player = new PlayerSession
+                {
+                    Id = playerId,
+                    ClientId = clientId,
+                    Name = name
+                };
+                _players[playerId] = player;
+            }
+            player.ActiveTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            _players[playerId] = player;
+            // 游戏运行中加入（重连/中途加入）：恢复期间不参与 Lockstep 帧等待，避免卡住全房间
+            player.Joining = _isRunning;
+
             _playerByClient[clientId] = playerId;
 
-            Debug.Log($"[Server][RoomManager] 玩家加入: {name} clientId={clientId} playerId={playerId} 总数={_players.Count}");
+            Debug.Log($"[Server][RoomManager] 玩家加入: {name} clientId={clientId} playerId={playerId} 总数={_players.Count} 重连={isReconnect} 中途加入={isMidGameJoin}");
 
-            // 广播玩家列表给所有人
+            // 广播玩家列表给所有人（含游戏是否已开始，供中途加入客户端判断）
             var joinMessage = new ServerMessage
             {
                 LobbySync = new LobbySyncResponse
@@ -161,6 +206,7 @@ namespace Network.Server
                     JoinRoom = new PlayerJoinRoomResponse
                     {
                         Owner = _players.ContainsKey(1) ? _players[1].Name : "",
+                        GameStarted = _isRunning
                     }
                 }
             };
@@ -169,8 +215,8 @@ namespace Network.Server
 
             BroadcastTcp(joinMessage);
 
-            // 断线重连：补发快照和历史帧
-            if (isReconnect && _isRunning)
+            // 游戏运行中：断线重连 或 中途加入 → 补发快照和历史帧
+            if (_isRunning)
             {
                 SendReconnectData(clientId, player);
             }
@@ -188,6 +234,16 @@ namespace Network.Server
             _playerByClient.Remove(clientId);
             Debug.Log($"[Server][RoomManager] 玩家离开: {name} clientId={clientId}");
 
+            // 广播离开消息，其他客户端据此刷新大厅显示
+            var msg = new ServerMessage
+            {
+                LobbySync = new LobbySyncResponse
+                {
+                    LeaveRoom = new PlayerLeaveRoomResponse { Name = name }
+                }
+            };
+            BroadcastTcp(msg);
+
             if (_players.Count == 0)
                 EndRoom();
         }
@@ -195,7 +251,8 @@ namespace Network.Server
         private void StartRoom(string name)
         {
             _isRunning = true;
-            _broadcastTimer.Start();
+            _serverFrameId = 0;
+            _sendIndex = 0;
 
             var msg = new ServerMessage
             {
@@ -215,7 +272,24 @@ namespace Network.Server
         private void EndRoom()
         {
             _isRunning = false;
-            _broadcastTimer?.Stop();
+            _gameSnapshot = null;
+            _serverFrameId = 0;
+            _sendIndex = 0;
+
+            foreach (var p in _players.Values)
+            {
+                p.InputQueue.Clear();
+            }
+
+            // 广播房间结束，客户端据此重置游戏状态
+            var msg = new ServerMessage
+            {
+                LobbySync = new LobbySyncResponse
+                {
+                    EndRoom = new PlayerEndRoomResponse { Name = "" }
+                }
+            };
+            BroadcastTcp(msg);
             Debug.Log("[Server][RoomManager] 房间结束");
         }
 
@@ -232,6 +306,9 @@ namespace Network.Server
             {
                 var sync = message.Players[0]; // 每个客户端只发送自己的操作
                 player.LastFrameId = sync.FrameId; // 记录客户端发送序号（调试用）
+
+                // 首个输入到达：加入中状态结束，正式参与帧同步
+                player.Joining = false;
 
                 // 入队等待下一帧广播统一分配服务端帧号
                 player.InputQueue.Enqueue(sync);
@@ -289,17 +366,17 @@ namespace Network.Server
             {
                 player.Online = false;
                 Debug.Log($"[Server][RoomManager] {player.Name} TCP 断开，标记离线");
-                OnRemoveClient?.Invoke(clientId);
             }
+            _playerByClient.Remove(clientId);
+            OnRemoveClient?.Invoke(clientId);
         }
 
         #endregion
 
-        #region 帧广播
+        #region 心跳检测
 
-        private void BroadcastGameSync()
+        private void CheckHeartbeatTimeout()
         {
-            // 心跳超时检测
             long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             foreach (var player in _players.Values)
             {
@@ -310,12 +387,21 @@ namespace Network.Server
                     OnRemoveClient?.Invoke(player.ClientId);
                 }
             }
+        }
 
-            // 严格帧同步：等待所有在线玩家至少有一个输入才广播
+        #endregion
+
+        #region 帧广播
+
+        private void BroadcastGameSync()
+        {
+            // 严格帧同步：等待所有"参与中"的在线玩家至少有一个输入才广播
+            // （重连/中途加入恢复中的玩家 Joining=true，不参与等待，避免恢复期卡住全房间）
             var onlinePlayers = _players.Values.Where(p => p.Online).ToList();
-            if (onlinePlayers.Count == 0) return;
+            var activePlayers = onlinePlayers.Where(p => !p.Joining).ToList();
+            if (activePlayers.Count == 0) return;
 
-            bool allReady = onlinePlayers.All(p => p.InputQueue.Count > 0);
+            bool allReady = activePlayers.All(p => p.InputQueue.Count > 0);
             if (!allReady)
             {
                 // 未全部就绪，等待下一轮
@@ -334,7 +420,7 @@ namespace Network.Server
             };
             syncMessage.GameSyncMessage = gameSync;
 
-            foreach (var player in onlinePlayers)
+            foreach (var player in activePlayers)
             {
                 var sync = player.InputQueue.Dequeue();
                 sync.FrameId = _serverFrameId; // 服务端统一分配帧号
@@ -342,15 +428,21 @@ namespace Network.Server
                 log += $" {sync.Name}:{sync.InputMove.X},{sync.InputMove.Y},{sync.InputMove.Z}";
                 gameSync.Players.Add(sync);
 
-                // 缓存历史帧（服务端帧号为Key，用于断线重连补发）
+                // 缓存历史帧（服务端帧号为Key，用于断线重连补发；重连复用会话，缓存不清空）
                 player.Frames[_serverFrameId] = sync;
                 player.CurrentFrameIds.Enqueue(_serverFrameId);
+
+                // 帧缓存上限保护，超出淘汰最旧帧
+                while (player.CurrentFrameIds.Count > MAX_CACHED_FRAMES)
+                {
+                    player.Frames.Remove(player.CurrentFrameIds.Dequeue());
+                }
             }
 
             // Debug.Log($"[Server][RoomManager] {log}");
 
             byte[] data = syncMessage.ToByteArray();
-            foreach (var player in onlinePlayers)
+            foreach (var player in activePlayers)
             {
                 OnSendKcp?.Invoke(player.ClientId, data);
             }
@@ -362,7 +454,13 @@ namespace Network.Server
 
         private void SendReconnectData(uint clientId, PlayerSession player)
         {
-            // 1. 发送快照
+            if (_gameSnapshot == null)
+            {
+                Debug.LogWarning($"[Server][RoomManager] 重连/中途加入时无快照可发 clientId={clientId}");
+                return;
+            }
+
+            // 1. 发送快照（LastFrameId 取该玩家当前发送序号，客户端据此恢复 _sendSeq）
             var snapMsg = new ServerMessage
             {
                 GameSnapshotMessage = new GameSnapshotMessage
@@ -382,19 +480,17 @@ namespace Network.Server
                     FrameId = ss.FrameId,
                     Pos = ss.Pos,
                     Velocity = ss.Velocity,
-                    LastFrameId = 0
+                    // 以快照中的执行帧作为恢复点，与补发范围 [快照帧+1, 当前帧] 对齐，
+                    // 避免 LastFrameId（客户端发送序号）落后导致补帧断档
+                    LastFrameId = ss.FrameId
                 };
-
-                uint pid = GetPlayerIdByName(ss.Name);
-                if (pid != 0 && _players.TryGetValue(pid, out var p))
-                    ps.LastFrameId = p.LastFrameId;
 
                 snapMsg.GameSnapshotMessage.Snapshot.PlayerSSs.Add(ps);
             }
 
             OnSendKcp?.Invoke(clientId, snapMsg.ToByteArray());
 
-            // 2. 补发历史帧（分包）
+            // 2. 补发历史帧 [快照帧+1, 当前帧]（按服务端帧号整帧补发，分包）
             const int MAX_FRAMES_PER_PACKET = 10;
             var framesMsg = new ServerMessage
             {
@@ -403,27 +499,32 @@ namespace Network.Server
                     Frames = new GameFrame()
                 }
             };
-            framesMsg.GameSnapshotMessage.Frames.FrameId = _gameSnapshot.FrameId;
+            framesMsg.GameSnapshotMessage.Frames.FrameId = _serverFrameId;
 
             int frameCount = 0;
-            foreach (var p in _players.Values)
+            for (ulong frameId = _gameSnapshot.FrameId + 1; frameId <= _serverFrameId; frameId++)
             {
-                for (ulong i = p.PreSnapshotId + 1; p.Frames.ContainsKey(i); i++)
+                foreach (var p in _players.Values)
                 {
-                    framesMsg.GameSnapshotMessage.Frames.Players.Add(p.Frames[i]);
-                    frameCount++;
-
-                    if (frameCount >= MAX_FRAMES_PER_PACKET)
+                    if (p.Frames.TryGetValue(frameId, out var sync))
                     {
-                        OnSendKcp?.Invoke(clientId, framesMsg.ToByteArray());
-                        framesMsg.GameSnapshotMessage.Frames.Players.Clear();
-                        frameCount = 0;
+                        framesMsg.GameSnapshotMessage.Frames.Players.Add(sync);
+                        frameCount++;
                     }
+                }
+
+                if (frameCount >= MAX_FRAMES_PER_PACKET)
+                {
+                    OnSendKcp?.Invoke(clientId, framesMsg.ToByteArray());
+                    framesMsg.GameSnapshotMessage.Frames.Players.Clear();
+                    frameCount = 0;
                 }
             }
 
             if (frameCount > 0)
                 OnSendKcp?.Invoke(clientId, framesMsg.ToByteArray());
+
+            Debug.Log($"[Server][RoomManager] 补发重连数据 clientId={clientId} 快照帧={_gameSnapshot.FrameId} 补帧至={_serverFrameId}");
         }
 
         private uint GetPlayerIdByName(string name)

@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using Framework;
 using GamePlay;
@@ -151,6 +152,10 @@ namespace UI.View
                 Debug.LogError("[Client][ClientDebugPanel] 获取GameSync子系统错误");
                 return;
             }
+
+            // 断线事件：提示手动重连（D7 双通道一致性，任一通道失效即触发）
+            _gameClient.OnConnectionLost += () =>
+                DebugLogger.ClientLog("[SYS]", "检测到断线（TCP/KCP 通道失效或收包超时），请点击[连接]手动重连");
         }
 
         private void Update()
@@ -203,19 +208,19 @@ namespace UI.View
             if (_gameClient == null)
                 Global.TryGet(out _gameClient);
 
-            bool tcpOk = _gameClient != null && _gameClient.TcpIsConnected();
-            bool kcpOk = _gameClient != null && _gameClient.KcpIsConnected();
+            // D7：TCP/KCP 双通道统一状态显示，避免"TCP 断了 UDP 还显示连着"的状态不一致
+            bool connected = _gameClient != null && _gameClient.State == GameClient.ConnectionState.Connected;
 
             if (_labelStatus != null)
             {
-                _labelStatus.text = tcpOk ? "●" : "○";
-                _labelStatus.style.color = tcpOk ? Color.green : Color.gray;
+                _labelStatus.text = connected ? "●" : "○";
+                _labelStatus.style.color = connected ? Color.green : Color.gray;
             }
 
             if (_labelUdpStatus != null)
             {
-                _labelUdpStatus.text = kcpOk ? "●" : "○";
-                _labelUdpStatus.style.color = kcpOk ? Color.green : Color.gray;
+                _labelUdpStatus.text = connected ? "●" : "○";
+                _labelUdpStatus.style.color = connected ? Color.green : Color.gray;
             }
 
             if (_labelClientId != null && _gameClient != null)
@@ -336,10 +341,18 @@ namespace UI.View
         {
             string ip = _fieldIp?.value ?? "127.0.0.1";
             int tcpPort = int.TryParse(_fieldTcpPort?.value, out var tp) ? tp : 1975;
-            int udpPort = int.TryParse(_fieldUdpPort?.value, out var up) ? up : 1975;
+            int udpPort = int.TryParse(_fieldUdpPort?.value, out var up) ? up : tcpPort;
 
-            _gameClient.StartLink(ip, tcpPort);
-            DebugLogger.ClientLog("[SYS]", $"连接服务器 {ip}:{tcpPort}(TCP) {udpPort}(UDP)");
+            try
+            {
+                // KCP 端口独立配置（修复：之前 UDP 端口字段未接入连接流程）
+                _gameClient.StartLink(ip, tcpPort, udpPort);
+                DebugLogger.ClientLog("[SYS]", $"连接服务器 {ip}:{tcpPort}(TCP) {udpPort}(KCP)");
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.ClientLog("[ERR]", $"连接失败: {ex.Message}");
+            }
         }
 
         private void OnDisconnect()

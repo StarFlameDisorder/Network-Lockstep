@@ -40,11 +40,12 @@ namespace LobbyMessage {
             "YmJ5TWVzc2FnZS5QbGF5ZXJMZWF2ZVJvb21SZXNwb25zZUgAEjoKCXN0YXJ0",
             "Um9vbRgEIAEoCzIlLkxvYmJ5TWVzc2FnZS5QbGF5ZXJTdGFydFJvb21SZXNw",
             "b25zZUgAEjYKB2VuZFJvb20YBSABKAsyIy5Mb2JieU1lc3NhZ2UuUGxheWVy",
-            "RW5kUm9vbVJlc3BvbnNlSABCCQoHY29udGVudCI4ChZQbGF5ZXJKb2luUm9v",
-            "bVJlc3BvbnNlEg0KBW93bmVyGAEgASgJEg8KB3BsYXllcnMYAiADKAkiJwoX",
-            "UGxheWVyTGVhdmVSb29tUmVzcG9uc2USDAoEbmFtZRgBIAEoCSInChdQbGF5",
-            "ZXJTdGFydFJvb21SZXNwb25zZRIMCgRuYW1lGAEgASgJIiUKFVBsYXllckVu",
-            "ZFJvb21SZXNwb25zZRIMCgRuYW1lGAEgASgJYgZwcm90bzM="));
+            "RW5kUm9vbVJlc3BvbnNlSABCCQoHY29udGVudCJNChZQbGF5ZXJKb2luUm9v",
+            "bVJlc3BvbnNlEg0KBW93bmVyGAEgASgJEg8KB3BsYXllcnMYAiADKAkSEwoL",
+            "Z2FtZVN0YXJ0ZWQYAyABKAgiJwoXUGxheWVyTGVhdmVSb29tUmVzcG9uc2US",
+            "DAoEbmFtZRgBIAEoCSInChdQbGF5ZXJTdGFydFJvb21SZXNwb25zZRIMCgRu",
+            "YW1lGAEgASgJIiUKFVBsYXllckVuZFJvb21SZXNwb25zZRIMCgRuYW1lGAEg",
+            "ASgJYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -54,7 +55,7 @@ namespace LobbyMessage {
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerStartRoomRequest), global::LobbyMessage.PlayerStartRoomRequest.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerEndRoomRequest), global::LobbyMessage.PlayerEndRoomRequest.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.LobbySyncResponse), global::LobbyMessage.LobbySyncResponse.Parser, new[]{ "Name", "JoinRoom", "LeaveRoom", "StartRoom", "EndRoom" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerJoinRoomResponse), global::LobbyMessage.PlayerJoinRoomResponse.Parser, new[]{ "Owner", "Players" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerJoinRoomResponse), global::LobbyMessage.PlayerJoinRoomResponse.Parser, new[]{ "Owner", "Players", "GameStarted" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerLeaveRoomResponse), global::LobbyMessage.PlayerLeaveRoomResponse.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerStartRoomResponse), global::LobbyMessage.PlayerStartRoomResponse.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LobbyMessage.PlayerEndRoomResponse), global::LobbyMessage.PlayerEndRoomResponse.Parser, new[]{ "Name" }, null, null, null, null)
@@ -1718,6 +1719,7 @@ namespace LobbyMessage {
     public PlayerJoinRoomResponse(PlayerJoinRoomResponse other) : this() {
       owner_ = other.owner_;
       players_ = other.players_.Clone();
+      gameStarted_ = other.gameStarted_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1750,6 +1752,21 @@ namespace LobbyMessage {
       get { return players_; }
     }
 
+    /// <summary>Field number for the "gameStarted" field.</summary>
+    public const int GameStartedFieldNumber = 3;
+    private bool gameStarted_;
+    /// <summary>
+    ///游戏是否已开始（中途加入时客户端据此进入恢复流程）
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool GameStarted {
+      get { return gameStarted_; }
+      set {
+        gameStarted_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1767,6 +1784,7 @@ namespace LobbyMessage {
       }
       if (Owner != other.Owner) return false;
       if(!players_.Equals(other.players_)) return false;
+      if (GameStarted != other.GameStarted) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1776,6 +1794,7 @@ namespace LobbyMessage {
       int hash = 1;
       if (Owner.Length != 0) hash ^= Owner.GetHashCode();
       hash ^= players_.GetHashCode();
+      if (GameStarted != false) hash ^= GameStarted.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1799,6 +1818,10 @@ namespace LobbyMessage {
         output.WriteString(Owner);
       }
       players_.WriteTo(output, _repeated_players_codec);
+      if (GameStarted != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(GameStarted);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1814,6 +1837,10 @@ namespace LobbyMessage {
         output.WriteString(Owner);
       }
       players_.WriteTo(ref output, _repeated_players_codec);
+      if (GameStarted != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(GameStarted);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1828,6 +1855,9 @@ namespace LobbyMessage {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Owner);
       }
       size += players_.CalculateSize(_repeated_players_codec);
+      if (GameStarted != false) {
+        size += 1 + 1;
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1844,6 +1874,9 @@ namespace LobbyMessage {
         Owner = other.Owner;
       }
       players_.Add(other.players_);
+      if (other.GameStarted != false) {
+        GameStarted = other.GameStarted;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1867,6 +1900,10 @@ namespace LobbyMessage {
             players_.AddEntriesFrom(input, _repeated_players_codec);
             break;
           }
+          case 24: {
+            GameStarted = input.ReadBool();
+            break;
+          }
         }
       }
     #endif
@@ -1888,6 +1925,10 @@ namespace LobbyMessage {
           }
           case 18: {
             players_.AddEntriesFrom(ref input, _repeated_players_codec);
+            break;
+          }
+          case 24: {
+            GameStarted = input.ReadBool();
             break;
           }
         }

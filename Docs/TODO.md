@@ -100,11 +100,33 @@ BV18T7M6HE8
 
 | 阶段 | 内容 | 状态 |
 |---|---|---|
-| 阶段A | 断线重连修复（KCP会话注册、房间级帧缓存、服务端快照、断线检测/自动重连、事件订阅泄漏、心跳配置、线程竞态） | ❌ 未开始 |
-| 阶段B | 客户端网络层重构（INetworkTransport + MessageBus + NetworkClient） | ❌ 未开始 |
-| 阶段C | GameSync 职责拆分 + 服务端广播改主线程驱动 | ❌ 未开始 |
-| 阶段D | UI 修复与清理（旧面板移除、断线状态显示、LeaveRoom/EndRoom 派发） | ❌ 未开始 |
+| 阶段A | 断线重连修复 | 🔧 基本完成（2026-08-02），已运行时验证：断线检测/清理/重连恢复/帧续播 |
+| 阶段B | 客户端网络层重构（INetworkTransport + MessageBus + NetworkClient） | 🔧 部分完成（消息主线程派发队列已做；INetworkTransport 抽象类未做） |
+| 阶段C | GameSync 职责拆分 + 服务端广播改主线程驱动 | 🔧 部分完成（服务端广播已改主线程驱动；GameSync 拆分未做） |
+| 阶段D | UI 修复与清理（旧面板移除、断线状态显示、LeaveRoom/EndRoom 派发） | 🔧 部分完成（断线状态/UDP端口/加入离开消息已做；场景旧面板移除未做） |
 | 阶段E | C++ Server/ 目录废弃与清理 | ❌ 未开始 |
+
+### 阶段A 已落地明细（2026-08-02）
+
+- **A1 KCP 会话注册**：服务端 KcpServer 增加"待发缓存"（conv 会话未创建时暂存，会话创建后补发）；客户端握手后立即发 KCP 注册包 → 重连补发不再被静默丢弃
+- **A2 房间级帧缓存**：断线重连复用原 PlayerSession（保留 Frames 历史帧缓存）；SendReconnectData 重写为按服务端帧号整帧补发 [快照帧+1, 当前帧]
+- **A3 服务端快照**：任意客户端定时上报（D1），触发条件由"帧号取模"改为"超过上次上报帧+间隔"（修复帧号跳变漏报）
+- **A4 事件订阅泄漏**：KCP 消息回调只在 Init 注册一次
+- **A5 断线检测**：客户端收包超时（3s，D5）+ TCP/KCP 双通道统一 ConnectionState（D7）+ 手动重连（D2）
+- **A6 重连恢复**：快照全量重建 + `_sendSeq`/`_lastSnapshotFrameId` 恢复 + 中途加入自建实体
+- **A7 心跳配置+线程模型**：`Initialize` 心跳超时参数生效；帧广播/心跳检测/保活全部改主线程驱动（GameServer.Update）；Dispatcher 网络事件统一主线程派发；KcpSession 加线程安全锁
+- **A8 中途加入**：服务端对运行中房间的新玩家也补发快照+帧；会话新增 `Joining` 状态，恢复期间不参与 Lockstep 帧等待（避免卡住全房间）
+- **额外修复**：TcpServer.GetClientInfo 对已销毁 TcpClient 抛异常导致死客户端无法清理；KcpServer 接收循环单包异常不再终止；DeleteClient 清理异常不阻止移除；服务端保活包（`ServerMessage.keepAlive` 新字段）
+
+### 阶段B 已落地明细
+
+- 客户端消息统一入队 + 主线程 Update 消费派发（消除跨线程调 Unity API）
+
+### 阶段D 已落地明细
+
+- ClientDebugPanel：TCP/KCP 统一状态显示、UDP 端口接入连接流程、断线提示手动重连
+- MessageDispatcher：LeaveRoom/EndRoom 派发、保活/普通文本消息处理
+- 大厅动态显示其他玩家加入/离开房间（DebugLogger）
 
 > 2026-07-24 附：房间逻辑已修复（玩家实体延迟到 StartRoom 创建）、调试UI已增强（帧信息+玩家状态+面板折叠）
 

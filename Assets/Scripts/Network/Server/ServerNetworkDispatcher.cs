@@ -55,6 +55,11 @@ namespace Network.Server
         private readonly object _lock = new();
         private uint _nextClientId = 1;
 
+        // 网络事件队列：TcpServer/KcpServer 的回调来自后台线程，先入队，由主线程 DrainEvents 统一派发，
+        // 保证 _clientsById 与 RoomManager 事件全部在主线程处理，避免线程竞态。
+        private readonly object _eventLock = new();
+        private readonly Queue<Action> _eventQueue = new();
+
         /// <summary>TCP 端口</summary>
         public int TcpPort => _tcpPort;
         /// <summary>KCP 端口</summary>
@@ -86,10 +91,47 @@ namespace Network.Server
             _tcpServer = new TcpServer(tcpPort);
             _kcpServer = new KcpServer(kcpPort);
 
-            _tcpServer.OnClientConnected += HandleTcpConnected;
-            _tcpServer.OnMessageReceived += HandleTcpMessage;
-            _tcpServer.OnClientDisconnected += HandleTcpDisconnected;
-            _kcpServer.OnMessageReceived += HandleKcpMessage;
+            // 网络回调来自后台线程：入队，主线程 DrainEvents 统一处理
+            _tcpServer.OnClientConnected += tcp => EnqueueEvent(() => HandleTcpConnected(tcp));
+            _tcpServer.OnMessageReceived += (tcp, data) => EnqueueEvent(() => HandleTcpMessage(tcp, data));
+            _tcpServer.OnClientDisconnected += tcp => EnqueueEvent(() => HandleTcpDisconnected(tcp));
+            _kcpServer.OnMessageReceived += (conv, data) => EnqueueEvent(() => HandleKcpMessage(conv, data));
+        }
+
+        /// <summary>
+        /// 入队一个网络事件（后台线程调用，仅入队，不处理）
+        /// </summary>
+        private void EnqueueEvent(Action action)
+        {
+            lock (_eventLock)
+            {
+                _eventQueue.Enqueue(action);
+            }
+        }
+
+        /// <summary>
+        /// 主线程逐帧派发网络事件（由 GameServer.Update 驱动）
+        /// </summary>
+        public void DrainEvents()
+        {
+            while (true)
+            {
+                Action action;
+                lock (_eventLock)
+                {
+                    if (_eventQueue.Count == 0) return;
+                    action = _eventQueue.Dequeue();
+                }
+
+                try
+                {
+                    action();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[Server][ServerNetworkDispatcher] 网络事件处理异常：{ex}");
+                }
+            }
         }
 
         public void Start()
@@ -97,6 +139,34 @@ namespace Network.Server
             _tcpServer.Start();
             _kcpServer.Start();
             Debug.Log("[Server][ServerNetworkDispatcher] 网络分发器已启动");
+        }
+
+        // 保活包间隔与累加器（覆盖所有已连接客户端，含未入房者）
+        private const float KEEPALIVE_INTERVAL = 1f;
+        private float _keepAliveAccum;
+
+        /// <summary>
+        /// 主线程逐帧驱动（由 GameServer.Update 调用）：周期广播保活包，
+        /// 客户端据此做"收包超时"断线检测（大厅/游戏阶段都生效）。
+        /// </summary>
+        public void Tick(float deltaTime)
+        {
+            _keepAliveAccum += deltaTime;
+            if (_keepAliveAccum < KEEPALIVE_INTERVAL) return;
+            _keepAliveAccum = 0;
+
+            var msg = new ServerMessage { KeepAlive = true };
+            byte[] data = msg.ToByteArray();
+
+            lock (_lock)
+            {
+                foreach (var client in _clientsById.Values)
+                {
+                    _tcpServer.Send(client.TcpSocket, data);
+                    if (client.HasKcp)
+                        _kcpServer.Send(client.ClientId, data);
+                }
+            }
         }
 
         public void Stop()
@@ -313,20 +383,26 @@ namespace Network.Server
         {
             lock (_lock)
             {
-                if (_clientsById.TryGetValue(clientId, out var c))
+                if (!_clientsById.TryGetValue(clientId, out var c)) return;
+
+                try
                 {
                     if (c.TcpSocket != null)
                     {
                         _tcpToClientId.Remove(c.TcpSocket);
                         _tcpServer.DisconnectClient(c.TcpSocket);
                     }
-                    
                     _kcpServer.RemoveClient(clientId);
-                    c.HasKcp = false;
-
-                    _clientsById.Remove(clientId);
-                    Debug.Log($"[Server][Dispatcher] 移除 clientId={clientId}");
                 }
+                catch (Exception ex)
+                {
+                    // 清理异常不能阻止客户端移除，否则死客户端会永久占用
+                    Debug.LogError($"[Server][Dispatcher] DeleteClient 清理异常 clientId={clientId}: {ex}");
+                }
+
+                c.HasKcp = false;
+                _clientsById.Remove(clientId);
+                Debug.Log($"[Server][Dispatcher] 移除 clientId={clientId}");
             }
         }
 

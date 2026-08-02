@@ -79,6 +79,8 @@ namespace Network.Client
                 {
                     var res=await _udpClient.ReceiveAsync();
 
+                    // StopLink 后 _kcpSession 可能已置空，旧接收循环需退出
+                    if (_kcpSession == null) break;
                     _kcpSession.Input(res.Buffer);
                 }
             }

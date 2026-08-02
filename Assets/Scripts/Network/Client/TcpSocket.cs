@@ -20,6 +20,9 @@ namespace Network.Client
         
         private List<byte> _tcpMessageBuffer=new List<byte>();
         private Socket _socketTcp;
+
+        /// <summary>连接断开事件（网络异常/对端关闭时触发，用于客户端断线检测）</summary>
+        public event Action OnDisconnected;
         
         public void StartLink(string ip, int port)
         {
@@ -46,13 +49,14 @@ namespace Network.Client
             ReceiveAsync((message) =>
             {
                 // Debug.Log("Tcp:收到消息");
-                _gameClient.HandleMessage(message);
+                _gameClient.HandleMessage(message, true);
             });
         }
 
         public void CloseLink()
         {
-            _socketTcp.Shutdown(SocketShutdown.Both);
+            if (_socketTcp == null) return;
+            try { _socketTcp.Shutdown(SocketShutdown.Both); } catch { /* 忽略：可能已断开 */ }
             _socketTcp.Close();
             _socketTcp = null;
         }
@@ -77,10 +81,11 @@ namespace Network.Client
         {
             try
             {
-                while (_socketTcp.Connected)
+                while (_socketTcp != null && _socketTcp.Connected)
                 {
                     byte[] buf = new byte[2048];
                     int originalLength = await _socketTcp.ReceiveAsync(buf, SocketFlags.None);
+                    if (originalLength == 0) break; // 对端关闭连接
                     //Debug.Log($"接收-Socket长度:{originalLength}");
                     _tcpMessageBuffer.AddRange(buf.Take(originalLength));
                     while (_tcpMessageBuffer.Count >= 4)
@@ -102,10 +107,17 @@ namespace Network.Client
                     }
                 }
             }
+            catch (ObjectDisposedException)
+            {
+                // 主动 CloseLink 关闭导致的正常异常，不视为错误
+                return;
+            }
             catch (Exception e)
             {
                 Debug.LogError("[Client][TcpSocket] 消息接收错误"+e);
             }
+            // 循环退出或异常：通知上层断线
+            OnDisconnected?.Invoke();
         }
 
         public bool IsConnected()

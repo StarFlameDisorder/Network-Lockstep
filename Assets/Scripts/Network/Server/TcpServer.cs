@@ -195,8 +195,15 @@ namespace Network.Server
 
         public string GetClientInfo(TcpClient client)
         {
-            if (client?.Client?.RemoteEndPoint is IPEndPoint ep)
-                return $"{ep.Address}:{ep.Port}";
+            try
+            {
+                if (client?.Client?.RemoteEndPoint is IPEndPoint ep)
+                    return $"{ep.Address}:{ep.Port}";
+            }
+            catch (ObjectDisposedException)
+            {
+                // 客户端已断开/销毁，端点不可读
+            }
             return "unknown";
         }
     }

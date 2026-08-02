@@ -14,6 +14,7 @@ message ServerMessage{
         LobbyMessage.LobbySyncResponse lobbySync = 5;
         GameMessage.GameSnapshotMessage gameSnapshotMessage=6;
     }
+    bool keepAlive = 7; //服务端保活包（客户端收包超时断线检测用，无实际内容）
 }
 
 message ClientMessage{

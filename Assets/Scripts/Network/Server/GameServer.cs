@@ -141,8 +141,13 @@ namespace Network.Server
 
         public override void Update(float deltaTime)
         {
-            // 服务端网络操作在独立线程（TcpListener/UdpClient 异步回调），
-            // Unity 主线程 Update 仅用于处理需要通过 Unity API 的逻辑
+            if (!_isRunning) return;
+
+            // 网络事件在主线程统一派发（TcpServer/KcpServer 回调来自后台线程，先入队再处理），
+            // 帧广播/心跳检测/保活也由主线程驱动，消除多线程竞态。
+            _dispatcher.DrainEvents();
+            _dispatcher.Tick(deltaTime);
+            _roomManager.Tick(deltaTime);
         }
 
         public override void Destroy()

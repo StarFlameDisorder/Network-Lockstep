@@ -70,7 +70,7 @@ namespace Network.Client
             _cancelTokenSource = new CancellationTokenSource();
             ReceiveAsync(message =>
             {
-                _gameClient.HandleMessage(message);
+                _gameClient.HandleMessage(message, false);
 
             },_cancelTokenSource.Token);
         }

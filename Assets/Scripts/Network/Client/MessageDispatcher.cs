@@ -41,6 +41,10 @@ namespace Network.Client
         {
             //Debug.Log([Client][MessageDispatcher] HandleMessage");
             ServerMessage message = ServerMessage.Parser.ParseFrom(data);
+
+            // 服务端保活包（不在 oneof 中，ContentCase 为 None）：仅用于收包超时检测，不派发
+            if (message.KeepAlive) return;
+
             switch (message.ContentCase)
             {
                 case ServerMessage.ContentOneofCase.ConnectMessage:
@@ -54,6 +58,10 @@ namespace Network.Client
                     break;
                 case ServerMessage.ContentOneofCase.GameSnapshotMessage:
                     TriggerHandler(Signals.GameSnapShot,message.GameSnapshotMessage);
+                    break;
+                case ServerMessage.ContentOneofCase.CommonMessage:
+                    // 普通文本消息（KCP/TCP 注册包、服务端调试广播等）：仅记录，不派发
+                    Debug.Log($"[Client][MessageDispatcher] CommonMessage: {message.CommonMessage}");
                     break;
                 default:
                     Debug.LogError($"[Client][MessageDispatcher] HandleMessage:未知类型+{message.ContentCase+BitConverter.ToString(message.ToByteArray())}");
@@ -89,6 +97,7 @@ namespace Network.Client
                     break;
                 case LobbySyncResponse.ContentOneofCase.LeaveRoom:
                     Debug.Log("[Client][MessageDispatcher] HandleLobbyMessage-LeaveRoom");
+                    TriggerHandler(Signals.LobbyLeaveRoom,message.LeaveRoom);
                     break;
                 case LobbySyncResponse.ContentOneofCase.StartRoom:
                     Debug.Log("[Client][MessageDispatcher] HandleLobbyMessage-StartRoom");
@@ -96,6 +105,7 @@ namespace Network.Client
                     break;
                 case LobbySyncResponse.ContentOneofCase.EndRoom:
                     Debug.Log("[Client][MessageDispatcher] HandleLobbyMessage-EndRoom");
+                    TriggerHandler(Signals.LobbyEndRoom,message.EndRoom);
                     break;
                 default:
                     Debug.LogError("[Client][MessageDispatcher] HandleLobbyMessage:未知类型"+message.ContentCase+BitConverter.ToString(message.ToByteArray()));

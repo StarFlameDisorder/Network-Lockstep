@@ -1,6 +1,6 @@
 using Framework;
 using Framework.TimerSystem;
-using GamePlay;
+using FrameSync;
 using Network.Client;
 using Network.Server;
 using UnityEngine;

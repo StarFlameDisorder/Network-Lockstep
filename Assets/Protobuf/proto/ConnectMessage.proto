@@ -4,30 +4,14 @@ package ConnectMessage;
 
 //服务器
 
-
 message ServerConnectMessage{
     oneof content {
-        HandShakeResponse handShakeMessage = 2;
+        HandShakeResponse handShakeMessage = 1;
     }
 }
 
-//客户端
-
-message ClientConnectMessage{
-    oneof content {
-        HandShakeRequest handShakeMessage = 2;//弃用
-    }
-}
-
-//握手
-
+//握手（TCP 连接建立后服务端回复，分配 clientId）
 message HandShakeResponse{
     string content = 1;
     uint32 clientId = 2;//仅用于tcp回复
 }
-
-message HandShakeRequest{//弃用
-    string content = 1;
-    uint32 clientId= 2;//仅用于udp请求
-}
-

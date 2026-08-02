@@ -21,7 +21,6 @@ message ClientMessage{
     uint32 clientId = 1;
     oneof content{
         string commonMessage = 2;
-        ConnectMessage.ClientConnectMessage connectMessage = 3;
         GameMessage.GameSyncMessage gameSyncMessage = 4;
         LobbyMessage.LobbySyncRequest lobbySync=5;
         GameMessage.HeartBeat heartBeat=6;

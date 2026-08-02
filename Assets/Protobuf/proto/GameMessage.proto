@@ -4,56 +4,82 @@ package GameMessage;
 
 import "UnityMath.proto";
 
+//帧广播（服务端→客户端）：一帧内所有玩家的输入
 message GameSyncMessage{
-    uint64 frameId=1;
-    uint64 time=2;
-    repeated PlayerSync players=3;
+    uint64 frameId = 1;
+    repeated PlayerSync players = 2;
 }
 
+//快照/补发帧（断线重连/中途加入恢复）
 message GameSnapshotMessage{
     oneof content{
-        GameSnapshot snapshot=3;
-        GameFrame frames=4;
+        GameSnapshot snapshot = 1;
+        GameFrame frames = 2;
     }
 }
 
 message GameSnapshot{
-    uint64 frameId=1;
-    repeated PlayerSnapshotSync playerSSs=3;
-    repeated ObjectSnapshotSync objectSSs=4;
+    uint64 frameId = 1;
+    repeated PlayerSnapshotSync playerSSs = 2;
+    repeated ObjectSnapshotSync objectSSs = 3;
 }
 
 message GameFrame{//只由服务器向客户端发送
-    uint64 frameId=1;
-    repeated PlayerSync players=2;
+    uint64 frameId = 1;
+    repeated PlayerSync players = 2;
 }
 
+//玩家本帧输入 = 命令列表（可同时下达多条命令，如移动+攻击；扩展新操作在此加 oneof 分支）
 message PlayerSync
 {
-    uint64 frameId=1;
-    uint64 time=2;
-    string name=3;
-    UnityMath.Vector3D inputMove= 4;
+    string name = 1;
+    uint64 frameId = 2;//服务端统一分配的帧号（客户端缓冲/补发的 Key）
+    repeated Command commands = 3;
+}
+
+//语义命令：oneof 分支即命令类型（区别于原始按键流）
+message Command{
+    oneof content{
+        MoveDirectionCommand moveDirection = 1;//持续方向移动（键盘直接操纵，调试方便）
+        MoveToCommand moveTo = 2;//移动到目标点（未来 RTS 正式移动方式）
+        AttackCommand attack = 3;
+        BuildCommand build = 4;
+    }
+}
+
+message MoveDirectionCommand{
+    UnityMath.Vector3D direction = 1;
+}
+
+message MoveToCommand{
+    UnityMath.Vector3D target = 1;
+}
+
+message AttackCommand{
+    uint64 targetObjectId = 1;//目标对象ID
+}
+
+message BuildCommand{
+    uint32 buildType = 1;//建筑类型（占位，未来扩展）
 }
 
 message PlayerSnapshotSync
 {
-    string name=1;
-    uint64 frameId=2;//第几帧的快照
-    uint64 lastFrameId=5;//最新的帧序号
+    string name = 1;
+    uint64 frameId = 2;//第几帧的快照
+    uint64 lastFrameId = 3;//最新的帧序号
 
-    UnityMath.Vector3D pos = 3;
-    UnityMath.Vector3D velocity= 4;
+    UnityMath.Vector3D pos = 4;
+    UnityMath.Vector3D velocity = 5;
 }
 
 message ObjectSnapshotSync
 {
-    uint64 objectId=1;
+    uint64 objectId = 1;
     UnityMath.Vector3D pos = 2;
-    UnityMath.Vector3D velocity= 3;
+    UnityMath.Vector3D velocity = 3;
 }
 
 message HeartBeat{
-    string name=1;
-    uint64 time=2;
+    string name = 1;
 }

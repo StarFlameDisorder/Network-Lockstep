@@ -76,7 +76,6 @@ namespace Network.Client
             {
                 case ServerConnectMessage.ContentOneofCase.HandShakeMessage:
                     Debug.Log("[Client][MessageDispatcher] Tcp-" + message.HandShakeMessage.Content);
-                    MessagePanel.Instance?.AddMessage(message.HandShakeMessage.Content);
                     TriggerHandler(Signals.ConnectHandShake,message.HandShakeMessage);
                     //NetworkManager.Instance.SetClientId(message.HandShakeMessage.ClientId);
                     break;

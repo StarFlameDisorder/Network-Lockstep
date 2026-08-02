@@ -434,7 +434,7 @@ namespace Network.Server
                 var sync = player.InputQueue.Dequeue();
                 sync.FrameId = _serverFrameId; // 服务端统一分配帧号
 
-                log += $" {sync.Name}:{sync.InputMove.X},{sync.InputMove.Y},{sync.InputMove.Z}";
+                log += $" {sync.Name}:{sync.Commands.Count}cmd";
                 gameSync.Players.Add(sync);
 
                 // 缓存历史帧（服务端帧号为Key，用于断线重连补发；重连复用会话，缓存不清空）

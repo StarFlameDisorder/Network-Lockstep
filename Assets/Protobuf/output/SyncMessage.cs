@@ -33,20 +33,18 @@ namespace SyncMessage {
             "GAUgASgLMh8uTG9iYnlNZXNzYWdlLkxvYmJ5U3luY1Jlc3BvbnNlSAASPwoT",
             "Z2FtZVNuYXBzaG90TWVzc2FnZRgGIAEoCzIgLkdhbWVNZXNzYWdlLkdhbWVT",
             "bmFwc2hvdE1lc3NhZ2VIABIRCglrZWVwQWxpdmUYByABKAhCCQoHY29udGVu",
-            "dCLhAgoNQ2xpZW50TWVzc2FnZRIQCghjbGllbnRJZBgBIAEoDRIXCg1jb21t",
-            "b25NZXNzYWdlGAIgASgJSAASPgoOY29ubmVjdE1lc3NhZ2UYAyABKAsyJC5D",
-            "b25uZWN0TWVzc2FnZS5DbGllbnRDb25uZWN0TWVzc2FnZUgAEjcKD2dhbWVT",
-            "eW5jTWVzc2FnZRgEIAEoCzIcLkdhbWVNZXNzYWdlLkdhbWVTeW5jTWVzc2Fn",
-            "ZUgAEjMKCWxvYmJ5U3luYxgFIAEoCzIeLkxvYmJ5TWVzc2FnZS5Mb2JieVN5",
-            "bmNSZXF1ZXN0SAASKwoJaGVhcnRCZWF0GAYgASgLMhYuR2FtZU1lc3NhZ2Uu",
-            "SGVhcnRCZWF0SAASPwoTZ2FtZVNuYXBzaG90TWVzc2FnZRgHIAEoCzIgLkdh",
-            "bWVNZXNzYWdlLkdhbWVTbmFwc2hvdE1lc3NhZ2VIAEIJCgdjb250ZW50YgZw",
-            "cm90bzM="));
+            "dCKhAgoNQ2xpZW50TWVzc2FnZRIQCghjbGllbnRJZBgBIAEoDRIXCg1jb21t",
+            "b25NZXNzYWdlGAIgASgJSAASNwoPZ2FtZVN5bmNNZXNzYWdlGAQgASgLMhwu",
+            "R2FtZU1lc3NhZ2UuR2FtZVN5bmNNZXNzYWdlSAASMwoJbG9iYnlTeW5jGAUg",
+            "ASgLMh4uTG9iYnlNZXNzYWdlLkxvYmJ5U3luY1JlcXVlc3RIABIrCgloZWFy",
+            "dEJlYXQYBiABKAsyFi5HYW1lTWVzc2FnZS5IZWFydEJlYXRIABI/ChNnYW1l",
+            "U25hcHNob3RNZXNzYWdlGAcgASgLMiAuR2FtZU1lc3NhZ2UuR2FtZVNuYXBz",
+            "aG90TWVzc2FnZUgAQgkKB2NvbnRlbnRiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::ConnectMessage.ConnectMessageReflection.Descriptor, global::GameMessage.GameMessageReflection.Descriptor, global::LobbyMessage.LobbyMessageReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ServerMessage), global::SyncMessage.ServerMessage.Parser, new[]{ "CommonMessage", "ConnectMessage", "GameSyncMessage", "LobbySync", "GameSnapshotMessage", "KeepAlive" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ClientMessage), global::SyncMessage.ClientMessage.Parser, new[]{ "ClientId", "CommonMessage", "ConnectMessage", "GameSyncMessage", "LobbySync", "HeartBeat", "GameSnapshotMessage" }, new[]{ "Content" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ClientMessage), global::SyncMessage.ClientMessage.Parser, new[]{ "ClientId", "CommonMessage", "GameSyncMessage", "LobbySync", "HeartBeat", "GameSnapshotMessage" }, new[]{ "Content" }, null, null, null)
           }));
     }
     #endregion
@@ -563,9 +561,6 @@ namespace SyncMessage {
         case ContentOneofCase.CommonMessage:
           CommonMessage = other.CommonMessage;
           break;
-        case ContentOneofCase.ConnectMessage:
-          ConnectMessage = other.ConnectMessage.Clone();
-          break;
         case ContentOneofCase.GameSyncMessage:
           GameSyncMessage = other.GameSyncMessage.Clone();
           break;
@@ -610,18 +605,6 @@ namespace SyncMessage {
       set {
         content_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
         contentCase_ = ContentOneofCase.CommonMessage;
-      }
-    }
-
-    /// <summary>Field number for the "connectMessage" field.</summary>
-    public const int ConnectMessageFieldNumber = 3;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::ConnectMessage.ClientConnectMessage ConnectMessage {
-      get { return contentCase_ == ContentOneofCase.ConnectMessage ? (global::ConnectMessage.ClientConnectMessage) content_ : null; }
-      set {
-        content_ = value;
-        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.ConnectMessage;
       }
     }
 
@@ -678,7 +661,6 @@ namespace SyncMessage {
     public enum ContentOneofCase {
       None = 0,
       CommonMessage = 2,
-      ConnectMessage = 3,
       GameSyncMessage = 4,
       LobbySync = 5,
       HeartBeat = 6,
@@ -715,7 +697,6 @@ namespace SyncMessage {
       }
       if (ClientId != other.ClientId) return false;
       if (CommonMessage != other.CommonMessage) return false;
-      if (!object.Equals(ConnectMessage, other.ConnectMessage)) return false;
       if (!object.Equals(GameSyncMessage, other.GameSyncMessage)) return false;
       if (!object.Equals(LobbySync, other.LobbySync)) return false;
       if (!object.Equals(HeartBeat, other.HeartBeat)) return false;
@@ -730,7 +711,6 @@ namespace SyncMessage {
       int hash = 1;
       if (ClientId != 0) hash ^= ClientId.GetHashCode();
       if (contentCase_ == ContentOneofCase.CommonMessage) hash ^= CommonMessage.GetHashCode();
-      if (contentCase_ == ContentOneofCase.ConnectMessage) hash ^= ConnectMessage.GetHashCode();
       if (contentCase_ == ContentOneofCase.GameSyncMessage) hash ^= GameSyncMessage.GetHashCode();
       if (contentCase_ == ContentOneofCase.LobbySync) hash ^= LobbySync.GetHashCode();
       if (contentCase_ == ContentOneofCase.HeartBeat) hash ^= HeartBeat.GetHashCode();
@@ -761,10 +741,6 @@ namespace SyncMessage {
       if (contentCase_ == ContentOneofCase.CommonMessage) {
         output.WriteRawTag(18);
         output.WriteString(CommonMessage);
-      }
-      if (contentCase_ == ContentOneofCase.ConnectMessage) {
-        output.WriteRawTag(26);
-        output.WriteMessage(ConnectMessage);
       }
       if (contentCase_ == ContentOneofCase.GameSyncMessage) {
         output.WriteRawTag(34);
@@ -800,10 +776,6 @@ namespace SyncMessage {
         output.WriteRawTag(18);
         output.WriteString(CommonMessage);
       }
-      if (contentCase_ == ContentOneofCase.ConnectMessage) {
-        output.WriteRawTag(26);
-        output.WriteMessage(ConnectMessage);
-      }
       if (contentCase_ == ContentOneofCase.GameSyncMessage) {
         output.WriteRawTag(34);
         output.WriteMessage(GameSyncMessage);
@@ -836,9 +808,6 @@ namespace SyncMessage {
       if (contentCase_ == ContentOneofCase.CommonMessage) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(CommonMessage);
       }
-      if (contentCase_ == ContentOneofCase.ConnectMessage) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ConnectMessage);
-      }
       if (contentCase_ == ContentOneofCase.GameSyncMessage) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(GameSyncMessage);
       }
@@ -869,12 +838,6 @@ namespace SyncMessage {
       switch (other.ContentCase) {
         case ContentOneofCase.CommonMessage:
           CommonMessage = other.CommonMessage;
-          break;
-        case ContentOneofCase.ConnectMessage:
-          if (ConnectMessage == null) {
-            ConnectMessage = new global::ConnectMessage.ClientConnectMessage();
-          }
-          ConnectMessage.MergeFrom(other.ConnectMessage);
           break;
         case ContentOneofCase.GameSyncMessage:
           if (GameSyncMessage == null) {
@@ -923,15 +886,6 @@ namespace SyncMessage {
           }
           case 18: {
             CommonMessage = input.ReadString();
-            break;
-          }
-          case 26: {
-            global::ConnectMessage.ClientConnectMessage subBuilder = new global::ConnectMessage.ClientConnectMessage();
-            if (contentCase_ == ContentOneofCase.ConnectMessage) {
-              subBuilder.MergeFrom(ConnectMessage);
-            }
-            input.ReadMessage(subBuilder);
-            ConnectMessage = subBuilder;
             break;
           }
           case 34: {
@@ -991,15 +945,6 @@ namespace SyncMessage {
           }
           case 18: {
             CommonMessage = input.ReadString();
-            break;
-          }
-          case 26: {
-            global::ConnectMessage.ClientConnectMessage subBuilder = new global::ConnectMessage.ClientConnectMessage();
-            if (contentCase_ == ContentOneofCase.ConnectMessage) {
-              subBuilder.MergeFrom(ConnectMessage);
-            }
-            input.ReadMessage(subBuilder);
-            ConnectMessage = subBuilder;
             break;
           }
           case 34: {

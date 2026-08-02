@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Framework;
 using GameMessage;
+using GamePlay;
 using LobbyMessage;
 using Network;
 using Network.Client;
@@ -11,7 +12,7 @@ using UnityMath;
 using Google.Protobuf;
 using SyncMessage;
 
-namespace GamePlay
+namespace FrameSync
 {
     public enum GameStatus
     {
@@ -21,8 +22,10 @@ namespace GamePlay
     }
     
     /// <summary>
-    /// 帧同步主控子系统。
+    /// 帧同步主控子系统（框架层）。
     /// 通过 SubSystemBase.Update 累加器驱动逻辑帧，替代协程 TimerHandle。
+    /// 负责：输入发送/接收、帧调度（喂帧给实体）、快照恢复、房间操作。
+    /// 游戏逻辑实体（PlayerEntity）由本类创建并逐帧喂输入，实体本身不依赖框架。
     /// </summary>
     public class GameSync : SubSystemBase
     {
@@ -260,21 +263,33 @@ namespace GamePlay
         #endregion
         
         #region 玩家输入操作处理及心跳
-        // 输入发送（第二步将改为语义命令：MoveDirection/MoveTo/Attack...，经 proto Command 传输；
-        // 目前过渡期仍为单一方向向量，接收端由 ToFrameInput 转为 FrameInput 命令列表）
+        
         private UInt64 _sendSeq = 1;                   // 本地发送序号（仅用于跟踪，非帧权威）
         private UInt64 _latestServerFrameId;           // 服务端广播的最新帧号（权威）
         private UInt64 _lastSnapshotFrameId;           // 上次上报快照的帧号（避免漏报/重复上报）
         private UInt64 _lastAppliedSnapshotFrameId;    // 最近一次应用（重建）的快照帧号（去重用）
-        private Vector2 _pendingInput;
+        private readonly List<InputCommand> _pendingEvents = new(); // 事件型命令（MoveTo/Attack/...），发送后清空
+        private InputCommand _lastMoveDirection;                   // 持续型命令：最后一次 MoveDirection（每帧重发）
+        private bool _hasMoveDirection;
         
         
         /// <summary>
-        /// 缓存当前帧的输入操作（由 PlayerController 等外部调用）
+        /// 入队命令（由 PlayerController 等输入层调用，语义命令）。
+        /// 持续型（MoveDirection）：缓存为最后一次方向，每帧重发——兼容 InputSystem 值不变不回调的情况
+        ///（按住 WASD 方向不变只回调一次，若发后即清会导致玩家只动一帧；松开按键回调方向为 0 自然停止）；
+        /// 事件型（MoveTo/Attack/...）：进本帧列表，发送后清空。
         /// </summary>
-        public void EnqueueInput(Vector2 mov)
+        public void EnqueueCommand(InputCommand command)
         {
-            _pendingInput = mov;
+            if (command.Type == CommandType.MoveDirection)
+            {
+                _lastMoveDirection = command;
+                _hasMoveDirection = true;
+            }
+            else
+            {
+                _pendingEvents.Add(command);
+            }
         }
 
         /// <summary>
@@ -293,18 +308,23 @@ namespace GamePlay
                 FrameId = _sendSeq // 本地发送序号，服务端会覆盖为统一帧号
             };
 
-            FixedPointVector3 dir = FixedPointVector3.FromFloat(_pendingInput.x, 0, _pendingInput.y);
             var sync = new PlayerSync
             {
                 FrameId = _sendSeq,
-                Name = _name,
-                InputMove = new Vector3D
-                {
-                    X=dir.GetRawX(),
-                    Y=dir.GetRawY(),
-                    Z=dir.GetRawZ()
-                }
+                Name = _name
             };
+
+            // 持续型：MoveDirection 每帧重发最后一次方向（InputSystem 值不变时不回调，必须缓存重发）
+            if (_hasMoveDirection)
+                sync.Commands.Add(ToProtoCommand(_lastMoveDirection));
+
+            // 事件型：本帧一次性命令（MoveTo/Attack/...），发送后清空
+            foreach (var cmd in _pendingEvents)
+            {
+                sync.Commands.Add(ToProtoCommand(cmd));
+            }
+            _pendingEvents.Clear();
+
             gameSyncMessage.Players.Add(sync);
             
             // 发送到服务器（不本地预写，等待服务端广播统一帧号后再执行）
@@ -316,6 +336,42 @@ namespace GamePlay
             _gameClient.KcpSendMessage(message.ToByteArray());
             
             _sendSeq++;
+        }
+
+        /// <summary>框架层 InputCommand → proto Command（发送端编码）</summary>
+        private static Command ToProtoCommand(InputCommand cmd)
+        {
+            switch (cmd.Type)
+            {
+                case CommandType.MoveDirection:
+                    return new Command
+                    {
+                        MoveDirection = new MoveDirectionCommand
+                        {
+                            Direction = ToVector3D(cmd.MoveDirection)
+                        }
+                    };
+                case CommandType.MoveTo:
+                    return new Command
+                    {
+                        MoveTo = new MoveToCommand
+                        {
+                            Target = ToVector3D(cmd.MoveToTarget)
+                        }
+                    };
+                default:
+                    return new Command();
+            }
+        }
+
+        private static Vector3D ToVector3D(FixedPointVector3 v)
+        {
+            return new Vector3D
+            {
+                X = v.GetRawX(),
+                Y = v.GetRawY(),
+                Z = v.GetRawZ()
+            };
         }
 
         /// <summary>
@@ -435,17 +491,35 @@ namespace GamePlay
             return x;
         }
 
-        /// <summary>proto PlayerSync → 框架层 FrameInput（第一步过渡：仅映射方向输入；proto 命令化后替换）</summary>
+        /// <summary>proto PlayerSync → 框架层 FrameInput（接收端解码：按命令列表映射）</summary>
         private static FrameInput ToFrameInput(PlayerSync sync)
         {
             var input = new FrameInput();
-            if (sync.InputMove != null)
+            foreach (var command in sync.Commands)
             {
-                input.Commands.Add(new InputCommand
+                switch (command.ContentCase)
                 {
-                    Type = CommandType.MoveDirection,
-                    MoveDirection = FixedPointVector3.FromRawValue(sync.InputMove.X, sync.InputMove.Y, sync.InputMove.Z)
-                });
+                    case Command.ContentOneofCase.MoveDirection:
+                        input.Commands.Add(new InputCommand
+                        {
+                            Type = CommandType.MoveDirection,
+                            MoveDirection = FixedPointVector3.FromRawValue(
+                                command.MoveDirection.Direction.X,
+                                command.MoveDirection.Direction.Y,
+                                command.MoveDirection.Direction.Z)
+                        });
+                        break;
+                    case Command.ContentOneofCase.MoveTo:
+                        input.Commands.Add(new InputCommand
+                        {
+                            Type = CommandType.MoveTo,
+                            MoveToTarget = FixedPointVector3.FromRawValue(
+                                command.MoveTo.Target.X,
+                                command.MoveTo.Target.Y,
+                                command.MoveTo.Target.Z)
+                        });
+                        break;
+                }
             }
             return input;
         }

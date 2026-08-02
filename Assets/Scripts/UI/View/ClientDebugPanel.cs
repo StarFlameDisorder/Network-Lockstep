@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using Framework;
+using FrameSync;
 using GamePlay;
 using Google.Protobuf;
 using LobbyMessage;

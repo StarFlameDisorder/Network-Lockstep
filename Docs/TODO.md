@@ -104,8 +104,8 @@ BV18T7M6HE8
 | 阶段A | 断线重连修复 | ✅ 已完成（2026-08-02），已实测验证：断线停止发送/补发缺口/跳帧容错/防多对象 |
 | 阶段B | 客户端网络层重构（INetworkTransport + MessageBus + NetworkClient） | 🔧 部分完成（消息主线程派发队列已做；INetworkTransport 抽象类未做，按"保持简单"原则暂缓） |
 | 阶段C | GameSync 职责拆分 + 服务端广播改主线程驱动 | ✅ 已完成（2026-08-02）：帧处理逻辑重构（TickGame 职责分离、快照/补发/对齐拆分、命名修正 NotStarted/ApplyAll 等）+ 服务端主线程（阶段A 已做） |
-| 阶段C2 | 执行模型重构（Quantum 风格：实体 Simulate + 框架喂帧） | ✅ 已完成（2026-08-03）：详见下方明细；第二步（proto 命令化）进行中 |
-| 阶段D | UI 修复与清理（旧面板移除、断线状态显示、LeaveRoom/EndRoom 派发） | 🔧 部分完成（断线状态/UDP端口/加入离开消息已做；场景旧面板移除需在 Unity 编辑器手动操作） |
+| 阶段C2 | 执行模型重构 + 输入命令化（Quantum 风格：实体 Simulate + 框架喂帧） | ✅ 已完成（2026-08-03）：执行模型重构 + proto 命令化 + 命名空间分离，详见下方明细 |
+| 阶段D | UI 修复与清理（旧面板移除、断线状态显示、LeaveRoom/EndRoom 派发） | ✅ 已完成（2026-08-03）：断线状态/UDP端口/加入离开消息已做（2026-08-02）；弃用面板脚本（StatusPanel/NetworkPanel/LobbyPanel/ButtonClick/MessagePanel/SubMessagePanel/ControlButton）已删除（场景旧面板用户已手动清理，MessageDispatcher 对 MessagePanel 的引用已移除） |
 | 阶段E | C++ Server/ 目录废弃与清理 | ✅ 已完成（2026-08-02）：Server/ 目录已删除（用户确认）；UdpServer/UdpSocket/Player.cs 已标记废弃 |
 
 ### 阶段A 已落地明细（2026-08-02）
@@ -159,7 +159,18 @@ BV18T7M6HE8
 - **框架调度**：删除 `GameFrame` 类（标记废弃，无引用）；替代为 `GameSync.ApplyFrames`（对每玩家取帧喂实体 + 追帧 + 缺口诊断日志）；追帧 sqrt 改整数开方 `IntSqrt`（修 `Math.Sqrt(double)` 浮点误差 bug，TODO 已知项顺手修）
 - **快照适配**：恢复点 = 各玩家 `FrameBuffer.LastExecutedFrameId`（框架维护）；`GetSnapshotSync(帧号)` 由框架传参，实体不感知执行进度
 - **调试面板**：ClientDebugPanel 帧信息改为从 `GameSync.FrameBuffers` 读取
-- 第二步（proto 命令化）：`ToFrameInput` 过渡映射将替换为 proto Command 直接映射；输入发送端改为语义命令
+
+### 阶段C2 第二步（proto 命令化 + 命名空间分离）已落地明细（2026-08-03）
+
+- **proto 命令化（GameMessage.proto 重构）**：`PlayerSync` 由固定 `inputMove`（Vector3D）改为 `repeated Command` 命令列表；新增 `Command`（oneof：`MoveDirectionCommand`/`MoveToCommand`/`AttackCommand`/`BuildCommand`，扩展新操作加分支即可）；`HeartBeat` 删死字段 `time`；`GameSyncMessage`/`GameSnapshotMessage`/`GameSnapshot`/`PlayerSnapshotSync` 字段编号重排（删旧字段跳号）
+- **proto 清理**：`ConnectMessage.proto` 删除弃用的 `HandShakeRequest` 与无引用的 `ClientConnectMessage`；`SyncMessage.ClientMessage.connectMessage` 字段同步删除；`proto.bat` 删除已失效的 `--cpp_out` 行（Server/ 已删）
+- **命名空间/目录分离（框架 vs 游戏逻辑）**：`GameSync`/`FrameBuffer`/`FrameInput` 迁至新命名空间 `FrameSync` + 新目录 `Assets/Scripts/FrameSync/`（.meta 随迁，GUID 不变）；游戏逻辑 `PlayerEntity`/`PlayerView`/`PlayerController` 保留在 `GamePlay`；引用方（GameCore/ClientDebugPanel/LobbyPanel/PlayerController）已适配
+- **输入语义化**：`PlayerController` 键盘方向 → `EnqueueCommand(MoveDirection)` 语义命令（原 `EnqueueInput(Vector2)` 过渡接口已删）；`GameSync` 每帧把本帧命令列表打包为 `PlayerSync.Commands` 发送；接收端 `ToFrameInput` 按命令列表解码（不再假设单一方向）
+- **服务端适配**：RoomManager 广播日志改为输出命令数（原读 `InputMove` 已删）
+- **废弃文件删除（2026-08-03 追加）**：`GameFrame.cs`/`Player.cs`/`FrameInputCommand.cs`/`UdpSocket.cs`/`UdpServer.cs` 已确认删除（含 .meta）；UI 弃用面板脚本（StatusPanel/NetworkPanel/LobbyPanel/ButtonClick/MessagePanel/SubMessagePanel/ControlButton）已确认删除（用户已在场景手动清理，MessageDispatcher 中 MessagePanel 引用已移除）
+- **玩家操作修复（2026-08-03 追加）**：玩家按住 WASD 只动一帧——根因：InputSystem 的 action 仅在值变化时回调（按住方向不变只回调一次），命令列表发送后即清导致后续帧无命令。修复：命令分**持续型/事件型**——`MoveDirection` 缓存最后一次方向每帧重发（松开按键回调为 0 自然停止）；`MoveTo/Attack/...` 事件型发送后清空
+
+> protoc 生成说明：本机 PowerShell 执行策略拦截 shell 命令，经用户授权通过 unity MCP `execute_code` 运行 protoc.exe 重新生成 C#（exit=0）。
 
 ### 阶段E 已落地明细（2026-08-02）
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Network;
 
-namespace GamePlay
+namespace FrameSync
 {
     /// <summary>
     /// 命令类型：语义化操作命令（区别于原始按键流）。

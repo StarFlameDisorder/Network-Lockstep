@@ -25,20 +25,15 @@ namespace ConnectMessage {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChRDb25uZWN0TWVzc2FnZS5wcm90bxIOQ29ubmVjdE1lc3NhZ2UiYAoUU2Vy",
-            "dmVyQ29ubmVjdE1lc3NhZ2USPQoQaGFuZFNoYWtlTWVzc2FnZRgCIAEoCzIh",
+            "dmVyQ29ubmVjdE1lc3NhZ2USPQoQaGFuZFNoYWtlTWVzc2FnZRgBIAEoCzIh",
             "LkNvbm5lY3RNZXNzYWdlLkhhbmRTaGFrZVJlc3BvbnNlSABCCQoHY29udGVu",
-            "dCJfChRDbGllbnRDb25uZWN0TWVzc2FnZRI8ChBoYW5kU2hha2VNZXNzYWdl",
-            "GAIgASgLMiAuQ29ubmVjdE1lc3NhZ2UuSGFuZFNoYWtlUmVxdWVzdEgAQgkK",
-            "B2NvbnRlbnQiNgoRSGFuZFNoYWtlUmVzcG9uc2USDwoHY29udGVudBgBIAEo",
-            "CRIQCghjbGllbnRJZBgCIAEoDSI1ChBIYW5kU2hha2VSZXF1ZXN0Eg8KB2Nv",
-            "bnRlbnQYASABKAkSEAoIY2xpZW50SWQYAiABKA1iBnByb3RvMw=="));
+            "dCI2ChFIYW5kU2hha2VSZXNwb25zZRIPCgdjb250ZW50GAEgASgJEhAKCGNs",
+            "aWVudElkGAIgASgNYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::ConnectMessage.ServerConnectMessage), global::ConnectMessage.ServerConnectMessage.Parser, new[]{ "HandShakeMessage" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ConnectMessage.ClientConnectMessage), global::ConnectMessage.ClientConnectMessage.Parser, new[]{ "HandShakeMessage" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ConnectMessage.HandShakeResponse), global::ConnectMessage.HandShakeResponse.Parser, new[]{ "Content", "ClientId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::ConnectMessage.HandShakeRequest), global::ConnectMessage.HandShakeRequest.Parser, new[]{ "Content", "ClientId" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::ConnectMessage.HandShakeResponse), global::ConnectMessage.HandShakeResponse.Parser, new[]{ "Content", "ClientId" }, null, null, null, null)
           }));
     }
     #endregion
@@ -95,7 +90,7 @@ namespace ConnectMessage {
     }
 
     /// <summary>Field number for the "handShakeMessage" field.</summary>
-    public const int HandShakeMessageFieldNumber = 2;
+    public const int HandShakeMessageFieldNumber = 1;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::ConnectMessage.HandShakeResponse HandShakeMessage {
@@ -110,7 +105,7 @@ namespace ConnectMessage {
     /// <summary>Enum of possible cases for the "content" oneof.</summary>
     public enum ContentOneofCase {
       None = 0,
-      HandShakeMessage = 2,
+      HandShakeMessage = 1,
     }
     private ContentOneofCase contentCase_ = ContentOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -171,7 +166,7 @@ namespace ConnectMessage {
       output.WriteRawMessage(this);
     #else
       if (contentCase_ == ContentOneofCase.HandShakeMessage) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteMessage(HandShakeMessage);
       }
       if (_unknownFields != null) {
@@ -185,7 +180,7 @@ namespace ConnectMessage {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
       if (contentCase_ == ContentOneofCase.HandShakeMessage) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteMessage(HandShakeMessage);
       }
       if (_unknownFields != null) {
@@ -237,7 +232,7 @@ namespace ConnectMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 18: {
+          case 10: {
             global::ConnectMessage.HandShakeResponse subBuilder = new global::ConnectMessage.HandShakeResponse();
             if (contentCase_ == ContentOneofCase.HandShakeMessage) {
               subBuilder.MergeFrom(HandShakeMessage);
@@ -261,7 +256,7 @@ namespace ConnectMessage {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 18: {
+          case 10: {
             global::ConnectMessage.HandShakeResponse subBuilder = new global::ConnectMessage.HandShakeResponse();
             if (contentCase_ == ContentOneofCase.HandShakeMessage) {
               subBuilder.MergeFrom(HandShakeMessage);
@@ -277,241 +272,9 @@ namespace ConnectMessage {
 
   }
 
-  public sealed partial class ClientConnectMessage : pb::IMessage<ClientConnectMessage>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<ClientConnectMessage> _parser = new pb::MessageParser<ClientConnectMessage>(() => new ClientConnectMessage());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<ClientConnectMessage> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::ConnectMessage.ConnectMessageReflection.Descriptor.MessageTypes[1]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ClientConnectMessage() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ClientConnectMessage(ClientConnectMessage other) : this() {
-      switch (other.ContentCase) {
-        case ContentOneofCase.HandShakeMessage:
-          HandShakeMessage = other.HandShakeMessage.Clone();
-          break;
-      }
-
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ClientConnectMessage Clone() {
-      return new ClientConnectMessage(this);
-    }
-
-    /// <summary>Field number for the "handShakeMessage" field.</summary>
-    public const int HandShakeMessageFieldNumber = 2;
-    /// <summary>
-    ///弃用
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::ConnectMessage.HandShakeRequest HandShakeMessage {
-      get { return contentCase_ == ContentOneofCase.HandShakeMessage ? (global::ConnectMessage.HandShakeRequest) content_ : null; }
-      set {
-        content_ = value;
-        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.HandShakeMessage;
-      }
-    }
-
-    private object content_;
-    /// <summary>Enum of possible cases for the "content" oneof.</summary>
-    public enum ContentOneofCase {
-      None = 0,
-      HandShakeMessage = 2,
-    }
-    private ContentOneofCase contentCase_ = ContentOneofCase.None;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public ContentOneofCase ContentCase {
-      get { return contentCase_; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void ClearContent() {
-      contentCase_ = ContentOneofCase.None;
-      content_ = null;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as ClientConnectMessage);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(ClientConnectMessage other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (!object.Equals(HandShakeMessage, other.HandShakeMessage)) return false;
-      if (ContentCase != other.ContentCase) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (contentCase_ == ContentOneofCase.HandShakeMessage) hash ^= HandShakeMessage.GetHashCode();
-      hash ^= (int) contentCase_;
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (contentCase_ == ContentOneofCase.HandShakeMessage) {
-        output.WriteRawTag(18);
-        output.WriteMessage(HandShakeMessage);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (contentCase_ == ContentOneofCase.HandShakeMessage) {
-        output.WriteRawTag(18);
-        output.WriteMessage(HandShakeMessage);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int CalculateSize() {
-      int size = 0;
-      if (contentCase_ == ContentOneofCase.HandShakeMessage) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(HandShakeMessage);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(ClientConnectMessage other) {
-      if (other == null) {
-        return;
-      }
-      switch (other.ContentCase) {
-        case ContentOneofCase.HandShakeMessage:
-          if (HandShakeMessage == null) {
-            HandShakeMessage = new global::ConnectMessage.HandShakeRequest();
-          }
-          HandShakeMessage.MergeFrom(other.HandShakeMessage);
-          break;
-      }
-
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 18: {
-            global::ConnectMessage.HandShakeRequest subBuilder = new global::ConnectMessage.HandShakeRequest();
-            if (contentCase_ == ContentOneofCase.HandShakeMessage) {
-              subBuilder.MergeFrom(HandShakeMessage);
-            }
-            input.ReadMessage(subBuilder);
-            HandShakeMessage = subBuilder;
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 18: {
-            global::ConnectMessage.HandShakeRequest subBuilder = new global::ConnectMessage.HandShakeRequest();
-            if (contentCase_ == ContentOneofCase.HandShakeMessage) {
-              subBuilder.MergeFrom(HandShakeMessage);
-            }
-            input.ReadMessage(subBuilder);
-            HandShakeMessage = subBuilder;
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
+  /// <summary>
+  ///握手（TCP 连接建立后服务端回复，分配 clientId）
+  /// </summary>
   public sealed partial class HandShakeResponse : pb::IMessage<HandShakeResponse>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -526,7 +289,7 @@ namespace ConnectMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::ConnectMessage.ConnectMessageReflection.Descriptor.MessageTypes[2]; }
+      get { return global::ConnectMessage.ConnectMessageReflection.Descriptor.MessageTypes[1]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -679,238 +442,6 @@ namespace ConnectMessage {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public void MergeFrom(HandShakeResponse other) {
-      if (other == null) {
-        return;
-      }
-      if (other.Content.Length != 0) {
-        Content = other.Content;
-      }
-      if (other.ClientId != 0) {
-        ClientId = other.ClientId;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            Content = input.ReadString();
-            break;
-          }
-          case 16: {
-            ClientId = input.ReadUInt32();
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 10: {
-            Content = input.ReadString();
-            break;
-          }
-          case 16: {
-            ClientId = input.ReadUInt32();
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
-  /// <summary>
-  ///弃用
-  /// </summary>
-  public sealed partial class HandShakeRequest : pb::IMessage<HandShakeRequest>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<HandShakeRequest> _parser = new pb::MessageParser<HandShakeRequest>(() => new HandShakeRequest());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<HandShakeRequest> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::ConnectMessage.ConnectMessageReflection.Descriptor.MessageTypes[3]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public HandShakeRequest() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public HandShakeRequest(HandShakeRequest other) : this() {
-      content_ = other.content_;
-      clientId_ = other.clientId_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public HandShakeRequest Clone() {
-      return new HandShakeRequest(this);
-    }
-
-    /// <summary>Field number for the "content" field.</summary>
-    public const int ContentFieldNumber = 1;
-    private string content_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Content {
-      get { return content_; }
-      set {
-        content_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "clientId" field.</summary>
-    public const int ClientIdFieldNumber = 2;
-    private uint clientId_;
-    /// <summary>
-    ///仅用于udp请求
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public uint ClientId {
-      get { return clientId_; }
-      set {
-        clientId_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as HandShakeRequest);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(HandShakeRequest other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (Content != other.Content) return false;
-      if (ClientId != other.ClientId) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (Content.Length != 0) hash ^= Content.GetHashCode();
-      if (ClientId != 0) hash ^= ClientId.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (Content.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Content);
-      }
-      if (ClientId != 0) {
-        output.WriteRawTag(16);
-        output.WriteUInt32(ClientId);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Content.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Content);
-      }
-      if (ClientId != 0) {
-        output.WriteRawTag(16);
-        output.WriteUInt32(ClientId);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int CalculateSize() {
-      int size = 0;
-      if (Content.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Content);
-      }
-      if (ClientId != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(ClientId);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(HandShakeRequest other) {
       if (other == null) {
         return;
       }

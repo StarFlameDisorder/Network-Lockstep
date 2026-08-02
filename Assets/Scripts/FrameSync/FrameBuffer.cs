@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GamePlay
+namespace FrameSync
 {
     /// <summary>
     /// 玩家帧缓冲（框架层）：按帧号暂存服务端广播的输入帧，供调度器按序消费。
@@ -40,7 +40,7 @@ namespace GamePlay
         /// 所有客户端收到同一份补发，跳帧一致，不破坏确定性。
         /// 返回 null = 无可用帧（缓冲空或均为过期帧），调用方按"缺口/离线"处理。
         /// </summary>
-        public FrameInput? TryPopNextFrame()
+        public FrameInput TryPopNextFrame()
         {
             if (_frames.TryGetValue(_nextFrameId, out var input))
             {

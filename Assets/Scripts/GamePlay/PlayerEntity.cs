@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameMessage;
 using Network;
 using Unity.VisualScripting;
@@ -48,8 +49,13 @@ namespace GamePlay
 
         public void Destroy()
         {
-            Object.Destroy(_view);
-            _view = null;
+            // 立即销毁表现层（而非 Object.Destroy 延迟到帧末）：
+            // 防止重建快照时旧对象未销毁、新对象已创建，导致同一玩家出现多个对象
+            if (_view != null)
+            {
+                Object.DestroyImmediate(_view.gameObject);
+                _view = null;
+            }
         }
 
         #region 帧同步
@@ -63,7 +69,22 @@ namespace GamePlay
         {
             UInt64 nextFrameId = _preFrameId + 1;
             if (!_pendingFrames.TryGetValue(nextFrameId, out var sync))
+            {
+                // 帧缺口容错：目标帧缺失但缓冲内有更晚的帧（补发时离线/停滞玩家的帧本就不存在），
+                // 跳到最早可用帧继续。缺口期间该玩家保持冻结，符合"离线期不移动"的语义；
+                // 所有客户端收到同一份补发，跳帧一致，不破坏确定性。
+                if (_pendingFrames.Count > 0)
+                {
+                    UInt64 first = _pendingFrames.Keys.First();
+                    if (first > nextFrameId)
+                    {
+                        Debug.LogWarning($"[Client][PlayerEntity] {_name} 帧缺口跳帧: 缺{nextFrameId} 跳至{first} (跳过{first - nextFrameId}帧)");
+                        _preFrameId = first - 1;
+                        return TryConsumeNextFrame();
+                    }
+                }
                 return false;
+            }
             
             _pendingFrames.Remove(nextFrameId);
             _preFrameId = sync.FrameId;
@@ -81,8 +102,16 @@ namespace GamePlay
         /// </summary>
         public void AddSyncMessage(PlayerSync sync)
         {
-            _pendingFrames.Add(sync.FrameId, sync);
+            // 容错：重复帧直接忽略（补发与实时广播在极端时序下可能重叠），
+            // 避免 SortedDictionary.Add 抛异常导致整个补发包中断、产生帧缺口
+            if (!_pendingFrames.ContainsKey(sync.FrameId))
+                _pendingFrames.Add(sync.FrameId, sync);
         }
+        
+        /// <summary>
+        /// 缓冲区中最早的帧号（用于诊断帧缺口；空缓冲返回 0）
+        /// </summary>
+        public UInt64 FirstPendingFrameId => _pendingFrames.Count > 0 ? _pendingFrames.Keys.First() : 0;
         
         #endregion
         

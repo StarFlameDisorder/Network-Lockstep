@@ -40,7 +40,10 @@ namespace GamePlay
                 {
                     if (!player.TryConsumeNextFrame())
                     {
-                        // Debug.LogWarning($"[Client][GameFrame] {player.Name}:无第{player.LastExecutedFrameId + 1}帧");
+                        // 缓冲非空但目标帧缺失 = 帧缺口（补发不完整/丢包）：
+                        // 正常等待（缓冲为空）不触发，持续卡住时此日志会重复出现，用于定位
+                        if (player.FrameCount > 0)
+                            Debug.LogWarning($"[Client][GameFrame] {player.Name} 帧缺口: 需帧{player.LastExecutedFrameId + 1} 但缓冲最早为{player.FirstPendingFrameId} (缓冲{player.FrameCount}帧)");
                         break;
                     }
                 }

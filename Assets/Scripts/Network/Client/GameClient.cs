@@ -162,6 +162,12 @@ namespace Network.Client
             _kcpPort = kcpPort > 0 ? kcpPort : tcpPort;
             _clientId = 0;
 
+            // 清空旧会话残留的未处理消息，避免断线前积压的帧/快照污染重连后的恢复
+            lock (_queueLock)
+            {
+                _messageQueue.Clear();
+            }
+
             long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             _lastTcpReceiveTime = now;
             _lastKcpReceiveTime = now;

@@ -256,8 +256,8 @@ namespace UI.View
         {
             if (_labelFrameInfo == null || _labelPlayersInfo == null) return;
 
-            // 帧号 + 哈希（同一行）
-            _labelFrameInfo.text = $"帧(服/发): {_gameSync.LatestServerFrameId}/{_gameSync.SendSeq}";
+            // 帧号 + 哈希（同一行）；服=服务端权威帧号，发=本地发送序号
+            _labelFrameInfo.text = $"帧号: 服{_gameSync.LatestServerFrameId} 发{_gameSync.SendSeq}";
             if (_labelWorldHash != null)
                 _labelWorldHash.text = $"哈希: {_gameSync.WorldHash}";
 

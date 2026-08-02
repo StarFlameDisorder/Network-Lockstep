@@ -255,6 +255,7 @@ namespace GamePlay
         private UInt64 _sendSeq = 1;                   // 本地发送序号（仅用于跟踪，非帧权威）
         private UInt64 _latestServerFrameId;           // 服务端广播的最新帧号
         private UInt64 _lastSnapshotFrameId;           // 上次上报快照的帧号（避免漏报/重复上报）
+        private UInt64 _lastAppliedSnapshotFrameId;    // 最近一次应用（重建）的快照帧号（去重用）
         private Vector2 _pendingInput;
         
         
@@ -272,6 +273,9 @@ namespace GamePlay
         /// </summary>
         public void SyncPlayerAction()
         {
+            // 断线/未连接时停止发送（服务端会丢弃，且避免 UI"发"序号持续增长造成"还在发数据"的假象）
+            if (_gameClient.State != GameClient.ConnectionState.Connected) return;
+
             uint clientId = _gameClient.GetClientId();
             
             GameSyncMessage gameSyncMessage = new GameSyncMessage
@@ -336,6 +340,9 @@ namespace GamePlay
         
         void HeartBeat()
         {
+            // 断线/未连接时停止心跳
+            if (_gameClient.State != GameClient.ConnectionState.Connected) return;
+
             uint clientId = _gameClient.GetClientId();
             ClientMessage message = new ClientMessage
             {
@@ -388,7 +395,15 @@ namespace GamePlay
             if (message.ContentCase == GameSnapshotMessage.ContentOneofCase.Snapshot)
             {
                 GameSnapshot snapshot = message.Snapshot;
-                
+
+                // 快照去重：重复加入/重连触发服务端重复补发同一份快照时，
+                // 跳过后续重复快照，避免重复重建产生多个玩家对象
+                if (_lastAppliedSnapshotFrameId >= snapshot.FrameId)
+                {
+                    Debug.LogWarning($"[Client][GameSync] 跳过重复快照 帧={snapshot.FrameId} (已应用{_lastAppliedSnapshotFrameId})");
+                    return;
+                }
+
                 // 断线重连/中途加入：清空本地所有内容，从快照全量重建
                 foreach (var playerEntity in _players)
                 {
@@ -398,6 +413,7 @@ namespace GamePlay
                 _pendingPlayerNames.Clear();
                 _sendSeq = 1;
                 _lastSnapshotFrameId = snapshot.FrameId;
+                _lastAppliedSnapshotFrameId = snapshot.FrameId;
                 
                 foreach (var playerSS in snapshot.PlayerSSs)
                 {
@@ -434,6 +450,11 @@ namespace GamePlay
                     Debug.Log($"[Client][GameSync] 中途加入，以快照帧={snapshot.FrameId} 创建自己实体");
                 }
 
+                // 发送序号与权威帧号对齐：避免重连后"发"从 0/1 重新开始造成帧号错乱观感
+                // （服务端广播时会用统一帧号覆盖客户端序号，此处仅用于展示与发送跟踪）
+                if (_sendSeq <= _latestServerFrameId)
+                    _sendSeq = _latestServerFrameId + 1;
+
                 Debug.Log("[Client][GameSync] 断线重连/中途加入-开始游戏");
                 StartGame();
             }
@@ -444,6 +465,14 @@ namespace GamePlay
                 {
                     if (!_players.ContainsKey(player.Name)) AddPlayer(player.Name);
                     _players[player.Name].AddSyncMessage(player);
+                }
+
+                // 补发帧推进权威帧号，并同步发送序号（避免"发"远落后于"服"）
+                if (frames.FrameId > _latestServerFrameId)
+                {
+                    _latestServerFrameId = frames.FrameId;
+                    if (_sendSeq <= _latestServerFrameId)
+                        _sendSeq = _latestServerFrameId + 1;
                 }
             }
             else

@@ -324,6 +324,15 @@ namespace Network.Server
             }
 
             var snapshot = message.Snapshot;
+
+            // 防御：快照帧号超前于当前服务端帧 = 客户端失步残留（如房间重启后旧客户端上报），
+            // 接受会毒化快照缓存，导致后续重连补发为空、客户端永远等不到目标帧
+            if (snapshot.FrameId > _serverFrameId)
+            {
+                Debug.LogWarning($"[Server][RoomManager] 拒绝异常快照 帧={snapshot.FrameId} 当前服务端帧={_serverFrameId} clientId={clientId}");
+                return;
+            }
+
             _gameSnapshot = snapshot;
 
             Debug.Log($"[Server][RoomManager] 收到快照 clientId={clientId} 玩家数={snapshot.PlayerSSs.Count} 帧={snapshot.FrameId}");
@@ -480,8 +489,8 @@ namespace Network.Server
                     FrameId = ss.FrameId,
                     Pos = ss.Pos,
                     Velocity = ss.Velocity,
-                    // 以快照中的执行帧作为恢复点，与补发范围 [快照帧+1, 当前帧] 对齐，
-                    // 避免 LastFrameId（客户端发送序号）落后导致补帧断档
+                    // 每个玩家以自己的执行帧为恢复点（LastFrameId=ss.FrameId），
+                    // 补发起点取所有玩家恢复点的最小值（见下方），保证覆盖每个玩家的恢复范围
                     LastFrameId = ss.FrameId
                 };
 
@@ -490,7 +499,22 @@ namespace Network.Server
 
             OnSendKcp?.Invoke(clientId, snapMsg.ToByteArray());
 
-            // 2. 补发历史帧 [快照帧+1, 当前帧]（按服务端帧号整帧补发，分包）
+            // 补发起点：所有玩家恢复点的最小值 + 1（必须从玩家实际断点开始，
+            // 否则像"快照帧=539 但某玩家执行帧=302"时，从540起会把 303..539 全部跳过造成帧缺口）
+            ulong resumeFrom = _gameSnapshot.FrameId + 1;
+            foreach (var ss in _gameSnapshot.PlayerSSs)
+            {
+                if (ss.FrameId + 1 < resumeFrom) resumeFrom = ss.FrameId + 1;
+            }
+
+            // 防御：补发起点超出帧缓存窗口时补发会不完整，属异常场景，打日志便于定位
+            if (resumeFrom < _serverFrameId - MAX_CACHED_FRAMES)
+            {
+                Debug.LogWarning($"[Server][RoomManager] 快照帧={_gameSnapshot.FrameId} 落后当前帧={_serverFrameId} 超过缓存窗口，补发可能不完整");
+            }
+
+            // 2. 补发历史帧 [resumeFrom, 当前帧]（按服务端帧号整帧补发，分包；
+            //    离线/停滞玩家的缺失帧会自然跳过，客户端侧用"跳帧容错"冻结跳过）
             const int MAX_FRAMES_PER_PACKET = 10;
             var framesMsg = new ServerMessage
             {
@@ -501,15 +525,43 @@ namespace Network.Server
             };
             framesMsg.GameSnapshotMessage.Frames.FrameId = _serverFrameId;
 
+            // 各玩家自己的补发起点（快照执行帧+1）：只补发其恢复点之后的帧，
+            // 避免恢复点之前的旧帧灌入客户端缓冲（造成"缓冲炸了"的假象）
+            var resumeByPlayer = new Dictionary<string, ulong>();
+            foreach (var ss in _gameSnapshot.PlayerSSs)
+                resumeByPlayer[ss.Name] = ss.FrameId + 1;
+
+            // 其他在线客户端只补重连玩家的帧（补缺口）；重连者收全量（配合快照重建）
+            var othersMsg = new ServerMessage
+            {
+                GameSnapshotMessage = new GameSnapshotMessage
+                {
+                    Frames = new GameFrame()
+                }
+            };
+            othersMsg.GameSnapshotMessage.Frames.FrameId = _serverFrameId;
+
             int frameCount = 0;
-            for (ulong frameId = _gameSnapshot.FrameId + 1; frameId <= _serverFrameId; frameId++)
+            int otherCount = 0;
+            for (ulong frameId = resumeFrom; frameId <= _serverFrameId; frameId++)
             {
                 foreach (var p in _players.Values)
                 {
-                    if (p.Frames.TryGetValue(frameId, out var sync))
+                    if (!p.Frames.TryGetValue(frameId, out var sync)) continue;
+
+                    // 该帧早于该玩家的恢复点则跳过（快照中无此玩家的中途加入者默认从快照帧+1 起）
+                    if (!resumeByPlayer.TryGetValue(sync.Name, out ulong playerResume))
+                        playerResume = _gameSnapshot.FrameId + 1;
+                    if (frameId < playerResume) continue;
+
+                    framesMsg.GameSnapshotMessage.Frames.Players.Add(sync);
+                    frameCount++;
+
+                    // 重连玩家的帧额外打包给其他在线客户端（否则其他客户端对该玩家的视图有缺口）
+                    if (sync.Name == player.Name)
                     {
-                        framesMsg.GameSnapshotMessage.Frames.Players.Add(sync);
-                        frameCount++;
+                        othersMsg.GameSnapshotMessage.Frames.Players.Add(sync);
+                        otherCount++;
                     }
                 }
 
@@ -519,12 +571,34 @@ namespace Network.Server
                     framesMsg.GameSnapshotMessage.Frames.Players.Clear();
                     frameCount = 0;
                 }
+                if (otherCount >= MAX_FRAMES_PER_PACKET)
+                {
+                    BroadcastReconnectFramesToOthers(player, othersMsg.ToByteArray());
+                    othersMsg.GameSnapshotMessage.Frames.Players.Clear();
+                    otherCount = 0;
+                }
             }
 
             if (frameCount > 0)
                 OnSendKcp?.Invoke(clientId, framesMsg.ToByteArray());
+            if (otherCount > 0)
+                BroadcastReconnectFramesToOthers(player, othersMsg.ToByteArray());
 
             Debug.Log($"[Server][RoomManager] 补发重连数据 clientId={clientId} 快照帧={_gameSnapshot.FrameId} 补帧至={_serverFrameId}");
+        }
+
+        /// <summary>
+        /// 把"重连玩家缺失的帧"发送给其他在线客户端：
+        /// 让它们补上该玩家离线/停滞期间的帧缺口，保证各客户端对该玩家的视图一致
+        /// （只含重连玩家的帧，不灌其他玩家的旧帧；重复帧由客户端 AddSyncMessage 容错忽略）
+        /// </summary>
+        private void BroadcastReconnectFramesToOthers(PlayerSession reconnectingPlayer, byte[] data)
+        {
+            foreach (var p in _players.Values)
+            {
+                if (!p.Online || p.Id == reconnectingPlayer.Id) continue;
+                OnSendKcp?.Invoke(p.ClientId, data);
+            }
         }
 
         private uint GetPlayerIdByName(string name)

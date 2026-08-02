@@ -15,7 +15,7 @@ namespace GamePlay
 {
     public enum GameStatus
     {
-        Notstarted,
+        NotStarted,
         Started,
         Pause
     }
@@ -79,7 +79,8 @@ namespace GamePlay
         // Update 累加器（替代协程 TimerHandle）
         private float _gameTickAccum;
         private float _heartBeatAccum;
-        private const float GAME_TICK_INTERVAL = 1f / 30f;
+        // 逻辑帧间隔与帧率保持单一来源（避免两处常量不一致）
+        private static readonly float GAME_TICK_INTERVAL = 1f / _gameFrameRate;
         private const float HEARTBEAT_INTERVAL = 1f;
         
         public override void Init()
@@ -120,14 +121,14 @@ namespace GamePlay
             if (_gameTickAccum >= GAME_TICK_INTERVAL)
             {
                 _gameTickAccum -= GAME_TICK_INTERVAL;
-                UpdateGame();
+                TickGame();
             }
             
             _heartBeatAccum += deltaTime;
             if (_heartBeatAccum >= HEARTBEAT_INTERVAL)
             {
                 _heartBeatAccum -= HEARTBEAT_INTERVAL;
-                HeartBeat();
+                SendHeartBeat();
             }
         }
         
@@ -251,9 +252,9 @@ namespace GamePlay
         #endregion
         
         #region 玩家输入操作处理及心跳
-        // 输入命令模式
+        // 输入命令模式（保持简单：当前输入为单一方向向量，未来可扩展为命令队列）
         private UInt64 _sendSeq = 1;                   // 本地发送序号（仅用于跟踪，非帧权威）
-        private UInt64 _latestServerFrameId;           // 服务端广播的最新帧号
+        private UInt64 _latestServerFrameId;           // 服务端广播的最新帧号（权威）
         private UInt64 _lastSnapshotFrameId;           // 上次上报快照的帧号（避免漏报/重复上报）
         private UInt64 _lastAppliedSnapshotFrameId;    // 最近一次应用（重建）的快照帧号（去重用）
         private Vector2 _pendingInput;
@@ -268,10 +269,10 @@ namespace GamePlay
         }
 
         /// <summary>
-        /// 每帧调用：发送本帧输入到服务器（FrameId由服务端统一分配）。
+        /// 发送本帧本地输入到服务器（帧号由服务端统一分配）。
         /// 不在本地预写入——严格 Lockstep 下等服务端广播后才执行。
         /// </summary>
-        public void SyncPlayerAction()
+        private void SendLocalInput()
         {
             // 断线/未连接时停止发送（服务端会丢弃，且避免 UI"发"序号持续增长造成"还在发数据"的假象）
             if (_gameClient.State != GameClient.ConnectionState.Connected) return;
@@ -304,17 +305,24 @@ namespace GamePlay
                 GameSyncMessage = gameSyncMessage
             };
             _gameClient.KcpSendMessage(message.ToByteArray());
+            
+            _sendSeq++;
+        }
 
-            // 快照上报（D1：任意客户端定时上报，服务端缓存为权威快照，供断线重连/中途加入恢复）
-            // 用"超过上次上报帧+间隔"触发而非取模，避免帧号批量到达跳变时漏报
+        /// <summary>
+        /// 快照上报（D1：任意客户端定时上报，服务端缓存为权威快照，供断线重连/中途加入恢复）。
+        /// 独立于输入发送，按"超过上次上报帧+间隔"触发而非取模，避免帧号批量到达跳变时漏报。
+        /// </summary>
+        private void TryReportSnapshot()
+        {
+            if (_gameClient.State != GameClient.ConnectionState.Connected) return;
+
             ulong snapshotSpacing = (UInt64)(_gameFrameRate * _snapshotSpacing);
             if (_latestServerFrameId > 0 && _latestServerFrameId >= _lastSnapshotFrameId + snapshotSpacing)
             {
-                SyncSnapshot(_latestServerFrameId, clientId);
+                SyncSnapshot(_latestServerFrameId, _gameClient.GetClientId());
                 _lastSnapshotFrameId = _latestServerFrameId;
             }
-            
-            _sendSeq++;
         }
 
         private void SyncSnapshot(UInt64 frameId, uint clientId)
@@ -338,7 +346,7 @@ namespace GamePlay
             _gameClient.KcpSendMessage(snapMessage.ToByteArray());
         }
         
-        void HeartBeat()
+        private void SendHeartBeat()
         {
             // 断线/未连接时停止心跳
             if (_gameClient.State != GameClient.ConnectionState.Connected) return;
@@ -359,16 +367,19 @@ namespace GamePlay
 
         #region 游戏状态更新
         
-        private void UpdateGame()
+        private void TickGame()
         {
             if (_status != GameStatus.Started) return;
             
-            // 1. 发送本帧本地输入到服务器，并将输入写入本地玩家缓冲区
-            SyncPlayerAction();
+            // 1. 发送本帧本地输入到服务器
+            SendLocalInput();
             
-            // 2. 推动所有玩家从缓冲区逐帧消费（远程输入由 ReceiveMessage 预先写入）
+            // 2. 快照上报（服务端缓存为权威快照，供断线重连/中途加入恢复）
+            TryReportSnapshot();
+            
+            // 3. 推动所有玩家从缓冲区逐帧消费（远程输入由 ReceiveMessage 预先写入）
             var frame = new GameFrame(_latestServerFrameId, _players);
-            frame.PushFrames();
+            frame.ApplyAll();
         }
         #endregion
         
@@ -394,91 +405,110 @@ namespace GamePlay
         {
             if (message.ContentCase == GameSnapshotMessage.ContentOneofCase.Snapshot)
             {
-                GameSnapshot snapshot = message.Snapshot;
-
-                // 快照去重：重复加入/重连触发服务端重复补发同一份快照时，
-                // 跳过后续重复快照，避免重复重建产生多个玩家对象
-                if (_lastAppliedSnapshotFrameId >= snapshot.FrameId)
-                {
-                    Debug.LogWarning($"[Client][GameSync] 跳过重复快照 帧={snapshot.FrameId} (已应用{_lastAppliedSnapshotFrameId})");
-                    return;
-                }
-
-                // 断线重连/中途加入：清空本地所有内容，从快照全量重建
-                foreach (var playerEntity in _players)
-                {
-                    playerEntity.Value.Destroy();
-                }
-                _players.Clear();
-                _pendingPlayerNames.Clear();
-                _sendSeq = 1;
-                _lastSnapshotFrameId = snapshot.FrameId;
-                _lastAppliedSnapshotFrameId = snapshot.FrameId;
-                
-                foreach (var playerSS in snapshot.PlayerSSs)
-                {
-                    AddPlayer(playerSS.Name);
-                    
-                    if (playerSS.Name == _name)
-                    {
-                        _latestServerFrameId = playerSS.LastFrameId;
-                        _sendSeq = playerSS.LastFrameId + 1;
-                        Debug.Log($"[Client][GameSync] {playerSS.Name} 快照恢复 帧={playerSS.LastFrameId}");
-                    }
-                    _players[playerSS.Name].SetSnapshotSync(playerSS);
-                }
-
-                // 中途加入：快照不含自己时，以快照帧号为起点创建自己实体（从出生点开始）
-                if (!_players.ContainsKey(_name))
-                {
-                    _latestServerFrameId = snapshot.FrameId;
-                    AddPlayer(_name);
-                    var self = _players[_name];
-                    var selfSync = new PlayerSnapshotSync
-                    {
-                        Name = _name,
-                        FrameId = snapshot.FrameId,
-                        LastFrameId = snapshot.FrameId,
-                        Pos = new Vector3D
-                        {
-                            X = self.Position.GetRawX(),
-                            Y = self.Position.GetRawY(),
-                            Z = self.Position.GetRawZ()
-                        }
-                    };
-                    self.SetSnapshotSync(selfSync);
-                    Debug.Log($"[Client][GameSync] 中途加入，以快照帧={snapshot.FrameId} 创建自己实体");
-                }
-
-                // 发送序号与权威帧号对齐：避免重连后"发"从 0/1 重新开始造成帧号错乱观感
-                // （服务端广播时会用统一帧号覆盖客户端序号，此处仅用于展示与发送跟踪）
-                if (_sendSeq <= _latestServerFrameId)
-                    _sendSeq = _latestServerFrameId + 1;
-
-                Debug.Log("[Client][GameSync] 断线重连/中途加入-开始游戏");
-                StartGame();
+                ApplySnapshot(message.Snapshot);
             }
             else if (message.ContentCase == GameSnapshotMessage.ContentOneofCase.Frames)
             {
-                GameMessage.GameFrame frames = message.Frames;
-                foreach (var player in frames.Players)
-                {
-                    if (!_players.ContainsKey(player.Name)) AddPlayer(player.Name);
-                    _players[player.Name].AddSyncMessage(player);
-                }
-
-                // 补发帧推进权威帧号，并同步发送序号（避免"发"远落后于"服"）
-                if (frames.FrameId > _latestServerFrameId)
-                {
-                    _latestServerFrameId = frames.FrameId;
-                    if (_sendSeq <= _latestServerFrameId)
-                        _sendSeq = _latestServerFrameId + 1;
-                }
+                HandleReplayFrames(message.Frames);
             }
             else
             {
-                Debug.LogError("[Client][GameSync] HandleMessage:未知类型" + message.ContentCase + BitConverter.ToString(message.ToByteArray()));
+                Debug.LogError("[Client][GameSync] ReceiveSnapshotMessage:未知类型" + message.ContentCase + BitConverter.ToString(message.ToByteArray()));
             }
+        }
+
+        /// <summary>
+        /// 应用权威快照：断线重连/中途加入时清空本地所有内容，从快照全量重建
+        /// </summary>
+        private void ApplySnapshot(GameSnapshot snapshot)
+        {
+            // 快照去重：重复加入/重连触发服务端重复补发同一份快照时，
+            // 跳过后续重复快照，避免重复重建产生多个玩家对象
+            if (_lastAppliedSnapshotFrameId >= snapshot.FrameId)
+            {
+                Debug.LogWarning($"[Client][GameSync] 跳过重复快照 帧={snapshot.FrameId} (已应用{_lastAppliedSnapshotFrameId})");
+                return;
+            }
+
+            // 清空本地所有内容，从快照全量重建
+            foreach (var playerEntity in _players)
+            {
+                playerEntity.Value.Destroy();
+            }
+            _players.Clear();
+            _pendingPlayerNames.Clear();
+            _sendSeq = 1;
+            _lastSnapshotFrameId = snapshot.FrameId;
+            _lastAppliedSnapshotFrameId = snapshot.FrameId;
+
+            foreach (var playerSS in snapshot.PlayerSSs)
+            {
+                AddPlayer(playerSS.Name);
+
+                if (playerSS.Name == _name)
+                {
+                    _latestServerFrameId = playerSS.LastFrameId;
+                    _sendSeq = playerSS.LastFrameId + 1;
+                    Debug.Log($"[Client][GameSync] {playerSS.Name} 快照恢复 帧={playerSS.LastFrameId}");
+                }
+                _players[playerSS.Name].SetSnapshotSync(playerSS);
+            }
+
+            // 中途加入：快照不含自己时，以快照帧号为起点创建自己实体（从出生点开始）
+            if (!_players.ContainsKey(_name))
+            {
+                _latestServerFrameId = snapshot.FrameId;
+                AddPlayer(_name);
+                var self = _players[_name];
+                var selfSync = new PlayerSnapshotSync
+                {
+                    Name = _name,
+                    FrameId = snapshot.FrameId,
+                    LastFrameId = snapshot.FrameId,
+                    Pos = new Vector3D
+                    {
+                        X = self.Position.GetRawX(),
+                        Y = self.Position.GetRawY(),
+                        Z = self.Position.GetRawZ()
+                    }
+                };
+                self.SetSnapshotSync(selfSync);
+                Debug.Log($"[Client][GameSync] 中途加入，以快照帧={snapshot.FrameId} 创建自己实体");
+            }
+
+            AlignSendSeqToServerFrame();
+
+            Debug.Log("[Client][GameSync] 断线重连/中途加入-开始游戏");
+            StartGame();
+        }
+
+        /// <summary>
+        /// 处理补发历史帧：灌入各玩家缓冲区并推进权威帧号
+        /// </summary>
+        private void HandleReplayFrames(GameMessage.GameFrame frames)
+        {
+            foreach (var player in frames.Players)
+            {
+                if (!_players.ContainsKey(player.Name)) AddPlayer(player.Name);
+                _players[player.Name].AddSyncMessage(player);
+            }
+
+            // 补发帧推进权威帧号，并同步发送序号（避免"发"远落后于"服"）
+            if (frames.FrameId > _latestServerFrameId)
+            {
+                _latestServerFrameId = frames.FrameId;
+                AlignSendSeqToServerFrame();
+            }
+        }
+
+        /// <summary>
+        /// 发送序号与权威帧号对齐：避免重连后"发"从 0/1 重新开始造成帧号错乱观感
+        /// （服务端广播时会用统一帧号覆盖客户端序号，此处仅用于展示与发送跟踪）
+        /// </summary>
+        private void AlignSendSeqToServerFrame()
+        {
+            if (_sendSeq <= _latestServerFrameId)
+                _sendSeq = _latestServerFrameId + 1;
         }
         #endregion
         
@@ -488,7 +518,7 @@ namespace GamePlay
         public event Action GamePauseEvent;
         public event Action GameContinueEvent;
         
-        GameStatus _status = GameStatus.Notstarted;
+        GameStatus _status = GameStatus.NotStarted;
 
         public GameStatus GetStatus()
         {
@@ -515,7 +545,7 @@ namespace GamePlay
 
         public void EndGame()
         {
-            _status = GameStatus.Notstarted;
+            _status = GameStatus.NotStarted;
         }
         
         #endregion

@@ -44,7 +44,6 @@ RTS 多人实时对战游戏的客户端-服务端完整实现，核心玩法为
 ## 项目结构
 
 - `Docs/` — 项目文档（重构方案、问题追踪、TODO 等）
-- `Server/` — （已废弃）C++/Qt 服务端源码，C# 服务端已覆盖全部功能，确认后删除（阶段E）
 - `Assets/Scripts/Core/` — 游戏核心（GameCore、GameConstants）
 - `Assets/Scripts/Framework/` — 框架基础设施（SubSystemBase、Global、DataProxySystem）
 - `Assets/Scripts/Network/` — 网络层（Client/Server/Base 三块：KcpClient/KcpServer/KcpSession + RoomManager 等）

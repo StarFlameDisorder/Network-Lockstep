@@ -1,4 +1,7 @@
 
+// [废弃] 旧玩家类，已被 PlayerEntity（纯逻辑）+ PlayerView（表现）替代
+// 无任何引用，保留仅供参考，待确认后删除
+
 using System;
 using System.Collections.Generic;
 using GameMessage;

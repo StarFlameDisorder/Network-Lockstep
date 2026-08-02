@@ -101,10 +101,10 @@ BV18T7M6HE8
 | 阶段 | 内容 | 状态 |
 |---|---|---|
 | 阶段A | 断线重连修复 | ✅ 已完成（2026-08-02），已实测验证：断线停止发送/补发缺口/跳帧容错/防多对象 |
-| 阶段B | 客户端网络层重构（INetworkTransport + MessageBus + NetworkClient） | 🔧 部分完成（消息主线程派发队列已做；INetworkTransport 抽象类未做） |
-| 阶段C | GameSync 职责拆分 + 服务端广播改主线程驱动 | 🔧 部分完成（服务端广播已改主线程驱动；GameSync 拆分未做） |
-| 阶段D | UI 修复与清理（旧面板移除、断线状态显示、LeaveRoom/EndRoom 派发） | 🔧 部分完成（断线状态/UDP端口/加入离开消息已做；场景旧面板移除未做） |
-| 阶段E | C++ Server/ 目录废弃与清理 | ❌ 未开始 |
+| 阶段B | 客户端网络层重构（INetworkTransport + MessageBus + NetworkClient） | 🔧 部分完成（消息主线程派发队列已做；INetworkTransport 抽象类未做，按"保持简单"原则暂缓） |
+| 阶段C | GameSync 职责拆分 + 服务端广播改主线程驱动 | ✅ 已完成（2026-08-02）：帧处理逻辑重构（TickGame 职责分离、快照/补发/对齐拆分、命名修正 NotStarted/ApplyAll 等）+ 服务端主线程（阶段A 已做） |
+| 阶段D | UI 修复与清理（旧面板移除、断线状态显示、LeaveRoom/EndRoom 派发） | 🔧 部分完成（断线状态/UDP端口/加入离开消息已做；场景旧面板移除需在 Unity 编辑器手动操作） |
+| 阶段E | C++ Server/ 目录废弃与清理 | ✅ 已完成（2026-08-02）：Server/ 目录已删除（用户确认）；UdpServer/UdpSocket/Player.cs 已标记废弃 |
 
 ### 阶段A 已落地明细（2026-08-02）
 
@@ -139,7 +139,43 @@ BV18T7M6HE8
 - MessageDispatcher：LeaveRoom/EndRoom 派发、保活/普通文本消息处理
 - 大厅动态显示其他玩家加入/离开房间（DebugLogger）
 
+### 阶段C 已落地明细（2026-08-02）
+
+- `TickGame`（原 `UpdateGame`）职责分离为三步：`SendLocalInput`（发输入）→ `TryReportSnapshot`（快照上报）→ `GameFrame.ApplyAll`（帧消费），消除原 `SyncPlayerAction` 混装"输入+快照"的问题
+- `ReceiveSnapshotMessage` 拆分为 `ApplySnapshot`（快照重建）/ `HandleReplayFrames`（补发帧）/ `AlignSendSeqToServerFrame`（帧号对齐），去掉两处重复的对齐逻辑
+- 命名修正：`GameStatus.Notstarted`→`NotStarted`、`GameFrame.PushFrames`→`ApplyAll`（帧执行器语义，TODO P2 关闭）、`HeartBeat`→`SendHeartBeat`、PlayerEntity `_preFrameId`→`_lastExecutedFrameId`、`_preSnapshotFrameId`→`_lastAppliedSnapshotFrameId`
+- 逻辑帧间隔 `GAME_TICK_INTERVAL` 从 `_gameFrameRate` 派生（单一来源）
+- 旧 `Player.cs` 标记废弃（已被 PlayerEntity+PlayerView 替代，无引用）
+
+### 阶段E 已落地明细（2026-08-02）
+
+- `Server/`（C++/Qt 服务端，含 protobuf 生成物）已删除（用户确认）
+- 客户端 `UdpSocket.cs` / 服务端 `UdpServer.cs` 标记废弃（KCP 已替换手写可靠UDP，无引用）
+
 > 2026-07-24 附：房间逻辑已修复（玩家实体延迟到 StartRoom 创建）、调试UI已增强（帧信息+玩家状态+面板折叠）
+
+---
+
+## 帧同步框架待办（2026-08-02 盘点）
+
+> 网络同步核心目标已达成（阶段A 完成），以下为框架层面的后续缺口，按优先级记录，暂不排期。
+
+### 正确性（帧同步命根子）
+- **Desync 检测闭环**（原 TODO P3，升级）：哈希目前只显示不比对。需跨客户端比对哈希 + 记录分歧起始帧号 + 日志标记（帧同步最怕静默分歧，各端算出不同结果却无人发现）
+- **确定性 Random**：逻辑一旦用 `UnityEngine.Random`/系统随机，各端必然分歧；需提供"种子播种、可复现"的确定性随机
+- **确定性时间**：逻辑内禁用 `Time.time`/`DateTime`（当前固定帧率累加器已满足）
+- **确定性数学完善**：FixedPoint 已有，缺 sqrt/三角等确定性实现（RTS 寻路/弹道会用到）
+- **自动化确定性回归测试**：同输入 → 同输出（防重构回归）
+
+### 网络健壮性
+- **快照漂移根治**（已知遗留）：不同时间点快照恢复导致位置漂移 → 重连时服务端向所有客户端统一广播权威快照
+- **弱网模拟器**：丢包/抖动/延迟注入，验证 KCP + 重连在真实弱网下的表现
+- **RTT/延迟显示**：调试面板补充
+- **输入校验/防重放**（服务端）：当前信任客户端输入，框架上留接口即可
+
+### 工程能力
+- **回放系统（Replay）**：记录输入流重放——帧同步标配 + 定位 desync 的最强工具（中成本，可后置）
+- **观战模式**（可选，后置）
 
 ---
 

@@ -13,6 +13,7 @@ message ServerMessage{
         GameMessage.GameSyncMessage gameSyncMessage = 4;
         LobbyMessage.LobbySyncResponse lobbySync = 5;
         GameMessage.GameSnapshotMessage gameSnapshotMessage=6;
+        GameMessage.DesyncNoticeMessage desyncNotice=8;
     }
     bool keepAlive = 7; //服务端保活包（客户端收包超时断线检测用，无实际内容）
 }
@@ -25,5 +26,6 @@ message ClientMessage{
         LobbyMessage.LobbySyncRequest lobbySync=5;
         GameMessage.HeartBeat heartBeat=6;
         GameMessage.GameSnapshotMessage gameSnapshotMessage=7;
+        GameMessage.HashReportMessage hashReport=8;
     }
 }

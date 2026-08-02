@@ -26,25 +26,28 @@ namespace SyncMessage {
           string.Concat(
             "ChFTeW5jTWVzc2FnZS5wcm90bxILU3luY01lc3NhZ2UaFENvbm5lY3RNZXNz",
             "YWdlLnByb3RvGhFHYW1lTWVzc2FnZS5wcm90bxoSTG9iYnlNZXNzYWdlLnBy",
-            "b3RvIrYCCg1TZXJ2ZXJNZXNzYWdlEhcKDWNvbW1vbk1lc3NhZ2UYAiABKAlI",
+            "b3RvIvACCg1TZXJ2ZXJNZXNzYWdlEhcKDWNvbW1vbk1lc3NhZ2UYAiABKAlI",
             "ABI+Cg5jb25uZWN0TWVzc2FnZRgDIAEoCzIkLkNvbm5lY3RNZXNzYWdlLlNl",
             "cnZlckNvbm5lY3RNZXNzYWdlSAASNwoPZ2FtZVN5bmNNZXNzYWdlGAQgASgL",
             "MhwuR2FtZU1lc3NhZ2UuR2FtZVN5bmNNZXNzYWdlSAASNAoJbG9iYnlTeW5j",
             "GAUgASgLMh8uTG9iYnlNZXNzYWdlLkxvYmJ5U3luY1Jlc3BvbnNlSAASPwoT",
             "Z2FtZVNuYXBzaG90TWVzc2FnZRgGIAEoCzIgLkdhbWVNZXNzYWdlLkdhbWVT",
-            "bmFwc2hvdE1lc3NhZ2VIABIRCglrZWVwQWxpdmUYByABKAhCCQoHY29udGVu",
-            "dCKhAgoNQ2xpZW50TWVzc2FnZRIQCghjbGllbnRJZBgBIAEoDRIXCg1jb21t",
-            "b25NZXNzYWdlGAIgASgJSAASNwoPZ2FtZVN5bmNNZXNzYWdlGAQgASgLMhwu",
-            "R2FtZU1lc3NhZ2UuR2FtZVN5bmNNZXNzYWdlSAASMwoJbG9iYnlTeW5jGAUg",
-            "ASgLMh4uTG9iYnlNZXNzYWdlLkxvYmJ5U3luY1JlcXVlc3RIABIrCgloZWFy",
-            "dEJlYXQYBiABKAsyFi5HYW1lTWVzc2FnZS5IZWFydEJlYXRIABI/ChNnYW1l",
-            "U25hcHNob3RNZXNzYWdlGAcgASgLMiAuR2FtZU1lc3NhZ2UuR2FtZVNuYXBz",
-            "aG90TWVzc2FnZUgAQgkKB2NvbnRlbnRiBnByb3RvMw=="));
+            "bmFwc2hvdE1lc3NhZ2VIABI4CgxkZXN5bmNOb3RpY2UYCCABKAsyIC5HYW1l",
+            "TWVzc2FnZS5EZXN5bmNOb3RpY2VNZXNzYWdlSAASEQoJa2VlcEFsaXZlGAcg",
+            "ASgIQgkKB2NvbnRlbnQi1wIKDUNsaWVudE1lc3NhZ2USEAoIY2xpZW50SWQY",
+            "ASABKA0SFwoNY29tbW9uTWVzc2FnZRgCIAEoCUgAEjcKD2dhbWVTeW5jTWVz",
+            "c2FnZRgEIAEoCzIcLkdhbWVNZXNzYWdlLkdhbWVTeW5jTWVzc2FnZUgAEjMK",
+            "CWxvYmJ5U3luYxgFIAEoCzIeLkxvYmJ5TWVzc2FnZS5Mb2JieVN5bmNSZXF1",
+            "ZXN0SAASKwoJaGVhcnRCZWF0GAYgASgLMhYuR2FtZU1lc3NhZ2UuSGVhcnRC",
+            "ZWF0SAASPwoTZ2FtZVNuYXBzaG90TWVzc2FnZRgHIAEoCzIgLkdhbWVNZXNz",
+            "YWdlLkdhbWVTbmFwc2hvdE1lc3NhZ2VIABI0CgpoYXNoUmVwb3J0GAggASgL",
+            "Mh4uR2FtZU1lc3NhZ2UuSGFzaFJlcG9ydE1lc3NhZ2VIAEIJCgdjb250ZW50",
+            "YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::ConnectMessage.ConnectMessageReflection.Descriptor, global::GameMessage.GameMessageReflection.Descriptor, global::LobbyMessage.LobbyMessageReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ServerMessage), global::SyncMessage.ServerMessage.Parser, new[]{ "CommonMessage", "ConnectMessage", "GameSyncMessage", "LobbySync", "GameSnapshotMessage", "KeepAlive" }, new[]{ "Content" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ClientMessage), global::SyncMessage.ClientMessage.Parser, new[]{ "ClientId", "CommonMessage", "GameSyncMessage", "LobbySync", "HeartBeat", "GameSnapshotMessage" }, new[]{ "Content" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ServerMessage), global::SyncMessage.ServerMessage.Parser, new[]{ "CommonMessage", "ConnectMessage", "GameSyncMessage", "LobbySync", "GameSnapshotMessage", "DesyncNotice", "KeepAlive" }, new[]{ "Content" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::SyncMessage.ClientMessage), global::SyncMessage.ClientMessage.Parser, new[]{ "ClientId", "CommonMessage", "GameSyncMessage", "LobbySync", "HeartBeat", "GameSnapshotMessage", "HashReport" }, new[]{ "Content" }, null, null, null)
           }));
     }
     #endregion
@@ -101,6 +104,9 @@ namespace SyncMessage {
           break;
         case ContentOneofCase.GameSnapshotMessage:
           GameSnapshotMessage = other.GameSnapshotMessage.Clone();
+          break;
+        case ContentOneofCase.DesyncNotice:
+          DesyncNotice = other.DesyncNotice.Clone();
           break;
       }
 
@@ -173,6 +179,18 @@ namespace SyncMessage {
       }
     }
 
+    /// <summary>Field number for the "desyncNotice" field.</summary>
+    public const int DesyncNoticeFieldNumber = 8;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::GameMessage.DesyncNoticeMessage DesyncNotice {
+      get { return contentCase_ == ContentOneofCase.DesyncNotice ? (global::GameMessage.DesyncNoticeMessage) content_ : null; }
+      set {
+        content_ = value;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.DesyncNotice;
+      }
+    }
+
     /// <summary>Field number for the "keepAlive" field.</summary>
     public const int KeepAliveFieldNumber = 7;
     private bool keepAlive_;
@@ -197,6 +215,7 @@ namespace SyncMessage {
       GameSyncMessage = 4,
       LobbySync = 5,
       GameSnapshotMessage = 6,
+      DesyncNotice = 8,
     }
     private ContentOneofCase contentCase_ = ContentOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -232,6 +251,7 @@ namespace SyncMessage {
       if (!object.Equals(GameSyncMessage, other.GameSyncMessage)) return false;
       if (!object.Equals(LobbySync, other.LobbySync)) return false;
       if (!object.Equals(GameSnapshotMessage, other.GameSnapshotMessage)) return false;
+      if (!object.Equals(DesyncNotice, other.DesyncNotice)) return false;
       if (KeepAlive != other.KeepAlive) return false;
       if (ContentCase != other.ContentCase) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -246,6 +266,7 @@ namespace SyncMessage {
       if (contentCase_ == ContentOneofCase.GameSyncMessage) hash ^= GameSyncMessage.GetHashCode();
       if (contentCase_ == ContentOneofCase.LobbySync) hash ^= LobbySync.GetHashCode();
       if (contentCase_ == ContentOneofCase.GameSnapshotMessage) hash ^= GameSnapshotMessage.GetHashCode();
+      if (contentCase_ == ContentOneofCase.DesyncNotice) hash ^= DesyncNotice.GetHashCode();
       if (KeepAlive != false) hash ^= KeepAlive.GetHashCode();
       hash ^= (int) contentCase_;
       if (_unknownFields != null) {
@@ -290,6 +311,10 @@ namespace SyncMessage {
         output.WriteRawTag(56);
         output.WriteBool(KeepAlive);
       }
+      if (contentCase_ == ContentOneofCase.DesyncNotice) {
+        output.WriteRawTag(66);
+        output.WriteMessage(DesyncNotice);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -324,6 +349,10 @@ namespace SyncMessage {
         output.WriteRawTag(56);
         output.WriteBool(KeepAlive);
       }
+      if (contentCase_ == ContentOneofCase.DesyncNotice) {
+        output.WriteRawTag(66);
+        output.WriteMessage(DesyncNotice);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -348,6 +377,9 @@ namespace SyncMessage {
       }
       if (contentCase_ == ContentOneofCase.GameSnapshotMessage) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(GameSnapshotMessage);
+      }
+      if (contentCase_ == ContentOneofCase.DesyncNotice) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(DesyncNotice);
       }
       if (KeepAlive != false) {
         size += 1 + 1;
@@ -394,6 +426,12 @@ namespace SyncMessage {
             GameSnapshotMessage = new global::GameMessage.GameSnapshotMessage();
           }
           GameSnapshotMessage.MergeFrom(other.GameSnapshotMessage);
+          break;
+        case ContentOneofCase.DesyncNotice:
+          if (DesyncNotice == null) {
+            DesyncNotice = new global::GameMessage.DesyncNoticeMessage();
+          }
+          DesyncNotice.MergeFrom(other.DesyncNotice);
           break;
       }
 
@@ -456,6 +494,15 @@ namespace SyncMessage {
             KeepAlive = input.ReadBool();
             break;
           }
+          case 66: {
+            global::GameMessage.DesyncNoticeMessage subBuilder = new global::GameMessage.DesyncNoticeMessage();
+            if (contentCase_ == ContentOneofCase.DesyncNotice) {
+              subBuilder.MergeFrom(DesyncNotice);
+            }
+            input.ReadMessage(subBuilder);
+            DesyncNotice = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -515,6 +562,15 @@ namespace SyncMessage {
             KeepAlive = input.ReadBool();
             break;
           }
+          case 66: {
+            global::GameMessage.DesyncNoticeMessage subBuilder = new global::GameMessage.DesyncNoticeMessage();
+            if (contentCase_ == ContentOneofCase.DesyncNotice) {
+              subBuilder.MergeFrom(DesyncNotice);
+            }
+            input.ReadMessage(subBuilder);
+            DesyncNotice = subBuilder;
+            break;
+          }
         }
       }
     }
@@ -572,6 +628,9 @@ namespace SyncMessage {
           break;
         case ContentOneofCase.GameSnapshotMessage:
           GameSnapshotMessage = other.GameSnapshotMessage.Clone();
+          break;
+        case ContentOneofCase.HashReport:
+          HashReport = other.HashReport.Clone();
           break;
       }
 
@@ -656,6 +715,18 @@ namespace SyncMessage {
       }
     }
 
+    /// <summary>Field number for the "hashReport" field.</summary>
+    public const int HashReportFieldNumber = 8;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::GameMessage.HashReportMessage HashReport {
+      get { return contentCase_ == ContentOneofCase.HashReport ? (global::GameMessage.HashReportMessage) content_ : null; }
+      set {
+        content_ = value;
+        contentCase_ = value == null ? ContentOneofCase.None : ContentOneofCase.HashReport;
+      }
+    }
+
     private object content_;
     /// <summary>Enum of possible cases for the "content" oneof.</summary>
     public enum ContentOneofCase {
@@ -665,6 +736,7 @@ namespace SyncMessage {
       LobbySync = 5,
       HeartBeat = 6,
       GameSnapshotMessage = 7,
+      HashReport = 8,
     }
     private ContentOneofCase contentCase_ = ContentOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -701,6 +773,7 @@ namespace SyncMessage {
       if (!object.Equals(LobbySync, other.LobbySync)) return false;
       if (!object.Equals(HeartBeat, other.HeartBeat)) return false;
       if (!object.Equals(GameSnapshotMessage, other.GameSnapshotMessage)) return false;
+      if (!object.Equals(HashReport, other.HashReport)) return false;
       if (ContentCase != other.ContentCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -715,6 +788,7 @@ namespace SyncMessage {
       if (contentCase_ == ContentOneofCase.LobbySync) hash ^= LobbySync.GetHashCode();
       if (contentCase_ == ContentOneofCase.HeartBeat) hash ^= HeartBeat.GetHashCode();
       if (contentCase_ == ContentOneofCase.GameSnapshotMessage) hash ^= GameSnapshotMessage.GetHashCode();
+      if (contentCase_ == ContentOneofCase.HashReport) hash ^= HashReport.GetHashCode();
       hash ^= (int) contentCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -758,6 +832,10 @@ namespace SyncMessage {
         output.WriteRawTag(58);
         output.WriteMessage(GameSnapshotMessage);
       }
+      if (contentCase_ == ContentOneofCase.HashReport) {
+        output.WriteRawTag(66);
+        output.WriteMessage(HashReport);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -792,6 +870,10 @@ namespace SyncMessage {
         output.WriteRawTag(58);
         output.WriteMessage(GameSnapshotMessage);
       }
+      if (contentCase_ == ContentOneofCase.HashReport) {
+        output.WriteRawTag(66);
+        output.WriteMessage(HashReport);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -819,6 +901,9 @@ namespace SyncMessage {
       }
       if (contentCase_ == ContentOneofCase.GameSnapshotMessage) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(GameSnapshotMessage);
+      }
+      if (contentCase_ == ContentOneofCase.HashReport) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(HashReport);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -862,6 +947,12 @@ namespace SyncMessage {
             GameSnapshotMessage = new global::GameMessage.GameSnapshotMessage();
           }
           GameSnapshotMessage.MergeFrom(other.GameSnapshotMessage);
+          break;
+        case ContentOneofCase.HashReport:
+          if (HashReport == null) {
+            HashReport = new global::GameMessage.HashReportMessage();
+          }
+          HashReport.MergeFrom(other.HashReport);
           break;
       }
 
@@ -924,6 +1015,15 @@ namespace SyncMessage {
             GameSnapshotMessage = subBuilder;
             break;
           }
+          case 66: {
+            global::GameMessage.HashReportMessage subBuilder = new global::GameMessage.HashReportMessage();
+            if (contentCase_ == ContentOneofCase.HashReport) {
+              subBuilder.MergeFrom(HashReport);
+            }
+            input.ReadMessage(subBuilder);
+            HashReport = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -981,6 +1081,15 @@ namespace SyncMessage {
             }
             input.ReadMessage(subBuilder);
             GameSnapshotMessage = subBuilder;
+            break;
+          }
+          case 66: {
+            global::GameMessage.HashReportMessage subBuilder = new global::GameMessage.HashReportMessage();
+            if (contentCase_ == ContentOneofCase.HashReport) {
+              subBuilder.MergeFrom(HashReport);
+            }
+            input.ReadMessage(subBuilder);
+            HashReport = subBuilder;
             break;
           }
         }

@@ -113,6 +113,7 @@ namespace FrameSync
             _gameClient.RegisterHandler<PlayerStartRoomResponse>(Signals.LobbyStartRoom, StartRoom);//开始游戏
             _gameClient.RegisterHandler<PlayerEndRoomResponse>(Signals.LobbyEndRoom, EndRoomHandler);//结束游戏
             _gameClient.RegisterHandler<GameSnapshotMessage>(Signals.GameSnapShot, ReceiveSnapshotMessage);//断线重连 收到快照
+            _gameClient.RegisterHandler<DesyncNoticeMessage>(Signals.Desync, ReceiveDesyncNotice);//Desync 分歧通知
         }
         
         /// <summary>
@@ -443,8 +444,46 @@ namespace FrameSync
             // 2. 快照上报（服务端缓存为权威快照，供断线重连/中途加入恢复）
             TryReportSnapshot();
             
-            // 3. 框架调度：从缓冲取每帧输入喂给实体执行（缺口/离线 = 喂 null，实体冻结）
+            // 3. 哈希上报（Desync 检测：服务端跨客户端比对，不一致广播 DesyncNotice）
+            TryReportHash();
+            
+            // 4. 框架调度：从缓冲取每帧输入喂给实体执行（缺口/离线 = 喂 null，实体冻结）
             ApplyFrames();
+        }
+
+        /// <summary>哈希上报间隔（逻辑帧数，30 = 约 1 秒）</summary>
+        private const uint HASH_REPORT_INTERVAL = 30;
+        private uint _hashReportCounter;
+
+        /// <summary>
+        /// 哈希上报（Desync 检测闭环客户端侧）：定期把世界哈希发给服务端，
+        /// 服务端跨客户端比对，不一致时广播 DesyncNotice（见 ReceiveDesyncNotice）。
+        /// </summary>
+        private void TryReportHash()
+        {
+            if (_gameClient.State != GameClient.ConnectionState.Connected) return;
+            if (_players.Count == 0) return;
+
+            if (++_hashReportCounter < HASH_REPORT_INTERVAL) return;
+            _hashReportCounter = 0;
+
+            ClientMessage message = new ClientMessage
+            {
+                ClientId = _gameClient.GetClientId(),
+                HashReport = new HashReportMessage
+                {
+                    Name = _name,
+                    FrameId = _latestServerFrameId,
+                    WorldHash = Convert.ToUInt32(ComputeWorldHash(), 16)
+                }
+            };
+            _gameClient.KcpSendMessage(message.ToByteArray());
+        }
+
+        /// <summary>收到服务端 Desync 分歧通知：记录分歧帧号（帧同步一致性被破坏的信号）</summary>
+        private void ReceiveDesyncNotice(DesyncNoticeMessage message)
+        {
+            Debug.LogError($"[Client][GameSync] Desync 分歧通知！帧={message.FrameId} 详情:{message.Detail}");
         }
 
         /// <summary>

@@ -362,6 +362,56 @@ namespace Network.Server
             player.Online = true;
         }
 
+        /// <summary>各玩家最近一次哈希上报（Name → 帧号+哈希），Desync 比对用</summary>
+        private readonly Dictionary<string, (ulong frameId, uint hash)> _playerHashes = new();
+
+        /// <summary>
+        /// 接收客户端哈希上报并跨客户端比对（Desync 检测闭环）：
+        /// 同一帧号（±1 帧进度容差）下不同玩家的世界哈希不一致 → 判定分歧，广播 DesyncNotice。
+        /// 帧同步最怕静默分歧（各端算出不同结果却无人发现），此比对 + 分歧帧号记录是底线保障。
+        /// </summary>
+        public void ReceiveHashReport(uint clientId, HashReportMessage message)
+        {
+            if (!_playerByClient.TryGetValue(clientId, out uint playerId)) return;
+            var player = _players[playerId];
+            if (player.Name != message.Name) return; // 简单身份校验
+
+            _playerHashes[player.Name] = (message.FrameId, message.WorldHash);
+
+            // 以刚收到的上报为基准，与其他玩家同帧（±1）的上报比对
+            foreach (var (name, other) in _playerHashes)
+            {
+                if (name == player.Name) continue;
+                ulong delta = other.frameId > message.FrameId ? other.frameId - message.FrameId : message.FrameId - other.frameId;
+                if (delta > 1) continue; // 进度差太大（上报未对齐），跳过本次比对
+
+                if (other.hash != message.WorldHash)
+                {
+                    string detail = $"帧={message.FrameId} {player.Name}={message.WorldHash:X8} vs {name}={other.hash:X8}";
+                    Debug.LogError($"[Server][RoomManager] Desync 检测到分歧！{detail}");
+                    BroadcastDesyncNotice(message.FrameId, detail);
+                }
+            }
+        }
+
+        /// <summary>广播 Desync 分歧通知给所有在线客户端（客户端据此日志/UI 标记分歧）</summary>
+        private void BroadcastDesyncNotice(ulong frameId, string detail)
+        {
+            var msg = new ServerMessage
+            {
+                DesyncNotice = new DesyncNoticeMessage
+                {
+                    FrameId = frameId,
+                    Detail = detail
+                }
+            };
+            byte[] data = msg.ToByteArray();
+            foreach (var p in _players.Values)
+            {
+                if (p.Online) OnSendKcp?.Invoke(p.ClientId, data);
+            }
+        }
+
         #endregion
 
         #region 断线处理
@@ -469,7 +519,9 @@ namespace Network.Server
                 return;
             }
 
-            // 1. 发送快照（LastFrameId 取该玩家当前发送序号，客户端据此恢复 _sendSeq）
+            // 1. 权威快照广播给所有在线客户端（快照漂移根治 2026-08-03）：
+            //    重连玩家 + 在线玩家全部从同一快照点重置，消除"不同时间点恢复导致位置漂移"。
+            //    （LastFrameId 取快照中该玩家的执行帧，客户端据此恢复 _sendSeq）
             var snapMsg = new ServerMessage
             {
                 GameSnapshotMessage = new GameSnapshotMessage
@@ -497,7 +549,7 @@ namespace Network.Server
                 snapMsg.GameSnapshotMessage.Snapshot.PlayerSSs.Add(ps);
             }
 
-            OnSendKcp?.Invoke(clientId, snapMsg.ToByteArray());
+            BroadcastKcp(snapMsg.ToByteArray());
 
             // 补发起点：所有玩家恢复点的最小值 + 1（必须从玩家实际断点开始，
             // 否则像"快照帧=539 但某玩家执行帧=302"时，从540起会把 303..539 全部跳过造成帧缺口）
@@ -513,7 +565,7 @@ namespace Network.Server
                 Debug.LogWarning($"[Server][RoomManager] 快照帧={_gameSnapshot.FrameId} 落后当前帧={_serverFrameId} 超过缓存窗口，补发可能不完整");
             }
 
-            // 2. 补发历史帧 [resumeFrom, 当前帧]（按服务端帧号整帧补发，分包；
+            // 2. 补发历史帧 [resumeFrom, 当前帧]（按服务端帧号整帧补发，分包广播给所有客户端；
             //    离线/停滞玩家的缺失帧会自然跳过，客户端侧用"跳帧容错"冻结跳过）
             const int MAX_FRAMES_PER_PACKET = 10;
             var framesMsg = new ServerMessage
@@ -531,18 +583,7 @@ namespace Network.Server
             foreach (var ss in _gameSnapshot.PlayerSSs)
                 resumeByPlayer[ss.Name] = ss.FrameId + 1;
 
-            // 其他在线客户端只补重连玩家的帧（补缺口）；重连者收全量（配合快照重建）
-            var othersMsg = new ServerMessage
-            {
-                GameSnapshotMessage = new GameSnapshotMessage
-                {
-                    Frames = new GameFrame()
-                }
-            };
-            othersMsg.GameSnapshotMessage.Frames.FrameId = _serverFrameId;
-
             int frameCount = 0;
-            int otherCount = 0;
             for (ulong frameId = resumeFrom; frameId <= _serverFrameId; frameId++)
             {
                 foreach (var p in _players.Values)
@@ -556,48 +597,29 @@ namespace Network.Server
 
                     framesMsg.GameSnapshotMessage.Frames.Players.Add(sync);
                     frameCount++;
-
-                    // 重连玩家的帧额外打包给其他在线客户端（否则其他客户端对该玩家的视图有缺口）
-                    if (sync.Name == player.Name)
-                    {
-                        othersMsg.GameSnapshotMessage.Frames.Players.Add(sync);
-                        otherCount++;
-                    }
                 }
 
                 if (frameCount >= MAX_FRAMES_PER_PACKET)
                 {
-                    OnSendKcp?.Invoke(clientId, framesMsg.ToByteArray());
+                    BroadcastKcp(framesMsg.ToByteArray());
                     framesMsg.GameSnapshotMessage.Frames.Players.Clear();
                     frameCount = 0;
-                }
-                if (otherCount >= MAX_FRAMES_PER_PACKET)
-                {
-                    BroadcastReconnectFramesToOthers(player, othersMsg.ToByteArray());
-                    othersMsg.GameSnapshotMessage.Frames.Players.Clear();
-                    otherCount = 0;
                 }
             }
 
             if (frameCount > 0)
-                OnSendKcp?.Invoke(clientId, framesMsg.ToByteArray());
-            if (otherCount > 0)
-                BroadcastReconnectFramesToOthers(player, othersMsg.ToByteArray());
+                BroadcastKcp(framesMsg.ToByteArray());
 
-            Debug.Log($"[Server][RoomManager] 补发重连数据 clientId={clientId} 快照帧={_gameSnapshot.FrameId} 补帧至={_serverFrameId}");
+            Debug.Log($"[Server][RoomManager] 补发重连数据（广播全客户端） clientId={clientId} 快照帧={_gameSnapshot.FrameId} 补帧至={_serverFrameId}");
         }
 
-        /// <summary>
-        /// 把"重连玩家缺失的帧"发送给其他在线客户端：
-        /// 让它们补上该玩家离线/停滞期间的帧缺口，保证各客户端对该玩家的视图一致
-        /// （只含重连玩家的帧，不灌其他玩家的旧帧；重复帧由客户端 AddSyncMessage 容错忽略）
-        /// </summary>
-        private void BroadcastReconnectFramesToOthers(PlayerSession reconnectingPlayer, byte[] data)
+        /// <summary>向所有在线客户端广播（KCP）</summary>
+        private void BroadcastKcp(byte[] data)
         {
             foreach (var p in _players.Values)
             {
-                if (!p.Online || p.Id == reconnectingPlayer.Id) continue;
-                OnSendKcp?.Invoke(p.ClientId, data);
+                if (p.Online)
+                    OnSendKcp?.Invoke(p.ClientId, data);
             }
         }
 

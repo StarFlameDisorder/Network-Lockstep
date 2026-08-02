@@ -77,6 +77,7 @@ namespace Network.Server
         public event Action<uint, GameSyncMessage> OnKcpGameSync;
         public event Action<uint, GameSnapshotMessage> OnKcpGameSnapshot;
         public event Action<uint, HeartBeat> OnKcpHeartBeat;
+        public event Action<uint, HashReportMessage> OnKcpHashReport;
         public event Action<uint> OnClientDisconnectRequest;
 
         #endregion
@@ -304,6 +305,9 @@ namespace Network.Server
                         break;
                     case ClientMessage.ContentOneofCase.GameSnapshotMessage:
                         OnKcpGameSnapshot?.Invoke(clientId, msg.GameSnapshotMessage);
+                        break;
+                    case ClientMessage.ContentOneofCase.HashReport:
+                        OnKcpHashReport?.Invoke(clientId, msg.HashReport);
                         break;
                     default:
                         Debug.LogWarning($"[Server][Dispatcher] KCP 未知消息类型 clientId={clientId}: {msg.ContentCase}");

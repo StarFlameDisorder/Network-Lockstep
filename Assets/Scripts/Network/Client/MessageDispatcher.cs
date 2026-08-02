@@ -59,6 +59,9 @@ namespace Network.Client
                 case ServerMessage.ContentOneofCase.GameSnapshotMessage:
                     TriggerHandler(Signals.GameSnapShot,message.GameSnapshotMessage);
                     break;
+                case ServerMessage.ContentOneofCase.DesyncNotice:
+                    TriggerHandler(Signals.Desync,message.DesyncNotice);
+                    break;
                 case ServerMessage.ContentOneofCase.CommonMessage:
                     // 普通文本消息（KCP/TCP 注册包、服务端调试广播等）：仅记录，不派发
                     Debug.Log($"[Client][MessageDispatcher] CommonMessage: {message.CommonMessage}");

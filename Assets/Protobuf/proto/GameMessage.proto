@@ -83,3 +83,16 @@ message ObjectSnapshotSync
 message HeartBeat{
     string name = 1;
 }
+
+//哈希上报（Desync 检测）：客户端定期上报世界哈希，服务端跨客户端比对
+message HashReportMessage{
+    string name = 1;
+    uint64 frameId = 2;//上报时刻的执行帧号（服务端广播的权威帧号）
+    uint32 worldHash = 3;//世界哈希（所有玩家位置 XOR）
+}
+
+//Desync 分歧通知（服务端→客户端）：比对不一致时广播
+message DesyncNoticeMessage{
+    uint64 frameId = 1;//分歧起始帧号
+    string detail = 2;//分歧详情（哪几个玩家哈希不一致）
+}

@@ -58,6 +58,7 @@ namespace Network.Server
             _dispatcher.OnKcpGameSync += HandleKcpGameSync;
             _dispatcher.OnKcpGameSnapshot += HandleKcpGameSnapshot;
             _dispatcher.OnKcpHeartBeat += HandleKcpHeartBeat;
+            _dispatcher.OnKcpHashReport += HandleKcpHashReport;
             _dispatcher.OnClientDisconnectRequest += HandleClientDisconnect;
 
             // RoomManager → NetworkDispatcher（发送消息）
@@ -113,6 +114,11 @@ namespace Network.Server
         private void HandleKcpHeartBeat(uint clientId, HeartBeat message)
         {
             _roomManager.ReceiveHeartBeat(clientId, message);
+        }
+
+        private void HandleKcpHashReport(uint clientId, HashReportMessage message)
+        {
+            _roomManager.ReceiveHashReport(clientId, message);
         }
 
         private void HandleClientDisconnect(uint clientId)

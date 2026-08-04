@@ -10,8 +10,10 @@
 - 按 **E 键**上下文交互：
   - 空闲且靠近自由物品 → 拾取最近者（携带时物品跟随玩家头顶）。
   - 携带中且靠近火车 → 送达（计数+1，物品回出生点）。
-- 目标：总送达次数达到 `DeliverTarget`（= 物品数 × 2 = 6）→ 面板显示"完成"。
+  - 携带中且不在火车旁 → **放到地上**（物品落在当前 XZ 位置，可被任何人再拾取）。
+- 目标：总送达次数达到 `DeliverTarget`（= 物品数 × 2 = 6）→ HUD 显示"任务完成"。
 - 计分/位置/物品状态全部确定性，各端一致；世界哈希已纳入物品位置，Desync 检测覆盖本玩法。
+- 简易 HUD（`CargoHud`，OnGUI 零资源依赖）：计分 + 操作提示 + 完成提示。
 
 ## 二、为什么用"物品纯逻辑模拟"（核心设计决策）
 
@@ -42,9 +44,10 @@
 | 协议 | `GameMessage.proto` | `Command` oneof 加 `InteractCommand`；`GameSnapshot` 加 `repeated ItemSnapshotSync itemSSs`（objectId/pos/owner/deliverCount） |
 | 框架 | `GameSync.cs` | 物品列表/创建/销毁；`ApplyFrames` 确定性排序 + 传物品世界；哈希含物品；快照收发含物品 |
 | 逻辑 | `ItemEntity.cs`（新） | 纯逻辑物品：位置/持有者/送达次数/快照 |
-| 逻辑 | `PlayerEntity.cs` | `Simulate(input, items)` 加 `Interact` case：拾取/送达/携带跟随 |
+| 逻辑 | `PlayerEntity.cs` | `Simulate(input, items)` 加 `Interact` case：拾取/送达/放下/携带跟随 |
 | 配置 | `CargoConfig.cs`（新） | 世界常量 + 确定性距离判定 |
 | 表现 | `ItemView.cs`（新） | 物品表现层（读逻辑位置 → transform） |
+| 表现 | `CargoHud.cs`（新） | 简易 HUD（OnGUI 计分/提示/完成，由 GameSync 创建） |
 | 表现 | `PlayerController.cs` | E 键 → `EnqueueCommand(Interact)` |
 | UI | `ClientDebugPanel.cs` | 追加"搬运: 已送达 X/Y"计分行 |
 | 服务端 | `RoomManager.cs` | `SendReconnectData` 补发快照时同步复制 `ItemSSs`（重连后物品不丢） |
@@ -62,8 +65,9 @@
 | Assets/Scripts/GamePlay/CargoConfig.cs | 世界配置（改布局改这里） |
 | Assets/Scripts/GamePlay/ItemEntity.cs | 物品纯逻辑实体 |
 | Assets/Scripts/GamePlay/ItemView.cs | 物品表现层 |
+| Assets/Scripts/UI/View/CargoHud.cs | 简易 HUD（计分/提示/完成） |
 | Assets/Scripts/GamePlay/PlayerEntity.cs | 玩家实体（Interact 交互） |
-| Assets/Scripts/FrameSync/GameSync.cs | 框架主控（物品世界/调度/快照/哈希） |
+| Assets/Scripts/FrameSync/GameSync.cs | 框架主控（物品世界/调度/快照/哈希/HUD 生命周期） |
 | Assets/Protobuf/proto/GameMessage.proto | Interact 命令 + 物品快照协议 |
 
 ## 七、演示脚本（双开验证）

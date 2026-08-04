@@ -102,13 +102,15 @@ namespace GamePlay
         }
 
         /// <summary>
-        /// 上下文交互（协作搬运 demo）：携带中靠近火车 → 送达；空闲时靠近自由物品 → 拾取最近者。
+        /// 上下文交互（协作搬运 demo）：
+        /// 携带中 → 靠近火车按 E 送达；否则按 E 放到地上（留在当前位置，可被再拾取）。
+        /// 空闲时 → 靠近自由物品按 E 拾取最近者。
         /// 所有客户端收到同一帧输入、按同一顺序执行，结果必然一致；
         /// 冲突裁决（两个玩家同帧抢同一物品）由框架层 ApplyFrames 按玩家名排序保证先后顺序。
         /// </summary>
         private void InteractWithItems(List<ItemEntity> items)
         {
-            // 携带中：靠近火车 → 送达
+            // 携带中：靠近火车 → 送达；否则 → 放到地上
             if (_carriedItem != null)
             {
                 if (CargoConfig.IsNearTrain(_position))
@@ -117,7 +119,15 @@ namespace GamePlay
                     _carriedItem = null;
                     Debug.Log($"[Client][PlayerEntity] {_name} 送达物品");
                 }
-                // 未靠近火车：继续携带（忽略本次交互）
+                else
+                {
+                    // 放到地上：物品落在玩家所在 XZ 位置（地面高度），恢复自由可被再次拾取
+                    _carriedItem.Position = FixedPointVector3.FromRawValue(
+                        _position.GetRawX(), CargoConfig.ItemGroundY.GetRawValue(), _position.GetRawZ());
+                    _carriedItem.Release();
+                    _carriedItem = null;
+                    Debug.Log($"[Client][PlayerEntity] {_name} 放下物品");
+                }
                 return;
             }
 

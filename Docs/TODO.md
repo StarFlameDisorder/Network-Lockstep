@@ -212,10 +212,10 @@ BV18T7M6HE8
 > 给帧同步框架一个可现场演示的完整玩法闭环，同时作为"新玩法接入现有框架"的示范。
 > 详细设计见 [协作搬运demo设计.md](协作搬运demo设计.md)。
 
-- **玩法**：双人协作，WASD 移动 + E 键拾取/送达（3 物品 + 火车送达区，目标送达 6 次）
+- **玩法**：双人协作，WASD 移动 + E 键拾取/送达/放到地上（3 物品 + 火车送达区，目标送达 6 次）
 - **核心设计**：物品纯逻辑模拟（不直接联网，传输意图不传输结果）；`ApplyFrames` 按玩家名 Ordinal 排序裁决拾取冲突；布局写死在 `CargoConfig` 代码常量
-- **已落地**：proto（InteractCommand + GameSnapshot.itemSSs）+ ItemEntity/ItemView/CargoConfig（新）+ GameSync（物品世界/哈希含物品/快照含物品）+ PlayerEntity.Interact + PlayerController E 键 + ClientDebugPanel 计分 + 服务端 SendReconnectData 补发物品快照
-- **新增文件**：`Assets/Scripts/GamePlay/{CargoConfig,ItemEntity,ItemView}.cs`（Unity 自动生成 .meta）
+- **已落地**：proto（InteractCommand + GameSnapshot.itemSSs）+ ItemEntity/ItemView/CargoConfig/CargoHud（新）+ GameSync（物品世界/哈希含物品/快照含物品/HUD 生命周期）+ PlayerEntity.Interact（拾取/送达/放下）+ PlayerController E 键 + ClientDebugPanel 计分 + 服务端 SendReconnectData 补发物品快照 + 追帧日志禁用（注释保留）
+- **新增文件**：`Assets/Scripts/GamePlay/{CargoConfig,ItemEntity,ItemView}.cs` + `Assets/Scripts/UI/View/CargoHud.cs`（Unity 自动生成 .meta）
 - **待验证**：双开实测（见设计文档"演示脚本"）
 
 ---

@@ -17,6 +17,8 @@ namespace GamePlay
         public static readonly FixedPoint PickupRadius = FixedPoint.FromFloat(1.2f);
         /// <summary>携带时物品相对玩家的位置偏移</summary>
         public static readonly FixedPointVector3 CarryOffset = FixedPointVector3.FromFloat(0f, 0.8f, 0f);
+        /// <summary>物品落地/出生高度（视觉用；逻辑判定只看 XZ）</summary>
+        public static readonly FixedPoint ItemGroundY = FixedPoint.FromFloat(0.5f);
 
         /// <summary>物品出生点（3 个；代码常量而非场景摆放，保证各端一致）</summary>
         public static readonly FixedPointVector3[] ItemSpawnPos =

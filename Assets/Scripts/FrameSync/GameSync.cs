@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityMath;
 using Google.Protobuf;
 using SyncMessage;
+using UI.View;
 
 namespace FrameSync
 {
@@ -107,6 +108,9 @@ namespace FrameSync
             _playerPrefab = playerPrefab;
         }
 
+        /// <summary>简易 HUD（协作搬运 demo 计分/提示；由本类创建与销毁）</summary>
+        private CargoHud _hud;
+
         public void PostInit()
         {
             if (!Global.TryGet(out _gameClient))
@@ -122,6 +126,9 @@ namespace FrameSync
             _gameClient.RegisterHandler<PlayerEndRoomResponse>(Signals.LobbyEndRoom, EndRoomHandler);//结束游戏
             _gameClient.RegisterHandler<GameSnapshotMessage>(Signals.GameSnapShot, ReceiveSnapshotMessage);//断线重连 收到快照
             _gameClient.RegisterHandler<DesyncNoticeMessage>(Signals.Desync, ReceiveDesyncNotice);//Desync 分歧通知
+
+            // 简易 HUD（OnGUI 计分/提示；游戏未开始时不显示）
+            _hud = new GameObject("CargoHud").AddComponent<CargoHud>();
         }
         
         /// <summary>
@@ -151,6 +158,11 @@ namespace FrameSync
             _players.Clear();
             _frameBuffers.Clear();
             ClearItems();
+            if (_hud != null)
+            {
+                UnityEngine.Object.DestroyImmediate(_hud.gameObject);
+                _hud = null;
+            }
         }
         
         #region 房间操作
@@ -628,7 +640,7 @@ namespace FrameSync
                 if (buffer.Count > BufferSize)
                 {
                     catchupTarget = Math.Min(IntSqrt(buffer.Count), MaxCatchupTime);
-                    Debug.Log($"[Client][GameSync] {entity.Name}追帧{catchupTarget - 1}");
+                    // Debug.Log($"[Client][GameSync] {entity.Name}追帧{catchupTarget - 1}");//追帧提示：高频刷屏，默认禁用
                 }
 
                 for (int i = 0; i < catchupTarget; i++)

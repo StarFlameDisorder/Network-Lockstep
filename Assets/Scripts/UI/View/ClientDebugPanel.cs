@@ -293,6 +293,16 @@ namespace UI.View
 
                 sb.AppendLine($"{kv.Key}: 帧{lastFrame} {bufColor}缓冲{bufferCount} ({pos.ToVector3():F1})");
             }
+
+            // 协作搬运 demo 计分（已送达/目标；物品状态确定性一致，各端显示相同）
+            var items = _gameSync.Items;
+            if (items.Count > 0)
+            {
+                int delivered = _gameSync.DeliveredTotal;
+                bool done = delivered >= CargoConfig.DeliverTarget;
+                sb.AppendLine($"搬运: 已送达 {delivered}/{CargoConfig.DeliverTarget}{(done ? " 完成!" : "")}");
+            }
+
             _labelPlayersInfo.text = sb.ToString().TrimEnd();
         }
 

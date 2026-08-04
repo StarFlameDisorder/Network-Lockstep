@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Framework;
 using GameMessage;
 using GamePlay;
@@ -61,7 +62,8 @@ namespace FrameSync
         public string WorldHash => ComputeWorldHash();
 
         /// <summary>
-        /// 计算世界哈希：对所有玩家的位置原始值做XOR
+        /// 计算世界哈希：对所有玩家与物品的位置原始值做XOR
+        /// （物品纳入哈希，Desync 检测才能覆盖搬运玩法）
         /// </summary>
         private string ComputeWorldHash()
         {
@@ -73,6 +75,12 @@ namespace FrameSync
                 hash ^= pos.GetRawX();
                 hash ^= pos.GetRawY();
                 hash ^= pos.GetRawZ();
+            }
+            foreach (var item in _items)
+            {
+                hash ^= item.Position.GetRawX();
+                hash ^= item.Position.GetRawY();
+                hash ^= item.Position.GetRawZ();
             }
             return hash.ToString("X8");
         }
@@ -142,6 +150,7 @@ namespace FrameSync
             Instance = null;
             _players.Clear();
             _frameBuffers.Clear();
+            ClearItems();
         }
         
         #region 房间操作
@@ -161,6 +170,24 @@ namespace FrameSync
         private Dictionary<string, FrameBuffer> _frameBuffers = new();
         /// <summary>帧缓冲只读访问（调试面板用）</summary>
         public IReadOnlyDictionary<string, FrameBuffer> FrameBuffers => _frameBuffers;
+
+        /// <summary>物品世界（协作搬运 demo）：所有客户端确定性模拟，不直接联网，天然一致</summary>
+        private readonly List<ItemEntity> _items = new();
+        /// <summary>物品只读访问（调试面板用）</summary>
+        public IReadOnlyList<ItemEntity> Items => _items;
+        /// <summary>火车（送达区）视觉对象（纯表现，不参与逻辑）</summary>
+        private GameObject _trainVisual;
+
+        /// <summary>已送达总次数（计分，用于 UI 显示；确定性，各端一致）</summary>
+        public int DeliveredTotal
+        {
+            get
+            {
+                int total = 0;
+                foreach (var item in _items) total += item.DeliverCount;
+                return total;
+            }
+        }
         
         private void JoinRoom(PlayerJoinRoomResponse response)
         {
@@ -214,6 +241,90 @@ namespace FrameSync
             }
         }
 
+        #region 物品世界（协作搬运 demo）
+
+        /// <summary>创建全部物品 + 火车视觉（游戏开始时；出生点取自 CargoConfig 代码常量，各端一致）</summary>
+        private void CreateAllItems()
+        {
+            ClearItems(); // 防御：避免重复创建
+            for (int i = 0; i < CargoConfig.ItemSpawnPos.Length; i++)
+            {
+                AddItemEntity(new ItemEntity(i, CargoConfig.ItemSpawnPos[i]));
+            }
+            CreateTrainVisual();
+            Debug.Log($"[Client][GameSync] 创建物品 {_items.Count} 个");
+        }
+
+        /// <summary>创建一个物品实体 + 表现层（立方体 + ItemView）</summary>
+        private void AddItemEntity(ItemEntity item)
+        {
+            _items.Add(item);
+
+            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            go.name = $"Item_{item.Id}";
+            go.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+            go.transform.position = item.Position.ToVector3();
+            var renderer = go.GetComponent<MeshRenderer>();
+            if (renderer != null) renderer.material.color = Color.yellow;
+
+            var view = go.AddComponent<ItemView>();
+            view.Bind(item);
+        }
+
+        /// <summary>创建火车（送达区）视觉对象（纯表现，逻辑判定用 CargoConfig.TrainPos）</summary>
+        private void CreateTrainVisual()
+        {
+            if (_trainVisual != null) return;
+            _trainVisual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            _trainVisual.name = "Train";
+            _trainVisual.transform.position = CargoConfig.TrainPos.ToVector3();
+            _trainVisual.transform.localScale = new Vector3(3f, 2f, 1.5f);
+            var renderer = _trainVisual.GetComponent<MeshRenderer>();
+            if (renderer != null) renderer.material.color = Color.gray;
+        }
+
+        /// <summary>清空物品世界（含表现层与火车视觉；快照重建/房间结束时调用）</summary>
+        private void ClearItems()
+        {
+            foreach (var item in _items) item.Destroy();
+            _items.Clear();
+            if (_trainVisual != null)
+            {
+                UnityEngine.Object.DestroyImmediate(_trainVisual);
+                _trainVisual = null;
+            }
+        }
+
+        /// <summary>从快照重建物品世界（断线重连/中途加入）：按快照全量恢复位置/持有者/送达次数</summary>
+        private void RebuildItemsFromSnapshot(GameSnapshot snapshot)
+        {
+            ClearItems();
+            foreach (var ss in snapshot.ItemSSs)
+            {
+                int id = (int)ss.ObjectId;
+                // 防御：快照 id 越界时取模回退到出生点配置
+                var spawn = CargoConfig.ItemSpawnPos[id % CargoConfig.ItemSpawnPos.Length];
+                var item = new ItemEntity(id, spawn);
+                item.SetSnapshotSync(ss);
+                AddItemEntity(item);
+            }
+            CreateTrainVisual();
+
+            // 恢复携带关系：持有者仍在本房间 → 重新挂回；已不在 → 释放为自由
+            foreach (var item in _items)
+            {
+                if (!item.IsFree)
+                {
+                    if (_players.TryGetValue(item.Owner, out var owner))
+                        owner.RestoreCarriedItem(item);
+                    else
+                        item.Release();
+                }
+            }
+        }
+
+        #endregion
+
         private void LeaveRoom(PlayerLeaveRoomResponse response)
         {
             Debug.Log("[Client][GameSync] 收到PlayerLeaveRoomResponse");
@@ -230,7 +341,7 @@ namespace FrameSync
         }
 
         /// <summary>
-        /// 房间结束（服务端广播）：重置游戏状态，清理玩家实体
+        /// 房间结束（服务端广播）：重置游戏状态，清理玩家实体与物品世界
         /// </summary>
         private void EndRoomHandler(PlayerEndRoomResponse response)
         {
@@ -242,6 +353,7 @@ namespace FrameSync
             _players.Clear();
             _frameBuffers.Clear();
             _pendingPlayerNames.Clear();
+            ClearItems();
             _latestServerFrameId = 0;
             _sendSeq = 1;
             EndGame();
@@ -251,8 +363,9 @@ namespace FrameSync
         {
             Debug.Log("[Client][GameSync] 收到PlayerStartRoomResponse");
             
-            // 游戏开始：统一创建所有玩家实体
+            // 游戏开始：统一创建所有玩家实体 + 物品世界
             CreateAllPlayerEntities();
+            CreateAllItems();
             StartGame();
             
             if (_name == _ownerName)
@@ -360,6 +473,11 @@ namespace FrameSync
                             Target = ToVector3D(cmd.MoveToTarget)
                         }
                     };
+                case CommandType.Interact:
+                    return new Command
+                    {
+                        Interact = new InteractCommand()
+                    };
                 default:
                     return new Command();
             }
@@ -398,6 +516,12 @@ namespace FrameSync
             {
                 // 恢复点 = 每个玩家各自执行到的帧号（缓冲进度由框架层维护）
                 snapshot.PlayerSSs.Add(pair.Value.GetSnapshotSync(_frameBuffers[pair.Key].LastExecutedFrameId));
+            }
+
+            // 物品状态进快照（协作搬运 demo：位置/持有者/送达次数，重连/中途加入恢复用）
+            foreach (var item in _items)
+            {
+                snapshot.ItemSSs.Add(item.GetSnapshotSync());
             }
 
             snapshot.FrameId = frameId;
@@ -490,13 +614,15 @@ namespace FrameSync
         /// 框架调度核心：决定"喂哪一帧"——对每个玩家从缓冲取下一帧输入，喂给实体 Simulate。
         /// 实体不感知帧号/缓冲，只消费输入；缺口/离线时输入为 null，由实体自行冻结。
         /// 追帧：缓冲超阈值时每帧多消费几帧，快速追平服务端权威帧。
+        /// 确定性：按玩家名（Ordinal）排序迭代——物品拾取冲突等"先到先得"裁决必须各端顺序一致。
         /// </summary>
         private void ApplyFrames()
         {
-            foreach (var pair in _players)
+            // Ordinal 排序保证跨端一致（默认字符串比较受文化影响，不可用于确定性）
+            foreach (var name in _players.Keys.OrderBy(n => n, StringComparer.Ordinal))
             {
-                var entity = pair.Value;
-                var buffer = _frameBuffers[pair.Key];
+                var entity = _players[name];
+                var buffer = _frameBuffers[name];
 
                 int catchupTarget = 1;
                 if (buffer.Count > BufferSize)
@@ -516,7 +642,7 @@ namespace FrameSync
                             Debug.LogWarning($"[Client][GameSync] {entity.Name} 帧缺口: 需帧{buffer.NextFrameId} 但缓冲最早为{buffer.MinFrameId} (缓冲{buffer.Count}帧)");
                         break;
                     }
-                    entity.Simulate(input);
+                    entity.Simulate(input, _items);
                 }
             }
         }
@@ -557,6 +683,9 @@ namespace FrameSync
                                 command.MoveTo.Target.Y,
                                 command.MoveTo.Target.Z)
                         });
+                        break;
+                    case Command.ContentOneofCase.Interact:
+                        input.Commands.Add(new InputCommand { Type = CommandType.Interact });
                         break;
                 }
             }
@@ -662,6 +791,9 @@ namespace FrameSync
                 self.SetSnapshotSync(selfSync);
                 Debug.Log($"[Client][GameSync] 中途加入，以快照帧={snapshot.FrameId} 创建自己实体");
             }
+
+            // 物品世界从快照全量重建（含携带关系恢复；放在玩家重建之后，确保持有者实体已存在）
+            RebuildItemsFromSnapshot(snapshot);
 
             AlignSendSeqToServerFrame();
 

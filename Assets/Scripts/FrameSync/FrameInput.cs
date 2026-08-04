@@ -13,6 +13,8 @@ namespace FrameSync
         MoveDirection,
         /// <summary>移动到目标点（未来 RTS 正式移动方式，预留；本帧实现留 TODO）</summary>
         MoveTo,
+        /// <summary>上下文交互（协作搬运 demo：拾取/放下；无参数，由 Simulate 按位置解析）</summary>
+        Interact,
     }
 
     /// <summary>

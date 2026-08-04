@@ -549,6 +549,12 @@ namespace Network.Server
                 snapMsg.GameSnapshotMessage.Snapshot.PlayerSSs.Add(ps);
             }
 
+            // 物品快照一并广播（协作搬运 demo：重连/中途加入后客户端需按物品快照重建世界）
+            foreach (var ss in _gameSnapshot.ItemSSs)
+            {
+                snapMsg.GameSnapshotMessage.Snapshot.ItemSSs.Add(ss);
+            }
+
             BroadcastKcp(snapMsg.ToByteArray());
 
             // 补发起点：所有玩家恢复点的最小值 + 1（必须从玩家实际断点开始，

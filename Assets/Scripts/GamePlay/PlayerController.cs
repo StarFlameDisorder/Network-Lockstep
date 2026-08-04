@@ -26,6 +26,17 @@ namespace GamePlay
                 return;
             }
         }
+
+        private void Update()
+        {
+            if (_gameSync == null) return;
+
+            // E 键上下文交互（协作搬运 demo：拾取/放下）——事件型命令，按下瞬间发送
+            if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+            {
+                _gameSync.EnqueueCommand(new InputCommand { Type = CommandType.Interact });
+            }
+        }
         
         public void OnMoveInput(InputAction.CallbackContext ctx)
         {

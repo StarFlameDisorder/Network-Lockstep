@@ -6,7 +6,7 @@
 
 ## 项目定位
 
-Unity (URP) 多人实时 **RTS 帧同步** 对战游戏。**唯一核心目标：网络同步**（Lockstep 确定性帧同步），架构保持简单，不做过度设计。
+Unity (URP) 多人实时 **RTS 帧同步** 对战游戏。**唯一核心目标：网络同步**（Lockstep 确定性帧同步），架构保持简单，不做过度设计。当前含一个**可玩示范玩法**：协作搬运 demo（双人拾取/送达，见 [Docs/协作搬运demo设计.md](Docs/协作搬运demo设计.md)）。
 
 ## 技术栈
 
@@ -47,8 +47,9 @@ Unity (URP) 多人实时 **RTS 帧同步** 对战游戏。**唯一核心目标�
 |---|---|---|
 | `GameSync` | FrameSync | 帧同步主控（房间/输入发送/快照/调度/重连恢复） |
 | `FrameBuffer` | FrameSync | 每玩家帧缓冲（Push/消费/跳帧/追帧） |
-| `FrameInput` / `InputCommand` | FrameSync | 一帧输入 = 命令列表；命令类型 MoveDirection/MoveTo |
+| `FrameInput` / `InputCommand` | FrameSync | 一帧输入 = 命令列表；命令类型 MoveDirection/MoveTo/Interact |
 | `PlayerEntity` | GamePlay | 纯确定性模拟（Simulate + 快照恢复/上报） |
+| `ItemEntity` / `CargoConfig` | GamePlay | 协作搬运 demo：物品纯逻辑实体 / 世界常量（改布局改 CargoConfig） |
 | `PlayerView` | GamePlay | 表现层（读 Position → transform） |
 | `PlayerController` | GamePlay | 输入层（语义命令） |
 | `GameServer` / `RoomManager` | Network/Server | 服务端主控 / 房间与帧广播 |
@@ -75,6 +76,7 @@ Unity (URP) 多人实时 **RTS 帧同步** 对战游戏。**唯一核心目标�
 
 - `TODO.md` — 阶段状态、问题备忘录、已落地明细（**先看这个**）
 - `帧同步框架架构设计.md` — 分层模型 + 核心类 + 关键机制 + 扩展点
+- `协作搬运demo设计.md` — 可玩示范玩法：确定性设计 + 新玩法接入框架的示范
 - `全面重构方案.md` / `重构方案.md` / `服务器重构.md` — 历史重构规划
 - `ToAgent.md` — 建议/工作流意见收集
 

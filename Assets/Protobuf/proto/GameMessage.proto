@@ -22,6 +22,7 @@ message GameSnapshot{
     uint64 frameId = 1;
     repeated PlayerSnapshotSync playerSSs = 2;
     repeated ObjectSnapshotSync objectSSs = 3;
+    repeated ItemSnapshotSync itemSSs = 4;
 }
 
 message GameFrame{//只由服务器向客户端发送
@@ -44,7 +45,11 @@ message Command{
         MoveToCommand moveTo = 2;//移动到目标点（未来 RTS 正式移动方式）
         AttackCommand attack = 3;
         BuildCommand build = 4;
+        InteractCommand interact = 5;//上下文交互（协作搬运 demo：拾取/放下，无参数，由 Simulate 按位置解析）
     }
+}
+
+message InteractCommand{
 }
 
 message MoveDirectionCommand{
@@ -78,6 +83,15 @@ message ObjectSnapshotSync
     uint64 objectId = 1;
     UnityMath.Vector3D pos = 2;
     UnityMath.Vector3D velocity = 3;
+}
+
+//物品快照（协作搬运 demo）：位置 + 持有者 + 送达次数
+message ItemSnapshotSync
+{
+    uint32 objectId = 1;
+    UnityMath.Vector3D pos = 2;
+    string owner = 3;//当前持有者（空 = 自由，可被拾取）
+    uint32 deliverCount = 4;//已送达次数
 }
 
 message HeartBeat{

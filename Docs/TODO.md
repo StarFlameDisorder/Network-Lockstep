@@ -187,10 +187,13 @@ BV18T7M6HE8
 
 ### 正确性（帧同步命根子）
 - **Desync 检测闭环**（原 TODO P3，升级）✅ 已解决（2026-08-03）：客户端每 30 帧上报世界哈希（HashReportMessage），服务端跨客户端同帧（±1 帧容差）比对，不一致时广播 DesyncNoticeMessage（含分歧帧号）到所有客户端并打日志。已落地：proto 消息 + 服务端 RoomManager.ReceiveHashReport 比对 + 客户端 TryReportHash/ReceiveDesyncNotice
-- **确定性 Random**：逻辑一旦用 `UnityEngine.Random`/系统随机，各端必然分歧；需提供"种子播种、可复现"的确定性随机
+- **确定性 Random**（2026-08-03 方案定稿）：`FrameSync.DeterministicRandom`（xorshift64 纯整数）；**播种策略（用户确认）：每帧 `Reseed(frameId)` 提供一帧内固定的一批随机数，帧间不同；同帧多次使用按调用顺序取（`Next()` 依次产出）**；所有客户端同帧→同序列，无需传输种子。用户倾向：RTS 不怎么吃随机，可接受直接砍掉——**结论：极简保留（单类几十行），按需实现，不排期**
 - **确定性时间**：逻辑内禁用 `Time.time`/`DateTime`（当前固定帧率累加器已满足）
-- **确定性数学完善**：FixedPoint 已有，缺 sqrt/三角等确定性实现（RTS 寻路/弹道会用到）
+- **确定性数学完善**（2026-08-03 方案定稿）：FixedPoint 增加全整数实现（禁 float 参与逻辑计算）——`Sqrt`（整数牛顿迭代）、`Sin/Cos`（**查表法，用户确认 1° 精度**：静态初始化整数计算生成 0~90° 定点表，角度 ±360° 折算）、`Atan2`（查表/分段线性）、常量 `Pi`；`FixedPointVector3.Normalized()`/`MoveTowards(target,d)`（归一化用 Sqrt，朝向用 Atan2——MoveTo 移动的基础）
 - **自动化确定性回归测试**：同输入 → 同输出（防重构回归）
+
+### 框架控制
+- **全房间暂停同步**（2026-08-03 方案定稿）：暂停/继续必须全房间一致（否则暂停者停发输入→Lockstep 卡死）。流程：房主发 `PauseRoomRequest` → 服务端校验房主 + 置 `_isPaused` → 广播 `PauseRoomResponse` → 各客户端 `GameSync.PauseGame()/ContinueGame()`（停止 TickGame）；服务端 `BroadcastGameSync` 暂停时直接 return（不推帧号），恢复后帧号继续；暂停瞬间各端缓冲（≤3帧）先消费完才停，所有端同时收到暂停→同时停→一致。**D1 决策（用户确认）：暂停中允许重连，服务端在补发数据时把当前暂停状态随快照告知，重连客户端恢复后同步进入暂停态**
 
 ### 网络健壮性
 - **快照漂移根治**（已知遗留）✅ 已解决（2026-08-03）：SendReconnectData 改为向**所有在线客户端**统一广播权威快照 + 全量补帧——重连玩家与在线玩家全部从同一快照点重置，消除"不同时间点恢复导致的位置漂移"（原先只给重连玩家发快照，在线玩家不回退，追帧期间哈希不一致）

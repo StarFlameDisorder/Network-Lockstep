@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Framework;
 using GameMessage;
 using GamePlay;
@@ -35,9 +34,6 @@ namespace FrameSync
         public static GameSync Instance;
         private GameClient _gameClient;
 
-        public const int BufferSize = 3;
-        public const int MaxCatchupTime = 5;
-
         private static int _gameFrameRate = 30;
         private static FixedPoint _gameFrameSpacing = FixedPoint.FromFloat(1f / _gameFrameRate);
         private static int _snapshotSpacing = 10;
@@ -59,32 +55,8 @@ namespace FrameSync
         public IReadOnlyCollection<string> PendingPlayerNames => _pendingPlayerNames;
         /// <summary>房主名</summary>
         public string OwnerName => _ownerName;
-        /// <summary>世界哈希值（所有玩家位置XOR，用于一致性校验。静止时不变）</summary>
-        public string WorldHash => ComputeWorldHash();
-
-        /// <summary>
-        /// 计算世界哈希：对所有玩家与物品的位置原始值做XOR
-        /// （物品纳入哈希，Desync 检测才能覆盖搬运玩法）
-        /// </summary>
-        private string ComputeWorldHash()
-        {
-            if (_players.Count == 0) return "00000000";
-            int hash = 0;
-            foreach (var kv in _players)
-            {
-                var pos = kv.Value.Position;
-                hash ^= pos.GetRawX();
-                hash ^= pos.GetRawY();
-                hash ^= pos.GetRawZ();
-            }
-            foreach (var item in _items)
-            {
-                hash ^= item.Position.GetRawX();
-                hash ^= item.Position.GetRawY();
-                hash ^= item.Position.GetRawZ();
-            }
-            return hash.ToString("X8");
-        }
+        /// <summary>世界哈希值（玩家+物品位置 XOR，用于一致性校验。静止时不变）</summary>
+        public string WorldHash => WorldStateHash.Compute(_players, _items).ToString("X8");
 
         #endregion
         
@@ -610,7 +582,7 @@ namespace FrameSync
                 {
                     Name = _name,
                     FrameId = _latestServerFrameId,
-                    WorldHash = Convert.ToUInt32(ComputeWorldHash(), 16)
+                    WorldHash = WorldStateHash.Compute(_players, _items)
                 }
             };
             _gameClient.KcpSendMessage(message.ToByteArray());
@@ -623,49 +595,15 @@ namespace FrameSync
         }
 
         /// <summary>
-        /// 框架调度核心：决定"喂哪一帧"——对每个玩家从缓冲取下一帧输入，喂给实体 Simulate。
+        /// 框架调度核心：委托 FrameSimulation.StepFrame（确定性模拟核心，与回归测试共用同一份代码）。
+        /// 决定"喂哪一帧"——对每个玩家从缓冲取下一帧输入喂给实体 Simulate；
         /// 实体不感知帧号/缓冲，只消费输入；缺口/离线时输入为 null，由实体自行冻结。
-        /// 追帧：缓冲超阈值时每帧多消费几帧，快速追平服务端权威帧。
-        /// 确定性：按玩家名（Ordinal）排序迭代——物品拾取冲突等"先到先得"裁决必须各端顺序一致。
         /// </summary>
         private void ApplyFrames()
         {
-            // Ordinal 排序保证跨端一致（默认字符串比较受文化影响，不可用于确定性）
-            foreach (var name in _players.Keys.OrderBy(n => n, StringComparer.Ordinal))
-            {
-                var entity = _players[name];
-                var buffer = _frameBuffers[name];
-
-                int catchupTarget = 1;
-                if (buffer.Count > BufferSize)
-                {
-                    catchupTarget = Math.Min(IntSqrt(buffer.Count), MaxCatchupTime);
-                    // Debug.Log($"[Client][GameSync] {entity.Name}追帧{catchupTarget - 1}");//追帧提示：高频刷屏，默认禁用
-                }
-
-                for (int i = 0; i < catchupTarget; i++)
-                {
-                    FrameInput input = buffer.TryPopNextFrame();
-                    if (input == null)
-                    {
-                        // 缓冲非空但无可用帧 = 异常缺口（正常等待时缓冲为空不触发），
-                        // 持续卡住时此日志会重复出现，用于定位
-                        if (buffer.Count > 0)
-                            Debug.LogWarning($"[Client][GameSync] {entity.Name} 帧缺口: 需帧{buffer.NextFrameId} 但缓冲最早为{buffer.MinFrameId} (缓冲{buffer.Count}帧)");
-                        break;
-                    }
-                    entity.Simulate(input, _items);
-                }
-            }
-        }
-
-        /// <summary>整数开方（避免 Math.Sqrt(double) 在完全平方数上的浮点误差取小）</summary>
-        private static int IntSqrt(int n)
-        {
-            if (n <= 1) return n;
-            int x = n, y = (x + 1) / 2;
-            while (y < x) { x = y; y = (x + n / x) / 2; }
-            return x;
+            FrameSimulation.StepFrame(_players, _frameBuffers, _items,
+                gapLog: (name, buffer) => Debug.LogWarning(
+                    $"[Client][GameSync] {name} 帧缺口: 需帧{buffer.NextFrameId} 但缓冲最早为{buffer.MinFrameId} (缓冲{buffer.Count}帧)"));
         }
 
         /// <summary>proto PlayerSync → 框架层 FrameInput（接收端解码：按命令列表映射）</summary>

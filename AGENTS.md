@@ -47,6 +47,7 @@ Unity (URP) 多人实时 **RTS 帧同步** 对战游戏。**唯一核心目标�
 |---|---|---|
 | `GameSync` | FrameSync | 帧同步主控（房间/输入发送/快照/调度/重连恢复） |
 | `FrameBuffer` | FrameSync | 每玩家帧缓冲（Push/消费/跳帧/追帧） |
+| `FrameSimulation` | FrameSync | 确定性模拟核心 StepFrame（排序/追帧/缺口语义；GameSync 与回归测试共用同一份） |
 | `FrameInput` / `InputCommand` | FrameSync | 一帧输入 = 命令列表；命令类型 MoveDirection/MoveTo/Interact |
 | `PlayerEntity` | GamePlay | 纯确定性模拟（Simulate + 快照恢复/上报） |
 | `ItemEntity` / `CargoConfig` | GamePlay | 协作搬运 demo：物品纯逻辑实体 / 世界常量（改布局改 CargoConfig） |
@@ -69,8 +70,9 @@ Unity (URP) 多人实时 **RTS 帧同步** 对战游戏。**唯一核心目标�
 ## 如何验证改动
 
 1. 改完 C# 后，确认 Unity 编译无报错（IDE 诊断/打开编辑器看 Console）。
-2. 双开实测：编辑器实例 A + 打包实例 B（服务端内嵌 A）。
-3. 验收标准：两画面帧号/位置/世界哈希一致 → 断线重连后状态恢复一致。
+2. **确定性回归测试**：菜单 Tools → 确定性回归测试（双世界哈希比对），或 unity MCP execute_code 调 `DevelopDebug.DeterminismRegressionTest.Run()`，必须 PASS。
+3. 双开实测：编辑器实例 A + 打包实例 B（服务端内嵌 A）。
+4. 验收标准：两画面帧号/位置/世界哈希一致 → 断线重连后状态恢复一致。
 
 ## 文档索引（Docs/）
 

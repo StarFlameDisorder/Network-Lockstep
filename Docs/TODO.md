@@ -190,7 +190,7 @@ BV18T7M6HE8
 - **确定性 Random**（2026-08-03 方案定稿）：`FrameSync.DeterministicRandom`（xorshift64 纯整数）；**播种策略（用户确认）：每帧 `Reseed(frameId)` 提供一帧内固定的一批随机数，帧间不同；同帧多次使用按调用顺序取（`Next()` 依次产出）**；所有客户端同帧→同序列，无需传输种子。用户倾向：RTS 不怎么吃随机，可接受直接砍掉——**结论：极简保留（单类几十行），按需实现，不排期**
 - **确定性时间**：逻辑内禁用 `Time.time`/`DateTime`（当前固定帧率累加器已满足）
 - **确定性数学完善**（2026-08-03 方案定稿）：FixedPoint 增加全整数实现（禁 float 参与逻辑计算）——`Sqrt`（整数牛顿迭代）、`Sin/Cos`（**查表法，用户确认 1° 精度**：静态初始化整数计算生成 0~90° 定点表，角度 ±360° 折算）、`Atan2`（查表/分段线性）、常量 `Pi`；`FixedPointVector3.Normalized()`/`MoveTowards(target,d)`（归一化用 Sqrt，朝向用 Atan2——MoveTo 移动的基础）
-- **自动化确定性回归测试**：同输入 → 同输出（防重构回归）
+- **自动化确定性回归测试** ✅ 已解决（2026-08-04）：`DevelopDebug/Editor/DeterminismRegressionTest.cs`——双独立世界逐帧断言全状态位一致 + 世界哈希一致（与线上 Desync 同一实现）。**测试驱动生产代码**：真实 FrameBuffer + `FrameSimulation.StepFrame`（GameSync.ApplyFrames 委托同一实现）。四层：脚本化语义场景（冲突/送达/放下）+ fuzz×5 seed（随机玩家/物品/指令，含 null 缺口冻结）+ 黄金哈希防回归（seed=12345 基准 `0xFFF36A30`）+ 变异自检（注入分歧证明能抓到）。w2 反序插入玩家模拟跨客户端加入顺序不同；已验证删排序 → 脚本化场景帧1 FAIL。运行：菜单 Tools → 确定性回归测试 / 变异自检。实测 **7/7 PASS**
 
 ### 框架控制
 - **全房间暂停同步**（2026-08-03 方案定稿）：暂停/继续必须全房间一致（否则暂停者停发输入→Lockstep 卡死）。流程：房主发 `PauseRoomRequest` → 服务端校验房主 + 置 `_isPaused` → 广播 `PauseRoomResponse` → 各客户端 `GameSync.PauseGame()/ContinueGame()`（停止 TickGame）；服务端 `BroadcastGameSync` 暂停时直接 return（不推帧号），恢复后帧号继续；暂停瞬间各端缓冲（≤3帧）先消费完才停，所有端同时收到暂停→同时停→一致。**D1 决策（用户确认）：暂停中允许重连，服务端在补发数据时把当前暂停状态随快照告知，重连客户端恢复后同步进入暂停态**

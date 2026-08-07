@@ -117,7 +117,7 @@ namespace GamePlay
                 {
                     _carriedItem.Deliver();
                     _carriedItem = null;
-                    Debug.Log($"[Client][PlayerEntity] {_name} 送达物品");
+                    // Debug.Log($"[Client][PlayerEntity] {_name} 送达物品");
                 }
                 else
                 {
@@ -126,7 +126,7 @@ namespace GamePlay
                         _position.GetRawX(), CargoConfig.ItemGroundY.GetRawValue(), _position.GetRawZ());
                     _carriedItem.Release();
                     _carriedItem = null;
-                    Debug.Log($"[Client][PlayerEntity] {_name} 放下物品");
+                    // Debug.Log($"[Client][PlayerEntity] {_name} 放下物品");
                 }
                 return;
             }
@@ -151,7 +151,7 @@ namespace GamePlay
                 if (best.TryClaim(_name))
                 {
                     _carriedItem = best;
-                    Debug.Log($"[Client][PlayerEntity] {_name} 拾取物品 {best.Id}");
+                    // Debug.Log($"[Client][PlayerEntity] {_name} 拾取物品 {best.Id}");
                 }
             }
         }

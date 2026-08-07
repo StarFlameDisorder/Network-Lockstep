@@ -14,7 +14,7 @@ namespace DevelopDebug
     /// 确定性回归测试：
     /// 1. 脚本化场景——双人冲突裁决/送达/放到地上的确定性语义
     /// 2. fuzz 随机场景——多 seed 随机玩家/物品布局 + 随机指令（含空帧/null 缺口碑）/多帧
-    /// 3. 黄金哈希——固定配置下终态哈希必须与基准一致（任何模拟行为变化 → 漂移 → FAIL）
+    /// 3. 基准哈希——固定配置下终态哈希必须与基准一致（任何模拟行为变化 → 漂移 → FAIL）
     /// 4. 变异自检（单独菜单）——注入已知分歧，验证测试确实能抓到（防"永远通过"）
     /// 每个场景都在两个独立模拟世界间逐帧断言：全状态位一致 + 世界哈希一致（与线上 Desync 同一实现）。
     /// </summary>
@@ -26,17 +26,18 @@ namespace DevelopDebug
         private const int SCRIPTED_FRAMES = 40;
 
         /// <summary>逐帧哈希明细输出开关（默认关；失败时自动输出分歧帧 + 该帧输入）</summary>
-        private const bool VERBOSE = false;
+        private const bool VERBOSE = true;
 
         /// <summary>逻辑帧间隔/速度（与 GameSync 一致，保证模拟参数真实）</summary>
         private static readonly FixedPoint FrameSpace = FixedPoint.FromFloat(1f / 30f);
         private static readonly FixedPoint Speed = FixedPoint.FromFloat(10f);
 
         /// <summary>
-        /// 黄金哈希基准：seed=12345, 4玩家6物品1000帧 的终态哈希（实测 2026-08-04 = 0xFFF36A30）。
+        /// 基准哈希基准：seed=12345, 4玩家6物品1000帧 的终态哈希（实测 2026-08-04 = 0xFFF36A30）。
         /// 任何确定性破坏/行为变化都会使其漂移 → FAIL；若为预期重构，改完后重新实测并更新此值。
         /// </summary>
-        private const uint GOLDEN_HASH = 0xFFF36A30;
+        private const uint REFERENCE_HASH = 0xFFF36A30;
+        private const string REFERENCE_INFO = "[fuzz seed=12345 4玩家/6物品/1000帧]";
 
         private struct FuzzConfig
         {
@@ -49,7 +50,7 @@ namespace DevelopDebug
         /// <summary>fuzz 场景列表（覆盖不同玩家数/物品数/时长）</summary>
         private static readonly FuzzConfig[] FUZZ_CONFIGS =
         {
-            new FuzzConfig { Seed = 12345, Players = 4, Items = 6, Frames = 1000 }, // 黄金哈希场景
+            new FuzzConfig { Seed = 12345, Players = 4, Items = 6, Frames = 1000 }, // 基准哈希场景
             new FuzzConfig { Seed = 2, Players = 3, Items = 5, Frames = 800 },
             new FuzzConfig { Seed = 3, Players = 4, Items = 4, Frames = 600 },
             new FuzzConfig { Seed = 4, Players = 2, Items = 3, Frames = 500 },
@@ -60,19 +61,19 @@ namespace DevelopDebug
 
         #region 入口
 
-        [MenuItem("Tools/确定性回归测试（双世界哈希比对）")]
+        [MenuItem("Tools/测试（双世界哈希比对）")]
         public static void RunFromMenu()
         {
             Debug.Log(Run());
         }
 
-        [MenuItem("Tools/确定性回归测试（变异自检：应检测到分歧）")]
+        [MenuItem("Tools/测试（变异自检）")]
         public static void MutationCheckFromMenu()
         {
             Debug.Log(MutationCheck());
         }
 
-        /// <summary>主入口：脚本化 + fuzz×5 + 黄金哈希，返回 PASS/FAIL 汇总</summary>
+        /// <summary>主入口：脚本化 + fuzz×5 + 基准哈希，返回 PASS/FAIL 汇总</summary>
         public static string Run()
         {
             try { return RunAll(); }
@@ -398,14 +399,14 @@ namespace DevelopDebug
             return $"PASS 终态哈希={finalHash:X8}";
         }
 
-        /// <summary>黄金哈希场景：固定配置的终态哈希必须与基准一致（防回归）</summary>
-        private static string RunGoldenHashScenario()
+        /// <summary>基准哈希场景：固定配置的终态哈希必须与基准一致（防回归）</summary>
+        private static string RunReferenceHashScenario()
         {
             string r = RunFuzzScenario(12345, 4, 6, 1000, out uint hash);
             if (!r.StartsWith("PASS")) return r;
-            return hash == GOLDEN_HASH
-                ? $"PASS 黄金哈希一致 {hash:X8}"
-                : $"FAIL 黄金哈希漂移 期望={GOLDEN_HASH:X8} 实际={hash:X8}——模拟行为已变化，若为预期重构请更新 GOLDEN_HASH";
+            return hash == REFERENCE_HASH
+                ? $"PASS 基准哈希一致 {hash:X8}"
+                : $"FAIL 基准哈希漂移 期望={REFERENCE_HASH:X8} 实际={hash:X8}——模拟行为已变化，若为预期重构请更新 GOLDEN_HASH";
         }
 
         #endregion
@@ -432,11 +433,11 @@ namespace DevelopDebug
                 sb.AppendLine($"[fuzz seed={c.Seed} {c.Players}玩家/{c.Items}物品/{c.Frames}帧] {r}");
             }
 
-            // 3. 黄金哈希
+            // 3. 基准哈希
             total++;
-            string golden = RunGoldenHashScenario();
-            if (golden.StartsWith("PASS")) pass++;
-            sb.AppendLine($"[黄金哈希] {golden}");
+            string reference = RunReferenceHashScenario();
+            if (reference.StartsWith("PASS")) pass++;
+            sb.AppendLine($"[基准哈希] {reference} {REFERENCE_INFO}");
 
             return $"{(pass == total ? "PASS" : "FAIL")} 汇总 {pass}/{total} 通过\n" + sb;
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using ConnectMessage;
+using Core;
 using GameMessage;
 using Google.Protobuf;
 using LobbyMessage;
@@ -143,7 +144,7 @@ namespace Network.Server
         }
 
         // 保活包间隔与累加器（覆盖所有已连接客户端，含未入房者）
-        private const float KEEPALIVE_INTERVAL = 1f;
+        private const float KEEPALIVE_INTERVAL = GameConstants.SERVER_KEEPALIVE_INTERVAL;
         private float _keepAliveAccum;
 
         /// <summary>

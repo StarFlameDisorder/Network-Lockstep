@@ -1,4 +1,5 @@
 using FrameSync;
+using Framework;
 using GamePlay;
 using UnityEngine;
 
@@ -13,8 +14,8 @@ namespace UI.View
     {
         private void OnGUI()
         {
-            var sync = GameSync.Instance;
-            if (sync == null) return;
+            // 经 Global 服务定位器获取（替代静态 Instance 单例）
+            if (!Global.TryGet(out GameSync sync)) return;
 
             // 仅游戏中显示（大厅/暂停不显示）
             if (sync.GetStatus() != GameStatus.Started) return;
@@ -24,8 +25,8 @@ namespace UI.View
 
             int delivered = sync.DeliveredTotal;
             int target = CargoConfig.DeliverTarget;
-
-            GUILayout.BeginArea(new Rect(10, 10, 280, 90));
+            
+            GUILayout.BeginArea(new Rect(10, 50, 280, 90));
             GUILayout.Label($"<size=22><b>搬运: {delivered}/{target}</b></size>");
             if (delivered >= target)
                 GUILayout.Label("<size=16><color=green><b>任务完成！</b></color></size>");

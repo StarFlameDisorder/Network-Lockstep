@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using Core;
 using Network.Base;
 using UnityEngine;
 
@@ -178,7 +179,7 @@ namespace Network.Server
                 }
 
                 // 缓存上限保护：只保留最新，防止"只连TCP不发KCP"的客户端导致内存无限增长
-                const int MAX_PENDING_SENDS = 64;
+                const int MAX_PENDING_SENDS = GameConstants.MAX_PENDING_SENDS;
                 if (list.Count >= MAX_PENDING_SENDS) list.RemoveAt(0);
                 list.Add(datagram);
             }

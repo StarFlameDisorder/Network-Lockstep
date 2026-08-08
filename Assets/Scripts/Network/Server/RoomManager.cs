@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using GameMessage;
 using Google.Protobuf;
 using LobbyMessage;
@@ -55,12 +56,10 @@ namespace Network.Server
         private ulong _sendIndex;
 
         // 主线程驱动累加器（替代 System.Timers.Timer）
-        private float _broadcastAccum;
+        private float _timeSinceBroadcast;         // 距上次帧广播的时间（限速：不短于一个帧间隔）
         private float _heartbeatAccum;
-        private int _gameFrameRate = 30;
+        private int _gameFrameRate = GameConstants.GAME_FRAME_RATE;
         private float _heartbeatTimeoutMs = 4000f;
-        private const float HEARTBEAT_CHECK_INTERVAL = 1f;   // 心跳超时检测节流
-        private const int MAX_CACHED_FRAMES = 600;           // 每玩家历史帧缓存上限（防止内存无限增长）
 
         // 事件：向外发送消息
         public event Action<uint, byte[]> OnSendTcp;
@@ -89,7 +88,7 @@ namespace Network.Server
         /// </summary>
         /// <param name="gameFrameRate">游戏帧率</param>
         /// <param name="heartbeatTimeoutSec">心跳超时时间（秒）</param>
-        public void Initialize(int gameFrameRate = 30, float heartbeatTimeoutSec = 4f)
+        public void Initialize(int gameFrameRate = GameConstants.GAME_FRAME_RATE, float heartbeatTimeoutSec = 4f)
         {
             _gameFrameRate = gameFrameRate;
             _heartbeatTimeoutMs = heartbeatTimeoutSec * 1000f;
@@ -97,37 +96,35 @@ namespace Network.Server
 
         public void Start()
         {
-            _broadcastAccum = 0;
+            _timeSinceBroadcast = 0;
             _heartbeatAccum = 0;
         }
 
         public void Stop()
         {
             _isRunning = false;
-            _broadcastAccum = 0;
+            _timeSinceBroadcast = 0;
             _heartbeatAccum = 0;
         }
 
         /// <summary>
-        /// 主线程逐帧驱动（由 GameServer.Update 调用）：心跳检测 + 帧广播
+        /// 主线程逐帧驱动（由 GameServer.Update 调用）：心跳检测 + 帧广播（限速事件驱动）
         /// </summary>
         public void Tick(float deltaTime)
         {
             // 心跳超时检测（节流 1s，大厅阶段也生效）
             _heartbeatAccum += deltaTime;
-            if (_heartbeatAccum >= HEARTBEAT_CHECK_INTERVAL)
+            if (_heartbeatAccum >= GameConstants.SERVER_HEARTBEAT_CHECK_INTERVAL)
             {
                 _heartbeatAccum = 0;
                 CheckHeartbeatTimeout();
+                CheckInputQueueBacklog();
             }
 
-            // 帧广播（按游戏帧率）
-            _broadcastAccum += deltaTime;
-            if (_broadcastAccum >= 1f / _gameFrameRate)
-            {
-                _broadcastAccum -= 1f / _gameFrameRate;
-                BroadcastGameSync();
-            }
+            // 帧广播：限速事件驱动——主循环负责在"距上帧 ≥ 帧间隔"时尝试广播
+            // （输入到达时 ReceiveGameSync 也会立即尝试，见 TryBroadcastGameSync）
+            _timeSinceBroadcast += deltaTime;
+            TryBroadcastGameSync();
         }
 
         #endregion
@@ -312,6 +309,9 @@ namespace Network.Server
 
                 // 入队等待下一帧广播统一分配服务端帧号
                 player.InputQueue.Enqueue(sync);
+
+                // 限速事件驱动：输入到达即尝试广播（若已就绪且距上帧 ≥ 帧间隔，立即广播而非等下个 tick）
+                TryBroadcastGameSync();
             }
         }
 
@@ -367,8 +367,10 @@ namespace Network.Server
 
         /// <summary>
         /// 接收客户端哈希上报并跨客户端比对（Desync 检测闭环）：
-        /// 同一帧号（±1 帧进度容差）下不同玩家的世界哈希不一致 → 判定分歧，广播 DesyncNotice。
-        /// 帧同步最怕静默分歧（各端算出不同结果却无人发现），此比对 + 分歧帧号记录是底线保障。
+        /// 只比对**同一帧号**的哈希——客户端按"已执行帧里程碑"（30 的倍数）上报，
+        /// 帧号相同 = 状态帧相同，才可比较；帧号不同（两客户端执行进度差）跳过，等待对齐。
+        /// （修复原 ±1 容差假阳性：每帧都在变的世界上，帧号差 1 = 状态本就不同，直接比对必然误报。）
+        /// 不一致 → 判定分歧，广播 DesyncNotice。帧同步最怕静默分歧，此比对 + 分歧帧号记录是底线保障。
         /// </summary>
         public void ReceiveHashReport(uint clientId, HashReportMessage message)
         {
@@ -378,12 +380,11 @@ namespace Network.Server
 
             _playerHashes[player.Name] = (message.FrameId, message.WorldHash);
 
-            // 以刚收到的上报为基准，与其他玩家同帧（±1）的上报比对
+            // 以刚收到的上报为基准，与其他玩家**同帧号**的上报比对
             foreach (var (name, other) in _playerHashes)
             {
                 if (name == player.Name) continue;
-                ulong delta = other.frameId > message.FrameId ? other.frameId - message.FrameId : message.FrameId - other.frameId;
-                if (delta > 1) continue; // 进度差太大（上报未对齐），跳过本次比对
+                if (other.frameId != message.FrameId) continue; // 帧号不同：跳过，等对齐后再比
 
                 if (other.hash != message.WorldHash)
                 {
@@ -448,9 +449,51 @@ namespace Network.Server
             }
         }
 
+        /// <summary>
+        /// 输入队列积压诊断（节流 1s）：客户端发送速率高于服务端消费速率（tick 漂移）时，
+        /// InputQueue 无上限增长 → 输入等待时间线性增加 → 操作延迟逐渐加大。
+        /// 此日志用于确认该根因（长期运行延迟变大的来源）。
+        /// </summary>
+        private void CheckInputQueueBacklog()
+        {
+            foreach (var player in _players.Values)
+            {
+                if (player.InputQueue.Count > GameConstants.INPUT_QUEUE_WARN_THRESHOLD)
+                {
+                    Debug.LogWarning($"[Server][RoomManager] 输入队列积压 {player.Name}={player.InputQueue.Count}条（阈值{GameConstants.INPUT_QUEUE_WARN_THRESHOLD}）——疑似客户端 tick 率高于服务端帧率，操作延迟将逐渐加大");
+                }
+            }
+        }
+
         #endregion
 
         #region 帧广播
+
+        /// <summary>
+        /// 限速事件驱动的广播入口：
+        /// 广播条件 = 距上帧 ≥ 帧间隔（正常限速 30fps 封顶） **或** 任一玩家输入队列积压 ≥ 阈值（排空优先）。
+        /// 后者让服务端在客户端领先时立即跟进，延迟保持 ~1 帧而不是涨到管线深度（3 帧）；
+        /// 帧率临时超过 30fps 无害——确定性只看帧号，客户端按自己节奏执行缓冲。
+        /// 由 Tick（主循环）与 ReceiveGameSync（输入到达）共同触发。
+        /// </summary>
+        private void TryBroadcastGameSync()
+        {
+            if (_timeSinceBroadcast < 1f / _gameFrameRate && MaxInputQueueDepth() < GameConstants.SERVER_BROADCAST_DRAIN_QUEUE)
+                return; // 限速窗口内且无积压：等下一轮
+            BroadcastGameSync();
+        }
+
+        /// <summary>当前参与玩家中输入队列的最大深度（积压判定用；Joining 恢复中玩家不计）</summary>
+        private int MaxInputQueueDepth()
+        {
+            int max = 0;
+            foreach (var player in _players.Values)
+            {
+                if (!player.Online || player.Joining) continue;
+                if (player.InputQueue.Count > max) max = player.InputQueue.Count;
+            }
+            return max;
+        }
 
         private void BroadcastGameSync()
         {
@@ -467,6 +510,7 @@ namespace Network.Server
                 return;
             }
 
+            _timeSinceBroadcast = 0; // 成功广播：重置限速计时
             _serverFrameId++;
 
             string log = $"{_sendIndex}(帧{_serverFrameId}):";
@@ -492,7 +536,7 @@ namespace Network.Server
                 player.CurrentFrameIds.Enqueue(_serverFrameId);
 
                 // 帧缓存上限保护，超出淘汰最旧帧
-                while (player.CurrentFrameIds.Count > MAX_CACHED_FRAMES)
+                while (player.CurrentFrameIds.Count > GameConstants.MAX_CACHED_FRAMES)
                 {
                     player.Frames.Remove(player.CurrentFrameIds.Dequeue());
                 }
@@ -566,7 +610,7 @@ namespace Network.Server
             }
 
             // 防御：补发起点超出帧缓存窗口时补发会不完整，属异常场景，打日志便于定位
-            if (resumeFrom < _serverFrameId - MAX_CACHED_FRAMES)
+            if (resumeFrom < _serverFrameId - GameConstants.MAX_CACHED_FRAMES)
             {
                 Debug.LogWarning($"[Server][RoomManager] 快照帧={_gameSnapshot.FrameId} 落后当前帧={_serverFrameId} 超过缓存窗口，补发可能不完整");
             }

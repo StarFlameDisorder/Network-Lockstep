@@ -406,7 +406,7 @@ namespace DevelopDebug
             if (!r.StartsWith("PASS")) return r;
             return hash == REFERENCE_HASH
                 ? $"PASS 基准哈希一致 {hash:X8}"
-                : $"FAIL 基准哈希漂移 期望={REFERENCE_HASH:X8} 实际={hash:X8}——模拟行为已变化，若为预期重构请更新 GOLDEN_HASH";
+                : $"FAIL 基准哈希漂移 期望={REFERENCE_HASH:X8} 实际={hash:X8}——模拟行为已变化，若为预期重构请更新 REFERENCE_HASH";
         }
 
         #endregion

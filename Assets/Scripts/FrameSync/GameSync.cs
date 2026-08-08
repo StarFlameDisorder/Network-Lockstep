@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Core;
 using Framework;
 using GameMessage;
 using GamePlay;
@@ -31,12 +32,11 @@ namespace FrameSync
     public class GameSync : SubSystemBase
     {
         public override SubSystemPriority Priority => SubSystemPriority.GamePlay;
-        public static GameSync Instance;
         private GameClient _gameClient;
 
-        private static int _gameFrameRate = 30;
+        private static int _gameFrameRate = GameConstants.GAME_FRAME_RATE;
         private static FixedPoint _gameFrameSpacing = FixedPoint.FromFloat(1f / _gameFrameRate);
-        private static int _snapshotSpacing = 10;
+        private static int _snapshotSpacing = GameConstants.SNAPSHOT_SPACING;
         
         private FixedPoint _speed = FixedPoint.FromFloat(10f);
         
@@ -65,13 +65,7 @@ namespace FrameSync
         private float _heartBeatAccum;
         // 逻辑帧间隔与帧率保持单一来源（避免两处常量不一致）
         private static readonly float GAME_TICK_INTERVAL = 1f / _gameFrameRate;
-        private const float HEARTBEAT_INTERVAL = 1f;
-        
-        public override void Init()
-        {
-            Instance = this;
-        }
-        
+
         /// <summary>
         /// 由 GameCore 在注册后注入依赖（替代 [SerializeField]）
         /// </summary>
@@ -116,9 +110,9 @@ namespace FrameSync
             }
             
             _heartBeatAccum += deltaTime;
-            if (_heartBeatAccum >= HEARTBEAT_INTERVAL)
+            if (_heartBeatAccum >= GameConstants.CLIENT_HEARTBEAT_INTERVAL)
             {
-                _heartBeatAccum -= HEARTBEAT_INTERVAL;
+                _heartBeatAccum -= GameConstants.CLIENT_HEARTBEAT_INTERVAL;
                 SendHeartBeat();
             }
         }
@@ -126,7 +120,6 @@ namespace FrameSync
         public override void Destroy()
         {
             EndGame();
-            Instance = null;
             _players.Clear();
             _frameBuffers.Clear();
             ClearItems();
@@ -393,11 +386,22 @@ namespace FrameSync
         /// <summary>
         /// 发送本帧本地输入到服务器（帧号由服务端统一分配）。
         /// 不在本地预写入——严格 Lockstep 下等服务端广播后才执行。
+        /// 管线化：在途输入（已发送未消费）达到 MAX_INPUT_PIPELINE 时暂停发送，
+        /// 等服务端消费后再补——服务端 InputQueue 有界，tick 漂移不再无界积压（延迟有界）。
         /// </summary>
         private void SendLocalInput()
         {
             // 断线/未连接时停止发送（服务端会丢弃，且避免 UI"发"序号持续增长造成"还在发数据"的假象）
             if (_gameClient.State != GameClient.ConnectionState.Connected) return;
+
+            // 在途输入 = 已发送帧(_sendSeq-1) - 服务端已消费帧(_latestServerFrameId)；防 ulong 下溢
+            ulong sentThrough = _sendSeq > 0 ? _sendSeq - 1 : 0;
+            ulong inFlight = _latestServerFrameId >= sentThrough ? 0 : sentThrough - _latestServerFrameId;
+            if (inFlight >= (ulong)GameConstants.MAX_INPUT_PIPELINE)
+            {
+                // 管线已满（服务端消费慢于发送），暂停本帧发送，等服务端广播推进后再补
+                return;
+            }
 
             uint clientId = _gameClient.GetClientId();
             
@@ -559,21 +563,25 @@ namespace FrameSync
             ApplyFrames();
         }
 
-        /// <summary>哈希上报间隔（逻辑帧数，30 = 约 1 秒）</summary>
-        private const uint HASH_REPORT_INTERVAL = 30;
-        private uint _hashReportCounter;
+        /// <summary>上次上报哈希的已执行帧号（防止同一里程碑重复上报）</summary>
+        private ulong _lastHashReportedFrame;
 
         /// <summary>
-        /// 哈希上报（Desync 检测闭环客户端侧）：定期把世界哈希发给服务端，
-        /// 服务端跨客户端比对，不一致时广播 DesyncNotice（见 ReceiveDesyncNotice）。
+        /// 哈希上报（Desync 检测闭环客户端侧）：
+        /// 按"已执行帧里程碑"（GameConstants.HASH_REPORT_INTERVAL 的倍数）上报，上报帧号 = 哈希实际对应的已执行帧（LastExecutedFrameId）。
+        /// 所有客户端在同一批帧号上报 → 服务端可精确比对同帧哈希
+        /// （修复原 ±1 容差假阳性：每帧都在变的世界上，帧号差 1 = 状态本就不同）。
         /// </summary>
         private void TryReportHash()
         {
             if (_gameClient.State != GameClient.ConnectionState.Connected) return;
             if (_players.Count == 0) return;
+            if (!_frameBuffers.TryGetValue(_name, out var selfBuffer)) return;
 
-            if (++_hashReportCounter < HASH_REPORT_INTERVAL) return;
-            _hashReportCounter = 0;
+            ulong executedFrame = selfBuffer.LastExecutedFrameId;
+            if (executedFrame < GameConstants.HASH_REPORT_INTERVAL || executedFrame % GameConstants.HASH_REPORT_INTERVAL != 0) return;
+            if (executedFrame == _lastHashReportedFrame) return;
+            _lastHashReportedFrame = executedFrame;
 
             ClientMessage message = new ClientMessage
             {
@@ -581,7 +589,7 @@ namespace FrameSync
                 HashReport = new HashReportMessage
                 {
                     Name = _name,
-                    FrameId = _latestServerFrameId,
+                    FrameId = executedFrame,
                     WorldHash = WorldStateHash.Compute(_players, _items)
                 }
             };

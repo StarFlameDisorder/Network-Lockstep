@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using GamePlay;
 
 namespace FrameSync
@@ -12,11 +13,6 @@ namespace FrameSync
     /// </summary>
     public static class FrameSimulation
     {
-        /// <summary>缓冲帧数阈值：超过则触发追帧</summary>
-        public const int BufferSize = 3;
-        /// <summary>每帧最大追帧数（防一次性追太多导致突发开销）</summary>
-        public const int MaxCatchupTime = 5;
-
         /// <summary>
         /// 推进一帧：按玩家名 Ordinal 排序迭代（冲突裁决顺序各端一致），
         /// 从每玩家缓冲取帧喂给实体 Simulate；缓冲超阈值时追帧；缺口/离线喂 null 由实体冻结。
@@ -40,9 +36,9 @@ namespace FrameSync
                 var buffer = buffers[name];
 
                 int catchupTarget = 1;
-                if (buffer.Count > BufferSize)
+                if (buffer.Count > GameConstants.BUFFER_SIZE)
                 {
-                    catchupTarget = Math.Min(IntSqrt(buffer.Count), MaxCatchupTime);
+                    catchupTarget = Math.Min(IntSqrt(buffer.Count), GameConstants.MAX_CATCHUP);
                     catchupLog?.Invoke(name);
                 }
 

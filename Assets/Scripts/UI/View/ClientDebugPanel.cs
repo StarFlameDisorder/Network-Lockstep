@@ -395,8 +395,9 @@ namespace UI.View
             };
             nm.TcpSendMessage(msg.ToByteArray());
 
-            if (GameSync.Instance != null)
-                GameSync.Instance.SetName(name);
+            // 经 Global 服务定位器获取（替代静态 Instance 单例）
+            if (Global.TryGet(out GameSync gameSync))
+                gameSync.SetName(name);
 
             DebugLogger.ClientLog("[TCP]", $"加入房间: {name}", "→");
         }

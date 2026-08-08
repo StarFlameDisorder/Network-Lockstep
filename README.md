@@ -1,8 +1,10 @@
-# Factory
+# Network-Lockstep
 
-一个基于 **Unity (URP)** 的多人实时 RTS 帧同步网络对战游戏项目。
+>仍在开发中
 
-> **当前方向：RTS 帧同步**。TPS 后续另起项目或单独评估。详见 [Docs/TODO.md](Docs/TODO.md)。
+一个基于 **Unity** 的多人实时 RTS 帧同步网络对战游戏项目。
+
+> **当前方向：RTS 帧同步**。详见 [Docs/TODO.md](Docs/TODO.md)。
 
 ## 项目定位
 
@@ -16,7 +18,7 @@ RTS 多人实时对战游戏的客户端-服务端完整实现，核心玩法为
 | 输入 | Unity Input System |
 | 序列化 | Google Protobuf |
 | 客户端网络 | .NET TCP（握手/控制）+ KCP（UDP 可靠传输，帧同步/心跳/快照，`System.Net.Sockets.Kcp`） |
-| 服务端 | Unity C# SubSystemBase（原 C++/Qt 服务端已迁移至此，开发模式单进程内嵌运行） |
+| 服务端 | Unity C# SubSystemBase |
 | 确定性数学 | 自实现 FixedPoint 定点数库 |
 
 ## 核心架构
@@ -28,7 +30,7 @@ RTS 多人实时对战游戏的客户端-服务端完整实现，核心玩法为
 - **心跳检测**：服务端主线程驱动，监测玩家在线状态（可配置超时）
 - **服务端线程模型**：网络事件主线程派发 + 帧广播/心跳/保活全部主线程驱动（消除后台线程字典竞态）
 - **大厅/房间系统**：支持创建/加入/离开房间，2 人 / 4 人匹配模式，游戏运行中支持中途加入
-- **服务端嵌入式**：C++/Qt 服务端已重构为 Unity C# SubSystemBase，支持开发模式单进程运行
+- **服务端嵌入式**：C++/Qt 服务端已重构为 Unity C# ，支持开发模式单进程运行
 
 ## 项目文档
 
